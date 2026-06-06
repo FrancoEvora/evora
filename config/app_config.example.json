@@ -1,0 +1,7 @@
+{
+  "app": {
+    "name": "Évora Launch OS",
+    "version": "4.0"
+  },
+  "mode": "standalone"
+}
