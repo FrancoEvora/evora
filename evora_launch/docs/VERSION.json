@@ -1,0 +1,10 @@
+{
+  "product": "Évora Launch OS",
+  "version": "5.7",
+  "base": "v4.3 restored",
+  "mode": "sem banco de dados",
+  "storage": "localStorage + sessionStorage",
+  "features": "v4.3 commercial journey + local login/RBAC/users/passwords/logs",
+  "target": "Vercel static",
+  "outputDirectory": "public"
+}

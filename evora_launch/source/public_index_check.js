@@ -1,0 +1,792 @@
+(() => {
+'use strict';
+const APP_VERSION = '5.6';
+const RELEASE_DATE = '2026-06-05';
+const STORAGE_KEY = 'evora-launch-os-v560';
+
+const money = new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'});
+const dateFmt = new Intl.DateTimeFormat('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric'});
+const dateTimeFmt = new Intl.DateTimeFormat('pt-BR',{day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit'});
+const STAGES = [
+  {id:'captado', label:'Lead captado', owner:'SDR', required:['captar-origem','primeiro-contato'], n:'01'},
+  {id:'diagnostico', label:'Diagnóstico rápido', owner:'SDR', required:['perfil-basico','entrada-prazo'], n:'02'},
+  {id:'encaixe', label:'Encaixe de perfil', owner:'SDR', required:['classificar','explicar-condicao'], n:'03'},
+  {id:'aquecimento', label:'Aquecimento', owner:'SDR', required:['enviar-material','registrar-interesse'], n:'04'},
+  {id:'simulacao', label:'Simulação orientada', owner:'Corretor', required:['simular','validar-aceite'], n:'05'},
+  {id:'escolha', label:'Escolha de lote', owner:'Corretor', required:['apresentar-lotes','lote-escolhido'], n:'06'},
+  {id:'proposta', label:'Proposta', owner:'Corretor', required:['emitir-proposta','validar-alcada'], n:'07'},
+  {id:'reserva', label:'Reserva', owner:'Corretor', required:['reservar-lote','prazo-reserva'], n:'08'},
+  {id:'contrato', label:'Contrato', owner:'Jurídico/Financeiro', required:['docs-obrigatorios','contrato-gerado'], n:'09'},
+  {id:'cliente', label:'Cliente', owner:'Pós-venda', required:['boas-vindas','primeira-comunicacao'], n:'10'}
+];
+const TASKS = {
+  'captado': [
+    ['captar-origem','Confirmar origem, campanha e interesse inicial'],
+    ['primeiro-contato','Realizar primeiro contato e validar WhatsApp']
+  ],
+  'diagnostico': [
+    ['perfil-basico','Mapear finalidade, cidade, perfil de comprador e decisor'],
+    ['entrada-prazo','Sondar capacidade de entrada e prazo de decisão']
+  ],
+  'encaixe': [
+    ['classificar','Classificar lead A/B/C/D'],
+    ['explicar-condicao','Explicar financiamento direto, IPCA e juros']
+  ],
+  'aquecimento': [
+    ['enviar-material','Enviar material aderente ao perfil do lead'],
+    ['registrar-interesse','Registrar resposta, objeção e próximo passo']
+  ],
+  'simulacao': [
+    ['simular','Executar simulação de condições'],
+    ['validar-aceite','Validar se o cliente aceitou a condição']
+  ],
+  'escolha': [
+    ['apresentar-lotes','Apresentar lotes compatíveis'],
+    ['lote-escolhido','Vincular lote desejado']
+  ],
+  'proposta': [
+    ['emitir-proposta','Emitir proposta formal'],
+    ['validar-alcada','Validar alçada, desconto e validade']
+  ],
+  'reserva': [
+    ['reservar-lote','Criar reserva com lead, corretor, prazo e motivo'],
+    ['prazo-reserva','Comunicar prazo e próximos passos']
+  ],
+  'contrato': [
+    ['docs-obrigatorios','Anexar documentos obrigatórios'],
+    ['contrato-gerado','Gerar contrato a partir da proposta aprovada']
+  ],
+  'cliente': [
+    ['boas-vindas','Enviar boas-vindas'],
+    ['primeira-comunicacao','Registrar primeira comunicação de pós-venda']
+  ]
+};
+const DOC_TYPES = [
+  ['id_doc','Documento pessoal / CPF / RG',true],
+  ['address','Comprovante de endereço',true],
+  ['spouse','Documento do cônjuge',false],
+  ['company','Contrato social / CNPJ',false],
+  ['other','Outro documento',false]
+];
+const VIEWS = [
+  ['war','Sala de Guerra'],
+  ['leads','Leads'],
+  ['sdr','SDR'],
+  ['brokers','Corretores'],
+  ['lots','Lotes'],
+  ['simulator','Simulador'],
+  ['proposals','Propostas'],
+  ['reservations','Reservas'],
+  ['contracts','Contratos'],
+  ['clients','Clientes'],
+  ['reports','Relatórios'],
+  ['settings','Configurações']
+];
+let view = 'war';
+let state = loadState();
+let filters = {search:'', lotStatus:'all'};
+
+function uid(p){return p+'-'+Math.random().toString(36).slice(2,9);}
+function now(){return new Date().toISOString();}
+function days(n){const d=new Date(); d.setDate(d.getDate()+n); return d.toISOString();}
+function months(n){const d=new Date(); d.setMonth(d.getMonth()+n); return d.toISOString();}
+function fmtMoney(v){return money.format(Number(v)||0);}
+function fmtDate(v){return v?dateFmt.format(new Date(v)):'—';}
+function fmtDateTime(v){return v?dateTimeFmt.format(new Date(v)):'—';}
+function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));}
+function pct(a,b){return b?Math.round((a/b)*100):0;}
+function stageIndex(id){const i=STAGES.findIndex(s=>s.id===id); return i<0?0:i;}
+function stage(id){return STAGES[stageIndex(id)];}
+function normalizeName(str){return String(str||'').trim().replace(/\s+/g,' ').toLowerCase().split(' ').filter(Boolean).map((p,i)=>['da','de','do','das','dos','e'].includes(p)&&i>0?p:p.charAt(0).toUpperCase()+p.slice(1)).join(' ');}
+function toast(msg){const el=document.getElementById('toast'); el.textContent=msg; el.classList.add('show'); clearTimeout(toast.t); toast.t=setTimeout(()=>el.classList.remove('show'),3000);}
+function save(){state.meta.updatedAt=now(); localStorage.setItem(STORAGE_KEY,JSON.stringify(state));}
+function loadState(){try{const raw=localStorage.getItem(STORAGE_KEY); if(raw) return normalize(JSON.parse(raw));}catch(e){console.warn(e)} return seed();}
+function normalize(s){
+  s.meta=s.meta||{version:APP_VERSION,createdAt:now(),updatedAt:now()}; s.meta.version=APP_VERSION;
+  s.projects=s.projects||[]; s.team=s.team||[]; s.leads=s.leads||[]; s.lots=s.lots||[];
+  s.proposals=s.proposals||[]; s.reservations=s.reservations||[]; s.contracts=s.contracts||[];
+  s.payments=s.payments||[]; s.materials=s.materials||[]; s.communications=s.communications||[];
+  s.selectedProjectId=s.selectedProjectId||(s.projects[0]&&s.projects[0].id);
+  s.leads.forEach(l=>{l.docs=l.docs||[]; l.actions=l.actions||{}; l.notesByStage=l.notesByStage||{}; l.history=l.history||[];});
+  return s;
+}
+function seed(){
+  const project={id:'proj-reserva',name:'Reserva Évora',city:'Bauru',uf:'SP',goalLots:100,goalSalePct:90,status:'Pré-lançamento'};
+  const team=[
+    {id:'u-dir',name:'Franco Évora',role:'Diretor Comercial',phone:'',creci:'',projects:[project.id]},
+    {id:'u-gest',name:'Mariana Castro',role:'Gestor Comercial',phone:'',creci:'',projects:[project.id]},
+    {id:'u-sdr1',name:'Ana Prado',role:'SDR',phone:'(14) 99999-1111',creci:'',projects:[project.id]},
+    {id:'u-sdr2',name:'Lucas Meireles',role:'SDR',phone:'(14) 99999-2222',creci:'',projects:[project.id]},
+    {id:'u-cor1',name:'Marcos Alencar',role:'Corretor',phone:'(14) 99999-3333',creci:'CRECI 000001-F',creciDoc:{name:'creci-marcos.pdf'},projects:[project.id]},
+    {id:'u-cor2',name:'Paula Nogueira',role:'Corretor',phone:'(14) 99999-4444',creci:'CRECI 000002-F',creciDoc:{name:'creci-paula.pdf'},projects:[project.id]}
+  ];
+  const lots=generateLots(project.id,100,619057);
+  const leads=[
+    lead('João Silva','Bauru','Instagram Lead Ads','Lista VIP','Investimento','Investidor','simulacao',82,'u-sdr1','u-cor1',lots[3].id),
+    lead('Marina Toledo','Jaú','Indicação','Lista VIP','Patrimônio','Patrimonial','reserva',91,'u-sdr1','u-cor2',lots[8].id),
+    lead('Carlos Mantovani','Botucatu','Google Search','Performance','Moradia','Família','aquecimento',66,'u-sdr2','',null),
+    lead('Fernanda Ribeiro','Bauru','Carteira corretor','Indicações','Construção futura','Premium','diagnostico',45,'u-sdr2','',null)
+  ];
+  leads[0].actions['simulacao']={'simular':{ts:now(),note:'Condição inicial simulada.'}};
+  leads[1].actions['reserva']={'reservar-lote':{ts:now(),note:'Reserva criada.'},'prazo-reserva':{ts:now(),note:'Prazo comunicado.'}};
+  lots[3].status='prioridade'; lots[3].leadId=leads[0].id; lots[3].sdrId='u-sdr1'; lots[3].brokerId='u-cor1';
+  lots[8].status='pre-reserva'; lots[8].leadId=leads[1].id; lots[8].sdrId='u-sdr1'; lots[8].brokerId='u-cor2'; lots[8].reservedUntil=days(2);
+  const reservation={id:'res-1',projectId:project.id,leadId:leads[1].id,lotId:lots[8].id,status:'pre-reserva',expiresAt:days(2),reason:'Cliente A, lote escolhido.',createdAt:now(),ownerId:'u-cor2'};
+  return normalize({meta:{version:APP_VERSION,createdAt:now(),updatedAt:now()},selectedProjectId:project.id,projects:[project],team,leads,lots,proposals:[],reservations:[reservation],contracts:[],payments:[],materials:[
+    {id:'mat-book',name:'Book do Empreendimento',type:'PDF',stage:'Aquecimento',persona:'Todos'},
+    {id:'mat-ipca',name:'Argumentário IPCA + 0,7%',type:'Roteiro',stage:'Simulação',persona:'Investidor'},
+    {id:'mat-obra',name:'Diário de Obra — Modelo',type:'Informativo',stage:'Pós-venda',persona:'Cliente'}
+  ],communications:[]});
+}
+function lead(name,city,source,campaign,purpose,profile,stageId,score,sdrId,brokerId,lotId){
+  return {id:uid('lead'),projectId:'proj-reserva',name,phone:'(14) 9'+Math.floor(1000+Math.random()*8999)+'-'+Math.floor(1000+Math.random()*8999),email:name.split(' ')[0].toLowerCase()+'@email.com',city,uf:'SP',source,campaign,purpose,profile,stage:stageId,score,sdrId,brokerId,lotId,nextAction:'Executar próxima ação guiada',nextDue:days(score>80?1:-1),createdAt:days(-Math.floor(Math.random()*6)),updatedAt:days(-Math.floor(Math.random()*4)),docs:[],actions:{},notesByStage:{},history:[{ts:now(),text:'Lead cadastrado na esteira v4.0.'}]};
+}
+function generateLots(projectId,total,basePrice){
+  const lots=[]; let count=0; const quadras=Math.ceil(total/20);
+  for(let q=1;q<=quadras;q++){
+    for(let n=1;n<=20 && count<total;n++){
+      count++;
+      const corner=n===1||n===20, green=q===1||n===4||n===17, commercial=q===quadras && n>=8 && n<=14;
+      const area=commercial?500:corner?520:green?480:450;
+      const factor=commercial?1.25:corner?1.18:green?1.10:1;
+      const price=Math.round(basePrice*factor*(area/450));
+      lots.push({id:uid('lot'),projectId,quadra:`Q${String(q).padStart(2,'0')}`,numero:`L${String(n).padStart(2,'0')}`,area,sector:commercial?'Eixo Comercial':green?'Área Verde':q%2?'Residencial Norte':'Residencial Sul',type:commercial?'Comercial':corner?'Esquina':green?'Premium':'Padrão',front:corner?18:15,depth:30,topography:q%3===0?'Aclive leve':q%3===1?'Plana':'Declive leve',face:['Norte','Sul','Leste','Oeste'][n%4],price,priceM2:Math.round(price/area),status:'livre',leadId:null,sdrId:null,brokerId:null,reservedUntil:null,reserveReason:'',gallery:[]});
+    }
+  }
+  return lots;
+}
+function project(){return state.projects.find(p=>p.id===state.selectedProjectId)||state.projects[0];}
+function projectLeads(){return state.leads.filter(l=>l.projectId===project().id);}
+function projectLots(){return state.lots.filter(l=>l.projectId===project().id);}
+function projectProposals(){return state.proposals.filter(p=>p.projectId===project().id);}
+function projectReservations(){return state.reservations.filter(r=>r.projectId===project().id);}
+function projectContracts(){return state.contracts.filter(c=>c.projectId===project().id);}
+function team(role){return state.team.filter(u=>(!role||u.role===role) && (u.projects||[]).includes(project().id));}
+function byId(arr,id){return arr.find(x=>x.id===id);}
+function leadBy(id){return byId(state.leads,id);}
+function lotBy(id){return byId(state.lots,id);}
+function person(id){const p=byId(state.team,id); return p?p.name:'—';}
+function temp(score){return score>=80?['A','green']:score>=60?['B','blue']:score>=40?['C','amber']:['D','red'];}
+function statusPill(status){return ({livre:'green',prioridade:'blue','pre-reserva':'amber',reservado:'amber',contrato:'blue',vendido:'dark',bloqueado:'red',rascunho:'gray',enviada:'blue','em-aprovacao':'amber',aprovada:'green',aceita:'green',convertida:'dark',assinado:'green'})[status]||'gray';}
+function lotStatusLabel(s){return ({livre:'Livre',prioridade:'Prioridade','pre-reserva':'Pré-reserva',contrato:'Contrato',vendido:'Vendido',bloqueado:'Bloqueado'})[s]||s;}
+function nextBestAction(l){
+  if(isStalled(l)) return 'Retomar imediatamente: lead parado ou ação vencida.';
+  if(!l.sdrId) return 'Atribuir SDR.';
+  if(stageIndex(l.stage)>=4 && !l.brokerId) return 'Atribuir corretor.';
+  if(l.stage==='aquecimento' && !actionDone(l,'aquecimento','enviar-material')) return 'Enviar material de aquecimento.';
+  if(l.stage==='simulacao') return 'Simular condição e validar aceite.';
+  if(l.stage==='escolha') return 'Apresentar e vincular lote.';
+  if(l.stage==='proposta') return 'Emitir proposta e validar alçada.';
+  if(l.stage==='reserva') return 'Consolidar reserva ou liberar lote.';
+  if(l.stage==='contrato') return 'Conferir documentos e gerar contrato.';
+  if(l.stage==='cliente') return 'Ativar pós-venda e comunicações.';
+  return TASKS[l.stage]?.[0]?.[1] || 'Executar próxima ação.';
+}
+function actionDone(l,stageId,taskId){return !!(l.actions?.[stageId]?.[taskId]);}
+function requiredMissing(l){
+  const miss=[];
+  for(const [id,label] of TASKS[l.stage]||[]) if(!actionDone(l,l.stage,id)) miss.push(label);
+  if(['escolha','proposta','reserva','contrato'].includes(l.stage) && !l.lotId) miss.push('Lote vinculado');
+  if(l.stage==='contrato') miss.push(...contractPendencies(l));
+  return [...new Set(miss)];
+}
+function isStalled(l){return !['cliente'].includes(l.stage) && ((l.nextDue && new Date(l.nextDue)<new Date()) || daysSince(l.updatedAt||l.createdAt)>=4);}
+function daysSince(iso){if(!iso)return 999; return Math.floor((new Date()-new Date(iso))/(1000*60*60*24));}
+function clients(){return projectLeads().filter(l=>l.stage==='cliente' || projectContracts().some(c=>c.leadId===l.id && c.signedAt));}
+function lastClientCom(l){const c=state.communications.filter(x=>x.leadId===l.id).sort((a,b)=>new Date(a.ts)-new Date(b.ts)); return c.length?c[c.length-1].ts:l.clientSince||l.updatedAt;}
+function clientSilent(l){return daysSince(lastClientCom(l))>30;}
+function hasDoc(l,type){return !!(l.docs||[]).find(d=>d.type===type);}
+function contractPendencies(l){
+  const m=[]; if(!l.document) m.push('CPF/CNPJ'); if(!l.email) m.push('e-mail'); if(!l.phone) m.push('WhatsApp'); if(!hasDoc(l,'id_doc')) m.push('documento pessoal'); if(!hasDoc(l,'address')) m.push('comprovante de endereço'); if((l.maritalStatus||'').includes('Casado') && !hasDoc(l,'spouse')) m.push('documento do cônjuge'); return m;
+}
+function simulate(price,entryPct=10,monthsCount=180,annualCount=15,interest=0.7,ratio=28.35){
+  const entry=price*(entryPct/100), bal=price-entry, i=interest/100;
+  let pvM=(1-Math.pow(1+i,-monthsCount))/i, pvA=0; for(let k=1;k<=annualCount;k++) pvA+=Math.pow(1+i,-12*k);
+  const monthly=bal/(pvM+ratio*pvA), annual=ratio*monthly, total=entry+monthly*monthsCount+annual*annualCount;
+  return {entry,monthly,annual,total,gain:total-price,balance:bal};
+}
+function lotGallery(lot){
+  if(!lot.gallery?.length){
+    const labels=['Vista conceitual','Acesso e entorno','Implantação','Potencial de uso'];
+    lot.gallery=labels.map((label,i)=>{
+      const colors=[['#245E82','#84C225'],['#173C52','#3D8B5C'],['#456B87','#9DD85B'],['#234A64','#84C225']][i];
+      const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="${colors[0]}"/><stop offset="1" stop-color="${colors[1]}"/></linearGradient></defs><rect width="800" height="500" fill="url(#g)"/><rect x="28" y="28" width="744" height="444" rx="28" fill="rgba(255,255,255,.10)" stroke="rgba(255,255,255,.30)"/><path d="M40 380C180 300 300 340 400 390S610 430 760 290V470H40Z" fill="rgba(255,255,255,.18)"/><text x="50" y="88" fill="#fff" font-family="Arial" font-size="24" font-weight="700">${esc(project().name)}</text><text x="50" y="140" fill="#fff" font-family="Arial" font-size="44" font-weight="800">${esc(label)} · ${esc(lot.quadra)}-${esc(lot.numero)}</text><text x="50" y="180" fill="#E8F9EE" font-family="Arial" font-size="24">${lot.area} m² · ${esc(lot.type)} · ${esc(lot.sector)}</text></svg>`;
+      return 'data:image/svg+xml;charset=UTF-8,'+encodeURIComponent(svg);
+    });
+  }
+  return lot.gallery;
+}
+function icon(name){const icons={
+  war:'<svg viewBox="0 0 24 24"><path d="M3 13h8V3H3zM13 21h8V11h-8zM13 3v6h8V3zM3 21h8v-6H3z"/></svg>',
+  leads:'<svg viewBox="0 0 24 24"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a6 6 0 0 1 6-6h0a6 6 0 0 1 6 6v2"/><path d="M18 8h4M20 6v4"/></svg>',
+  sdr:'<svg viewBox="0 0 24 24"><path d="M21 15a4 4 0 0 1-4 4H7l-4 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/><path d="M8 9h8M8 13h5"/></svg>',
+  brokers:'<svg viewBox="0 0 24 24"><path d="M3 21h18"/><path d="M5 21V8l7-5 7 5v13"/><path d="M9 21v-6h6v6"/></svg>',
+  lots:'<svg viewBox="0 0 24 24"><path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z"/><path d="M9 4v14M15 6v14"/></svg>',
+  simulator:'<svg viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M8 6h8M8 10h2M12 10h2M16 10h0M8 14h2M12 14h2M16 14h0M8 18h8"/></svg>',
+  proposals:'<svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16l4-3 4 3 4-3 4 3V8z"/><path d="M14 2v6h6"/></svg>',
+  reservations:'<svg viewBox="0 0 24 24"><path d="M12 21s7-4.4 7-11a7 7 0 0 0-14 0c0 6.6 7 11 7 11z"/><circle cx="12" cy="10" r="2"/></svg>',
+  contracts:'<svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16h16V8z"/><path d="M14 2v6h6"/><path d="M8 13h8M8 17h5"/></svg>',
+  clients:'<svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/><circle cx="9.5" cy="7" r="4"/><path d="M17 11l2 2 4-4"/></svg>',
+  reports:'<svg viewBox="0 0 24 24"><path d="M4 19V5"/><path d="M4 19h16"/><path d="M8 16V9M12 16V7M16 16v-4"/></svg>',
+  settings:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3h.1a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8v.1a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>'
+}; return icons[name]||icons.war;}
+function render(){
+  const root=document.getElementById('app');
+  root.innerHTML=`<div class="app"><aside class="sidebar">${renderSidebar()}</aside><main class="main">${renderTopbar()}${renderView()}<div class="tiny" style="margin-top:28px">Évora Launch OS v${APP_VERSION} · dados locais neste navegador · ${esc(project().name)}</div></main></div>`;
+}
+function renderSidebar(){
+  return `<div class="brandPanel"><img src="assets/logo_evora_white.png" alt="Évora Urbanismo"><div class="sub">Sistema de performance comercial<br><b>${esc(project().name)}</b> · ${esc(project().city)}/${esc(project().uf)}</div></div>
+  <div class="version">● v${APP_VERSION} · ${RELEASE_DATE}</div>
+  <div class="projectBox"><label>Empreendimento</label><select onchange="selectProject(this.value)">${state.projects.map(p=>`<option value="${p.id}" ${p.id===state.selectedProjectId?'selected':''}>${esc(p.name)} · ${esc(p.city)}/${esc(p.uf)}</option>`).join('')}</select></div>
+  <div class="nav">${VIEWS.map(([id,label])=>`<button class="${view===id?'active':''}" onclick="setView('${id}')"><span class="ico">${icon(id)}</span>${label}</button>`).join('')}</div>
+  <div class="principle"><b>Regra v4.0</b>Menos cadastro solto, mais condução. O sistema indica a próxima ação, bloqueia avanço sem fundamentos e transforma pós-venda em canal de indicação.</div>`;
+}
+function renderTopbar(){
+  const titles={
+    war:['Sala de Guerra','Ações urgentes, gargalos, potencial de venda e comando do gestor.'],
+    leads:['Leads e Dossiê Comercial','Jornada guiada, próxima melhor ação, documentos, simulação, reserva e contrato em uma única ficha.'],
+    sdr:['Painel SDR','Fila de pré-vendas para trabalhar mais leads com menos esforço operacional.'],
+    brokers:['Corretores','Carteira consultiva, CRECI validado e performance por corretor.'],
+    lots:['Lotes','Mapa comercial, disponibilidade, reserva e simulação por lote.'],
+    simulator:['Simulador','Condições comerciais para transformar interesse em proposta.'],
+    proposals:['Propostas','Propostas com validade, alçada e caminho para reserva/contrato.'],
+    reservations:['Reservas','Controle de prioridade, prazo e estoque travado.'],
+    contracts:['Contratos','Geração, assinatura e migração para cliente.'],
+    clients:['Clientes e Pós-venda','Comunicações, diário de obra, relacionamento e indicação.'],
+    reports:['Relatórios','Relatórios executivos e geração em PDF via impressão/salvar como PDF.'],
+    settings:['Configurações','Equipe, campanhas, materiais e dados mestres.']
+  };
+  const t=titles[view]||titles.war;
+  const actions={
+    war:`<button class="btn primary" onclick="openNewLead()">+ Lead</button>`,
+    leads:`<button class="btn primary" onclick="openNewLead()">+ Lead</button>`,
+    lots:`<button class="btn primary" onclick="setView('simulator')">Simular</button>`,
+    simulator:`<button class="btn primary" onclick="createProposalFromSimulator()">Gerar proposta</button>`,
+    reports:`<button class="btn primary" onclick="printReport('executivo')">Gerar PDF executivo</button>`,
+    settings:`<button class="btn primary" onclick="openTeamForm()">+ Pessoa</button>`
+  }[view]||`<button class="btn" onclick="setView('war')">Sala de Guerra</button>`;
+  return `<div class="topbar"><div class="title"><h1>${t[0]}</h1><p>${t[1]}</p></div><div class="actions">${actions}</div></div>`;
+}
+function renderView(){
+  return ({war:renderWar,leads:renderLeads,sdr:renderSdr,brokers:renderBrokers,lots:renderLots,simulator:renderSimulator,proposals:renderProposals,reservations:renderReservations,contracts:renderContracts,clients:renderClients,reports:renderReports,settings:renderSettings}[view]||renderWar)();
+}
+function analytics(){
+  const leads=projectLeads(), lots=projectLots(), props=projectProposals(), res=projectReservations(), cons=projectContracts(), cls=clients();
+  return {
+    leads,lots,props,res,cons,cls,
+    a:leads.filter(l=>l.score>=80).length,
+    stalled:leads.filter(isStalled),
+    silent:cls.filter(clientSilent),
+    ready:leads.filter(l=>['reserva','contrato'].includes(l.stage)).length,
+    sold:lots.filter(l=>['contrato','vendido'].includes(l.status)).length,
+    stockReserved:lots.filter(l=>['prioridade','pre-reserva'].includes(l.status)).length,
+    carteira:props.filter(p=>['aprovada','aceita','convertida'].includes(p.status)).reduce((s,p)=>s+p.total,0)
+  };
+}
+function kpi(label,value,hint){return `<div class="card kpiCard"><div class="kpiLabel">${esc(label)}</div><div class="kpiValue">${esc(value)}</div><div class="kpiHint">${esc(hint)}</div></div>`;}
+function renderWar(){
+  const a=analytics(); const target=Math.round((project().goalLots||a.lots.length)*(project().goalSalePct||90)/100);
+  const urgent=[
+    ...a.stalled.map(l=>({type:'danger',title:`Lead parado · ${l.name}`,body:`${stage(l.stage).label} · ${nextBestAction(l)}`,button:`<button class="btn small danger" onclick="openDossier('${l.id}')">Retomar</button>`})),
+    ...a.silent.map(l=>({type:'warn',title:`Cliente sem comunicação · ${l.name}`,body:`Último contato: ${fmtDateTime(lastClientCom(l))}`,button:`<button class="btn small warn" onclick="openClient('${l.id}')">Pós-venda</button>`})),
+    ...a.res.filter(r=>new Date(r.expiresAt)<new Date()).map(r=>({type:'warn',title:`Reserva vencida · ${lotLabel(r.lotId)}`,body:`Cliente: ${leadName(r.leadId)}`,button:`<button class="btn small warn" onclick="openReservation('${r.id}')">Abrir</button>`}))
+  ].slice(0,8);
+  const topLeads=projectLeads().filter(l=>l.score>=70 && !['cliente'].includes(l.stage)).sort((x,y)=>y.score-x.score).slice(0,8);
+  return `<div class="grid kpi">
+    ${kpi('Leads ativos',a.leads.length,`${a.a} clientes A/B fortes`)}
+    ${kpi('Prontos / avançados',a.ready,`Meta de abertura: ${target}`)}
+    ${kpi('Reservas',a.res.length,`${a.stockReserved} lotes em prioridade/pré-reserva`)}
+    ${kpi('Carteira provável',fmtMoney(a.carteira),'Propostas aprovadas, aceitas ou convertidas')}
+  </div>
+  <div class="grid two" style="margin-top:16px">
+    <div class="card"><h2>Ações urgentes</h2><div class="warList">${urgent.length?urgent.map(x=>`<div class="task ${x.type}"><div><b>${esc(x.title)}</b><span class="tiny">${esc(x.body)}</span></div>${x.button}</div>`).join(''):'<div class="empty">Nenhuma ação crítica. Mantenha a cadência.</div>'}</div></div>
+    <div class="card"><h2>Clientes com maior potencial</h2><div class="warList">${topLeads.map(l=>`<div class="task"><div><b>${esc(l.name)} · Cliente ${temp(l.score)[0]}</b><span class="tiny">${esc(stage(l.stage).label)} · ${esc(nextBestAction(l))}</span></div><button class="btn small" onclick="openDossier('${l.id}')">Dossiê</button></div>`).join('')||'<div class="empty">Sem clientes quentes.</div>'}</div></div>
+  </div>
+  <div class="grid three" style="margin-top:16px">
+    <div class="card"><h3>Gargalos</h3>${renderBottlenecks()}</div>
+    <div class="card"><h3>Comando do gestor</h3><div class="actions" style="justify-content:flex-start"><button class="btn" onclick="setView('reports')">Relatórios</button><button class="btn" onclick="printReport('executivo')">PDF executivo</button><button class="btn" onclick="setView('reservations')">Reservas</button></div></div>
+    <div class="card"><h3>Pressão de abertura</h3><p><b>${a.ready>=target?'Pronto para janela forte':'Ainda formando demanda'}</b><br>${a.ready} oportunidades em reserva/contrato para meta de ${target}. Priorize leads A e reservas ativas.</p></div>
+  </div>`;
+}
+function renderBottlenecks(){
+  const rows=STAGES.map(s=>({s,n:projectLeads().filter(l=>l.stage===s.id).length})).filter(x=>x.n);
+  return `<div class="timeline">${rows.map(x=>`<div class="event"><b>${esc(x.s.label)}</b><span>${x.n} lead(s) nesta etapa</span></div>`).join('')}</div>`;
+}
+function renderLeads(){
+  const q=filters.search.toLowerCase();
+  const leads=projectLeads().filter(l=>!q||[l.name,l.city,l.source,l.campaign,l.purpose,l.profile,stage(l.stage).label].join(' ').toLowerCase().includes(q));
+  return `<div class="card"><div class="actions" style="justify-content:flex-start;margin-bottom:12px"><input style="min-width:280px;border:1px solid var(--line);border-radius:13px;padding:10px" placeholder="Buscar lead..." value="${esc(filters.search)}" oninput="setFilter('search',this.value)"><button class="btn primary" onclick="openNewLead()">+ Lead</button></div><div class="tableWrap"><table><thead><tr><th>Lead</th><th>Jornada</th><th>Score</th><th>Próxima ação</th><th>Responsáveis</th><th>Lote</th><th>Ações</th></tr></thead><tbody>${leads.map(l=>leadRow(l)).join('')||'<tr><td colspan="7" class="muted">Nenhum lead.</td></tr>'}</tbody></table></div></div>`;
+}
+function leadRow(l){const t=temp(l.score);return `<tr class="${isStalled(l)?'alertRow':''}"><td><div class="leadName">${esc(l.name)}</div><div class="tiny">${esc(l.city)}/${esc(l.uf)} · ${esc(l.source)}</div></td><td>${esc(stage(l.stage).label)}<div class="tiny">${stage(l.stage).n} · ${stage(l.stage).owner}</div></td><td><span class="pill ${t[1]}">Cliente ${t[0]} · ${l.score}</span></td><td>${esc(nextBestAction(l))}<div class="tiny">Prazo: ${fmtDateTime(l.nextDue)}</div></td><td>SDR: ${esc(person(l.sdrId))}<br><span class="tiny">Corretor: ${esc(person(l.brokerId))}</span></td><td>${l.lotId?`<button class="btn small" onclick="openLot('${l.lotId}')">${lotLabel(l.lotId)}</button>`:'—'}</td><td><button class="btn small primary" onclick="openDossier('${l.id}')">Dossiê</button></td></tr>`;}
+function renderSdr(){return renderRolePanel('SDR',['captado','diagnostico','encaixe','aquecimento']);}
+function renderBrokers(){return renderRolePanel('Corretor',['simulacao','escolha','proposta','reserva','contrato']);}
+function renderRolePanel(role,stageIds){
+  const people=team(role);
+  return `<div class="grid two">${people.map(u=>{const ls=projectLeads().filter(l=>(role==='SDR'?l.sdrId:l.brokerId)===u.id && stageIds.includes(l.stage));return `<div class="card"><h2>${esc(u.name)}</h2><p>${esc(u.role)} ${u.creci?'· '+esc(u.creci):''}</p><div class="grid three" style="margin:14px 0"><div class="card" style="box-shadow:none"><b>${ls.length}</b><div class="tiny">em carteira</div></div><div class="card" style="box-shadow:none"><b>${ls.filter(isStalled).length}</b><div class="tiny">parados</div></div><div class="card" style="box-shadow:none"><b>${ls.filter(l=>l.score>=80).length}</b><div class="tiny">clientes A</div></div></div><div class="warList">${ls.slice(0,8).map(l=>`<div class="task ${isStalled(l)?'danger':''}"><div><b>${esc(l.name)}</b><span class="tiny">${esc(stage(l.stage).label)} · ${esc(nextBestAction(l))}</span></div><button class="btn small" onclick="openDossier('${l.id}')">Abrir</button></div>`).join('')||'<div class="empty">Sem itens nesta carteira.</div>'}</div></div>`;}).join('')}</div>`;
+}
+function renderLots(){
+  const lots=projectLots().filter(l=>filters.lotStatus==='all'||l.status===filters.lotStatus);
+  return `<div class="card"><div class="actions" style="justify-content:flex-start;margin-bottom:14px"><select onchange="setFilter('lotStatus',this.value)"><option value="all">Todos</option><option value="livre">Livres</option><option value="prioridade">Prioridade</option><option value="pre-reserva">Pré-reserva</option><option value="vendido">Vendidos</option></select><button class="btn primary" onclick="setView('simulator')">Simular condição</button></div><div class="lotGrid">${lots.map(l=>`<div class="lotCard"><div style="display:flex;justify-content:space-between;gap:10px"><div><h3>${esc(l.quadra)}-${esc(l.numero)}</h3><div class="tiny">${esc(l.type)} · ${esc(l.sector)}</div></div><span class="pill ${statusPill(l.status)}">${lotStatusLabel(l.status)}</span></div><p><b>${l.area} m²</b> · ${fmtMoney(l.price)}<br>Preço/m²: ${fmtMoney(l.priceM2)}<br>${l.leadId?'Lead: '+esc(leadName(l.leadId)):'Sem vínculo'}</p><div class="actions" style="justify-content:flex-start"><button class="btn small" onclick="openLot('${l.id}')">Detalhes</button><button class="btn small" onclick="openReserveLot('${l.id}')">Reservar</button><button class="btn small" onclick="openSimulator('${l.id}')">Simular</button></div></div>`).join('')}</div></div>`;
+}
+function renderSimulator(){
+  const first=projectLots().find(l=>l.status!=='vendido')||projectLots()[0];
+  return `<div class="card"><h2>Simulador central</h2><p>Escolha um lead e um lote. A simulação pode gerar proposta ou reserva imediatamente.</p>${simulatorForm(first?.id,'')}</div>`;
+}
+function simulatorForm(lotId='',leadId=''){
+  const lot=lotBy(lotId)||projectLots()[0];
+  const result=lot?simulate(lot.price,10,180,15,0.7,28.35):null;
+  return `<div class="formGrid" style="margin-top:14px">
+    <div class="field"><label>Lead</label><select id="simLead"><option value="">Sem lead específico</option>${projectLeads().map(l=>`<option value="${l.id}" ${l.id===leadId?'selected':''}>${esc(l.name)} · ${esc(l.city)} · ${l.score}</option>`).join('')}</select></div>
+    <div class="field"><label>Lote</label><select id="simLot" onchange="updateSim()">${projectLots().map(l=>`<option value="${l.id}" ${l.id===lotId?'selected':''}>${esc(l.quadra)}-${esc(l.numero)} · ${l.area} m² · ${fmtMoney(l.price)}</option>`).join('')}</select></div>
+    <div class="field"><label>Entrada %</label><input id="simEntry" type="number" value="10" oninput="updateSim()"></div>
+    <div class="field"><label>Mensais</label><input id="simMonths" type="number" value="180" oninput="updateSim()"></div>
+    <div class="field"><label>Anuais</label><input id="simAnnuals" type="number" value="15" oninput="updateSim()"></div>
+    <div class="field"><label>Juros a.m.</label><input id="simInterest" type="number" step="0.01" value="0.7" oninput="updateSim()"></div>
+    <div class="field"><label>Índice</label><select id="simIndex"><option>IPCA</option><option>IGP-M</option><option>INCC</option></select></div>
+    <div class="field"><label>Fator anual</label><input id="simRatio" type="number" step="0.01" value="28.35" oninput="updateSim()"></div>
+    <div class="span3" id="simResult">${simResultHtml(lot,result)}</div>
+    <div class="span3 actions" style="justify-content:flex-start"><button class="btn" onclick="openReserveLot(document.getElementById('simLot').value,document.getElementById('simLead').value)">Reservar lote</button><button class="btn primary" onclick="createProposalFromSimulator()">Gerar proposta</button></div>
+  </div>`;
+}
+function simResultHtml(lot,res){return lot&&res?`<div class="grid four"><div class="card" style="box-shadow:none"><h3>${fmtMoney(lot.price)}</h3><p>Preço</p></div><div class="card" style="box-shadow:none"><h3>${fmtMoney(res.entry)}</h3><p>Entrada</p></div><div class="card" style="box-shadow:none"><h3>${fmtMoney(res.monthly)}</h3><p>Mensal</p></div><div class="card" style="box-shadow:none"><h3>${fmtMoney(res.annual)}</h3><p>Anual</p></div></div><div class="card" style="box-shadow:none;margin-top:12px"><p><b>Total nominal:</b> ${fmtMoney(res.total)} · <b>Ganho financeiro:</b> ${fmtMoney(res.gain)}</p></div>`:'<div class="empty">Selecione um lote.</div>';}
+function updateSim(){const lot=lotBy(document.getElementById('simLot').value); const res=simulate(lot.price,+v('simEntry'),+v('simMonths'),+v('simAnnuals'),+v('simInterest'),+v('simRatio')); document.getElementById('simResult').innerHTML=simResultHtml(lot,res);}
+function renderProposals(){const rows=projectProposals();return `<div class="card"><div class="actions" style="justify-content:flex-start;margin-bottom:12px"><button class="btn primary" onclick="setView('simulator')">Nova pelo simulador</button></div><div class="tableWrap"><table><thead><tr><th>Cliente/Lote</th><th>Status</th><th>Condição</th><th>Total</th><th>Ações</th></tr></thead><tbody>${rows.map(p=>`<tr><td><b>${esc(leadName(p.leadId))}</b><div class="tiny">${esc(lotLabel(p.lotId))}</div></td><td><span class="pill ${statusPill(p.status)}">${esc(p.status)}</span></td><td>${p.months}x ${fmtMoney(p.monthly)} · ${p.annuals} anuais</td><td>${fmtMoney(p.total)}</td><td><button class="btn small" onclick="openProposal('${p.id}')">Abrir</button></td></tr>`).join('')||'<tr><td colspan="5" class="muted">Nenhuma proposta.</td></tr>'}</tbody></table></div></div>`;}
+function renderReservations(){const rows=projectReservations();return `<div class="card"><div class="tableWrap"><table><thead><tr><th>Lote</th><th>Lead</th><th>Status</th><th>Expira</th><th>Motivo</th><th>Ações</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${esc(lotLabel(r.lotId))}</td><td>${esc(leadName(r.leadId))}</td><td><span class="pill ${statusPill(r.status)}">${lotStatusLabel(r.status)}</span></td><td>${fmtDateTime(r.expiresAt)}</td><td>${esc(r.reason)}</td><td><button class="btn small" onclick="openReservation('${r.id}')">Abrir</button></td></tr>`).join('')||'<tr><td colspan="6" class="muted">Nenhuma reserva.</td></tr>'}</tbody></table></div></div>`;}
+function renderContracts(){const rows=projectContracts();return `<div class="card"><div class="tableWrap"><table><thead><tr><th>Cliente</th><th>Lote</th><th>Status</th><th>Gerado</th><th>Assinado</th><th>Ações</th></tr></thead><tbody>${rows.map(c=>`<tr><td>${esc(leadName(c.leadId))}</td><td>${esc(lotLabel(c.lotId))}</td><td><span class="pill ${c.signedAt?'green':'blue'}">${c.signedAt?'Assinado':'Gerado'}</span></td><td>${fmtDateTime(c.createdAt)}</td><td>${fmtDateTime(c.signedAt)}</td><td><button class="btn small" onclick="openContract('${c.id}')">Abrir</button>${!c.signedAt?`<button class="btn small success" onclick="signContract('${c.id}')">Assinar demo</button>`:''}</td></tr>`).join('')||'<tr><td colspan="6" class="muted">Nenhum contrato.</td></tr>'}</tbody></table></div></div>`;}
+function renderClients(){const cls=clients();return `<div class="grid three"><div class="card"><h3>Clientes ativos</h3><p>${cls.length}</p></div><div class="card"><h3>Sem comunicação 30+</h3><p>${cls.filter(clientSilent).length}</p></div><div class="card"><h3>Comunicações</h3><p>${state.communications.filter(c=>leadBy(c.leadId)?.projectId===project().id).length}</p></div></div><div class="grid two" style="margin-top:16px">${cls.map(l=>`<div class="card ${clientSilent(l)?'task warn':''}"><h3>${esc(l.name)}</h3><p>${esc(lotLabel(l.lotId))} · último contato: ${fmtDateTime(lastClientCom(l))}</p><div class="actions" style="justify-content:flex-start;margin-top:12px"><button class="btn small" onclick="openClient('${l.id}')">Abrir</button><button class="btn small" onclick="registerClientCom('${l.id}','Diário de obra enviado ao cliente.')">Diário de obra</button><button class="btn small" onclick="registerClientCom('${l.id}','Check-in de relacionamento realizado.')">Check-in</button></div></div>`).join('')||'<div class="empty">Nenhum cliente ainda.</div>'}</div>`;}
+function renderReports(){
+  const reports=[['executivo','Executivo diário','Leads, reservas, propostas, alertas e carteira.'],['lancamento','Prontidão de lançamento','Pressão de compra, estoque e gargalos.'],['sdr','Performance SDR','Atendimento, qualificação e leads parados.'],['corretores','Performance corretores','Propostas, reservas e contratos.'],['campanhas','Origem e campanhas','Qualidade e conversão por canal.'],['estoque','Estoque','Lotes livres, reservados e vendidos.'],['financeiro','Financeiro','Carteira, recebido, a receber e vencidos.'],['posvenda','Pós-venda','Clientes, comunicações e risco de silêncio.']];
+  return `<div class="reportGrid">${reports.map(r=>`<div class="card"><h3>${r[1]}</h3><p>${r[2]}</p><div class="actions" style="justify-content:flex-start;margin-top:14px"><button class="btn primary" onclick="printReport('${r[0]}')">Gerar PDF</button><button class="btn" onclick="downloadReportHtml('${r[0]}')">Baixar HTML</button></div></div>`).join('')}</div>`;
+}
+function renderSettings(){
+  return `<div class="grid two"><div class="card"><h2>Equipe</h2><div class="warList">${state.team.map(u=>`<div class="task ${u.role==='Corretor'&&(!u.creci||!u.creciDoc)?'danger':''}"><div><b>${esc(u.name)}</b><span class="tiny">${esc(u.role)} ${u.creci?'· '+esc(u.creci):''}${u.role==='Corretor'&&!u.creciDoc?' · CRECI PDF pendente':''}</span></div><button class="btn small" onclick="openTeamForm('${u.id}')">Editar</button></div>`).join('')}</div><div class="actions" style="justify-content:flex-start;margin-top:12px"><button class="btn primary" onclick="openTeamForm()">+ Pessoa</button></div></div><div class="card"><h2>Materiais</h2><div class="timeline">${state.materials.map(m=>`<div class="event"><b>${esc(m.name)}</b><span>${esc(m.type)} · ${esc(m.stage)} · ${esc(m.persona)}</span></div>`).join('')}</div></div></div>`;
+}
+function openModal(title,subtitle,body,cls=''){document.getElementById('modal-root').innerHTML=`<div class="modalBackdrop"><div class="modal ${cls}"><div class="modalHead"><div><h3>${esc(title)}</h3>${subtitle?`<p class="muted">${esc(subtitle)}</p>`:''}</div><button class="close" onclick="closeModal()">×</button></div><div class="modalBody">${body}</div></div></div>`;}
+function closeModal(){document.getElementById('modal-root').innerHTML='';}
+function openDossier(id,tab='acao'){
+  const l=leadBy(id); if(!l)return; const miss=requiredMissing(l); const t=temp(l.score);
+  const body=`<div class="tabs">${['acao','dados','docs','simular','historico'].map(x=>`<button class="tab ${tab===x?'active':''}" onclick="openDossier('${l.id}','${x}')">${({acao:'Ação',dados:'Dados',docs:'Documentos',simular:'Simular',historico:'Histórico'})[x]}</button>`).join('')}</div>
+  <div class="dossierHead"><div class="nextBox"><h3>Próxima melhor ação</h3><p>${esc(nextBestAction(l))}</p><div style="margin-top:10px"><span class="pill ${t[1]}">Cliente ${t[0]} · ${l.score}</span> <span class="pill">${esc(stage(l.stage).label)}</span></div></div><div class="card" style="box-shadow:none"><h3>Responsáveis</h3><p>SDR: ${esc(person(l.sdrId))}<br>Corretor: ${esc(person(l.brokerId))}<br>Lote: ${l.lotId?esc(lotLabel(l.lotId)):'—'}</p></div></div>
+  <div class="card" style="box-shadow:none;margin-top:14px"><div class="stepper">${STAGES.map((s,i)=>`<div class="step ${i<stageIndex(l.stage)?'done':''} ${i===stageIndex(l.stage)?'current':''}">${s.n} ${esc(s.label)}</div>`).join('')}</div></div>
+  ${tab==='acao'?dossierAction(l,miss):tab==='dados'?dossierData(l):tab==='docs'?dossierDocs(l):tab==='simular'?simulatorForm(l.lotId,l.id):dossierHistory(l)}`;
+  openModal(l.name,`${l.city}/${l.uf} · ${l.source}`,body,'wide');
+}
+function dossierAction(l,miss){
+  return `<div class="grid two" style="margin-top:14px"><div class="card"><h3>Checklist obrigatório da etapa</h3><div class="checkGrid">${(TASKS[l.stage]||[]).map(([id,label])=>{const done=actionDone(l,l.stage,id);return `<div class="checkCard ${done?'done':''}"><b>${esc(label)}</b><div class="tiny">${done?'Concluído em '+fmtDateTime(l.actions[l.stage][id].ts):'Pendente'}</div><textarea id="note_${id}" class="stageNote" placeholder="Anotação específica desta ação">${esc(l.notesByStage?.[l.stage]?.[id]||'')}</textarea><div class="actions" style="justify-content:flex-start;margin-top:8px"><button class="btn small ${done?'':'primary'}" onclick="registerAction('${l.id}','${id}')">${done?'Registrar novamente':'Registrar ação'}</button><button class="btn small" onclick="saveStageNote('${l.id}','${id}')">Salvar anotação</button></div></div>`;}).join('')}</div></div><div class="card"><h3>Avanço de etapa</h3>${miss.length?`<div class="task warn"><div><b>Pendências fundamentais</b><span class="tiny">${esc(miss.join(' · '))}</span></div></div>`:'<div class="task"><div><b>Etapa liberada</b><span class="tiny">Todos os fundamentos foram registrados.</span></div></div>'}<div class="actions" style="justify-content:flex-start;margin-top:14px"><button class="btn success" onclick="advanceLead('${l.id}')">Avançar etapa</button><button class="btn" onclick="openReserveLot('${l.lotId||''}','${l.id}')">Reservar lote</button><button class="btn" onclick="openDossier('${l.id}','simular')">Simular</button></div></div></div>`;
+}
+function dossierData(l){return `<div class="card" style="margin-top:14px"><h3>Cadastro progressivo</h3><div class="formGrid"><div class="field"><label>Nome</label><input id="leadName" value="${esc(l.name)}"></div><div class="field"><label>WhatsApp</label><input id="leadPhone" value="${esc(l.phone)}"></div><div class="field"><label>E-mail</label><input id="leadEmail" value="${esc(l.email)}"></div><div class="field"><label>Cidade</label><input id="leadCity" value="${esc(l.city)}"></div><div class="field"><label>Finalidade</label><input id="leadPurpose" value="${esc(l.purpose)}"></div><div class="field"><label>Perfil</label><input id="leadProfile" value="${esc(l.profile)}"></div><div class="field"><label>CPF/CNPJ</label><input id="leadDoc" value="${esc(l.document||'')}"></div><div class="field"><label>Estado civil</label><select id="leadMarital"><option ${l.maritalStatus==='Solteiro(a)'?'selected':''}>Solteiro(a)</option><option ${l.maritalStatus==='Casado(a)'?'selected':''}>Casado(a)</option><option ${l.maritalStatus==='União estável'?'selected':''}>União estável</option></select></div><div class="field"><label>Score</label><input id="leadScore" type="number" value="${l.score}"></div><div class="span3 actions" style="justify-content:flex-start"><button class="btn primary" onclick="saveLeadData('${l.id}')">Salvar cadastro</button></div></div></div>`;}
+function dossierDocs(l){return `<div class="card" style="margin-top:14px"><h3>Cofre de documentos</h3><p class="muted">Documentos obrigatórios liberam a geração contratual. Nesta versão local, use arquivos pequenos.</p><div class="docGrid" style="margin-top:12px">${DOC_TYPES.map(([type,label,req])=>`<div class="docCard ${req&&!hasDoc(l,type)?'reqMissing':''}"><b>${esc(label)}</b><div class="tiny">${hasDoc(l,type)?'Anexado':'Pendente '+(req?'obrigatório':'opcional')}</div><input type="file" id="doc_${type}" accept=".pdf,image/*"><div class="actions" style="justify-content:flex-start;margin-top:8px"><button class="btn small" onclick="attachDoc('${l.id}','${type}')">Anexar</button>${hasDoc(l,type)?`<button class="btn small" onclick="downloadDoc('${l.id}','${type}')">Baixar</button>`:''}</div></div>`).join('')}</div></div>`;}
+function dossierHistory(l){return `<div class="card" style="margin-top:14px"><h3>Timeline</h3><div class="timeline">${(l.history||[]).slice().reverse().map(e=>`<div class="event"><b>${fmtDateTime(e.ts)}</b><span>${esc(e.text)}</span></div>`).join('')}</div></div>`;}
+function registerAction(leadId,taskId){const l=leadBy(leadId); l.actions[l.stage]=l.actions[l.stage]||{}; l.actions[l.stage][taskId]={ts:now(),note:v('note_'+taskId)}; l.updatedAt=now(); if(taskId==='lote-escolhido' && l.lotId){} l.history.push({ts:now(),text:'Ação registrada: '+(TASKS[l.stage].find(t=>t[0]===taskId)?.[1]||taskId)}); save(); render(); openDossier(leadId,'acao'); toast('Ação registrada.');}
+function saveStageNote(leadId,taskId){const l=leadBy(leadId); l.notesByStage[l.stage]=l.notesByStage[l.stage]||{}; l.notesByStage[l.stage][taskId]=v('note_'+taskId); l.updatedAt=now(); save(); openDossier(leadId,'acao'); toast('Anotação salva.');}
+function advanceLead(leadId){const l=leadBy(leadId); const miss=requiredMissing(l); if(miss.length){toast('Conclua as ações fundamentais antes de avançar.'); openDossier(leadId,'acao'); return;} const idx=stageIndex(l.stage); if(idx>=STAGES.length-1){toast('Jornada concluída.'); return;} l.stage=STAGES[idx+1].id; l.updatedAt=now(); l.nextDue=days(2); l.history.push({ts:now(),text:'Avançou para '+stage(l.stage).label}); save(); render(); openDossier(leadId,'acao'); toast('Etapa avançada.');}
+function saveLeadData(id){const l=leadBy(id); l.name=normalizeName(v('leadName')); l.phone=v('leadPhone'); l.email=v('leadEmail'); l.city=v('leadCity'); l.purpose=v('leadPurpose'); l.profile=v('leadProfile'); l.document=v('leadDoc'); l.maritalStatus=v('leadMarital'); l.score=+v('leadScore')||l.score; l.updatedAt=now(); l.history.push({ts:now(),text:'Cadastro atualizado.'}); save(); render(); openDossier(id,'dados'); toast('Cadastro salvo.');}
+function attachDoc(id,type){const l=leadBy(id); const file=document.getElementById('doc_'+type).files[0]; if(!file)return toast('Selecione um arquivo.'); if(file.size>1400000)return toast('Arquivo grande demais para localStorage. Use até 1,4 MB.'); const rd=new FileReader(); rd.onload=()=>{l.docs=l.docs.filter(d=>d.type!==type); l.docs.push({type,name:file.name,mime:file.type,dataUrl:rd.result,uploadedAt:now()}); l.history.push({ts:now(),text:'Documento anexado: '+file.name}); save(); openDossier(id,'docs'); toast('Documento anexado.');}; rd.readAsDataURL(file);}
+function downloadDoc(id,type){const l=leadBy(id); const d=l.docs.find(x=>x.type===type); if(!d)return; const a=document.createElement('a'); a.href=d.dataUrl; a.download=d.name; a.click();}
+function openLot(id){const lot=lotBy(id); if(!lot)return; const body=`<div class="grid four"><div class="card" style="box-shadow:none"><h3>${lot.area} m²</h3><p>Área</p></div><div class="card" style="box-shadow:none"><h3>${fmtMoney(lot.price)}</h3><p>Preço</p></div><div class="card" style="box-shadow:none"><h3>${esc(lotStatusLabel(lot.status))}</h3><p>Status</p></div><div class="card" style="box-shadow:none"><h3>${esc(lot.type)}</h3><p>Tipo</p></div></div><div class="card" style="box-shadow:none;margin-top:14px"><h3>Galeria</h3><div class="lotGallery">${lotGallery(lot).map(src=>`<img src="${src}">`).join('')}</div></div><div class="grid two" style="margin-top:14px"><div class="card" style="box-shadow:none"><h3>Detalhes</h3><p>Setor: ${esc(lot.sector)}<br>Frente: ${lot.front}m · Profundidade: ${lot.depth}m<br>Topografia: ${esc(lot.topography)} · Face: ${esc(lot.face)}<br>Lead: ${lot.leadId?esc(leadName(lot.leadId)):'—'}</p></div><div class="card" style="box-shadow:none"><h3>Ações</h3><div class="actions" style="justify-content:flex-start"><button class="btn primary" onclick="openReserveLot('${lot.id}')">Reservar lote</button><button class="btn" onclick="openSimulator('${lot.id}')">Simular</button></div></div></div>`; openModal(lotLabel(id),lot.sector,body,'wide');}
+function openReserveLot(lotId='',leadId=''){const body=`<div class="reservePanel"><b>Reserva controlada</b><p>Exige lead, prazo, motivo e responsável. Reserva sem próxima ação vira estoque travado.</p></div><div class="formGrid" style="margin-top:14px"><div class="field"><label>Lote</label><select id="resLot">${projectLots().map(l=>`<option value="${l.id}" ${l.id===lotId?'selected':''}>${esc(lotLabel(l.id))} · ${lotStatusLabel(l.status)}</option>`).join('')}</select></div><div class="field"><label>Lead</label><select id="resLead"><option value="">Selecione</option>${projectLeads().map(l=>`<option value="${l.id}" ${l.id===leadId?'selected':''}>${esc(l.name)} · ${l.score}</option>`).join('')}</select></div><div class="field"><label>Status</label><select id="resStatus"><option value="prioridade">Prioridade</option><option value="pre-reserva">Pré-reserva</option><option value="bloqueado">Bloqueio estratégico</option></select></div><div class="field"><label>Prazo dias</label><input id="resDays" type="number" value="2"></div><div class="field span2"><label>Motivo</label><input id="resReason" placeholder="Ex.: cliente A, proposta aceita"></div><div class="span3"><button class="btn primary" onclick="saveReservation()">Confirmar reserva</button></div></div>`; openModal('Reservar lote','Prioridade, pré-reserva ou bloqueio estratégico.',body,'wide');}
+function saveReservation(){const lot=lotBy(v('resLot')), l=leadBy(v('resLead')); if(!lot)return; if(v('resStatus')!=='bloqueado'&&!l)return toast('Selecione um lead.'); lot.status=v('resStatus'); lot.reservedUntil=days(+v('resDays')||2); lot.reserveReason=v('resReason'); if(l){lot.leadId=l.id; lot.sdrId=l.sdrId; lot.brokerId=l.brokerId; l.lotId=lot.id; if(stageIndex(l.stage)<stageIndex('reserva')) l.stage='reserva'; l.history.push({ts:now(),text:'Reserva criada para '+lotLabel(lot.id)});} state.reservations.push({id:uid('res'),projectId:project().id,leadId:l?l.id:null,lotId:lot.id,status:lot.status,expiresAt:lot.reservedUntil,reason:v('resReason'),createdAt:now(),ownerId:l?.brokerId||''}); save(); closeModal(); render(); toast('Reserva registrada.');}
+function openSimulator(lotId='',leadId=''){openModal('Simulador de condições','Da simulação para proposta ou reserva.',simulatorForm(lotId,leadId),'wide');}
+function createProposalFromSimulator(){const lot=lotBy(v('simLot')), l=leadBy(v('simLead')); if(!lot)return toast('Selecione lote.'); if(!l)return toast('Selecione lead para proposta.'); const res=simulate(lot.price,+v('simEntry'),+v('simMonths'),+v('simAnnuals'),+v('simInterest'),+v('simRatio')); const p={id:uid('prop'),projectId:project().id,leadId:l.id,lotId:lot.id,status:'rascunho',entry:+v('simEntry'),months:+v('simMonths'),annuals:+v('simAnnuals'),interest:+v('simInterest'),index:v('simIndex'),monthly:res.monthly,annual:res.annual,total:res.total,createdAt:now(),expiresAt:days(5)}; state.proposals.push(p); l.stage='proposta'; l.lotId=lot.id; l.history.push({ts:now(),text:'Proposta criada a partir do simulador.'}); save(); closeModal(); render(); toast('Proposta criada.');}
+function openProposal(id){const p=byId(state.proposals,id); const l=leadBy(p.leadId); const lot=lotBy(p.lotId); const body=`<div class="grid four"><div class="card" style="box-shadow:none"><h3>${fmtMoney(p.total)}</h3><p>Total</p></div><div class="card" style="box-shadow:none"><h3>${fmtMoney(p.monthly)}</h3><p>Mensal</p></div><div class="card" style="box-shadow:none"><h3>${fmtMoney(p.annual)}</h3><p>Anual</p></div><div class="card" style="box-shadow:none"><h3>${p.status}</h3><p>Status</p></div></div><div class="actions" style="justify-content:flex-start;margin-top:14px"><button class="btn" onclick="openReserveLot('${lot.id}','${l.id}')">Reservar lote</button><button class="btn" onclick="approveProposal('${p.id}')">Aprovar</button><button class="btn success" onclick="acceptProposal('${p.id}')">Aceite</button><button class="btn primary" onclick="createContract('${p.id}')">Gerar contrato</button></div>`; openModal('Proposta · '+l.name,lotLabel(lot.id),body,'wide');}
+function approveProposal(id){const p=byId(state.proposals,id); p.status='aprovada'; save(); openProposal(id); toast('Proposta aprovada.');}
+function acceptProposal(id){const p=byId(state.proposals,id); p.status='aceita'; save(); openProposal(id); toast('Aceite registrado.');}
+function createContract(propId){const p=byId(state.proposals,propId); const l=leadBy(p.leadId); const pend=contractPendencies(l); if(pend.length)return toast('Pendências contratuais: '+pend.join(', ')); const c={id:uid('ctr'),projectId:project().id,proposalId:p.id,leadId:l.id,lotId:p.lotId,status:'gerado',createdAt:now(),signedAt:null}; state.contracts.push(c); p.status='convertida'; l.stage='contrato'; l.history.push({ts:now(),text:'Contrato gerado.'}); lotBy(p.lotId).status='contrato'; save(); closeModal(); render(); toast('Contrato gerado.');}
+function openContract(id){const c=byId(state.contracts,id); const l=leadBy(c.leadId); const body=`<div class="card" style="box-shadow:none"><h3>Contrato demonstrativo</h3><p>Cliente: ${esc(l.name)}<br>Lote: ${esc(lotLabel(c.lotId))}<br>Status: ${c.signedAt?'Assinado':'Gerado'}</p></div><div class="actions" style="justify-content:flex-start;margin-top:14px">${!c.signedAt?`<button class="btn success" onclick="signContract('${c.id}')">Assinar demo</button>`:`<button class="btn" onclick="openClient('${l.id}')">Abrir cliente</button>`}</div>`; openModal('Contrato',l.name,body,'narrow');}
+function signContract(id){const c=byId(state.contracts,id); c.signedAt=now(); c.status='assinado'; const l=leadBy(c.leadId); l.stage='cliente'; l.clientSince=now(); l.history.push({ts:now(),text:'Contrato assinado. Lead virou cliente.'}); lotBy(c.lotId).status='vendido'; save(); closeModal(); render(); toast('Cliente criado no pós-venda.');}
+function openReservation(id){const r=byId(state.reservations,id); openModal('Reserva',lotLabel(r.lotId),`<div class="card" style="box-shadow:none"><p>Lead: ${esc(leadName(r.leadId))}<br>Status: ${lotStatusLabel(r.status)}<br>Expira: ${fmtDateTime(r.expiresAt)}<br>Motivo: ${esc(r.reason)}</p></div><div class="actions" style="justify-content:flex-start;margin-top:14px"><button class="btn" onclick="openDossier('${r.leadId}')">Dossiê</button><button class="btn" onclick="openLot('${r.lotId}')">Lote</button></div>`,'narrow');}
+function openClient(id){const l=leadBy(id); const body=`<div class="grid three"><div class="card" style="box-shadow:none"><h3>${esc(l.name)}</h3><p>${esc(lotLabel(l.lotId))}</p></div><div class="card" style="box-shadow:none"><h3>${fmtDateTime(lastClientCom(l))}</h3><p>Última comunicação</p></div><div class="card" style="box-shadow:none"><h3>${clientSilent(l)?'Atenção':'Em dia'}</h3><p>Status relacionamento</p></div></div><div class="actions" style="justify-content:flex-start;margin:14px 0"><button class="btn" onclick="registerClientCom('${l.id}','Boas-vindas enviadas.')">Boas-vindas</button><button class="btn" onclick="registerClientCom('${l.id}','Material informativo enviado.')">Informativo</button><button class="btn" onclick="registerClientCom('${l.id}','Diário de obra enviado.')">Diário de obra</button><button class="btn" onclick="registerClientCom('${l.id}','Check-in registrado.')">Check-in</button></div><div class="timeline">${state.communications.filter(c=>c.leadId===l.id).slice().reverse().map(c=>`<div class="event"><b>${fmtDateTime(c.ts)}</b><span>${esc(c.text)}</span></div>`).join('')||'<div class="empty">Sem comunicações.</div>'}</div>`; openModal('Cliente · '+l.name,'Pós-venda e relacionamento',body,'wide');}
+function registerClientCom(id,text){state.communications.push({id:uid('com'),leadId:id,text,ts:now(),type:'posvenda'}); leadBy(id).history.push({ts:now(),text:'Pós-venda: '+text}); save(); render(); openClient(id); toast('Comunicação registrada.');}
+function openNewLead(){openModal('Novo lead','Cadastro mínimo para velocidade.',`<div class="formGrid"><div class="field"><label>Nome</label><input id="newName"></div><div class="field"><label>WhatsApp</label><input id="newPhone"></div><div class="field"><label>Cidade</label><input id="newCity" value="${esc(project().city)}"></div><div class="field"><label>Origem</label><input id="newSource" value="WhatsApp orgânico"></div><div class="field"><label>Finalidade</label><input id="newPurpose" value="Moradia"></div><div class="field"><label>Perfil</label><input id="newProfile" value="Família"></div><div class="span3"><button class="btn primary" onclick="saveNewLead()">Cadastrar</button></div></div>`,'wide');}
+function saveNewLead(){const l=lead(normalizeName(v('newName')),v('newCity'),v('newSource'),'Lista VIP',v('newPurpose'),v('newProfile'),'captado',35,team('SDR')[0]?.id||'', '', null); l.phone=v('newPhone'); state.leads.push(l); save(); closeModal(); render(); toast('Lead cadastrado.');}
+function openTeamForm(id=''){const u=id?byId(state.team,id):null; openModal(id?'Editar pessoa':'Nova pessoa','Corretores exigem CRECI e PDF.',`<div class="formGrid"><div class="field"><label>Nome</label><input id="personName" value="${esc(u?.name||'')}"></div><div class="field"><label>Função</label><select id="personRole"><option ${u?.role==='SDR'?'selected':''}>SDR</option><option ${u?.role==='Corretor'?'selected':''}>Corretor</option><option ${u?.role==='Gestor Comercial'?'selected':''}>Gestor Comercial</option><option ${u?.role==='Diretor Comercial'?'selected':''}>Diretor Comercial</option></select></div><div class="field"><label>WhatsApp</label><input id="personPhone" value="${esc(u?.phone||'')}"></div><div class="field"><label>CRECI</label><input id="personCreci" value="${esc(u?.creci||'')}"></div><div class="field span2"><label>Documento CRECI em PDF</label><input id="personCreciFile" type="file" accept="application/pdf"><div class="tiny">${u?.creciDoc?'Anexado: '+esc(u.creciDoc.name):'Obrigatório para corretor'}</div></div><div class="span3"><button class="btn primary" onclick="savePerson('${id}')">Salvar</button></div></div>`,'wide');}
+function savePerson(id){const role=v('personRole'); const file=document.getElementById('personCreciFile').files[0]; const existing=id?byId(state.team,id):null; if(role==='Corretor'&&!v('personCreci'))return toast('CRECI obrigatório.'); if(role==='Corretor'&&!file&&!existing?.creciDoc)return toast('PDF do CRECI obrigatório.'); if(file&&file.type!=='application/pdf')return toast('Documento CRECI deve ser PDF.'); const finish=(doc)=>{if(existing){Object.assign(existing,{name:normalizeName(v('personName')),role,phone:v('personPhone'),creci:v('personCreci'),creciDoc:doc||existing.creciDoc});}else state.team.push({id:uid('u'),name:normalizeName(v('personName')),role,phone:v('personPhone'),creci:v('personCreci'),creciDoc:doc,projects:[project().id]}); save(); closeModal(); render(); toast('Pessoa salva.');}; if(file){const rd=new FileReader(); rd.onload=()=>finish({name:file.name,dataUrl:rd.result,uploadedAt:now()}); rd.readAsDataURL(file);}else finish(null);}
+function reportData(type){
+  const a=analytics();
+  const origin=[...new Set(projectLeads().map(l=>l.source))].map(o=>({Origem:o,Leads:projectLeads().filter(l=>l.source===o).length,ClientesA:projectLeads().filter(l=>l.source===o&&l.score>=80).length,Avançados:projectLeads().filter(l=>l.source===o&&stageIndex(l.stage)>=stageIndex('reserva')).length}));
+  const broker=team('Corretor').map(b=>({Corretor:b.name,Leads:projectLeads().filter(l=>l.brokerId===b.id).length,Propostas:projectProposals().filter(p=>leadBy(p.leadId)?.brokerId===b.id).length,Contratos:projectContracts().filter(c=>leadBy(c.leadId)?.brokerId===b.id).length}));
+  const stock=['livre','prioridade','pre-reserva','contrato','vendido','bloqueado'].map(s=>({Status:lotStatusLabel(s),Lotes:projectLots().filter(l=>l.status===s).length}));
+  return {a,origin,broker,stock};
+}
+function reportHtml(type){
+  const {a,origin,broker,stock}=reportData(type);
+  const table=(title,rows)=>`<h2>${title}</h2><table><thead><tr>${Object.keys(rows[0]||{}).map(k=>`<th>${k}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr>${Object.values(r).map(v=>`<td>${esc(v)}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
+  return `<!doctype html><html><head><meta charset="utf-8"><title>Relatório ${esc(type)}</title><style>body{font-family:Arial,sans-serif;color:#173C52;margin:36px}h1{font-size:26px}h2{margin-top:28px}table{border-collapse:collapse;width:100%;margin-top:8px}th,td{border:1px solid #d8e2e8;padding:8px;text-align:left;font-size:12px}th{background:#f1f6f8}.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.kpi{border:1px solid #d8e2e8;border-radius:12px;padding:12px}.kpi b{display:block;font-size:20px;margin-top:6px}.brand{display:flex;align-items:center;gap:12px}.brand img{height:42px}@media print{button{display:none}}</style></head><body><div class="brand"><img src="assets/logo_evora.png"><div><h1>Relatório ${esc(type)} · ${esc(project().name)}</h1><p>${fmtDateTime(now())}</p></div></div><div class="kpis"><div class="kpi">Leads<b>${a.leads.length}</b></div><div class="kpi">Clientes A<b>${a.a}</b></div><div class="kpi">Reservas<b>${a.res.length}</b></div><div class="kpi">Carteira<b>${fmtMoney(a.carteira)}</b></div></div>${table('Origem',origin)}${table('Corretores',broker)}${table('Estoque',stock)}<h2>Alertas</h2><p>Leads parados: ${a.stalled.length}<br>Clientes sem comunicação 30+: ${a.silent.length}</p><button onclick="window.print()">Salvar/Imprimir PDF</button><script>setTimeout(()=>window.print(),400)<\/script></body></html>`;
+}
+function printReport(type){const w=window.open('','_blank'); w.document.write(reportHtml(type)); w.document.close();}
+function downloadReportHtml(type){const blob=new Blob([reportHtml(type)],{type:'text/html;charset=utf-8'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=`relatorio-${type}-${project().name.replace(/\s+/g,'-')}.html`; a.click(); URL.revokeObjectURL(a.href);}
+function openProposal(id){const p=byId(state.proposals,id); openProposalModal(p);}
+function openProposalModal(p){const l=leadBy(p.leadId); const lot=lotBy(p.lotId); openModal('Proposta · '+l.name,lotLabel(lot.id),`<div class="grid four"><div class="card" style="box-shadow:none"><h3>${fmtMoney(p.total)}</h3><p>Total</p></div><div class="card" style="box-shadow:none"><h3>${fmtMoney(p.monthly)}</h3><p>Mensal</p></div><div class="card" style="box-shadow:none"><h3>${fmtMoney(p.annual)}</h3><p>Anual</p></div><div class="card" style="box-shadow:none"><h3>${p.status}</h3><p>Status</p></div></div><div class="actions" style="justify-content:flex-start;margin-top:14px"><button class="btn" onclick="openReserveLot('${lot.id}','${l.id}')">Reservar lote</button><button class="btn" onclick="approveProposal('${p.id}')">Aprovar</button><button class="btn success" onclick="acceptProposal('${p.id}')">Aceite</button><button class="btn primary" onclick="createContract('${p.id}')">Gerar contrato</button></div>`,'wide');}
+function v(id){const el=document.getElementById(id); return el?el.value:'';}
+function setView(x){view=x; closeModal(); render();}
+function setFilter(k,vv){filters[k]=vv; render();}
+function selectProject(id){state.selectedProjectId=id; save(); render();}
+function leadName(id){return leadBy(id)?.name||'—';}
+function lotLabel(id){const l=lotBy(id); return l?`${l.quadra}-${l.numero}`:'—';}
+function exportJSON(){const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='evora-launch-os-v4-backup.json'; a.click(); URL.revokeObjectURL(a.href);}
+window.setView=setView; window.setFilter=setFilter; window.selectProject=selectProject; window.openDossier=openDossier; window.openNewLead=openNewLead; window.saveNewLead=saveNewLead; window.registerAction=registerAction; window.saveStageNote=saveStageNote; window.advanceLead=advanceLead; window.saveLeadData=saveLeadData; window.attachDoc=attachDoc; window.downloadDoc=downloadDoc; window.openLot=openLot; window.openReserveLot=openReserveLot; window.saveReservation=saveReservation; window.openSimulator=openSimulator; window.updateSim=updateSim; window.createProposalFromSimulator=createProposalFromSimulator; window.openProposal=openProposal; window.approveProposal=approveProposal; window.acceptProposal=acceptProposal; window.createContract=createContract; window.openContract=openContract; window.signContract=signContract; window.openReservation=openReservation; window.openClient=openClient; window.registerClientCom=registerClientCom; window.openTeamForm=openTeamForm; window.savePerson=savePerson; window.printReport=printReport; window.downloadReportHtml=downloadReportHtml; window.exportJSON=exportJSON; window.closeModal=closeModal;
+/* ==== v4.1 patch start ==== */
+function activeReservationForLot(lotId){
+  return state.reservations.find(r=>r.lotId===lotId && ['prioridade','pre-reserva','reservado','bloqueado'].includes(r.status));
+}
+function releaseLot(lotId){
+  const lot=lotBy(lotId); if(!lot) return;
+  const oldLeadId=lot.leadId;
+  lot.status='livre'; lot.leadId=null; lot.sdrId=null; lot.brokerId=null; lot.reservedUntil=null; lot.reserveReason='';
+  state.reservations = state.reservations.filter(r=>r.lotId!==lotId);
+  if(oldLeadId){
+    const l=leadBy(oldLeadId);
+    if(l && l.lotId===lotId){ l.lotId=null; l.history.push({ts:now(),text:'Lote liberado no mapa de lotes.'}); }
+  }
+  save(); closeModal(); render(); toast('Lote liberado e disponível novamente.');
+}
+function autoReserveForProposal(p){
+  const lot=lotBy(p.lotId), l=leadBy(p.leadId);
+  if(!lot || !l || lot.status==='vendido') return;
+  lot.status='pre-reserva'; lot.leadId=l.id; lot.sdrId=l.sdrId; lot.brokerId=l.brokerId; lot.reservedUntil=days(2); lot.reserveReason='Reserva automática gerada junto com proposta.';
+  l.lotId=lot.id; l.stage='reserva'; l.history.push({ts:now(),text:'Lote reservado automaticamente após geração da proposta.'});
+  state.reservations = state.reservations.filter(r=>r.lotId!==lot.id);
+  state.reservations.push({id:uid('res'),projectId:project().id,leadId:l.id,lotId:lot.id,status:'pre-reserva',expiresAt:lot.reservedUntil,reason:'Reserva automática da proposta',createdAt:now(),ownerId:l.brokerId||''});
+}
+function renderLots(){
+  const lots=projectLots().filter(l=>filters.lotStatus==='all'||l.status===filters.lotStatus);
+  return `<div class="card"><div class="actions" style="justify-content:flex-start;margin-bottom:14px"><select onchange="setFilter('lotStatus',this.value)"><option value="all">Todos</option><option value="livre">Livres</option><option value="prioridade">Prioridade</option><option value="pre-reserva">Pré-reserva</option><option value="vendido">Vendidos</option><option value="bloqueado">Bloqueados</option></select><button class="btn primary" onclick="setView('simulator')">Simular</button></div><div class="lotGrid">${lots.map(l=>`<div class="lotCard"><div style="display:flex;justify-content:space-between;gap:10px"><div><h3>${esc(l.quadra)}-${esc(l.numero)}</h3><div class="tiny">${esc(l.type)} · ${esc(l.sector)}</div></div><span class="pill ${statusPill(l.status)}">${lotStatusLabel(l.status)}</span></div><p><b>${l.area} m²</b> · ${fmtMoney(l.price)}<br>Preço/m²: ${fmtMoney(l.priceM2)}<br>${l.leadId?'Lead: '+esc(leadName(l.leadId)):'Sem vínculo'}${l.reservedUntil?'<br>Expira: '+fmtDateTime(l.reservedUntil):''}</p>${l.status!=='livre'&&l.status!=='vendido'?'<div class="unlockHint">Este lote está bloqueado/reservado. Use “Liberar” para disponibilizar novamente.</div>':''}<div class="actions" style="justify-content:flex-start;margin-top:10px"><button class="btn small" onclick="openLot('${l.id}')">Detalhes</button>${l.status!=='vendido'?`<button class="btn small" onclick="openReserveLot('${l.id}')">Reservar</button>`:''}<button class="btn small" onclick="openSimulator('${l.id}')">Simular</button>${l.status!=='livre'&&l.status!=='vendido'?`<button class="btn small warn" onclick="releaseLot('${l.id}')">Liberar</button>`:''}</div></div>`).join('')}</div></div>`;
+}
+function openLot(id){
+  const lot=lotBy(id); if(!lot)return;
+  const body=`<div class="grid four"><div class="card" style="box-shadow:none"><h3>${lot.area} m²</h3><p>Área</p></div><div class="card" style="box-shadow:none"><h3>${fmtMoney(lot.price)}</h3><p>Preço</p></div><div class="card" style="box-shadow:none"><h3>${esc(lotStatusLabel(lot.status))}</h3><p>Status</p></div><div class="card" style="box-shadow:none"><h3>${esc(lot.type)}</h3><p>Tipo</p></div></div><div class="card" style="box-shadow:none;margin-top:14px"><h3>Galeria</h3><div class="lotGallery">${lotGallery(lot).map(src=>`<img src="${src}">`).join('')}</div></div><div class="grid two" style="margin-top:14px"><div class="card" style="box-shadow:none"><h3>Detalhes</h3><p>Setor: ${esc(lot.sector)}<br>Frente: ${lot.front}m · Profundidade: ${lot.depth}m<br>Topografia: ${esc(lot.topography)} · Face: ${esc(lot.face)}<br>Lead: ${lot.leadId?esc(leadName(lot.leadId)):'—'}<br>${lot.reservedUntil?'Expira: '+fmtDateTime(lot.reservedUntil):''}</p></div><div class="card" style="box-shadow:none"><h3>Ações do lote</h3><div class="actions" style="justify-content:flex-start"><button class="btn primary" onclick="openReserveLot('${lot.id}')">Reservar lote</button><button class="btn" onclick="openSimulator('${lot.id}')">Simular</button>${lot.status!=='livre'&&lot.status!=='vendido'?`<button class="btn warn" onclick="releaseLot('${lot.id}')">Liberar lote</button>`:''}</div>${lot.status!=='livre'&&lot.status!=='vendido'?'<div class="unlockHint">Ao liberar, o lote volta para “Livre” e pode ser reservado novamente.</div>':''}</div></div>`;
+  openModal(lotLabel(id),lot.sector,body,'wide');
+}
+function openActionNote(leadId,taskId){
+  const l=leadBy(leadId); const task=(TASKS[l.stage]||[]).find(t=>t[0]===taskId);
+  const note=(l.notesByStage?.[l.stage]?.[taskId])||'';
+  openModal('Anotação da ação', task?task[1]:taskId, `<div class="field"><label>Anotação específica</label><textarea id="actionNoteText" style="min-height:170px">${esc(note)}</textarea></div><div class="actions" style="justify-content:flex-start;margin-top:14px"><button class="btn primary" onclick="saveActionNote('${leadId}','${taskId}')">Salvar anotação</button><button class="btn" onclick="openDossier('${leadId}','acao')">Voltar ao dossiê</button></div>`, 'narrow');
+}
+function saveActionNote(leadId,taskId){
+  const l=leadBy(leadId); if(!l) return;
+  l.notesByStage[l.stage]=l.notesByStage[l.stage]||{};
+  l.notesByStage[l.stage][taskId]=v('actionNoteText');
+  l.updatedAt=now(); l.history.push({ts:now(),text:'Anotação específica salva.'});
+  save(); openDossier(leadId,'acao'); toast('Anotação salva.');
+}
+function dossierAction(l,miss){
+  return `<div class="grid two" style="margin-top:14px"><div class="card"><h3>Checklist obrigatório da etapa</h3><div class="checkGrid">${(TASKS[l.stage]||[]).map(([id,label])=>{const done=actionDone(l,l.stage,id); const note=l.notesByStage?.[l.stage]?.[id]; return `<div class="checkCard ${done?'done':''}"><b>${esc(label)}</b><div class="tiny">${done?'Concluído em '+fmtDateTime(l.actions[l.stage][id].ts):'Pendente'}</div>${note?`<div class="actionNotePreview">${esc(note)}</div>`:''}<div class="actions" style="justify-content:flex-start;margin-top:8px"><button class="btn small ${done?'':'primary'}" onclick="registerAction('${l.id}','${id}')">${done?'Registrar novamente':'Registrar ação'}</button><button class="btn small" onclick="openActionNote('${l.id}','${id}')">Anotar</button></div></div>`;}).join('')}</div></div><div class="card"><h3>Avanço de etapa</h3>${miss.length?`<div class="task warn"><div><b>Pendências fundamentais</b><span class="tiny">${esc(miss.join(' · '))}</span></div></div>`:'<div class="task"><div><b>Etapa liberada</b><span class="tiny">Todos os fundamentos foram registrados.</span></div></div>'}<div class="actions" style="justify-content:flex-start;margin-top:14px"><button class="btn success" onclick="advanceLead('${l.id}')">Avançar etapa</button><button class="btn" onclick="openReserveLot('${l.lotId||''}','${l.id}')">Reservar lote</button><button class="btn" onclick="openDossier('${l.id}','simular')">Simular</button></div></div></div>`;
+}
+function dossierData(l){
+  return `<div class="card" style="margin-top:14px"><h3>Cadastro progressivo</h3><p class="muted">Complete os dados conforme a jornada avança. Endereço e dados jurídicos são essenciais antes do contrato.</p><div class="formGrid" style="margin-top:14px"><div class="field"><label>Nome</label><input id="leadName" value="${esc(l.name)}"></div><div class="field"><label>WhatsApp</label><input id="leadPhone" value="${esc(l.phone)}"></div><div class="field"><label>E-mail</label><input id="leadEmail" value="${esc(l.email)}"></div><div class="field"><label>Cidade</label><input id="leadCity" value="${esc(l.city)}"></div><div class="field"><label>UF</label><input id="leadUf" value="${esc(l.uf||'SP')}"></div><div class="field"><label>Finalidade</label><input id="leadPurpose" value="${esc(l.purpose)}"></div><div class="field"><label>Perfil</label><input id="leadProfile" value="${esc(l.profile)}"></div><div class="field"><label>CPF/CNPJ</label><input id="leadDoc" value="${esc(l.document||'')}"></div><div class="field"><label>Estado civil</label><select id="leadMarital"><option ${l.maritalStatus==='Solteiro(a)'?'selected':''}>Solteiro(a)</option><option ${l.maritalStatus==='Casado(a)'?'selected':''}>Casado(a)</option><option ${l.maritalStatus==='União estável'?'selected':''}>União estável</option><option ${l.maritalStatus==='Divorciado(a)'?'selected':''}>Divorciado(a)</option></select></div><div class="field"><label>Profissão</label><input id="leadProfession" value="${esc(l.profession||'')}"></div><div class="field"><label>Score</label><input id="leadScore" type="number" value="${l.score}"></div></div><div class="addressBlock"><h3>Endereço e complemento cadastral</h3><div class="formGrid"><div class="field"><label>CEP</label><input id="leadCep" value="${esc(l.cep||'')}"></div><div class="field span2"><label>Endereço</label><input id="leadAddress" value="${esc(l.address||'')}"></div><div class="field"><label>Número</label><input id="leadNumber" value="${esc(l.number||'')}"></div><div class="field"><label>Bairro</label><input id="leadDistrict" value="${esc(l.district||'')}"></div><div class="field"><label>Complemento</label><input id="leadComplement" value="${esc(l.complement||'')}"></div><div class="field"><label>Nome do cônjuge</label><input id="leadSpouseName" value="${esc(l.spouseName||'')}"></div><div class="field"><label>CPF do cônjuge</label><input id="leadSpouseDoc" value="${esc(l.spouseDoc||'')}"></div><div class="field"><label>WhatsApp do cônjuge</label><input id="leadSpousePhone" value="${esc(l.spousePhone||'')}"></div></div></div><div class="actions" style="justify-content:flex-start;margin-top:14px"><button class="btn primary" onclick="saveLeadData('${l.id}')">Salvar cadastro</button></div></div>`;
+}
+function saveLeadData(id){
+  const l=leadBy(id); if(!l) return;
+  l.name=normalizeName(v('leadName')); l.phone=v('leadPhone'); l.email=v('leadEmail'); l.city=v('leadCity'); l.uf=v('leadUf'); l.purpose=v('leadPurpose'); l.profile=v('leadProfile'); l.document=v('leadDoc'); l.maritalStatus=v('leadMarital'); l.profession=v('leadProfession'); l.score=+v('leadScore')||l.score;
+  l.cep=v('leadCep'); l.address=v('leadAddress'); l.number=v('leadNumber'); l.district=v('leadDistrict'); l.complement=v('leadComplement'); l.spouseName=v('leadSpouseName'); l.spouseDoc=v('leadSpouseDoc'); l.spousePhone=v('leadSpousePhone');
+  l.updatedAt=now(); l.history.push({ts:now(),text:'Cadastro complementar atualizado.'}); save(); render(); openDossier(id,'dados'); toast('Cadastro salvo.');
+}
+function contractPendencies(l){
+  const m=[]; if(!l.document) m.push('CPF/CNPJ'); if(!l.email) m.push('e-mail'); if(!l.phone) m.push('WhatsApp'); if(!l.address||!l.number||!l.district||!l.cep) m.push('endereço completo'); if(!hasDoc(l,'id_doc')) m.push('documento pessoal'); if(!hasDoc(l,'address')) m.push('comprovante de endereço'); if((l.maritalStatus||'').includes('Casado') && (!l.spouseName||!l.spouseDoc||!hasDoc(l,'spouse'))) m.push('dados/documento do cônjuge'); return m;
+}
+function createProposalFromSimulator(){
+  const lot=lotBy(v('simLot')), l=leadBy(v('simLead')); if(!lot)return toast('Selecione lote.'); if(!l)return toast('Selecione lead para proposta.');
+  const res=simulate(lot.price,+v('simEntry'),+v('simMonths'),+v('simAnnuals'),+v('simInterest'),+v('simRatio'));
+  const p={id:uid('prop'),projectId:project().id,leadId:l.id,lotId:lot.id,status:'rascunho',entry:+v('simEntry'),months:+v('simMonths'),annuals:+v('simAnnuals'),interest:+v('simInterest'),index:v('simIndex'),monthly:res.monthly,annual:res.annual,total:res.total,createdAt:now(),expiresAt:days(5)};
+  state.proposals.push(p); autoReserveForProposal(p); l.history.push({ts:now(),text:'Proposta criada e lote reservado automaticamente.'}); save(); closeModal(); render(); openProposal(p.id); toast('Proposta criada e lote reservado.');
+}
+function proposalPdfHtml(p){
+  const l=leadBy(p.leadId), lot=lotBy(p.lotId);
+  return `<!doctype html><html><head><meta charset="utf-8"><title>Proposta ${esc(l.name)}</title><style>body{font-family:Arial,sans-serif;color:#173C52;margin:36px}h1{font-size:26px}.box{border:1px solid #d8e2e8;border-radius:14px;padding:14px;margin:12px 0}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.brand{display:flex;gap:12px;align-items:center}.brand img{height:44px}table{border-collapse:collapse;width:100%}td,th{border:1px solid #d8e2e8;padding:9px;text-align:left}button{padding:10px 14px;border:0;border-radius:10px;background:#245E82;color:white;font-weight:bold}@media print{button{display:none}}</style></head><body><div class="brand"><img src="assets/logo_evora.png"><div><h1>Proposta comercial</h1><p>${esc(project().name)} · ${fmtDateTime(now())}</p></div></div><div class="box"><b>Cliente:</b> ${esc(l.name)}<br><b>Lote:</b> ${esc(lotLabel(lot.id))} · ${lot.area} m²<br><b>Status:</b> ${esc(p.status)} · <b>Validade:</b> ${fmtDate(p.expiresAt)}</div><table><tr><th>Preço</th><td>${fmtMoney(lot.price)}</td></tr><tr><th>Entrada</th><td>${p.entry}%</td></tr><tr><th>Mensais</th><td>${p.months}x ${fmtMoney(p.monthly)}</td></tr><tr><th>Anuais</th><td>${p.annuals}x ${fmtMoney(p.annual)}</td></tr><tr><th>Correção</th><td>${esc(p.index)} + ${p.interest}% a.m.</td></tr><tr><th>Total nominal</th><td>${fmtMoney(p.total)}</td></tr></table><div class="box"><h2>Confirmação</h2><p>Para seguir, o cliente deve confirmar interesse e enviar documentação para contrato. Esta página serve como modelo da futura página de confirmação online.</p><button onclick="alert('Confirmação demonstrativa registrada. Em produção, este botão gravará o aceite no sistema.')">Confirmar interesse</button></div><button onclick="window.print()">Salvar/Imprimir PDF</button></body></html>`;
+}
+function printProposal(id){ const p=byId(state.proposals,id); const w=window.open('','_blank'); w.document.write(proposalPdfHtml(p)); w.document.close(); setTimeout(()=>w.print(),500); }
+function openProposalConfirmation(id){ const p=byId(state.proposals,id); const w=window.open('','_blank'); w.document.write(proposalPdfHtml(p)); w.document.close(); }
+function sendProposalEmail(id){ const p=byId(state.proposals,id); const l=leadBy(p.leadId); const subject=encodeURIComponent('Proposta comercial · '+project().name); const body=encodeURIComponent(`Olá ${l.name}, segue sua proposta do ${project().name}. Lote: ${lotLabel(p.lotId)}. Total nominal: ${fmtMoney(p.total)}. Para confirmar, responda este e-mail ou acesse a página de confirmação gerada pelo sistema.`); window.location.href=`mailto:${l.email||''}?subject=${subject}&body=${body}`; }
+function sendProposalWhatsApp(id){ const p=byId(state.proposals,id); const l=leadBy(p.leadId); const phone=String(l.phone||'').replace(/\D/g,''); const msg=encodeURIComponent(`Olá ${l.name}, segue sua proposta do ${project().name}. Lote ${lotLabel(p.lotId)}, mensais de ${fmtMoney(p.monthly)} e anuais de ${fmtMoney(p.annual)}. Total nominal: ${fmtMoney(p.total)}. Posso seguir com a confirmação?`); window.open(`https://wa.me/${phone?('55'+phone):''}?text=${msg}`,'_blank'); }
+function openProposalModal(p){
+  const l=leadBy(p.leadId); const lot=lotBy(p.lotId);
+  openModal('Proposta · '+l.name,lotLabel(lot.id),`<div class="grid four"><div class="card" style="box-shadow:none"><h3>${fmtMoney(p.total)}</h3><p>Total</p></div><div class="card" style="box-shadow:none"><h3>${fmtMoney(p.monthly)}</h3><p>Mensal</p></div><div class="card" style="box-shadow:none"><h3>${fmtMoney(p.annual)}</h3><p>Anual</p></div><div class="card" style="box-shadow:none"><h3>${p.status}</h3><p>Status</p></div></div><div class="proposalShare"><button class="btn primary" onclick="printProposal('${p.id}')">Gerar PDF</button><button class="btn" onclick="sendProposalEmail('${p.id}')">Enviar e-mail</button><button class="btn" onclick="sendProposalWhatsApp('${p.id}')">Enviar WhatsApp</button><button class="btn" onclick="openProposalConfirmation('${p.id}')">Página de confirmação</button></div><div class="actions" style="justify-content:flex-start;margin-top:14px"><button class="btn" onclick="openReserveLot('${lot.id}','${l.id}')">Reservar lote</button><button class="btn" onclick="approveProposal('${p.id}')">Aprovar</button><button class="btn success" onclick="acceptProposal('${p.id}')">Aceite</button><button class="btn primary" onclick="createContract('${p.id}')">Gerar contrato</button></div>`,'wide');
+}
+window.releaseLot=releaseLot; window.openActionNote=openActionNote; window.saveActionNote=saveActionNote; window.printProposal=printProposal; window.sendProposalEmail=sendProposalEmail; window.sendProposalWhatsApp=sendProposalWhatsApp; window.openProposalConfirmation=openProposalConfirmation;
+ /* ==== v4.1 patch end ==== */
+
+/* ==== v4.2 patch start ==== */
+function ensureProposalReserve(p){
+  const lot=lotBy(p.lotId), l=leadBy(p.leadId);
+  if(!lot || !l) return;
+  if(lot.status==='vendido') return toast('Este lote já está vendido.');
+  lot.status='pre-reserva';
+  lot.leadId=l.id;
+  lot.sdrId=l.sdrId;
+  lot.brokerId=l.brokerId;
+  lot.reservedUntil=lot.reservedUntil || days(2);
+  lot.reserveReason='Reserva automática vinculada à proposta '+p.id;
+  l.lotId=lot.id;
+  if(stageIndex(l.stage)<stageIndex('reserva')) l.stage='reserva';
+  state.reservations=state.reservations.filter(r=>r.lotId!==lot.id);
+  state.reservations.push({id:uid('res'),projectId:project().id,leadId:l.id,lotId:lot.id,status:'pre-reserva',expiresAt:lot.reservedUntil,reason:'Reserva automática da proposta',createdAt:now(),ownerId:l.brokerId||''});
+  l.history.push({ts:now(),text:'Lote '+lotLabel(lot.id)+' reservado automaticamente ao gerar proposta.'});
+}
+function createProposalFromSimulator(){
+  const lot=lotBy(v('simLot')), l=leadBy(v('simLead'));
+  if(!lot)return toast('Selecione lote.');
+  if(!l)return toast('Selecione lead para proposta.');
+  if(lot.status==='vendido') return toast('Este lote já está vendido.');
+  const res=simulate(lot.price,+v('simEntry'),+v('simMonths'),+v('simAnnuals'),+v('simInterest'),+v('simRatio'));
+  const p={id:uid('prop'),projectId:project().id,leadId:l.id,lotId:lot.id,status:'em-aprovacao',entry:+v('simEntry'),months:+v('simMonths'),annuals:+v('simAnnuals'),interest:+v('simInterest'),index:v('simIndex'),monthly:res.monthly,annual:res.annual,total:res.total,createdAt:now(),expiresAt:days(5),sentAt:null,approvedAt:null,acceptedAt:null,confirmedAt:null};
+  state.proposals.push(p);
+  ensureProposalReserve(p);
+  l.history.push({ts:now(),text:'Proposta criada e enviada para aprovação. A reserva do lote foi criada automaticamente.'});
+  save(); closeModal(); render(); openProposal(p.id); toast('Proposta criada, enviada para aprovação e lote reservado.');
+}
+function proposalFlowHtml(p){
+  const approved=['aprovada','enviada','aceita','convertida'].includes(p.status);
+  const sent=!!p.sentAt || ['enviada','aceita','convertida'].includes(p.status);
+  const accepted=!!p.acceptedAt || ['aceita','convertida'].includes(p.status);
+  const contracted=p.status==='convertida';
+  const step=(n,title,body,state)=>`<div class="flowStep ${state}"><b>${n}. ${title}</b><span class="tiny">${body}</span></div>`;
+  return `<div class="proposalFlow">
+    ${step(1,'Aprovação',approved?'Aprovada e liberada para envio.':'Antes de enviar, aprove a proposta.',''+(approved?'done':'active'))}
+    ${step(2,'Envio',sent?'Proposta enviada ao cliente.':'Envio bloqueado até aprovação.',approved?(sent?'done':'active'):'locked')}
+    ${step(3,'Confirmação',accepted?'Aceite/confirm. registrado.':'Aguardar aceite ou confirmação.',sent?(accepted?'done':'active'):'locked')}
+    ${step(4,'Contrato',contracted?'Contrato gerado.':'Gerar contrato após aceite e documentos.',accepted?(contracted?'done':'active'):'locked')}
+  </div>`;
+}
+function proposalPdfHtml(p){
+  const l=leadBy(p.leadId), lot=lotBy(p.lotId);
+  return `<!doctype html><html><head><meta charset="utf-8"><title>Proposta ${esc(l.name)}</title><style>body{font-family:Arial,sans-serif;color:#173C52;margin:36px}h1{font-size:26px}.box{border:1px solid #d8e2e8;border-radius:14px;padding:14px;margin:12px 0}.brand{display:flex;gap:12px;align-items:center}.brand img{height:44px}table{border-collapse:collapse;width:100%;margin-top:14px}td,th{border:1px solid #d8e2e8;padding:9px;text-align:left}th{background:#f3f7f9}button{padding:10px 14px;border:0;border-radius:10px;background:#245E82;color:white;font-weight:bold}.confirm{background:#F0FBE9;border:1px solid #C8EFA2;border-radius:14px;padding:14px;margin-top:16px}@media print{button{display:none}}</style></head><body><div class="brand"><img src="assets/logo_evora.png"><div><h1>Proposta comercial</h1><p>${esc(project().name)} · ${fmtDateTime(now())}</p></div></div><div class="box"><b>Cliente:</b> ${esc(l.name)}<br><b>Lote:</b> ${esc(lotLabel(lot.id))} · ${lot.area} m²<br><b>Status:</b> ${esc(p.status)} · <b>Validade:</b> ${fmtDate(p.expiresAt)}</div><table><tr><th>Preço do lote</th><td>${fmtMoney(lot.price)}</td></tr><tr><th>Entrada</th><td>${p.entry}%</td></tr><tr><th>Mensais</th><td>${p.months}x ${fmtMoney(p.monthly)}</td></tr><tr><th>Anuais</th><td>${p.annuals}x ${fmtMoney(p.annual)}</td></tr><tr><th>Correção</th><td>${esc(p.index)} + ${p.interest}% a.m.</td></tr><tr><th>Total nominal</th><td>${fmtMoney(p.total)}</td></tr></table><div class="confirm"><h2>Confirmação</h2><p>Esta página representa o ambiente de confirmação. Na versão com backend, o botão gravará o aceite do cliente, data, IP e versão da proposta.</p><button onclick="alert('Confirmação demonstrativa registrada. Em produção, será salvo no sistema.')">Confirmar interesse</button></div><button onclick="window.print()">Salvar/Imprimir PDF</button></body></html>`;
+}
+function printProposal(id){ const p=byId(state.proposals,id); if(!p) return; const w=window.open('','_blank'); w.document.write(proposalPdfHtml(p)); w.document.close(); setTimeout(()=>w.print(),500); }
+function openProposalConfirmation(id){ const p=byId(state.proposals,id); if(!p) return; const w=window.open('','_blank'); w.document.write(proposalPdfHtml(p)); w.document.close(); }
+function sendProposalEmail(id){ const p=byId(state.proposals,id), l=leadBy(p.leadId); if(!['aprovada','enviada','aceita','convertida'].includes(p.status)) return toast('Aprove a proposta antes do envio.'); p.sentAt=p.sentAt||now(); p.status=p.status==='aprovada'?'enviada':p.status; save(); const subject=encodeURIComponent('Proposta comercial · '+project().name); const body=encodeURIComponent(`Olá ${l.name}, segue sua proposta do ${project().name}. Lote: ${lotLabel(p.lotId)}. Total nominal: ${fmtMoney(p.total)}. Para confirmar, responda este e-mail ou acesse a página de confirmação gerada pelo sistema.`); window.location.href=`mailto:${l.email||''}?subject=${subject}&body=${body}`; }
+function sendProposalWhatsApp(id){ const p=byId(state.proposals,id), l=leadBy(p.leadId); if(!['aprovada','enviada','aceita','convertida'].includes(p.status)) return toast('Aprove a proposta antes do envio.'); p.sentAt=p.sentAt||now(); p.status=p.status==='aprovada'?'enviada':p.status; save(); const phone=String(l.phone||'').replace(/\D/g,''); const msg=encodeURIComponent(`Olá ${l.name}, segue sua proposta do ${project().name}. Lote ${lotLabel(p.lotId)}, mensais de ${fmtMoney(p.monthly)} e anuais de ${fmtMoney(p.annual)}. Total nominal: ${fmtMoney(p.total)}. Posso seguir com a confirmação?`); window.open(`https://wa.me/${phone?('55'+phone):''}?text=${msg}`,'_blank'); }
+function approveProposal(id){const p=byId(state.proposals,id); if(!p) return; p.status='aprovada'; p.approvedAt=now(); ensureProposalReserve(p); save(); openProposal(id); toast('Proposta aprovada. Agora o envio está liberado.');}
+function acceptProposal(id){const p=byId(state.proposals,id); if(!p) return; if(!['enviada','aprovada','aceita'].includes(p.status)) return toast('Aprove a proposta antes do aceite.'); p.status='aceita'; p.acceptedAt=now(); save(); openProposal(id); toast('Aceite registrado.');}
+function markProposalSent(id){const p=byId(state.proposals,id); if(!p) return; if(!['aprovada','enviada','aceita'].includes(p.status)) return toast('Aprove a proposta antes de marcar envio.'); p.status=p.status==='aprovada'?'enviada':p.status; p.sentAt=p.sentAt||now(); save(); openProposal(id); toast('Envio registrado.');}
+function openProposalModal(p){
+  const l=leadBy(p.leadId); const lot=lotBy(p.lotId); if(!l||!lot) return;
+  const approved=['aprovada','enviada','aceita','convertida'].includes(p.status);
+  const sent=!!p.sentAt || ['enviada','aceita','convertida'].includes(p.status);
+  const accepted=['aceita','convertida'].includes(p.status);
+  const pend=contractPendencies(l);
+  const approvalActions = !approved ? `<button class="btn primary" onclick="approveProposal('${p.id}')">Aprovar proposta</button>` : `<span class="pill green">Aprovada</span>`;
+  const sendActions = approved ? `<button class="btn" onclick="printProposal('${p.id}')">Gerar PDF</button><button class="btn" onclick="sendProposalEmail('${p.id}')">Enviar e-mail</button><button class="btn" onclick="sendProposalWhatsApp('${p.id}')">Enviar WhatsApp</button><button class="btn" onclick="openProposalConfirmation('${p.id}')">Página de confirmação</button><button class="btn" onclick="markProposalSent('${p.id}')">Marcar enviado</button>` : `<button class="btn" disabled title="Aprove primeiro">Envio bloqueado</button>`;
+  const acceptAction = (approved||sent) && !accepted ? `<button class="btn success" onclick="acceptProposal('${p.id}')">Registrar aceite/confirm.</button>` : accepted ? `<span class="pill green">Aceite registrado</span>` : '';
+  const contractAction = accepted ? `<button class="btn primary" onclick="createContract('${p.id}')">Gerar contrato</button>` : `<button class="btn" disabled title="Registre aceite antes">Contrato bloqueado</button>`;
+  openModal('Proposta · '+l.name,`Fluxo: aprovação → envio → confirmação → contrato`,`
+    <div class="grid four"><div class="card" style="box-shadow:none"><h3>${fmtMoney(p.total)}</h3><p>Total nominal</p></div><div class="card" style="box-shadow:none"><h3>${fmtMoney(p.monthly)}</h3><p>Mensal</p></div><div class="card" style="box-shadow:none"><h3>${fmtMoney(p.annual)}</h3><p>Anual</p></div><div class="card" style="box-shadow:none"><h3>${esc(p.status)}</h3><p>Status</p></div></div>
+    ${proposalFlowHtml(p)}
+    <div class="proposalNote"><b>Regra da esteira:</b> a proposta nasce em aprovação e o lote fica automaticamente em pré-reserva. O envio ao cliente só deve acontecer após aprovação.</div>
+    <div class="card" style="box-shadow:none;margin-top:14px"><h3>1. Aprovação interna</h3><div class="proposalActions">${approvalActions}</div></div>
+    <div class="card" style="box-shadow:none;margin-top:14px"><h3>2. Envio ao cliente</h3><div class="proposalActions">${sendActions}</div></div>
+    <div class="card" style="box-shadow:none;margin-top:14px"><h3>3. Confirmação / aceite</h3><div class="proposalActions">${acceptAction || '<span class="pill">Aguardando aprovação/envio</span>'}</div></div>
+    <div class="card" style="box-shadow:none;margin-top:14px"><h3>4. Contrato</h3>${pend.length?`<p class="muted">Pendências antes do contrato: ${esc(pend.join(' · '))}</p>`:'<p class="muted">Cadastro apto para geração contratual.</p>'}<div class="proposalActions">${contractAction}<button class="btn" onclick="openReserveLot('${lot.id}','${l.id}')">Ajustar reserva</button></div></div>
+  `,'wide');
+}
+function createContract(propId){const p=byId(state.proposals,propId); const l=leadBy(p.leadId); const pend=contractPendencies(l); if(!['aceita','convertida'].includes(p.status))return toast('Registre o aceite antes de gerar contrato.'); if(pend.length)return toast('Pendências contratuais: '+pend.join(', ')); const c={id:uid('ctr'),projectId:project().id,proposalId:p.id,leadId:l.id,lotId:p.lotId,status:'gerado',createdAt:now(),signedAt:null}; state.contracts.push(c); p.status='convertida'; l.stage='contrato'; l.history.push({ts:now(),text:'Contrato gerado a partir de proposta aceita.'}); lotBy(p.lotId).status='contrato'; save(); closeModal(); render(); toast('Contrato gerado.');}
+
+/* Reports v4.2 */
+function chartBars(rows,labelKey,valueKey,color='#245E82',height=220){
+  const max=Math.max(1,...rows.map(r=>Number(r[valueKey])||0)); const w=720; const left=150; const barH=24; const gap=10; const h=Math.max(height, rows.length*(barH+gap)+45);
+  return `<svg viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg">${rows.map((r,i)=>{const y=28+i*(barH+gap); const val=Number(r[valueKey])||0; const bw=Math.round((w-left-80)*(val/max)); return `<text x="8" y="${y+17}" font-family="Arial" font-size="12" fill="#173C52">${esc(r[labelKey]).slice(0,22)}</text><rect x="${left}" y="${y}" width="${bw}" height="${barH}" rx="6" fill="${color}"/><text x="${left+bw+8}" y="${y+17}" font-family="Arial" font-size="12" fill="#173C52">${esc(val)}</text>`;}).join('')}</svg>`;
+}
+function chartLine(values,color='#84C225'){
+  const w=720,h=220,p=34; const max=Math.max(1,...values.map(v=>v.value)); const pts=values.map((v,i)=>`${p+i*((w-2*p)/Math.max(1,values.length-1))},${h-p-(v.value/max)*(h-2*p)}`).join(' ');
+  return `<svg viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg"><polyline points="${pts}" fill="none" stroke="${color}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><line x1="${p}" y1="${h-p}" x2="${w-p}" y2="${h-p}" stroke="#D8E2E8"/><line x1="${p}" y1="${p}" x2="${p}" y2="${h-p}" stroke="#D8E2E8"/>${values.map((v,i)=>{const x=p+i*((w-2*p)/Math.max(1,values.length-1)); const y=h-p-(v.value/max)*(h-2*p); return `<circle cx="${x}" cy="${y}" r="5" fill="${color}"/><text x="${x-14}" y="${h-8}" font-family="Arial" font-size="11" fill="#637887">${esc(v.label)}</text>`;}).join('')}</svg>`;
+}
+function financialProjection(){
+  const props=projectProposals().filter(p=>['aprovada','enviada','aceita','convertida','em-aprovacao'].includes(p.status));
+  const rows=[];
+  for(let m=0;m<12;m++){ const d=new Date(); d.setMonth(d.getMonth()+m); const label=String(d.getMonth()+1).padStart(2,'0')+'/'+String(d.getFullYear()).slice(2); let value=0; props.forEach(p=>{value+=p.monthly||0; if(m%12===0)value+=p.annual||0; if(m===0)value+=(lotBy(p.lotId)?.price||0)*(p.entry||10)/100;}); rows.push({label,value:Math.round(value)}); }
+  return rows;
+}
+function reportData(type){
+  const a=analytics();
+  const leads=projectLeads(), lots=projectLots(), props=projectProposals(), cons=projectContracts();
+  const origin=[...new Set(leads.map(l=>l.source))].map(o=>({Origem:o,Leads:leads.filter(l=>l.source===o).length,ClientesA:leads.filter(l=>l.source===o&&l.score>=80).length,Reservas:leads.filter(l=>l.source===o&&stageIndex(l.stage)>=stageIndex('reserva')).length,Conversao:pct(leads.filter(l=>l.source===o&&stageIndex(l.stage)>=stageIndex('reserva')).length,leads.filter(l=>l.source===o).length)+'%'}));
+  const campaigns=[...new Set(leads.map(l=>l.campaign))].map(c=>({Campanha:c,Leads:leads.filter(l=>l.campaign===c).length,ClientesA:leads.filter(l=>l.campaign===c&&l.score>=80).length,Propostas:props.filter(p=>leadBy(p.leadId)?.campaign===c).length,Contratos:cons.filter(ct=>leadBy(ct.leadId)?.campaign===c).length}));
+  const brokers=team('Corretor').map(b=>({Corretor:b.name,Leads:leads.filter(l=>l.brokerId===b.id).length,Propostas:props.filter(p=>leadBy(p.leadId)?.brokerId===b.id).length,Reservas:projectReservations().filter(r=>leadBy(r.leadId)?.brokerId===b.id).length,Contratos:cons.filter(c=>leadBy(c.leadId)?.brokerId===b.id).length}));
+  const sdrs=team('SDR').map(s=>({SDR:s.name,Leads:leads.filter(l=>l.sdrId===s.id).length,ClientesA:leads.filter(l=>l.sdrId===s.id&&l.score>=80).length,Parados:leads.filter(l=>l.sdrId===s.id&&isStalled(l)).length,Avancados:leads.filter(l=>l.sdrId===s.id&&stageIndex(l.stage)>=stageIndex('simulacao')).length}));
+  const stock=['livre','prioridade','pre-reserva','contrato','vendido','bloqueado'].map(s=>({Status:lotStatusLabel(s),Lotes:lots.filter(l=>l.status===s).length}));
+  const funnel=STAGES.map(s=>({Etapa:s.label,Leads:leads.filter(l=>l.stage===s.id).length}));
+  const financial=[
+    {Indicador:'Carteira de propostas',Valor:fmtMoney(props.reduce((s,p)=>s+(p.total||0),0))},
+    {Indicador:'Entradas previstas',Valor:fmtMoney(props.reduce((s,p)=>s+(lotBy(p.lotId)?.price||0)*((p.entry||10)/100),0))},
+    {Indicador:'Receita mensal potencial',Valor:fmtMoney(props.reduce((s,p)=>s+(p.monthly||0),0))},
+    {Indicador:'Receita anual potencial',Valor:fmtMoney(props.reduce((s,p)=>s+(p.annual||0),0))},
+    {Indicador:'Contratos assinados',Valor:cons.filter(c=>c.signedAt).length}
+  ];
+  const projection=financialProjection();
+  return {a,origin,campaigns,brokers,sdrs,stock,funnel,financial,projection};
+}
+function tableHtml(title,rows){
+  const keys=Object.keys(rows[0]||{});
+  return `<h2>${title}</h2><table><thead><tr>${keys.map(k=>`<th>${esc(k)}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr>${keys.map(k=>`<td>${esc(r[k])}</td>`).join('')}</tr>`).join('')||`<tr><td>Sem dados</td></tr>`}</tbody></table>`;
+}
+function renderReports(){
+  const d=reportData('all');
+  const reportCards=[['executivo','Executivo diário','Visão geral para reunião diária.'],['vendas','Desempenho de vendas','Funil, SDR, corretores, campanha e origem.'],['financeiro','Financeiro e carteira','Carteira, entradas, mensal/anual e projeção.'],['estoque','Estoque e reservas','Disponibilidade, lotes travados e velocidade.'],['posvenda','Pós-venda','Clientes sem comunicação, informativos e diário de obra.']];
+  return `<div class="reportHero"><h2>Central de relatórios</h2><p>Relatórios executivos com gráficos e opção de PDF via impressão/salvar como PDF.</p><div class="reportKpis"><div class="reportKpi"><span>Leads</span><b>${d.a.leads.length}</b></div><div class="reportKpi"><span>Propostas</span><b>${d.a.props.length}</b></div><div class="reportKpi"><span>Reservas</span><b>${d.a.res.length}</b></div><div class="reportKpi"><span>Carteira</span><b>${fmtMoney(d.a.carteira)}</b></div></div></div>
+  <div class="reportGrid" style="margin-top:16px">${reportCards.map(r=>`<div class="card"><h3>${r[1]}</h3><p>${r[2]}</p><div class="actions" style="justify-content:flex-start;margin-top:14px"><button class="btn primary" onclick="printReport('${r[0]}')">Gerar PDF</button><button class="btn" onclick="downloadReportHtml('${r[0]}')">Baixar HTML</button></div></div>`).join('')}</div>
+  <div class="grid two" style="margin-top:16px"><div class="chartCard"><h3>Funil de vendas</h3><div class="chartWrap">${chartBars(d.funnel,'Etapa','Leads','#245E82',300)}</div></div><div class="chartCard"><h3>Projeção de caixa 12 meses</h3><div class="chartWrap">${chartLine(d.projection.map(x=>({label:x.label,value:x.value})),'#84C225')}</div></div></div>
+  <div class="grid two" style="margin-top:16px"><div class="chartCard"><h3>Corretores</h3><div class="chartWrap">${chartBars(d.brokers,'Corretor','Propostas','#173C52',250)}</div></div><div class="chartCard"><h3>Origem dos leads</h3><div class="chartWrap">${chartBars(d.origin,'Origem','Leads','#84C225',250)}</div></div></div>`;
+}
+function reportHtml(type){
+  const d=reportData(type);
+  const chart1=chartBars(d.funnel,'Etapa','Leads','#245E82',330);
+  const chart2=chartLine(d.projection.map(x=>({label:x.label,value:x.value})),'#84C225');
+  const chart3=chartBars(d.brokers,'Corretor','Propostas','#173C52',260);
+  const chart4=chartBars(d.origin,'Origem','Leads','#84C225',260);
+  return `<!doctype html><html><head><meta charset="utf-8"><title>Relatório ${esc(type)}</title><style>body{font-family:Arial,sans-serif;color:#173C52;margin:34px}h1{font-size:26px;margin:0}h2{margin-top:28px}p{color:#5f7280}.brand{display:flex;align-items:center;gap:12px;margin-bottom:18px}.brand img{height:42px}.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:18px 0}.kpi{border:1px solid #d8e2e8;border-radius:12px;padding:12px}.kpi b{display:block;font-size:20px;margin-top:6px}.chart{border:1px solid #d8e2e8;border-radius:14px;padding:12px;margin:14px 0;page-break-inside:avoid}table{border-collapse:collapse;width:100%;margin-top:8px}th,td{border:1px solid #d8e2e8;padding:8px;text-align:left;font-size:12px}th{background:#f1f6f8}@media print{button{display:none}body{margin:20px}}</style></head><body><div class="brand"><img src="assets/logo_evora.png"><div><h1>Relatório ${esc(type)} · ${esc(project().name)}</h1><p>${fmtDateTime(now())}</p></div></div><div class="kpis"><div class="kpi">Leads<b>${d.a.leads.length}</b></div><div class="kpi">Clientes A<b>${d.a.a}</b></div><div class="kpi">Reservas<b>${d.a.res.length}</b></div><div class="kpi">Carteira<b>${fmtMoney(d.a.carteira)}</b></div></div><div class="chart"><h2>Funil de vendas</h2>${chart1}</div><div class="chart"><h2>Projeção de caixa 12 meses</h2>${chart2}</div><div class="chart"><h2>Performance de corretores</h2>${chart3}</div><div class="chart"><h2>Origem dos leads</h2>${chart4}</div>${tableHtml('Financeiro',d.financial)}${tableHtml('SDR',d.sdrs)}${tableHtml('Corretores',d.brokers)}${tableHtml('Campanhas',d.campaigns)}${tableHtml('Estoque',d.stock)}<h2>Alertas</h2><p>Leads parados: ${d.a.stalled.length}<br>Clientes sem comunicação 30+: ${d.a.silent.length}</p><button onclick="window.print()">Salvar/Imprimir PDF</button><script>setTimeout(()=>window.print(),500)<\/script></body></html>`;
+}
+window.printProposal=printProposal; window.openProposalConfirmation=openProposalConfirmation; window.sendProposalEmail=sendProposalEmail; window.sendProposalWhatsApp=sendProposalWhatsApp; window.markProposalSent=markProposalSent;
+/* ==== v4.2 patch end ==== */
+
+/* ==== v5.6 sector-specific reports patch start ==== */
+function reportDefinitions(){
+  return [
+    {id:'executivo', title:'Executivo diário', desc:'Resumo para diretoria: pressão de compra, gargalos, alertas e próximos comandos.', tags:['Diretoria','Diário','Decisão']},
+    {id:'lancamento', title:'Prontidão de lançamento', desc:'Mede se há demanda represada suficiente para abrir vendas com velocidade.', tags:['Lançamento','Demanda','Estoque']},
+    {id:'vendas', title:'Desempenho de vendas', desc:'Performance comercial por etapa, corretor, proposta, reserva e contrato.', tags:['Comercial','Conversão','Corretores']},
+    {id:'sdr', title:'Performance SDR', desc:'Atendimento, qualificação, leads parados e qualidade da passagem para corretores.', tags:['SDR','Pré-vendas','SLA']},
+    {id:'corretores', title:'Performance corretores', desc:'Carteira consultiva, simulações, propostas, reservas, contratos e CRECI.', tags:['Corretores','Propostas','Fechamento']},
+    {id:'campanhas', title:'Origem e campanhas', desc:'Qualidade e conversão por origem, campanha, finalidade e perfil de comprador.', tags:['Marketing','Canais','Qualidade']},
+    {id:'estoque', title:'Estoque e reservas', desc:'Lotes livres, reservados, bloqueados, vendidos, vencimentos e liberação de estoque.', tags:['Estoque','Lotes','Reservas']},
+    {id:'financeiro', title:'Financeiro e carteira', desc:'Carteira de propostas, entradas, mensais, anuais, contratos e projeção de caixa.', tags:['Financeiro','Carteira','Caixa']},
+    {id:'posvenda', title:'Pós-venda e relacionamento', desc:'Clientes sem comunicação, diários de obra, informativos e risco de relacionamento.', tags:['Clientes','Relacionamento','Indicação']}
+  ];
+}
+function stageRowsDetailed(){
+  return STAGES.map(s=>{
+    const leads = projectLeads().filter(l=>l.stage===s.id);
+    return {
+      Etapa:s.label,
+      Leads:leads.length,
+      ClientesA:leads.filter(l=>l.score>=80).length,
+      Parados:leads.filter(isStalled).length,
+      Conversao:pct(leads.length,Math.max(1,projectLeads().length))+'%'
+    };
+  });
+}
+function reportData(type){
+  const a=analytics();
+  const leads=projectLeads(), lots=projectLots(), props=projectProposals(), resv=projectReservations(), cons=projectContracts(), cls=clients();
+  const origin=[...new Set(leads.map(l=>l.source||'Sem origem'))].map(o=>{
+    const group=leads.filter(l=>(l.source||'Sem origem')===o);
+    const advanced=group.filter(l=>stageIndex(l.stage)>=stageIndex('reserva')).length;
+    return {Origem:o,Leads:group.length,ClientesA:group.filter(l=>l.score>=80).length,Propostas:props.filter(p=>leadBy(p.leadId)?.source===o).length,Reservas:advanced,Conversao:pct(advanced,group.length)+'%'};
+  });
+  const campaigns=[...new Set(leads.map(l=>l.campaign||'Sem campanha'))].map(c=>{
+    const group=leads.filter(l=>(l.campaign||'Sem campanha')===c);
+    return {Campanha:c,Leads:group.length,ClientesA:group.filter(l=>l.score>=80).length,Propostas:props.filter(p=>leadBy(p.leadId)?.campaign===c).length,Contratos:cons.filter(ct=>leadBy(ct.leadId)?.campaign===c).length,Conversao:pct(group.filter(l=>stageIndex(l.stage)>=stageIndex('reserva')).length,group.length)+'%'};
+  });
+  const purpose=[...new Set(leads.map(l=>l.purpose||'Sem finalidade'))].map(c=>{
+    const group=leads.filter(l=>(l.purpose||'Sem finalidade')===c);
+    return {Finalidade:c,Leads:group.length,ClientesA:group.filter(l=>l.score>=80).length,Reservas:group.filter(l=>stageIndex(l.stage)>=stageIndex('reserva')).length};
+  });
+  const profile=[...new Set(leads.map(l=>l.profile||'Sem perfil'))].map(c=>{
+    const group=leads.filter(l=>(l.profile||'Sem perfil')===c);
+    return {Perfil:c,Leads:group.length,ClientesA:group.filter(l=>l.score>=80).length,Reservas:group.filter(l=>stageIndex(l.stage)>=stageIndex('reserva')).length};
+  });
+  const brokers=team('Corretor').map(b=>{
+    const group=leads.filter(l=>l.brokerId===b.id);
+    return {Corretor:b.name,Leads:group.length,ClientesA:group.filter(l=>l.score>=80).length,Simulacao:group.filter(l=>stageIndex(l.stage)>=stageIndex('simulacao')).length,Propostas:props.filter(p=>leadBy(p.leadId)?.brokerId===b.id).length,Reservas:resv.filter(r=>leadBy(r.leadId)?.brokerId===b.id).length,Contratos:cons.filter(c=>leadBy(c.leadId)?.brokerId===b.id).length,CRECI:b.creci&&b.creciDoc?'OK':'Pendente'};
+  });
+  const sdrs=team('SDR').map(s=>{
+    const group=leads.filter(l=>l.sdrId===s.id);
+    return {SDR:s.name,Leads:group.length,ClientesA:group.filter(l=>l.score>=80).length,Qualificados:group.filter(l=>stageIndex(l.stage)>=stageIndex('encaixe')).length,Passados:group.filter(l=>!!l.brokerId).length,Parados:group.filter(isStalled).length,Conversao:pct(group.filter(l=>stageIndex(l.stage)>=stageIndex('simulacao')).length,group.length)+'%'};
+  });
+  const stock=['livre','prioridade','pre-reserva','contrato','vendido','bloqueado'].map(s=>({Status:lotStatusLabel(s),Lotes:lots.filter(l=>l.status===s).length,VGV:fmtMoney(lots.filter(l=>l.status===s).reduce((sum,l)=>sum+(l.price||0),0))}));
+  const reservedLots=lots.filter(l=>['prioridade','pre-reserva','bloqueado'].includes(l.status)).map(l=>({Lote:lotLabel(l.id),Status:lotStatusLabel(l.status),Lead:leadName(l.leadId),Expira:fmtDateTime(l.reservedUntil),Motivo:l.reserveReason||'—'}));
+  const proposals=props.map(p=>({Cliente:leadName(p.leadId),Lote:lotLabel(p.lotId),Status:p.status,Total:fmtMoney(p.total),Mensal:fmtMoney(p.monthly),Anual:fmtMoney(p.annual),Validade:fmtDate(p.expiresAt)}));
+  const financial=[
+    {Indicador:'Carteira total de propostas',Valor:fmtMoney(props.reduce((s,p)=>s+(p.total||0),0))},
+    {Indicador:'Carteira aprovada/enviada/aceita',Valor:fmtMoney(props.filter(p=>['aprovada','enviada','aceita','convertida'].includes(p.status)).reduce((s,p)=>s+(p.total||0),0))},
+    {Indicador:'Entradas previstas',Valor:fmtMoney(props.reduce((s,p)=>s+(lotBy(p.lotId)?.price||0)*((p.entry||10)/100),0))},
+    {Indicador:'Receita mensal potencial',Valor:fmtMoney(props.reduce((s,p)=>s+(p.monthly||0),0))},
+    {Indicador:'Receita anual potencial',Valor:fmtMoney(props.reduce((s,p)=>s+(p.annual||0),0))},
+    {Indicador:'Ticket médio de proposta',Valor:fmtMoney(props.length?props.reduce((s,p)=>s+(p.total||0),0)/props.length:0)},
+    {Indicador:'Contratos assinados',Valor:cons.filter(c=>c.signedAt).length}
+  ];
+  const projection=financialProjection();
+  const clientsRows=cls.map(l=>({Cliente:l.name,Lote:lotLabel(l.lotId),Desde:fmtDate(l.clientSince),UltimoContato:fmtDateTime(lastClientCom(l)),Status:clientSilent(l)?'Sem comunicação 30+':'Em dia'}));
+  const alerts=[
+    {Alerta:'Leads parados',Quantidade:a.stalled.length,Ação:'Retomar follow-up e próxima ação'},
+    {Alerta:'Clientes sem comunicação 30+',Quantidade:a.silent.length,Ação:'Enviar informativo/diário de obra/check-in'},
+    {Alerta:'Reservas vencidas',Quantidade:resv.filter(r=>new Date(r.expiresAt)<new Date()).length,Ação:'Liberar ou converter lote'},
+    {Alerta:'Corretores com CRECI pendente',Quantidade:team('Corretor').filter(b=>!b.creci||!b.creciDoc).length,Ação:'Regularizar cadastro'}
+  ];
+  return {a,leads,lots,props,resv,cons,cls,origin,campaigns,purpose,profile,brokers,sdrs,stock,reservedLots,proposals,financial,projection,clientsRows,alerts,funnel:stageRowsDetailed()};
+}
+function tableHtml(title,rows){
+  const keys=Object.keys(rows[0]||{});
+  return `<h2>${title}</h2><table><thead><tr>${keys.map(k=>`<th>${esc(k)}</th>`).join('')}</tr></thead><tbody>${rows.length?rows.map(r=>`<tr>${keys.map(k=>`<td>${esc(r[k])}</td>`).join('')}</tr>`).join(''):`<tr><td>Sem dados</td></tr>`}</tbody></table>`;
+}
+function renderMiniChart(values){
+  const nums=values.map(v=>Number(v)||0); const max=Math.max(1,...nums);
+  return `<div class="miniChart">${nums.map(v=>`<span style="height:${Math.max(7,Math.round((v/max)*54))}px"></span>`).join('')}</div>`;
+}
+function renderReports(){
+  const d=reportData('all');
+  const defs=reportDefinitions();
+  const metric={
+    executivo:[d.a.leads.length,d.a.a,d.a.res.length,d.a.carteira/1000000],
+    lancamento:[d.a.ready,d.a.res.length,d.a.stockReserved,d.a.stalled.length],
+    vendas:[d.props.length,d.resv.length,d.cons.length,d.a.a],
+    sdr:d.sdrs.map(x=>x.Leads),
+    corretores:d.brokers.map(x=>x.Propostas),
+    campanhas:d.origin.map(x=>x.Leads),
+    estoque:d.stock.map(x=>x.Lotes),
+    financeiro:d.projection.map(x=>x.value/1000),
+    posvenda:[d.cls.length,d.a.silent.length,state.communications.length,0]
+  };
+  return `<div class="reportHero"><h2>Central de relatórios inteligentes</h2><p>Cada botão agora gera um relatório setorial específico, com dados, gráficos e recomendações próprias.</p><div class="reportKpis"><div class="reportKpi"><span>Leads</span><b>${d.a.leads.length}</b></div><div class="reportKpi"><span>Propostas</span><b>${d.props.length}</b></div><div class="reportKpi"><span>Reservas</span><b>${d.resv.length}</b></div><div class="reportKpi"><span>Carteira</span><b>${fmtMoney(d.a.carteira)}</b></div></div></div>
+  <div class="reportTypeGrid" style="margin-top:16px">${defs.map(r=>`<div class="reportTypeCard"><h3>${r.title}</h3><p>${r.desc}</p><div class="reportTagRow">${r.tags.map(t=>`<span class="pill">${t}</span>`).join('')}</div>${renderMiniChart(metric[r.id]||[1,2,3])}<div class="actions" style="justify-content:flex-start;margin-top:14px"><button class="btn primary" onclick="printReport('${r.id}')">Gerar PDF</button><button class="btn" onclick="downloadReportHtml('${r.id}')">Baixar HTML</button></div></div>`).join('')}</div>
+  <div class="grid two" style="margin-top:16px"><div class="chartCard"><h3>Funil de vendas</h3><div class="chartWrap">${chartBars(d.funnel,'Etapa','Leads','#245E82',330)}</div></div><div class="chartCard"><h3>Projeção de caixa 12 meses</h3><div class="chartWrap">${chartLine(d.projection.map(x=>({label:x.label,value:x.value})),'#84C225')}</div></div></div>`;
+}
+function reportBlocks(type,d){
+  const chartFunnel=`<div class="chart"><h2>Funil de vendas</h2>${chartBars(d.funnel,'Etapa','Leads','#245E82',330)}</div>`;
+  const chartCash=`<div class="chart"><h2>Projeção de caixa 12 meses</h2>${chartLine(d.projection.map(x=>({label:x.label,value:x.value})),'#84C225')}</div>`;
+  const chartBrokers=`<div class="chart"><h2>Performance de corretores</h2>${chartBars(d.brokers,'Corretor','Propostas','#173C52',300)}</div>`;
+  const chartOrigins=`<div class="chart"><h2>Origem dos leads</h2>${chartBars(d.origin,'Origem','Leads','#84C225',280)}</div>`;
+  const chartStock=`<div class="chart"><h2>Estoque por status</h2>${chartBars(d.stock,'Status','Lotes','#245E82',260)}</div>`;
+  const chartSdr=`<div class="chart"><h2>Leads por SDR</h2>${chartBars(d.sdrs,'SDR','Leads','#84C225',260)}</div>`;
+  const map={
+    executivo: `${chartFunnel}${chartCash}${tableHtml('Alertas executivos',d.alerts)}${tableHtml('Resumo financeiro',d.financial)}${tableHtml('Próximas decisões',[
+      {Decisão:'Abrir vendas?',Leitura:d.a.ready>=Math.round((project().goalLots||d.lots.length)*(project().goalSalePct||90)/100)?'Pressão suficiente':'Ainda formar demanda'},
+      {Decisão:'Foco imediato',Leitura:d.a.stalled.length?'Retomar leads parados':'Aumentar propostas/reservas'},
+      {Decisão:'Estoque',Leitura:d.reservedLots.length?'Revisar reservas ativas':'Estoque livre sem travas críticas'}
+    ])}`,
+    lancamento: `${chartFunnel}${chartStock}${tableHtml('Prontidão por etapa',d.funnel)}${tableHtml('Reservas e bloqueios',d.reservedLots)}${tableHtml('Alertas de abertura',d.alerts)}`,
+    vendas: `${chartFunnel}${chartBrokers}${tableHtml('Propostas',d.proposals)}${tableHtml('Corretores',d.brokers)}${tableHtml('Alertas comerciais',d.alerts)}`,
+    sdr: `${chartSdr}${tableHtml('SDRs',d.sdrs)}${tableHtml('Funil por etapa',d.funnel)}${tableHtml('Alertas SDR',d.alerts.filter(x=>['Leads parados','Corretores com CRECI pendente'].includes(x.Alerta)))}`,
+    corretores: `${chartBrokers}${tableHtml('Performance de corretores',d.brokers)}${tableHtml('Propostas por cliente',d.proposals)}${tableHtml('Reservas sob responsabilidade comercial',d.reservedLots)}`,
+    campanhas: `${chartOrigins}${tableHtml('Origem dos leads',d.origin)}${tableHtml('Campanhas',d.campaigns)}${tableHtml('Finalidades',d.purpose)}${tableHtml('Perfis de comprador',d.profile)}`,
+    estoque: `${chartStock}${tableHtml('Estoque por status',d.stock)}${tableHtml('Reservas ativas e bloqueios',d.reservedLots)}${tableHtml('Propostas vinculadas a lotes',d.proposals)}`,
+    financeiro: `${chartCash}${tableHtml('Indicadores financeiros',d.financial)}${tableHtml('Propostas e carteira',d.proposals)}${tableHtml('Projeção 12 meses',d.projection.map(x=>({Mes:x.label,Valor:fmtMoney(x.value)})))}`,
+    posvenda: `${tableHtml('Clientes',d.clientsRows)}${tableHtml('Alertas de relacionamento',d.alerts.filter(x=>x.Alerta.includes('Clientes')))}${tableHtml('Comunicações recentes',state.communications.filter(c=>leadBy(c.leadId)?.projectId===project().id).slice(-20).map(c=>({Cliente:leadName(c.leadId),Data:fmtDateTime(c.ts),Comunicação:c.text}))) }`
+  };
+  return map[type] || map.executivo;
+}
+function reportTitle(type){
+  return (reportDefinitions().find(r=>r.id===type)||reportDefinitions()[0]).title;
+}
+function reportHtml(type){
+  const d=reportData(type);
+  const blocks=reportBlocks(type,d);
+  return `<!doctype html><html><head><meta charset="utf-8"><title>${esc(reportTitle(type))}</title><style>body{font-family:Arial,sans-serif;color:#173C52;margin:34px}h1{font-size:26px;margin:0}h2{margin-top:28px}p{color:#5f7280}.brand{display:flex;align-items:center;gap:12px;margin-bottom:18px}.brand img{height:42px}.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:18px 0}.kpi{border:1px solid #d8e2e8;border-radius:12px;padding:12px}.kpi b{display:block;font-size:20px;margin-top:6px}.chart{border:1px solid #d8e2e8;border-radius:14px;padding:12px;margin:14px 0;page-break-inside:avoid}table{border-collapse:collapse;width:100%;margin-top:8px;page-break-inside:auto}th,td{border:1px solid #d8e2e8;padding:8px;text-align:left;font-size:12px}th{background:#f1f6f8}.summary{border:1px solid #C8EFA2;background:#F0FBE9;border-radius:14px;padding:14px;margin:16px 0}@media print{button{display:none}body{margin:20px}.chart{break-inside:avoid}}</style></head><body><div class="brand"><img src="assets/logo_evora.png"><div><h1>${esc(reportTitle(type))} · ${esc(project().name)}</h1><p>${fmtDateTime(now())}</p></div></div><div class="kpis"><div class="kpi">Leads<b>${d.a.leads.length}</b></div><div class="kpi">Clientes A<b>${d.a.a}</b></div><div class="kpi">Reservas<b>${d.a.res.length}</b></div><div class="kpi">Carteira<b>${fmtMoney(d.a.carteira)}</b></div></div><div class="summary"><b>Leitura automática:</b> ${reportInsight(type,d)}</div>${blocks}<button onclick="window.print()">Salvar/Imprimir PDF</button><script>setTimeout(()=>window.print(),500)<\/script></body></html>`;
+}
+function reportInsight(type,d){
+  const insights={
+    executivo:`Há ${d.a.stalled.length} lead(s) parado(s), ${d.a.res.length} reserva(s) e carteira provável de ${fmtMoney(d.a.carteira)}.`,
+    lancamento:`A prontidão depende de ${d.a.ready} oportunidades avançadas contra a meta de ${Math.round((project().goalLots||d.lots.length)*(project().goalSalePct||90)/100)}.`,
+    vendas:`O time possui ${d.props.length} proposta(s), ${d.resv.length} reserva(s) e ${d.cons.length} contrato(s).`,
+    sdr:`O pré-vendas tem ${d.sdrs.reduce((s,x)=>s+x.Parados,0)} lead(s) parado(s) e ${d.sdrs.reduce((s,x)=>s+x.Qualificados,0)} qualificado(s).`,
+    corretores:`Corretores geraram ${d.brokers.reduce((s,x)=>s+x.Propostas,0)} proposta(s) e ${d.brokers.reduce((s,x)=>s+x.Contratos,0)} contrato(s).`,
+    campanhas:`As origens somam ${d.origin.reduce((s,x)=>s+x.Leads,0)} lead(s); compare qualidade por Clientes A e Reservas.`,
+    estoque:`Existem ${d.stock.find(x=>x.Status==='Livre')?.Lotes||0} lote(s) livres e ${d.reservedLots.length} lote(s) travados/reservados.`,
+    financeiro:`A projeção mensal/anual considera propostas existentes e carteira potencial de ${fmtMoney(d.a.carteira)}.`,
+    posvenda:`Há ${d.a.silent.length} cliente(s) sem comunicação há mais de 30 dias.`
+  };
+  return insights[type]||insights.executivo;
+}
+window.markProposalSent=markProposalSent;
+/* ==== v4.2 patch end ==== */
+
+render();
+})();
