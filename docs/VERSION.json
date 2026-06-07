@@ -1,13 +1,14 @@
 {
   "product": "Évora Launch OS",
-  "version": "5.13",
-  "base": "v5.12",
+  "version": "5.14",
+  "base": "v5.13",
   "mode": "sem banco de dados",
   "target": "Vercel static",
   "changes": [
-    "lead tratado sai da lista de atenção da campanha",
-    "assinatura de atenção reativa o alerta se o problema mudar",
-    "gráficos de VGV da campanha reduzidos e padronizados",
-    "padronização de gráficos similares: barras horizontais, fluxo de caixa e relatórios"
+    "correção de textos sobrepostos em campanha-performance",
+    "gráficos de VGV menores e melhor distribuídos",
+    "padronização de gráficos similares",
+    "lead sai automaticamente da lista de atenção ao avançar na jornada",
+    "lead sai automaticamente da lista de atenção ao registrar ação de checklist"
   ]
 }
