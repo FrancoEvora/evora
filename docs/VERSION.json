@@ -1,14 +1,13 @@
 {
   "product": "Évora Launch OS",
-  "version": "5.8",
-  "base": "v4.3 + v5.7 local login",
+  "version": "5.8.2",
+  "base": "v5.8.1",
   "mode": "sem banco de dados",
-  "storage": "localStorage + sessionStorage",
   "target": "Vercel static",
-  "improvements": [
-    "mobile scroll to content",
-    "guided action buttons in checklist",
-    "simulator entry installments up to 6x",
-    "lead and lot filters in selectors"
+  "changes": [
+    "proposta com detalhes ricos e observações de negociação",
+    "histórico de materiais enviados com canal e data",
+    "nova tela Envio de Materiais",
+    "checklist mostra materiais enviados"
   ]
 }

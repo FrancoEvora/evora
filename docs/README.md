@@ -1,34 +1,22 @@
-# Évora Launch OS v5.8 — Jornada guiada e mobile
+# Évora Launch OS v5.8.2
 
-Base: v4.3 restaurada + login local da v5.7.
+Ajustes sobre a v5.8.1:
 
-## Ajustes desta versão
-
-- Em mobile/iPhone, ao clicar no menu, a tela rola automaticamente para o conteúdo.
-- Checklist obrigatório da etapa recebeu botões contextuais:
-  - abrir simulador;
-  - abrir mapa;
-  - escolher/travar lote;
-  - reservar lote;
-  - abrir documentos;
-  - abrir propostas/contratos;
-  - registrar comunicação de pós-venda.
-- Simulador permite parcelar a entrada em até 6x.
-- O simulador mostra valor de cada parcela da entrada.
-- Seleção de lead e lote recebeu campo de filtro por nome, cidade, origem, quadra, setor etc.
-- Reserva também recebeu filtros de lead e lote.
+- tela de aprovação da proposta com detalhes ricos;
+- exibição do lote selecionado/reservado dentro da proposta;
+- observações de negociação na proposta;
+- proposta PDF inclui lote, reserva, entrada parcelada e observações;
+- nova tela específica de Envio de Materiais;
+- registro de material enviado por lead, canal, data/hora e responsável;
+- checklist de material mostra quais materiais foram enviados, quando e por qual canal.
 
 ## Primeiro acesso
 
-```text
-admin@evora.local
+admin@evora.local  
 Evora@2026!
-```
 
-## Vercel
+## Deploy
 
-```text
-Build Command: npm run build
-Output Directory: public
+Build Command: npm run build  
+Output Directory: public  
 Install Command: npm install
-```
