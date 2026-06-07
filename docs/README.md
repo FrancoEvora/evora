@@ -1,59 +1,33 @@
-# Évora Launch OS v5.10
+# Évora Launch OS v5.11
 
-Evolução da v5.9.1 com setor completo de campanhas e reforço do VGV financeiro.
+Evolução da v5.10 com campanhas avançadas.
 
 ## Campanhas
 
-Novo módulo **Campanhas e Represamento**:
+- Correção visual dos cards de VGV para evitar sobreposição.
+- VGV projetado, em negociação, realizado e executado.
+- Gráficos comparativos de VGV.
+- Cadastro de novo lead diretamente dentro da campanha.
+- Vinculação de leads existentes à campanha.
+- Métricas de desempenho por campanha.
+- Ranking de SDRs participantes.
+- Ranking de corretores participantes.
+- Roteiros de atendimento por campanha.
+- Scripts de WhatsApp e ligação por campanha.
+- FAQs por campanha.
 
-- criação e edição de campanhas;
-- objetivo da campanha;
-- canal;
-- período;
-- metas de leads, vendas e VGV;
-- budget;
-- materiais vinculados;
-- condições comerciais específicas:
-  - entrada;
-  - parcelamento da entrada;
-  - mensais;
-  - anuais;
-  - juros;
-  - fator anual;
-  - desconto máximo;
-- métricas por campanha:
-  - leads;
-  - clientes A;
-  - propostas;
-  - reservas;
-  - clientes;
-  - VGV realizado;
-  - VGV executado;
-  - conversão;
-  - CPL;
-  - custo por venda.
+## Materiais
 
-## Leads e campanhas
+Nas Configurações, agora é possível cadastrar, editar e excluir materiais.
 
-Os leads podem ser vinculados ou alterados de campanha a qualquer momento:
+Materiais podem ter:
 
-- pela lista de leads;
-- pelo dossiê do lead;
-- no cadastro de novo lead.
-
-## Condições por campanha
-
-Ao abrir o simulador a partir de um lead vinculado a uma campanha, o sistema aplica automaticamente a condição da campanha.
-
-## Financeiro
-
-O financeiro agora destaca também:
-
-- VGV projetado do empreendimento;
-- VGV executado do empreendimento;
-- VGV realizado total;
-- VGV realizado no período;
-- VGV em negociação.
+- nome;
+- tipo;
+- etapa;
+- persona;
+- link/URL;
+- descrição.
 
 ## Deploy
 
