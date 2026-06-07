@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Évora Launch OS v5.8 — Sistema de Performance Comercial</title>
+  <title>Évora Launch OS v5.8.1.1 — Sistema de Performance Comercial</title>
   <meta name="description" content="Sistema de performance comercial para loteamentos, com sala de guerra, jornada guiada, simulador, reservas, contratos, clientes, pós-venda e relatórios em PDF.">
   <style>
     :root{
@@ -172,7 +172,7 @@
 @media(max-width:600px){.proposalFlow{grid-template-columns:1fr}}
 
 
-/* v5.8 report intelligence */
+/* v5.8.1 report intelligence */
 .reportTypeGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
 .reportTypeCard{background:white;border:1px solid var(--line);border-radius:20px;padding:16px;box-shadow:0 8px 24px rgba(23,60,82,.06)}
 .reportTypeCard h3{margin-bottom:7px}
@@ -183,7 +183,7 @@
 .printHint{border:1px solid #C8EFA2;background:#F0FBE9;border-radius:16px;padding:12px;margin-top:12px;color:#3A6F16;font-size:13px;line-height:1.45}
 
 
-/* v5.8 login/local RBAC layer */
+/* v5.8.1 login/local RBAC layer */
 .loginPage{min-height:100vh;display:grid;grid-template-columns:1fr 430px;background:#fff}
 .loginHero{background:linear-gradient(135deg,#0E2738,#245E82);color:white;padding:44px;display:flex;flex-direction:column;justify-content:space-between}
 .loginHero img{max-width:270px;display:block}
@@ -204,7 +204,7 @@
 @media(max-width:900px){.loginPage{grid-template-columns:1fr}.loginHero{min-height:360px}}
 
 
-/* v5.8 mobile and guided journey refinements */
+/* v5.8.1 mobile and guided journey refinements */
 .actionButtons{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;padding-top:8px;border-top:1px solid var(--line)}
 .actionButtons .btn{font-size:12px;padding:7px 9px;border-radius:10px}
 .selectFilterGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -220,18 +220,25 @@
   .modal{width:calc(100% - 20px)}
 }
 
+
+/* v5.8.1 checklist refinement */
+.checkCard .actionButtons{margin-top:12px}
+.checkCard .primaryActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.checkCard .primaryActions .btn{min-width:132px;justify-content:center}
+.actionNotePreview{margin-top:8px;padding:8px 10px;border-radius:12px;background:#F8FBFC;border:1px dashed var(--line);font-size:12px;color:var(--muted)}
+
 </style>
 </head>
 <body>
-  <div id="app"><div style="padding:30px;font-family:system-ui"><h2>Carregando Évora Launch OS v5.8...</h2></div></div>
+  <div id="app"><div style="padding:30px;font-family:system-ui"><h2>Carregando Évora Launch OS v5.8.1.1...</h2></div></div>
   <div id="modal-root"></div>
   <div id="toast" class="toast"></div>
 <script>
 (() => {
 'use strict';
-const APP_VERSION = '5.8';
+const APP_VERSION = '5.8.1';
 const RELEASE_DATE = '2026-06-05';
-const STORAGE_KEY = 'evora-launch-os-v580';
+const STORAGE_KEY = 'evora-launch-os-v5810';
 
 const money = new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'});
 const dateFmt = new Intl.DateTimeFormat('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric'});
@@ -641,7 +648,7 @@ function reportHtml(type){
   const {a,origin,broker,stock}=reportData(type);
   const table=(title,rows)=>`<h2>${title}</h2><table><thead><tr>${Object.keys(rows[0]||{}).map(k=>`<th>${k}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr>${Object.values(r).map(v=>`<td>${esc(v)}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
   return `<!doctype html><html><head><meta charset="utf-8"><title>Relatório ${esc(type)}</title><style>body{font-family:Arial,sans-serif;color:#173C52;margin:36px}h1{font-size:26px}h2{margin-top:28px}table{border-collapse:collapse;width:100%;margin-top:8px}th,td{border:1px solid #d8e2e8;padding:8px;text-align:left;font-size:12px}th{background:#f1f6f8}.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.kpi{border:1px solid #d8e2e8;border-radius:12px;padding:12px}.kpi b{display:block;font-size:20px;margin-top:6px}.brand{display:flex;align-items:center;gap:12px}.brand img{height:42px}@media print{button{display:none}}
-/* v5.8 login/local RBAC layer */
+/* v5.8.1 login/local RBAC layer */
 .loginPage{min-height:100vh;display:grid;grid-template-columns:1fr 430px;background:#fff}
 .loginHero{background:linear-gradient(135deg,#0E2738,#245E82);color:white;padding:44px;display:flex;flex-direction:column;justify-content:space-between}
 .loginHero img{max-width:270px;display:block}
@@ -662,7 +669,7 @@ function reportHtml(type){
 @media(max-width:900px){.loginPage{grid-template-columns:1fr}.loginHero{min-height:360px}}
 
 
-/* v5.8 mobile and guided journey refinements */
+/* v5.8.1 mobile and guided journey refinements */
 .actionButtons{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;padding-top:8px;border-top:1px solid var(--line)}
 .actionButtons .btn{font-size:12px;padding:7px 9px;border-radius:10px}
 .selectFilterGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -677,6 +684,13 @@ function reportHtml(type){
   .selectFilterGrid{grid-template-columns:1fr}
   .modal{width:calc(100% - 20px)}
 }
+
+
+/* v5.8.1 checklist refinement */
+.checkCard .actionButtons{margin-top:12px}
+.checkCard .primaryActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.checkCard .primaryActions .btn{min-width:132px;justify-content:center}
+.actionNotePreview{margin-top:8px;padding:8px 10px;border-radius:12px;background:#F8FBFC;border:1px dashed var(--line);font-size:12px;color:var(--muted)}
 
 </style></head><body><div class="brand"><img src="assets/logo_evora.png"><div><h1>Relatório ${esc(type)} · ${esc(project().name)}</h1><p>${fmtDateTime(now())}</p></div></div><div class="kpis"><div class="kpi">Leads<b>${a.leads.length}</b></div><div class="kpi">Clientes A<b>${a.a}</b></div><div class="kpi">Reservas<b>${a.res.length}</b></div><div class="kpi">Carteira<b>${fmtMoney(a.carteira)}</b></div></div>${table('Origem',origin)}${table('Corretores',broker)}${table('Estoque',stock)}<h2>Alertas</h2><p>Leads parados: ${a.stalled.length}<br>Clientes sem comunicação 30+: ${a.silent.length}</p><button onclick="window.print()">Salvar/Imprimir PDF</button><script>setTimeout(()=>window.print(),400)<\/script></body></html>`;
 }
@@ -760,7 +774,7 @@ function createProposalFromSimulator(){
 function proposalPdfHtml(p){
   const l=leadBy(p.leadId), lot=lotBy(p.lotId);
   return `<!doctype html><html><head><meta charset="utf-8"><title>Proposta ${esc(l.name)}</title><style>body{font-family:Arial,sans-serif;color:#173C52;margin:36px}h1{font-size:26px}.box{border:1px solid #d8e2e8;border-radius:14px;padding:14px;margin:12px 0}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.brand{display:flex;gap:12px;align-items:center}.brand img{height:44px}table{border-collapse:collapse;width:100%}td,th{border:1px solid #d8e2e8;padding:9px;text-align:left}button{padding:10px 14px;border:0;border-radius:10px;background:#245E82;color:white;font-weight:bold}@media print{button{display:none}}
-/* v5.8 login/local RBAC layer */
+/* v5.8.1 login/local RBAC layer */
 .loginPage{min-height:100vh;display:grid;grid-template-columns:1fr 430px;background:#fff}
 .loginHero{background:linear-gradient(135deg,#0E2738,#245E82);color:white;padding:44px;display:flex;flex-direction:column;justify-content:space-between}
 .loginHero img{max-width:270px;display:block}
@@ -781,7 +795,7 @@ function proposalPdfHtml(p){
 @media(max-width:900px){.loginPage{grid-template-columns:1fr}.loginHero{min-height:360px}}
 
 
-/* v5.8 mobile and guided journey refinements */
+/* v5.8.1 mobile and guided journey refinements */
 .actionButtons{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;padding-top:8px;border-top:1px solid var(--line)}
 .actionButtons .btn{font-size:12px;padding:7px 9px;border-radius:10px}
 .selectFilterGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -796,6 +810,13 @@ function proposalPdfHtml(p){
   .selectFilterGrid{grid-template-columns:1fr}
   .modal{width:calc(100% - 20px)}
 }
+
+
+/* v5.8.1 checklist refinement */
+.checkCard .actionButtons{margin-top:12px}
+.checkCard .primaryActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.checkCard .primaryActions .btn{min-width:132px;justify-content:center}
+.actionNotePreview{margin-top:8px;padding:8px 10px;border-radius:12px;background:#F8FBFC;border:1px dashed var(--line);font-size:12px;color:var(--muted)}
 
 </style></head><body><div class="brand"><img src="assets/logo_evora.png"><div><h1>Proposta comercial</h1><p>${esc(project().name)} · ${fmtDateTime(now())}</p></div></div><div class="box"><b>Cliente:</b> ${esc(l.name)}<br><b>Lote:</b> ${esc(lotLabel(lot.id))} · ${lot.area} m²<br><b>Status:</b> ${esc(p.status)} · <b>Validade:</b> ${fmtDate(p.expiresAt)}</div><table><tr><th>Preço</th><td>${fmtMoney(lot.price)}</td></tr><tr><th>Entrada</th><td>${p.entry}%</td></tr><tr><th>Mensais</th><td>${p.months}x ${fmtMoney(p.monthly)}</td></tr><tr><th>Anuais</th><td>${p.annuals}x ${fmtMoney(p.annual)}</td></tr><tr><th>Correção</th><td>${esc(p.index)} + ${p.interest}% a.m.</td></tr><tr><th>Total nominal</th><td>${fmtMoney(p.total)}</td></tr></table><div class="box"><h2>Confirmação</h2><p>Para seguir, o cliente deve confirmar interesse e enviar documentação para contrato. Esta página serve como modelo da futura página de confirmação online.</p><button onclick="alert('Confirmação demonstrativa registrada. Em produção, este botão gravará o aceite no sistema.')">Confirmar interesse</button></div><button onclick="window.print()">Salvar/Imprimir PDF</button></body></html>`;
 }
@@ -855,7 +876,7 @@ function proposalFlowHtml(p){
 function proposalPdfHtml(p){
   const l=leadBy(p.leadId), lot=lotBy(p.lotId);
   return `<!doctype html><html><head><meta charset="utf-8"><title>Proposta ${esc(l.name)}</title><style>body{font-family:Arial,sans-serif;color:#173C52;margin:36px}h1{font-size:26px}.box{border:1px solid #d8e2e8;border-radius:14px;padding:14px;margin:12px 0}.brand{display:flex;gap:12px;align-items:center}.brand img{height:44px}table{border-collapse:collapse;width:100%;margin-top:14px}td,th{border:1px solid #d8e2e8;padding:9px;text-align:left}th{background:#f3f7f9}button{padding:10px 14px;border:0;border-radius:10px;background:#245E82;color:white;font-weight:bold}.confirm{background:#F0FBE9;border:1px solid #C8EFA2;border-radius:14px;padding:14px;margin-top:16px}@media print{button{display:none}}
-/* v5.8 login/local RBAC layer */
+/* v5.8.1 login/local RBAC layer */
 .loginPage{min-height:100vh;display:grid;grid-template-columns:1fr 430px;background:#fff}
 .loginHero{background:linear-gradient(135deg,#0E2738,#245E82);color:white;padding:44px;display:flex;flex-direction:column;justify-content:space-between}
 .loginHero img{max-width:270px;display:block}
@@ -876,7 +897,7 @@ function proposalPdfHtml(p){
 @media(max-width:900px){.loginPage{grid-template-columns:1fr}.loginHero{min-height:360px}}
 
 
-/* v5.8 mobile and guided journey refinements */
+/* v5.8.1 mobile and guided journey refinements */
 .actionButtons{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;padding-top:8px;border-top:1px solid var(--line)}
 .actionButtons .btn{font-size:12px;padding:7px 9px;border-radius:10px}
 .selectFilterGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -891,6 +912,13 @@ function proposalPdfHtml(p){
   .selectFilterGrid{grid-template-columns:1fr}
   .modal{width:calc(100% - 20px)}
 }
+
+
+/* v5.8.1 checklist refinement */
+.checkCard .actionButtons{margin-top:12px}
+.checkCard .primaryActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.checkCard .primaryActions .btn{min-width:132px;justify-content:center}
+.actionNotePreview{margin-top:8px;padding:8px 10px;border-radius:12px;background:#F8FBFC;border:1px dashed var(--line);font-size:12px;color:var(--muted)}
 
 </style></head><body><div class="brand"><img src="assets/logo_evora.png"><div><h1>Proposta comercial</h1><p>${esc(project().name)} · ${fmtDateTime(now())}</p></div></div><div class="box"><b>Cliente:</b> ${esc(l.name)}<br><b>Lote:</b> ${esc(lotLabel(lot.id))} · ${lot.area} m²<br><b>Status:</b> ${esc(p.status)} · <b>Validade:</b> ${fmtDate(p.expiresAt)}</div><table><tr><th>Preço do lote</th><td>${fmtMoney(lot.price)}</td></tr><tr><th>Entrada</th><td>${p.entry}%</td></tr><tr><th>Mensais</th><td>${p.months}x ${fmtMoney(p.monthly)}</td></tr><tr><th>Anuais</th><td>${p.annuals}x ${fmtMoney(p.annual)}</td></tr><tr><th>Correção</th><td>${esc(p.index)} + ${p.interest}% a.m.</td></tr><tr><th>Total nominal</th><td>${fmtMoney(p.total)}</td></tr></table><div class="confirm"><h2>Confirmação</h2><p>Esta página representa o ambiente de confirmação. Na versão com backend, o botão gravará o aceite do cliente, data, IP e versão da proposta.</p><button onclick="alert('Confirmação demonstrativa registrada. Em produção, será salvo no sistema.')">Confirmar interesse</button></div><button onclick="window.print()">Salvar/Imprimir PDF</button></body></html>`;
 }
@@ -976,7 +1004,7 @@ function reportHtml(type){
   const chart3=chartBars(d.brokers,'Corretor','Propostas','#173C52',260);
   const chart4=chartBars(d.origin,'Origem','Leads','#84C225',260);
   return `<!doctype html><html><head><meta charset="utf-8"><title>Relatório ${esc(type)}</title><style>body{font-family:Arial,sans-serif;color:#173C52;margin:34px}h1{font-size:26px;margin:0}h2{margin-top:28px}p{color:#5f7280}.brand{display:flex;align-items:center;gap:12px;margin-bottom:18px}.brand img{height:42px}.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:18px 0}.kpi{border:1px solid #d8e2e8;border-radius:12px;padding:12px}.kpi b{display:block;font-size:20px;margin-top:6px}.chart{border:1px solid #d8e2e8;border-radius:14px;padding:12px;margin:14px 0;page-break-inside:avoid}table{border-collapse:collapse;width:100%;margin-top:8px}th,td{border:1px solid #d8e2e8;padding:8px;text-align:left;font-size:12px}th{background:#f1f6f8}@media print{button{display:none}body{margin:20px}}
-/* v5.8 login/local RBAC layer */
+/* v5.8.1 login/local RBAC layer */
 .loginPage{min-height:100vh;display:grid;grid-template-columns:1fr 430px;background:#fff}
 .loginHero{background:linear-gradient(135deg,#0E2738,#245E82);color:white;padding:44px;display:flex;flex-direction:column;justify-content:space-between}
 .loginHero img{max-width:270px;display:block}
@@ -997,7 +1025,7 @@ function reportHtml(type){
 @media(max-width:900px){.loginPage{grid-template-columns:1fr}.loginHero{min-height:360px}}
 
 
-/* v5.8 mobile and guided journey refinements */
+/* v5.8.1 mobile and guided journey refinements */
 .actionButtons{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;padding-top:8px;border-top:1px solid var(--line)}
 .actionButtons .btn{font-size:12px;padding:7px 9px;border-radius:10px}
 .selectFilterGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -1013,12 +1041,19 @@ function reportHtml(type){
   .modal{width:calc(100% - 20px)}
 }
 
+
+/* v5.8.1 checklist refinement */
+.checkCard .actionButtons{margin-top:12px}
+.checkCard .primaryActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.checkCard .primaryActions .btn{min-width:132px;justify-content:center}
+.actionNotePreview{margin-top:8px;padding:8px 10px;border-radius:12px;background:#F8FBFC;border:1px dashed var(--line);font-size:12px;color:var(--muted)}
+
 </style></head><body><div class="brand"><img src="assets/logo_evora.png"><div><h1>Relatório ${esc(type)} · ${esc(project().name)}</h1><p>${fmtDateTime(now())}</p></div></div><div class="kpis"><div class="kpi">Leads<b>${d.a.leads.length}</b></div><div class="kpi">Clientes A<b>${d.a.a}</b></div><div class="kpi">Reservas<b>${d.a.res.length}</b></div><div class="kpi">Carteira<b>${fmtMoney(d.a.carteira)}</b></div></div><div class="chart"><h2>Funil de vendas</h2>${chart1}</div><div class="chart"><h2>Projeção de caixa 12 meses</h2>${chart2}</div><div class="chart"><h2>Performance de corretores</h2>${chart3}</div><div class="chart"><h2>Origem dos leads</h2>${chart4}</div>${tableHtml('Financeiro',d.financial)}${tableHtml('SDR',d.sdrs)}${tableHtml('Corretores',d.brokers)}${tableHtml('Campanhas',d.campaigns)}${tableHtml('Estoque',d.stock)}<h2>Alertas</h2><p>Leads parados: ${d.a.stalled.length}<br>Clientes sem comunicação 30+: ${d.a.silent.length}</p><button onclick="window.print()">Salvar/Imprimir PDF</button><script>setTimeout(()=>window.print(),500)<\/script></body></html>`;
 }
 window.printProposal=printProposal; window.openProposalConfirmation=openProposalConfirmation; window.sendProposalEmail=sendProposalEmail; window.sendProposalWhatsApp=sendProposalWhatsApp; window.markProposalSent=markProposalSent;
 /* ==== v4.2 patch end ==== */
 
-/* ==== v5.8 sector-specific reports patch start ==== */
+/* ==== v5.8.1 sector-specific reports patch start ==== */
 function reportDefinitions(){
   return [
     {id:'executivo', title:'Executivo diário', desc:'Resumo para diretoria: pressão de compra, gargalos, alertas e próximos comandos.', tags:['Diretoria','Diário','Decisão']},
@@ -1151,7 +1186,7 @@ function reportHtml(type){
   const d=reportData(type);
   const blocks=reportBlocks(type,d);
   return `<!doctype html><html><head><meta charset="utf-8"><title>${esc(reportTitle(type))}</title><style>body{font-family:Arial,sans-serif;color:#173C52;margin:34px}h1{font-size:26px;margin:0}h2{margin-top:28px}p{color:#5f7280}.brand{display:flex;align-items:center;gap:12px;margin-bottom:18px}.brand img{height:42px}.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:18px 0}.kpi{border:1px solid #d8e2e8;border-radius:12px;padding:12px}.kpi b{display:block;font-size:20px;margin-top:6px}.chart{border:1px solid #d8e2e8;border-radius:14px;padding:12px;margin:14px 0;page-break-inside:avoid}table{border-collapse:collapse;width:100%;margin-top:8px;page-break-inside:auto}th,td{border:1px solid #d8e2e8;padding:8px;text-align:left;font-size:12px}th{background:#f1f6f8}.summary{border:1px solid #C8EFA2;background:#F0FBE9;border-radius:14px;padding:14px;margin:16px 0}@media print{button{display:none}body{margin:20px}.chart{break-inside:avoid}}
-/* v5.8 login/local RBAC layer */
+/* v5.8.1 login/local RBAC layer */
 .loginPage{min-height:100vh;display:grid;grid-template-columns:1fr 430px;background:#fff}
 .loginHero{background:linear-gradient(135deg,#0E2738,#245E82);color:white;padding:44px;display:flex;flex-direction:column;justify-content:space-between}
 .loginHero img{max-width:270px;display:block}
@@ -1172,7 +1207,7 @@ function reportHtml(type){
 @media(max-width:900px){.loginPage{grid-template-columns:1fr}.loginHero{min-height:360px}}
 
 
-/* v5.8 mobile and guided journey refinements */
+/* v5.8.1 mobile and guided journey refinements */
 .actionButtons{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;padding-top:8px;border-top:1px solid var(--line)}
 .actionButtons .btn{font-size:12px;padding:7px 9px;border-radius:10px}
 .selectFilterGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -1187,6 +1222,13 @@ function reportHtml(type){
   .selectFilterGrid{grid-template-columns:1fr}
   .modal{width:calc(100% - 20px)}
 }
+
+
+/* v5.8.1 checklist refinement */
+.checkCard .actionButtons{margin-top:12px}
+.checkCard .primaryActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.checkCard .primaryActions .btn{min-width:132px;justify-content:center}
+.actionNotePreview{margin-top:8px;padding:8px 10px;border-radius:12px;background:#F8FBFC;border:1px dashed var(--line);font-size:12px;color:var(--muted)}
 
 </style></head><body><div class="brand"><img src="assets/logo_evora.png"><div><h1>${esc(reportTitle(type))} · ${esc(project().name)}</h1><p>${fmtDateTime(now())}</p></div></div><div class="kpis"><div class="kpi">Leads<b>${d.a.leads.length}</b></div><div class="kpi">Clientes A<b>${d.a.a}</b></div><div class="kpi">Reservas<b>${d.a.res.length}</b></div><div class="kpi">Carteira<b>${fmtMoney(d.a.carteira)}</b></div></div><div class="summary"><b>Leitura automática:</b> ${reportInsight(type,d)}</div>${blocks}<button onclick="window.print()">Salvar/Imprimir PDF</button><script>setTimeout(()=>window.print(),500)<\/script></body></html>`;
 }
@@ -1207,8 +1249,8 @@ function reportInsight(type,d){
 window.markProposalSent=markProposalSent;
 /* ==== v4.2 patch end ==== */
 
-/* ==== v5.8 local login + RBAC layer start ==== */
-const AUTH_SESSION_KEY = 'evora-launch-os-v58-session';
+/* ==== v5.8.1 local login + RBAC layer start ==== */
+const AUTH_SESSION_KEY = 'evora-launch-os-v581-session';
 function localHash(value){ let h=5381; const s=String(value||''); for(let i=0;i<s.length;i++) h=((h<<5)+h)+s.charCodeAt(i); return 'h'+Math.abs(h); }
 function defaultPermissions(){
   return [
@@ -1272,7 +1314,7 @@ function authLog(action,entity,entityId,details=''){ ensureAuthState(); state.au
 function renderLogin(){
   ensureAuthState();
   const root=document.getElementById('app');
-  root.innerHTML=`<div class="loginPage"><section class="loginHero"><div><img src="assets/logo_evora_white.png" alt="Évora"><h1>Launch OS v5.8</h1><p>Versão restaurada da v4.3 com login local, usuários, permissões, corretores, senhas e logs — sem perder a jornada comercial.</p></div><small>Primeiro acesso: admin@evora.local · Evora@2026!</small></section><section class="loginCard"><h2>Entrar no sistema</h2><p>Controle local de usuários e permissões. Os dados permanecem no navegador.</p><form id="loginForm"><div class="field"><label>E-mail</label><input id="loginEmail" value="admin@evora.local"></div><div class="field"><label>Senha</label><input id="loginPassword" type="password" value="Evora@2026!"></div><button class="btn primary" style="width:100%;justify-content:center" type="submit">Entrar</button></form><div class="authNotice"><b>Modo sem banco:</b> usuários e leads ficam no localStorage deste navegador.</div></section></div>`;
+  root.innerHTML=`<div class="loginPage"><section class="loginHero"><div><img src="assets/logo_evora_white.png" alt="Évora"><h1>Launch OS v5.8.1</h1><p>Évora Launch OS — inteligência comercial para vender com velocidade, método e controle.</p></div><small>Primeiro acesso: admin@evora.local · Evora@2026!</small></section><section class="loginCard"><h2>Entrar no sistema</h2><p>Controle local de usuários e permissões. Os dados permanecem no navegador.</p><form id="loginForm"><div class="field"><label>E-mail</label><input id="loginEmail" value="admin@evora.local"></div><div class="field"><label>Senha</label><input id="loginPassword" type="password" value="Evora@2026!"></div><button class="btn primary" style="width:100%;justify-content:center" type="submit">Entrar</button></form><div class="authNotice"><b>Modo sem banco:</b> usuários e leads ficam no localStorage deste navegador.</div></section></div>`;
   document.getElementById('loginForm').addEventListener('submit',e=>{ e.preventDefault(); const email=document.getElementById('loginEmail').value.trim().toLowerCase(); const pw=document.getElementById('loginPassword').value; const u=state.auth.users.find(x=>String(x.email).toLowerCase()===email && x.active); if(!u || u.passwordHash!==localHash(pw)){ toast('E-mail ou senha inválidos.'); return; } sessionStorage.setItem(AUTH_SESSION_KEY,u.id); authLog('login','user',u.id,u.email); render(); toast('Login realizado.'); });
 }
 const _v56Render = render;
@@ -1302,7 +1344,7 @@ renderSidebar = function(){
   <div class="authUserPanel"><b>${esc(u.name)}</b><br>${esc(u.email)}<br>${esc(r?.name||'Sem papel')}<div style="margin-top:8px"><button class="btn small" onclick="localLogout()">Sair</button></div></div>
   <div class="projectBox"><label>Empreendimento</label><select onchange="selectProject(this.value)">${state.projects.map(p=>`<option value="${p.id}" ${p.id===state.selectedProjectId?'selected':''}>${esc(p.name)} · ${esc(p.city)}/${esc(p.uf)}</option>`).join('')}</select></div>
   <div class="nav">${allowed.map(([id,label])=>`<button class="${view===id?'active':''}" onclick="setView('${id}')"><span class="ico">${icon(id)}</span>${label}</button>`).join('')}</div>
-  <div class="principle"><b>Regra v5.8</b>Login e permissões foram adicionados sem remover a jornada comercial da v4.3.</div>`;
+  <div class="principle"><b>Regra v5.8.1</b>Login e permissões foram adicionados sem remover a jornada comercial da v4.3.</div>`;
 };
 const _oldRenderTopbar = renderTopbar;
 renderTopbar = function(){
@@ -1460,9 +1502,9 @@ function deleteLeadLocal(id){
 }
 function localLogout(){ const u=authUser(); if(u) authLog('logout','user',u.id,u.email); sessionStorage.removeItem(AUTH_SESSION_KEY); render(); }
 window.openAuthUserForm=openAuthUserForm; window.saveAuthUser=saveAuthUser; window.deleteAuthUser=deleteAuthUser; window.openResetPasswordLocal=openResetPasswordLocal; window.resetPasswordLocal=resetPasswordLocal; window.saveAuthRole=saveAuthRole; window.changeMyPasswordLocal=changeMyPasswordLocal; window.adminResetPasswordLocal=adminResetPasswordLocal; window.exportAuthLogs=exportAuthLogs; window.deleteLeadLocal=deleteLeadLocal; window.localLogout=localLogout;
-/* ==== v5.8 local login + RBAC layer end ==== */
+/* ==== v5.8.1 local login + RBAC layer end ==== */
 
-/* ==== v5.8 guided journey + mobile scroll patch start ==== */
+/* ==== v5.8.1 guided journey + mobile scroll patch start ==== */
 function scrollToMainContent(){
   setTimeout(()=>{
     const main=document.querySelector('.main');
@@ -1546,7 +1588,14 @@ function proposalPdfHtml(p){
   const inst=p.entryInstallments||1;
   const entryTotal=(lot?.price||0)*((p.entry||10)/100);
   const entryPart=p.entryInstallmentValue||entryTotal/inst;
-  return `<!doctype html><html><head><meta charset="utf-8"><title>Proposta ${esc(l.name)}</title><style>body{font-family:Arial,sans-serif;color:#173C52;margin:36px}h1{font-size:26px}.box{border:1px solid #d8e2e8;border-radius:14px;padding:14px;margin:12px 0}.brand{display:flex;gap:12px;align-items:center}.brand img{height:44px}table{border-collapse:collapse;width:100%;margin-top:14px}td,th{border:1px solid #d8e2e8;padding:9px;text-align:left}th{background:#f3f7f9}button{padding:10px 14px;border:0;border-radius:10px;background:#245E82;color:white;font-weight:bold}.confirm{background:#F0FBE9;border:1px solid #C8EFA2;border-radius:14px;padding:14px;margin-top:16px}@media print{button{display:none}}</style></head><body><div class="brand"><img src="assets/logo_evora.png"><div><h1>Proposta comercial</h1><p>${esc(project().name)} · ${fmtDateTime(now())}</p></div></div><div class="box"><b>Cliente:</b> ${esc(l.name)}<br><b>Lote:</b> ${esc(lotLabel(lot.id))} · ${lot.area} m²<br><b>Status:</b> ${esc(p.status)} · <b>Validade:</b> ${fmtDate(p.expiresAt)}</div><table><tr><th>Preço do lote</th><td>${fmtMoney(lot.price)}</td></tr><tr><th>Entrada</th><td>${p.entry}% · ${inst===1?'à vista':`${inst}x de ${fmtMoney(entryPart)}`} · total ${fmtMoney(entryTotal)}</td></tr><tr><th>Mensais</th><td>${p.months}x ${fmtMoney(p.monthly)}</td></tr><tr><th>Anuais</th><td>${p.annuals}x ${fmtMoney(p.annual)}</td></tr><tr><th>Correção</th><td>${esc(p.index)} + ${p.interest}% a.m.</td></tr><tr><th>Total nominal</th><td>${fmtMoney(p.total)}</td></tr></table><div class="confirm"><h2>Confirmação</h2><p>Esta página representa o ambiente de confirmação. Na versão com backend, o botão gravará o aceite do cliente, data, IP e versão da proposta.</p><button onclick="alert('Confirmação demonstrativa registrada. Em produção, será salvo no sistema.')">Confirmar interesse</button></div><button onclick="window.print()">Salvar/Imprimir PDF</button></body></html>`;
+  return `<!doctype html><html><head><meta charset="utf-8"><title>Proposta ${esc(l.name)}</title><style>body{font-family:Arial,sans-serif;color:#173C52;margin:36px}h1{font-size:26px}.box{border:1px solid #d8e2e8;border-radius:14px;padding:14px;margin:12px 0}.brand{display:flex;gap:12px;align-items:center}.brand img{height:44px}table{border-collapse:collapse;width:100%;margin-top:14px}td,th{border:1px solid #d8e2e8;padding:9px;text-align:left}th{background:#f3f7f9}button{padding:10px 14px;border:0;border-radius:10px;background:#245E82;color:white;font-weight:bold}.confirm{background:#F0FBE9;border:1px solid #C8EFA2;border-radius:14px;padding:14px;margin-top:16px}@media print{button{display:none}}
+/* v5.8.1 checklist refinement */
+.checkCard .actionButtons{margin-top:12px}
+.checkCard .primaryActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.checkCard .primaryActions .btn{min-width:132px;justify-content:center}
+.actionNotePreview{margin-top:8px;padding:8px 10px;border-radius:12px;background:#F8FBFC;border:1px dashed var(--line);font-size:12px;color:var(--muted)}
+
+</style></head><body><div class="brand"><img src="assets/logo_evora.png"><div><h1>Proposta comercial</h1><p>${esc(project().name)} · ${fmtDateTime(now())}</p></div></div><div class="box"><b>Cliente:</b> ${esc(l.name)}<br><b>Lote:</b> ${esc(lotLabel(lot.id))} · ${lot.area} m²<br><b>Status:</b> ${esc(p.status)} · <b>Validade:</b> ${fmtDate(p.expiresAt)}</div><table><tr><th>Preço do lote</th><td>${fmtMoney(lot.price)}</td></tr><tr><th>Entrada</th><td>${p.entry}% · ${inst===1?'à vista':`${inst}x de ${fmtMoney(entryPart)}`} · total ${fmtMoney(entryTotal)}</td></tr><tr><th>Mensais</th><td>${p.months}x ${fmtMoney(p.monthly)}</td></tr><tr><th>Anuais</th><td>${p.annuals}x ${fmtMoney(p.annual)}</td></tr><tr><th>Correção</th><td>${esc(p.index)} + ${p.interest}% a.m.</td></tr><tr><th>Total nominal</th><td>${fmtMoney(p.total)}</td></tr></table><div class="confirm"><h2>Confirmação</h2><p>Esta página representa o ambiente de confirmação. Na versão com backend, o botão gravará o aceite do cliente, data, IP e versão da proposta.</p><button onclick="alert('Confirmação demonstrativa registrada. Em produção, será salvo no sistema.')">Confirmar interesse</button></div><button onclick="window.print()">Salvar/Imprimir PDF</button></body></html>`;
 }
 function actionControls(l,taskId){
   const b=[];
@@ -1618,7 +1667,55 @@ openReserveLot = function(lotId='',leadId=''){
 };
 window.filterSelectOptions=filterSelectOptions; window.openLeadSimulator=openLeadSimulator; window.goLotsForLead=goLotsForLead; window.openLotPickerForLead=openLotPickerForLead; window.renderLotPickerResults=renderLotPickerResults; window.assignLotToLead=assignLotToLead; window.registerClientCommunicationFromLead=registerClientCommunicationFromLead;
 window.updateSim=updateSim; window.createProposalFromSimulator=createProposalFromSimulator;
-/* ==== v5.8 guided journey + mobile scroll patch end ==== */
+/* ==== v5.8.1 guided journey + mobile scroll patch end ==== */
+
+/* ==== v5.8.1 checklist + slogan patch start ==== */
+dossierAction = function(l,miss){
+  const tasks = TASKS[l.stage] || [];
+  return `<div class="grid two" style="margin-top:14px">
+    <div class="card">
+      <h3>Checklist obrigatório da etapa</h3>
+      <div class="checkGrid">${tasks.map(([id,label])=>{
+        const done = actionDone(l,l.stage,id);
+        const note = l.notesByStage?.[l.stage]?.[id] || '';
+        return `<div class="checkCard ${done?'done':''}">
+          <b>${esc(label)}</b>
+          <div class="tiny">${done ? 'Concluído em '+fmtDateTime(l.actions[l.stage][id].ts) : 'Pendente'}</div>
+          ${note ? `<div class="actionNotePreview">${esc(note)}</div>` : ''}
+          ${actionControls(l,id)}
+          <div class="primaryActions">
+            <button class="btn small primary" onclick="registerAction('${l.id}','${id}')">Registrar ação</button>
+            <button class="btn small" onclick="toggleStageNote('${l.id}','${id}')">Anotar</button>
+          </div>
+          <div id="note-wrap-${id}" style="display:${note?'block':'none'};margin-top:10px">
+            <textarea id="note-${id}" placeholder="Anote detalhes específicos desta ação..." style="width:100%;min-height:86px;border:1px solid var(--line);border-radius:12px;padding:10px">${esc(note)}</textarea>
+            <div class="actions" style="justify-content:flex-start;margin-top:8px"><button class="btn small" onclick="saveStageNote('${l.id}','${id}')">Salvar anotação</button></div>
+          </div>
+        </div>`;
+      }).join('')}</div>
+    </div>
+    <div class="card">
+      <h3>Avanço da etapa</h3>
+      <div class="timeline">
+        ${miss.length?`<div class="event"><b>Itens pendentes</b><span>${miss.map(x=>esc(x)).join(' · ')}</span></div>`:`<div class="event"><b>Checklist completo</b><span>A etapa já pode ser avançada.</span></div>`}
+        <div class="event"><b>Próximo passo sugerido</b><span>${esc(stage(l.stage).next||'Concluir checklist atual.')}</span></div>
+        <div class="event"><b>Atalho operacional</b><span>Use os botões contextuais dentro de cada item do checklist para executar a ação certa sem sair da lógica da jornada.</span></div>
+      </div>
+      <div class="actions" style="justify-content:flex-start;margin-top:12px">
+        <button class="btn primary" onclick="advanceLead('${l.id}')">Avançar etapa</button>
+        <button class="btn" onclick="openDossier('${l.id}','simular')">Simular</button>
+      </div>
+    </div>
+  </div>`;
+};
+function toggleStageNote(leadId,taskId){
+  const wrap=document.getElementById('note-wrap-'+taskId);
+  if(!wrap) return;
+  wrap.style.display = wrap.style.display==='none' ? 'block' : 'none';
+  const area=document.getElementById('note-'+taskId);
+  if(area && wrap.style.display==='block') setTimeout(()=>area.focus(),60);
+}
+/* ==== v5.8.1 checklist + slogan patch end ==== */
 
 render();
 })();
