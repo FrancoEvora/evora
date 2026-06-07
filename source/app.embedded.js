@@ -1,8 +1,8 @@
 (() => {
 'use strict';
-const APP_VERSION = '5.7';
+const APP_VERSION = '5.8';
 const RELEASE_DATE = '2026-06-05';
-const STORAGE_KEY = 'evora-launch-os-v570';
+const STORAGE_KEY = 'evora-launch-os-v580';
 
 const money = new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'});
 const dateFmt = new Intl.DateTimeFormat('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric'});
@@ -412,7 +412,7 @@ function reportHtml(type){
   const {a,origin,broker,stock}=reportData(type);
   const table=(title,rows)=>`<h2>${title}</h2><table><thead><tr>${Object.keys(rows[0]||{}).map(k=>`<th>${k}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr>${Object.values(r).map(v=>`<td>${esc(v)}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
   return `<!doctype html><html><head><meta charset="utf-8"><title>Relatório ${esc(type)}</title><style>body{font-family:Arial,sans-serif;color:#173C52;margin:36px}h1{font-size:26px}h2{margin-top:28px}table{border-collapse:collapse;width:100%;margin-top:8px}th,td{border:1px solid #d8e2e8;padding:8px;text-align:left;font-size:12px}th{background:#f1f6f8}.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.kpi{border:1px solid #d8e2e8;border-radius:12px;padding:12px}.kpi b{display:block;font-size:20px;margin-top:6px}.brand{display:flex;align-items:center;gap:12px}.brand img{height:42px}@media print{button{display:none}}
-/* v5.7 login/local RBAC layer */
+/* v5.8 login/local RBAC layer */
 .loginPage{min-height:100vh;display:grid;grid-template-columns:1fr 430px;background:#fff}
 .loginHero{background:linear-gradient(135deg,#0E2738,#245E82);color:white;padding:44px;display:flex;flex-direction:column;justify-content:space-between}
 .loginHero img{max-width:270px;display:block}
@@ -431,6 +431,23 @@ function reportHtml(type){
 .authNotice{border:1px solid #C8EFA2;background:#F0FBE9;color:#3A6F16;border-radius:16px;padding:12px;margin:12px 0}
 .authDanger{border:1px solid #FECACA;background:#FFF7F7;color:#991B1B;border-radius:16px;padding:12px;margin:12px 0}
 @media(max-width:900px){.loginPage{grid-template-columns:1fr}.loginHero{min-height:360px}}
+
+
+/* v5.8 mobile and guided journey refinements */
+.actionButtons{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;padding-top:8px;border-top:1px solid var(--line)}
+.actionButtons .btn{font-size:12px;padding:7px 9px;border-radius:10px}
+.selectFilterGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.entryPlan{border:1px solid #C8EFA2;background:#F0FBE9;color:#3A6F16;border-radius:16px;padding:12px;margin-top:12px}
+.lotPickerGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin-top:12px}
+.lotPickCard{border:1px solid var(--line);background:white;border-radius:16px;padding:12px}
+.lotPickCard h3{margin-bottom:4px}
+.filterInput{border:1px solid var(--line);border-radius:13px;padding:10px 11px;width:100%;background:white}
+.mobileHint{display:none}
+@media(max-width:900px){
+  .mobileHint{display:block;border:1px solid #C8EFA2;background:#F0FBE9;color:#3A6F16;border-radius:14px;padding:10px;margin:10px 0;font-size:12px}
+  .selectFilterGrid{grid-template-columns:1fr}
+  .modal{width:calc(100% - 20px)}
+}
 
 </style></head><body><div class="brand"><img src="assets/logo_evora.png"><div><h1>Relatório ${esc(type)} · ${esc(project().name)}</h1><p>${fmtDateTime(now())}</p></div></div><div class="kpis"><div class="kpi">Leads<b>${a.leads.length}</b></div><div class="kpi">Clientes A<b>${a.a}</b></div><div class="kpi">Reservas<b>${a.res.length}</b></div><div class="kpi">Carteira<b>${fmtMoney(a.carteira)}</b></div></div>${table('Origem',origin)}${table('Corretores',broker)}${table('Estoque',stock)}<h2>Alertas</h2><p>Leads parados: ${a.stalled.length}<br>Clientes sem comunicação 30+: ${a.silent.length}</p><button onclick="window.print()">Salvar/Imprimir PDF</button><script>setTimeout(()=>window.print(),400)<\/script></body></html>`;
 }
@@ -514,7 +531,7 @@ function createProposalFromSimulator(){
 function proposalPdfHtml(p){
   const l=leadBy(p.leadId), lot=lotBy(p.lotId);
   return `<!doctype html><html><head><meta charset="utf-8"><title>Proposta ${esc(l.name)}</title><style>body{font-family:Arial,sans-serif;color:#173C52;margin:36px}h1{font-size:26px}.box{border:1px solid #d8e2e8;border-radius:14px;padding:14px;margin:12px 0}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.brand{display:flex;gap:12px;align-items:center}.brand img{height:44px}table{border-collapse:collapse;width:100%}td,th{border:1px solid #d8e2e8;padding:9px;text-align:left}button{padding:10px 14px;border:0;border-radius:10px;background:#245E82;color:white;font-weight:bold}@media print{button{display:none}}
-/* v5.7 login/local RBAC layer */
+/* v5.8 login/local RBAC layer */
 .loginPage{min-height:100vh;display:grid;grid-template-columns:1fr 430px;background:#fff}
 .loginHero{background:linear-gradient(135deg,#0E2738,#245E82);color:white;padding:44px;display:flex;flex-direction:column;justify-content:space-between}
 .loginHero img{max-width:270px;display:block}
@@ -533,6 +550,23 @@ function proposalPdfHtml(p){
 .authNotice{border:1px solid #C8EFA2;background:#F0FBE9;color:#3A6F16;border-radius:16px;padding:12px;margin:12px 0}
 .authDanger{border:1px solid #FECACA;background:#FFF7F7;color:#991B1B;border-radius:16px;padding:12px;margin:12px 0}
 @media(max-width:900px){.loginPage{grid-template-columns:1fr}.loginHero{min-height:360px}}
+
+
+/* v5.8 mobile and guided journey refinements */
+.actionButtons{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;padding-top:8px;border-top:1px solid var(--line)}
+.actionButtons .btn{font-size:12px;padding:7px 9px;border-radius:10px}
+.selectFilterGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.entryPlan{border:1px solid #C8EFA2;background:#F0FBE9;color:#3A6F16;border-radius:16px;padding:12px;margin-top:12px}
+.lotPickerGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin-top:12px}
+.lotPickCard{border:1px solid var(--line);background:white;border-radius:16px;padding:12px}
+.lotPickCard h3{margin-bottom:4px}
+.filterInput{border:1px solid var(--line);border-radius:13px;padding:10px 11px;width:100%;background:white}
+.mobileHint{display:none}
+@media(max-width:900px){
+  .mobileHint{display:block;border:1px solid #C8EFA2;background:#F0FBE9;color:#3A6F16;border-radius:14px;padding:10px;margin:10px 0;font-size:12px}
+  .selectFilterGrid{grid-template-columns:1fr}
+  .modal{width:calc(100% - 20px)}
+}
 
 </style></head><body><div class="brand"><img src="assets/logo_evora.png"><div><h1>Proposta comercial</h1><p>${esc(project().name)} · ${fmtDateTime(now())}</p></div></div><div class="box"><b>Cliente:</b> ${esc(l.name)}<br><b>Lote:</b> ${esc(lotLabel(lot.id))} · ${lot.area} m²<br><b>Status:</b> ${esc(p.status)} · <b>Validade:</b> ${fmtDate(p.expiresAt)}</div><table><tr><th>Preço</th><td>${fmtMoney(lot.price)}</td></tr><tr><th>Entrada</th><td>${p.entry}%</td></tr><tr><th>Mensais</th><td>${p.months}x ${fmtMoney(p.monthly)}</td></tr><tr><th>Anuais</th><td>${p.annuals}x ${fmtMoney(p.annual)}</td></tr><tr><th>Correção</th><td>${esc(p.index)} + ${p.interest}% a.m.</td></tr><tr><th>Total nominal</th><td>${fmtMoney(p.total)}</td></tr></table><div class="box"><h2>Confirmação</h2><p>Para seguir, o cliente deve confirmar interesse e enviar documentação para contrato. Esta página serve como modelo da futura página de confirmação online.</p><button onclick="alert('Confirmação demonstrativa registrada. Em produção, este botão gravará o aceite no sistema.')">Confirmar interesse</button></div><button onclick="window.print()">Salvar/Imprimir PDF</button></body></html>`;
 }
@@ -592,7 +626,7 @@ function proposalFlowHtml(p){
 function proposalPdfHtml(p){
   const l=leadBy(p.leadId), lot=lotBy(p.lotId);
   return `<!doctype html><html><head><meta charset="utf-8"><title>Proposta ${esc(l.name)}</title><style>body{font-family:Arial,sans-serif;color:#173C52;margin:36px}h1{font-size:26px}.box{border:1px solid #d8e2e8;border-radius:14px;padding:14px;margin:12px 0}.brand{display:flex;gap:12px;align-items:center}.brand img{height:44px}table{border-collapse:collapse;width:100%;margin-top:14px}td,th{border:1px solid #d8e2e8;padding:9px;text-align:left}th{background:#f3f7f9}button{padding:10px 14px;border:0;border-radius:10px;background:#245E82;color:white;font-weight:bold}.confirm{background:#F0FBE9;border:1px solid #C8EFA2;border-radius:14px;padding:14px;margin-top:16px}@media print{button{display:none}}
-/* v5.7 login/local RBAC layer */
+/* v5.8 login/local RBAC layer */
 .loginPage{min-height:100vh;display:grid;grid-template-columns:1fr 430px;background:#fff}
 .loginHero{background:linear-gradient(135deg,#0E2738,#245E82);color:white;padding:44px;display:flex;flex-direction:column;justify-content:space-between}
 .loginHero img{max-width:270px;display:block}
@@ -611,6 +645,23 @@ function proposalPdfHtml(p){
 .authNotice{border:1px solid #C8EFA2;background:#F0FBE9;color:#3A6F16;border-radius:16px;padding:12px;margin:12px 0}
 .authDanger{border:1px solid #FECACA;background:#FFF7F7;color:#991B1B;border-radius:16px;padding:12px;margin:12px 0}
 @media(max-width:900px){.loginPage{grid-template-columns:1fr}.loginHero{min-height:360px}}
+
+
+/* v5.8 mobile and guided journey refinements */
+.actionButtons{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;padding-top:8px;border-top:1px solid var(--line)}
+.actionButtons .btn{font-size:12px;padding:7px 9px;border-radius:10px}
+.selectFilterGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.entryPlan{border:1px solid #C8EFA2;background:#F0FBE9;color:#3A6F16;border-radius:16px;padding:12px;margin-top:12px}
+.lotPickerGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin-top:12px}
+.lotPickCard{border:1px solid var(--line);background:white;border-radius:16px;padding:12px}
+.lotPickCard h3{margin-bottom:4px}
+.filterInput{border:1px solid var(--line);border-radius:13px;padding:10px 11px;width:100%;background:white}
+.mobileHint{display:none}
+@media(max-width:900px){
+  .mobileHint{display:block;border:1px solid #C8EFA2;background:#F0FBE9;color:#3A6F16;border-radius:14px;padding:10px;margin:10px 0;font-size:12px}
+  .selectFilterGrid{grid-template-columns:1fr}
+  .modal{width:calc(100% - 20px)}
+}
 
 </style></head><body><div class="brand"><img src="assets/logo_evora.png"><div><h1>Proposta comercial</h1><p>${esc(project().name)} · ${fmtDateTime(now())}</p></div></div><div class="box"><b>Cliente:</b> ${esc(l.name)}<br><b>Lote:</b> ${esc(lotLabel(lot.id))} · ${lot.area} m²<br><b>Status:</b> ${esc(p.status)} · <b>Validade:</b> ${fmtDate(p.expiresAt)}</div><table><tr><th>Preço do lote</th><td>${fmtMoney(lot.price)}</td></tr><tr><th>Entrada</th><td>${p.entry}%</td></tr><tr><th>Mensais</th><td>${p.months}x ${fmtMoney(p.monthly)}</td></tr><tr><th>Anuais</th><td>${p.annuals}x ${fmtMoney(p.annual)}</td></tr><tr><th>Correção</th><td>${esc(p.index)} + ${p.interest}% a.m.</td></tr><tr><th>Total nominal</th><td>${fmtMoney(p.total)}</td></tr></table><div class="confirm"><h2>Confirmação</h2><p>Esta página representa o ambiente de confirmação. Na versão com backend, o botão gravará o aceite do cliente, data, IP e versão da proposta.</p><button onclick="alert('Confirmação demonstrativa registrada. Em produção, será salvo no sistema.')">Confirmar interesse</button></div><button onclick="window.print()">Salvar/Imprimir PDF</button></body></html>`;
 }
@@ -696,7 +747,7 @@ function reportHtml(type){
   const chart3=chartBars(d.brokers,'Corretor','Propostas','#173C52',260);
   const chart4=chartBars(d.origin,'Origem','Leads','#84C225',260);
   return `<!doctype html><html><head><meta charset="utf-8"><title>Relatório ${esc(type)}</title><style>body{font-family:Arial,sans-serif;color:#173C52;margin:34px}h1{font-size:26px;margin:0}h2{margin-top:28px}p{color:#5f7280}.brand{display:flex;align-items:center;gap:12px;margin-bottom:18px}.brand img{height:42px}.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:18px 0}.kpi{border:1px solid #d8e2e8;border-radius:12px;padding:12px}.kpi b{display:block;font-size:20px;margin-top:6px}.chart{border:1px solid #d8e2e8;border-radius:14px;padding:12px;margin:14px 0;page-break-inside:avoid}table{border-collapse:collapse;width:100%;margin-top:8px}th,td{border:1px solid #d8e2e8;padding:8px;text-align:left;font-size:12px}th{background:#f1f6f8}@media print{button{display:none}body{margin:20px}}
-/* v5.7 login/local RBAC layer */
+/* v5.8 login/local RBAC layer */
 .loginPage{min-height:100vh;display:grid;grid-template-columns:1fr 430px;background:#fff}
 .loginHero{background:linear-gradient(135deg,#0E2738,#245E82);color:white;padding:44px;display:flex;flex-direction:column;justify-content:space-between}
 .loginHero img{max-width:270px;display:block}
@@ -716,12 +767,29 @@ function reportHtml(type){
 .authDanger{border:1px solid #FECACA;background:#FFF7F7;color:#991B1B;border-radius:16px;padding:12px;margin:12px 0}
 @media(max-width:900px){.loginPage{grid-template-columns:1fr}.loginHero{min-height:360px}}
 
+
+/* v5.8 mobile and guided journey refinements */
+.actionButtons{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;padding-top:8px;border-top:1px solid var(--line)}
+.actionButtons .btn{font-size:12px;padding:7px 9px;border-radius:10px}
+.selectFilterGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.entryPlan{border:1px solid #C8EFA2;background:#F0FBE9;color:#3A6F16;border-radius:16px;padding:12px;margin-top:12px}
+.lotPickerGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin-top:12px}
+.lotPickCard{border:1px solid var(--line);background:white;border-radius:16px;padding:12px}
+.lotPickCard h3{margin-bottom:4px}
+.filterInput{border:1px solid var(--line);border-radius:13px;padding:10px 11px;width:100%;background:white}
+.mobileHint{display:none}
+@media(max-width:900px){
+  .mobileHint{display:block;border:1px solid #C8EFA2;background:#F0FBE9;color:#3A6F16;border-radius:14px;padding:10px;margin:10px 0;font-size:12px}
+  .selectFilterGrid{grid-template-columns:1fr}
+  .modal{width:calc(100% - 20px)}
+}
+
 </style></head><body><div class="brand"><img src="assets/logo_evora.png"><div><h1>Relatório ${esc(type)} · ${esc(project().name)}</h1><p>${fmtDateTime(now())}</p></div></div><div class="kpis"><div class="kpi">Leads<b>${d.a.leads.length}</b></div><div class="kpi">Clientes A<b>${d.a.a}</b></div><div class="kpi">Reservas<b>${d.a.res.length}</b></div><div class="kpi">Carteira<b>${fmtMoney(d.a.carteira)}</b></div></div><div class="chart"><h2>Funil de vendas</h2>${chart1}</div><div class="chart"><h2>Projeção de caixa 12 meses</h2>${chart2}</div><div class="chart"><h2>Performance de corretores</h2>${chart3}</div><div class="chart"><h2>Origem dos leads</h2>${chart4}</div>${tableHtml('Financeiro',d.financial)}${tableHtml('SDR',d.sdrs)}${tableHtml('Corretores',d.brokers)}${tableHtml('Campanhas',d.campaigns)}${tableHtml('Estoque',d.stock)}<h2>Alertas</h2><p>Leads parados: ${d.a.stalled.length}<br>Clientes sem comunicação 30+: ${d.a.silent.length}</p><button onclick="window.print()">Salvar/Imprimir PDF</button><script>setTimeout(()=>window.print(),500)<\/script></body></html>`;
 }
 window.printProposal=printProposal; window.openProposalConfirmation=openProposalConfirmation; window.sendProposalEmail=sendProposalEmail; window.sendProposalWhatsApp=sendProposalWhatsApp; window.markProposalSent=markProposalSent;
 /* ==== v4.2 patch end ==== */
 
-/* ==== v5.7 sector-specific reports patch start ==== */
+/* ==== v5.8 sector-specific reports patch start ==== */
 function reportDefinitions(){
   return [
     {id:'executivo', title:'Executivo diário', desc:'Resumo para diretoria: pressão de compra, gargalos, alertas e próximos comandos.', tags:['Diretoria','Diário','Decisão']},
@@ -854,7 +922,7 @@ function reportHtml(type){
   const d=reportData(type);
   const blocks=reportBlocks(type,d);
   return `<!doctype html><html><head><meta charset="utf-8"><title>${esc(reportTitle(type))}</title><style>body{font-family:Arial,sans-serif;color:#173C52;margin:34px}h1{font-size:26px;margin:0}h2{margin-top:28px}p{color:#5f7280}.brand{display:flex;align-items:center;gap:12px;margin-bottom:18px}.brand img{height:42px}.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:18px 0}.kpi{border:1px solid #d8e2e8;border-radius:12px;padding:12px}.kpi b{display:block;font-size:20px;margin-top:6px}.chart{border:1px solid #d8e2e8;border-radius:14px;padding:12px;margin:14px 0;page-break-inside:avoid}table{border-collapse:collapse;width:100%;margin-top:8px;page-break-inside:auto}th,td{border:1px solid #d8e2e8;padding:8px;text-align:left;font-size:12px}th{background:#f1f6f8}.summary{border:1px solid #C8EFA2;background:#F0FBE9;border-radius:14px;padding:14px;margin:16px 0}@media print{button{display:none}body{margin:20px}.chart{break-inside:avoid}}
-/* v5.7 login/local RBAC layer */
+/* v5.8 login/local RBAC layer */
 .loginPage{min-height:100vh;display:grid;grid-template-columns:1fr 430px;background:#fff}
 .loginHero{background:linear-gradient(135deg,#0E2738,#245E82);color:white;padding:44px;display:flex;flex-direction:column;justify-content:space-between}
 .loginHero img{max-width:270px;display:block}
@@ -873,6 +941,23 @@ function reportHtml(type){
 .authNotice{border:1px solid #C8EFA2;background:#F0FBE9;color:#3A6F16;border-radius:16px;padding:12px;margin:12px 0}
 .authDanger{border:1px solid #FECACA;background:#FFF7F7;color:#991B1B;border-radius:16px;padding:12px;margin:12px 0}
 @media(max-width:900px){.loginPage{grid-template-columns:1fr}.loginHero{min-height:360px}}
+
+
+/* v5.8 mobile and guided journey refinements */
+.actionButtons{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;padding-top:8px;border-top:1px solid var(--line)}
+.actionButtons .btn{font-size:12px;padding:7px 9px;border-radius:10px}
+.selectFilterGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.entryPlan{border:1px solid #C8EFA2;background:#F0FBE9;color:#3A6F16;border-radius:16px;padding:12px;margin-top:12px}
+.lotPickerGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin-top:12px}
+.lotPickCard{border:1px solid var(--line);background:white;border-radius:16px;padding:12px}
+.lotPickCard h3{margin-bottom:4px}
+.filterInput{border:1px solid var(--line);border-radius:13px;padding:10px 11px;width:100%;background:white}
+.mobileHint{display:none}
+@media(max-width:900px){
+  .mobileHint{display:block;border:1px solid #C8EFA2;background:#F0FBE9;color:#3A6F16;border-radius:14px;padding:10px;margin:10px 0;font-size:12px}
+  .selectFilterGrid{grid-template-columns:1fr}
+  .modal{width:calc(100% - 20px)}
+}
 
 </style></head><body><div class="brand"><img src="assets/logo_evora.png"><div><h1>${esc(reportTitle(type))} · ${esc(project().name)}</h1><p>${fmtDateTime(now())}</p></div></div><div class="kpis"><div class="kpi">Leads<b>${d.a.leads.length}</b></div><div class="kpi">Clientes A<b>${d.a.a}</b></div><div class="kpi">Reservas<b>${d.a.res.length}</b></div><div class="kpi">Carteira<b>${fmtMoney(d.a.carteira)}</b></div></div><div class="summary"><b>Leitura automática:</b> ${reportInsight(type,d)}</div>${blocks}<button onclick="window.print()">Salvar/Imprimir PDF</button><script>setTimeout(()=>window.print(),500)<\/script></body></html>`;
 }
@@ -893,8 +978,8 @@ function reportInsight(type,d){
 window.markProposalSent=markProposalSent;
 /* ==== v4.2 patch end ==== */
 
-/* ==== v5.7 local login + RBAC layer start ==== */
-const AUTH_SESSION_KEY = 'evora-launch-os-v57-session';
+/* ==== v5.8 local login + RBAC layer start ==== */
+const AUTH_SESSION_KEY = 'evora-launch-os-v58-session';
 function localHash(value){ let h=5381; const s=String(value||''); for(let i=0;i<s.length;i++) h=((h<<5)+h)+s.charCodeAt(i); return 'h'+Math.abs(h); }
 function defaultPermissions(){
   return [
@@ -958,7 +1043,7 @@ function authLog(action,entity,entityId,details=''){ ensureAuthState(); state.au
 function renderLogin(){
   ensureAuthState();
   const root=document.getElementById('app');
-  root.innerHTML=`<div class="loginPage"><section class="loginHero"><div><img src="assets/logo_evora_white.png" alt="Évora"><h1>Launch OS v5.7</h1><p>Versão restaurada da v4.3 com login local, usuários, permissões, corretores, senhas e logs — sem perder a jornada comercial.</p></div><small>Primeiro acesso: admin@evora.local · Evora@2026!</small></section><section class="loginCard"><h2>Entrar no sistema</h2><p>Controle local de usuários e permissões. Os dados permanecem no navegador.</p><form id="loginForm"><div class="field"><label>E-mail</label><input id="loginEmail" value="admin@evora.local"></div><div class="field"><label>Senha</label><input id="loginPassword" type="password" value="Evora@2026!"></div><button class="btn primary" style="width:100%;justify-content:center" type="submit">Entrar</button></form><div class="authNotice"><b>Modo sem banco:</b> usuários e leads ficam no localStorage deste navegador.</div></section></div>`;
+  root.innerHTML=`<div class="loginPage"><section class="loginHero"><div><img src="assets/logo_evora_white.png" alt="Évora"><h1>Launch OS v5.8</h1><p>Versão restaurada da v4.3 com login local, usuários, permissões, corretores, senhas e logs — sem perder a jornada comercial.</p></div><small>Primeiro acesso: admin@evora.local · Evora@2026!</small></section><section class="loginCard"><h2>Entrar no sistema</h2><p>Controle local de usuários e permissões. Os dados permanecem no navegador.</p><form id="loginForm"><div class="field"><label>E-mail</label><input id="loginEmail" value="admin@evora.local"></div><div class="field"><label>Senha</label><input id="loginPassword" type="password" value="Evora@2026!"></div><button class="btn primary" style="width:100%;justify-content:center" type="submit">Entrar</button></form><div class="authNotice"><b>Modo sem banco:</b> usuários e leads ficam no localStorage deste navegador.</div></section></div>`;
   document.getElementById('loginForm').addEventListener('submit',e=>{ e.preventDefault(); const email=document.getElementById('loginEmail').value.trim().toLowerCase(); const pw=document.getElementById('loginPassword').value; const u=state.auth.users.find(x=>String(x.email).toLowerCase()===email && x.active); if(!u || u.passwordHash!==localHash(pw)){ toast('E-mail ou senha inválidos.'); return; } sessionStorage.setItem(AUTH_SESSION_KEY,u.id); authLog('login','user',u.id,u.email); render(); toast('Login realizado.'); });
 }
 const _v56Render = render;
@@ -988,7 +1073,7 @@ renderSidebar = function(){
   <div class="authUserPanel"><b>${esc(u.name)}</b><br>${esc(u.email)}<br>${esc(r?.name||'Sem papel')}<div style="margin-top:8px"><button class="btn small" onclick="localLogout()">Sair</button></div></div>
   <div class="projectBox"><label>Empreendimento</label><select onchange="selectProject(this.value)">${state.projects.map(p=>`<option value="${p.id}" ${p.id===state.selectedProjectId?'selected':''}>${esc(p.name)} · ${esc(p.city)}/${esc(p.uf)}</option>`).join('')}</select></div>
   <div class="nav">${allowed.map(([id,label])=>`<button class="${view===id?'active':''}" onclick="setView('${id}')"><span class="ico">${icon(id)}</span>${label}</button>`).join('')}</div>
-  <div class="principle"><b>Regra v5.7</b>Login e permissões foram adicionados sem remover a jornada comercial da v4.3.</div>`;
+  <div class="principle"><b>Regra v5.8</b>Login e permissões foram adicionados sem remover a jornada comercial da v4.3.</div>`;
 };
 const _oldRenderTopbar = renderTopbar;
 renderTopbar = function(){
@@ -1146,7 +1231,165 @@ function deleteLeadLocal(id){
 }
 function localLogout(){ const u=authUser(); if(u) authLog('logout','user',u.id,u.email); sessionStorage.removeItem(AUTH_SESSION_KEY); render(); }
 window.openAuthUserForm=openAuthUserForm; window.saveAuthUser=saveAuthUser; window.deleteAuthUser=deleteAuthUser; window.openResetPasswordLocal=openResetPasswordLocal; window.resetPasswordLocal=resetPasswordLocal; window.saveAuthRole=saveAuthRole; window.changeMyPasswordLocal=changeMyPasswordLocal; window.adminResetPasswordLocal=adminResetPasswordLocal; window.exportAuthLogs=exportAuthLogs; window.deleteLeadLocal=deleteLeadLocal; window.localLogout=localLogout;
-/* ==== v5.7 local login + RBAC layer end ==== */
+/* ==== v5.8 local login + RBAC layer end ==== */
+
+/* ==== v5.8 guided journey + mobile scroll patch start ==== */
+function scrollToMainContent(){
+  setTimeout(()=>{
+    const main=document.querySelector('.main');
+    if(main){ main.scrollIntoView({behavior:'smooth', block:'start'}); }
+    else { window.scrollTo({top:0, behavior:'smooth'}); }
+  },80);
+}
+const _v57SetView = setView;
+setView = function(x){
+  if(typeof canView==='function' && !canView(x)){ toast('Acesso negado.'); return; }
+  view=x; closeModal(); render(); scrollToMainContent();
+};
+window.setView=setView;
+function leadOptionsHTML(selected='', query=''){
+  const q=String(query||'').toLowerCase();
+  const leads=projectLeads().filter(l=>!q||[l.name,l.city,l.phone,l.email,l.source,l.campaign,l.purpose,l.profile].join(' ').toLowerCase().includes(q));
+  return `<option value="">Sem lead específico</option>`+leads.map(l=>`<option value="${l.id}" ${l.id===selected?'selected':''}>${esc(l.name)} · ${esc(l.city)} · ${l.score}</option>`).join('');
+}
+function lotOptionsHTML(selected='', query=''){
+  const q=String(query||'').toLowerCase();
+  const lots=projectLots().filter(l=>!q||[l.quadra,l.numero,l.type,l.sector,l.status,lotLabel(l.id)].join(' ').toLowerCase().includes(q));
+  return lots.map(l=>`<option value="${l.id}" ${l.id===selected?'selected':''}>${esc(l.quadra)}-${esc(l.numero)} · ${l.area} m² · ${fmtMoney(l.price)} · ${lotStatusLabel(l.status)}</option>`).join('');
+}
+function filterSelectOptions(filterId, selectId, type){
+  const filter=document.getElementById(filterId), select=document.getElementById(selectId);
+  if(!filter||!select) return;
+  const current=select.value;
+  select.innerHTML = type==='lead' ? leadOptionsHTML(current, filter.value) : lotOptionsHTML(current, filter.value);
+  if([...select.options].some(o=>o.value===current)) select.value=current;
+}
+function entryInstallments(){
+  const raw=Number(v('simEntryInstallments')||1);
+  return Math.max(1,Math.min(6,raw||1));
+}
+function simulatorForm(lotId='',leadId=''){
+  const lot=lotBy(lotId)||projectLots()[0];
+  const result=lot?simulate(lot.price,10,180,15,0.7,28.35):null;
+  return `<div class="mobileHint">Depois de escolher itens no menu, a tela rola automaticamente para o conteúdo.</div><div class="formGrid" style="margin-top:14px">
+    <div class="field"><label>Filtrar lead</label><input id="simLeadFilter" class="filterInput" placeholder="Digite nome, cidade, origem..." oninput="filterSelectOptions('simLeadFilter','simLead','lead')"></div>
+    <div class="field"><label>Lead</label><select id="simLead">${leadOptionsHTML(leadId)}</select></div>
+    <div class="field"><label>Filtrar lote</label><input id="simLotFilter" class="filterInput" placeholder="Quadra, lote, setor..." oninput="filterSelectOptions('simLotFilter','simLot','lot')"></div>
+    <div class="field"><label>Lote</label><select id="simLot" onchange="updateSim()">${lotOptionsHTML(lot?.id||lotId)}</select></div>
+    <div class="field"><label>Entrada %</label><input id="simEntry" type="number" value="10" oninput="updateSim()"></div>
+    <div class="field"><label>Parcelar entrada</label><select id="simEntryInstallments" onchange="updateSim()"><option value="1">À vista</option><option value="2">2x</option><option value="3">3x</option><option value="4">4x</option><option value="5">5x</option><option value="6">6x</option></select></div>
+    <div class="field"><label>Mensais</label><input id="simMonths" type="number" value="180" oninput="updateSim()"></div>
+    <div class="field"><label>Anuais</label><input id="simAnnuals" type="number" value="15" oninput="updateSim()"></div>
+    <div class="field"><label>Juros a.m.</label><input id="simInterest" type="number" step="0.01" value="0.7" oninput="updateSim()"></div>
+    <div class="field"><label>Índice</label><select id="simIndex"><option>IPCA</option><option>IGP-M</option><option>INCC</option></select></div>
+    <div class="field"><label>Fator anual</label><input id="simRatio" type="number" step="0.01" value="28.35" oninput="updateSim()"></div>
+    <div class="span3" id="simResult">${simResultHtml(lot,result,1)}</div>
+    <div class="span3 actions" style="justify-content:flex-start"><button class="btn" onclick="openReserveLot(document.getElementById('simLot').value,document.getElementById('simLead').value)">Reservar lote</button><button class="btn primary" onclick="createProposalFromSimulator()">Gerar proposta</button></div>
+  </div>`;
+}
+function simResultHtml(lot,res,installments=1){
+  if(!lot||!res) return '<div class="empty">Selecione um lote.</div>';
+  const inst=Math.max(1,Math.min(6,Number(installments)||1));
+  const entryPart=res.entry/inst;
+  return `<div class="grid four"><div class="card" style="box-shadow:none"><h3>${fmtMoney(lot.price)}</h3><p>Preço</p></div><div class="card" style="box-shadow:none"><h3>${fmtMoney(res.entry)}</h3><p>Entrada total</p></div><div class="card" style="box-shadow:none"><h3>${fmtMoney(res.monthly)}</h3><p>Mensal</p></div><div class="card" style="box-shadow:none"><h3>${fmtMoney(res.annual)}</h3><p>Anual</p></div></div><div class="entryPlan"><b>Entrada parcelada:</b> ${inst===1?'à vista':`${inst}x de ${fmtMoney(entryPart)}`} · <b>Total nominal:</b> ${fmtMoney(res.total)} · <b>Ganho financeiro:</b> ${fmtMoney(res.gain)}</div>`;
+}
+function updateSim(){
+  const lot=lotBy(document.getElementById('simLot').value);
+  if(!lot) return;
+  const res=simulate(lot.price,+v('simEntry'),+v('simMonths'),+v('simAnnuals'),+v('simInterest'),+v('simRatio'));
+  document.getElementById('simResult').innerHTML=simResultHtml(lot,res,entryInstallments());
+}
+function createProposalFromSimulator(){
+  const lot=lotBy(v('simLot')), l=leadBy(v('simLead'));
+  if(!lot) return toast('Selecione lote.');
+  if(!l) return toast('Selecione lead para proposta.');
+  const inst=entryInstallments();
+  const res=simulate(lot.price,+v('simEntry'),+v('simMonths'),+v('simAnnuals'),+v('simInterest'),+v('simRatio'));
+  const p={id:uid('prop'),projectId:project().id,leadId:l.id,lotId:lot.id,status:'em-aprovacao',entry:+v('simEntry'),entryInstallments:inst,entryInstallmentValue:res.entry/inst,months:+v('simMonths'),annuals:+v('simAnnuals'),interest:+v('simInterest'),index:v('simIndex'),monthly:res.monthly,annual:res.annual,total:res.total,createdAt:now(),expiresAt:days(5),sentAt:null,approvedAt:null,acceptedAt:null,confirmedAt:null};
+  state.proposals.push(p);
+  if(typeof ensureProposalReserve==='function') ensureProposalReserve(p);
+  else { lot.status='pre-reserva'; lot.leadId=l.id; lot.sdrId=l.sdrId; lot.brokerId=l.brokerId; lot.reservedUntil=days(2); l.lotId=lot.id; state.reservations.push({id:uid('res'),projectId:project().id,leadId:l.id,lotId:lot.id,status:'pre-reserva',expiresAt:lot.reservedUntil,reason:'Reserva automática da proposta',createdAt:now(),ownerId:l.brokerId||''}); }
+  l.stage='reserva'; l.history.push({ts:now(),text:`Proposta criada, entrada em ${inst}x e lote reservado automaticamente.`});
+  save(); closeModal(); render(); openProposal(p.id); toast('Proposta criada e lote reservado automaticamente.');
+}
+function proposalPdfHtml(p){
+  const l=leadBy(p.leadId), lot=lotBy(p.lotId);
+  const inst=p.entryInstallments||1;
+  const entryTotal=(lot?.price||0)*((p.entry||10)/100);
+  const entryPart=p.entryInstallmentValue||entryTotal/inst;
+  return `<!doctype html><html><head><meta charset="utf-8"><title>Proposta ${esc(l.name)}</title><style>body{font-family:Arial,sans-serif;color:#173C52;margin:36px}h1{font-size:26px}.box{border:1px solid #d8e2e8;border-radius:14px;padding:14px;margin:12px 0}.brand{display:flex;gap:12px;align-items:center}.brand img{height:44px}table{border-collapse:collapse;width:100%;margin-top:14px}td,th{border:1px solid #d8e2e8;padding:9px;text-align:left}th{background:#f3f7f9}button{padding:10px 14px;border:0;border-radius:10px;background:#245E82;color:white;font-weight:bold}.confirm{background:#F0FBE9;border:1px solid #C8EFA2;border-radius:14px;padding:14px;margin-top:16px}@media print{button{display:none}}</style></head><body><div class="brand"><img src="assets/logo_evora.png"><div><h1>Proposta comercial</h1><p>${esc(project().name)} · ${fmtDateTime(now())}</p></div></div><div class="box"><b>Cliente:</b> ${esc(l.name)}<br><b>Lote:</b> ${esc(lotLabel(lot.id))} · ${lot.area} m²<br><b>Status:</b> ${esc(p.status)} · <b>Validade:</b> ${fmtDate(p.expiresAt)}</div><table><tr><th>Preço do lote</th><td>${fmtMoney(lot.price)}</td></tr><tr><th>Entrada</th><td>${p.entry}% · ${inst===1?'à vista':`${inst}x de ${fmtMoney(entryPart)}`} · total ${fmtMoney(entryTotal)}</td></tr><tr><th>Mensais</th><td>${p.months}x ${fmtMoney(p.monthly)}</td></tr><tr><th>Anuais</th><td>${p.annuals}x ${fmtMoney(p.annual)}</td></tr><tr><th>Correção</th><td>${esc(p.index)} + ${p.interest}% a.m.</td></tr><tr><th>Total nominal</th><td>${fmtMoney(p.total)}</td></tr></table><div class="confirm"><h2>Confirmação</h2><p>Esta página representa o ambiente de confirmação. Na versão com backend, o botão gravará o aceite do cliente, data, IP e versão da proposta.</p><button onclick="alert('Confirmação demonstrativa registrada. Em produção, será salvo no sistema.')">Confirmar interesse</button></div><button onclick="window.print()">Salvar/Imprimir PDF</button></body></html>`;
+}
+function actionControls(l,taskId){
+  const b=[];
+  const add=(label,fn,cls='')=>b.push(`<button class="btn small ${cls}" onclick="${fn}">${label}</button>`);
+  if(['simular','sim-exec','sim-ajuste','sim-valid','validar-aceite'].includes(taskId)) add('Abrir simulador',`openLeadSimulator('${l.id}')`,'primary');
+  if(['apresentar-lotes','lote-escolhido','prio-lote'].includes(taskId)){ add('Abrir mapa',`goLotsForLead('${l.id}')`); add('Escolher/travar lote',`openLotPickerForLead('${l.id}')`,'primary'); }
+  if(['emitir-proposta','prop-envio'].includes(taskId)) add('Simular e gerar proposta',`openLeadSimulator('${l.id}')`,'primary');
+  if(['validar-alcada','prop-alcada'].includes(taskId)) add('Abrir propostas',`setView('proposals')`);
+  if(['reservar-lote','prazo-reserva','reserva-lote'].includes(taskId)) add('Reservar lote',`openReserveLot('${l.lotId||''}','${l.id}')`,'primary');
+  if(['docs-obrigatorios','contrato-cadastro','contrato-conjuge'].includes(taskId)) add('Abrir documentos',`openDossier('${l.id}','docs')`,'primary');
+  if(['contrato-gerado','contrato-envio'].includes(taskId)) add('Abrir contratos',`setView('contracts')`);
+  if(['enviar-material','aq-envio'].includes(taskId)) add('Registrar envio',`registerAction('${l.id}','${taskId}')`);
+  if(['boas-vindas','primeira-comunicacao','entrada-boasvindas','cart-checkin','cart-obra'].includes(taskId)) add('Registrar comunicação',`registerClientCommunicationFromLead('${l.id}','${taskId}')`,'primary');
+  return b.length?`<div class="actionButtons">${b.join('')}</div>`:'';
+}
+function dossierAction(l,miss){
+  return `<div class="grid two" style="margin-top:14px"><div class="card"><h3>Checklist obrigatório da etapa</h3><div class="checkGrid">${(TASKS[l.stage]||[]).map(([id,label])=>{const done=actionDone(l,l.stage,id); const note=l.notesByStage?.[l.stage]?.[id]; return `<div class="checkCard ${done?'done':''}"><b>${esc(label)}</b><div class="tiny">${done?'Concluído em '+fmtDateTime(l.actions[l.stage][id].ts):'Pendente'}</div>${note?`<div class="actionNotePreview">${esc(note)}</div>`:''}<div class="actions" style="justify-content:flex-start;margin-top:8px"><button class="btn small ${done?'':'primary'}" onclick="registerAction('${l.id}','${id}')">${done?'Registrar novamente':'Registrar ação'}</button><button class="btn small" onclick="openActionNote('${l.id}','${id}')">Anotar</button></div>${actionControls(l,id)}</div>`;}).join('')}</div></div><div class="card"><h3>Avanço de etapa</h3>${miss.length?`<div class="task warn"><div><b>Pendências fundamentais</b><span class="tiny">${esc(miss.join(' · '))}</span></div></div>`:'<div class="task"><div><b>Etapa liberada</b><span class="tiny">Todos os fundamentos foram registrados.</span></div></div>'}<div class="actions" style="justify-content:flex-start;margin-top:14px"><button class="btn success" onclick="advanceLead('${l.id}')">Avançar etapa</button><button class="btn" onclick="openReserveLot('${l.lotId||''}','${l.id}')">Reservar lote</button><button class="btn" onclick="openLeadSimulator('${l.id}')">Simular</button></div></div></div>`;
+}
+function openLeadSimulator(leadId){
+  const l=leadBy(leadId); if(!l) return;
+  openSimulator(l.lotId||'',leadId);
+}
+function goLotsForLead(leadId){
+  const l=leadBy(leadId); if(!l) return;
+  state.activeLeadForLotSelection=leadId;
+  setView('lots');
+  toast(`Mapa aberto para selecionar lote de ${l.name}.`);
+}
+function openLotPickerForLead(leadId){
+  const l=leadBy(leadId); if(!l) return;
+  openModal('Escolher lote para '+l.name,'Filtre, vincule ou reserve um lote diretamente para este lead.',`<div class="field"><label>Filtrar lote</label><input id="lotPickerFilter" class="filterInput" placeholder="Quadra, lote, setor, tipo..." oninput="renderLotPickerResults('${leadId}')"></div><div id="lotPickerResults"></div>`,'wide');
+  setTimeout(()=>renderLotPickerResults(leadId),20);
+}
+function renderLotPickerResults(leadId){
+  const q=String(document.getElementById('lotPickerFilter')?.value||'').toLowerCase();
+  const container=document.getElementById('lotPickerResults'); if(!container) return;
+  const lots=projectLots().filter(l=>!q||[l.quadra,l.numero,l.type,l.sector,l.status,lotLabel(l.id)].join(' ').toLowerCase().includes(q)).slice(0,60);
+  container.innerHTML=`<div class="lotPickerGrid">${lots.map(l=>`<div class="lotPickCard"><h3>${esc(l.quadra)}-${esc(l.numero)}</h3><p class="tiny">${esc(l.type)} · ${esc(l.sector)} · ${lotStatusLabel(l.status)}</p><p><b>${l.area} m²</b> · ${fmtMoney(l.price)}</p><div class="actions" style="justify-content:flex-start"><button class="btn small" onclick="assignLotToLead('${leadId}','${l.id}',false)">Vincular</button><button class="btn small primary" onclick="assignLotToLead('${leadId}','${l.id}',true)">Vincular e reservar</button><button class="btn small" onclick="openLot('${l.id}')">Detalhes</button></div></div>`).join('')}</div>`;
+}
+function assignLotToLead(leadId,lotId,reserveIt=false){
+  const l=leadBy(leadId), lot=lotBy(lotId); if(!l||!lot) return;
+  if(lot.leadId && lot.leadId!==leadId && lot.status!=='livre'){
+    if(!confirm(`Este lote está vinculado a ${leadName(lot.leadId)}. Deseja substituir o vínculo?`)) return;
+  }
+  if(l.lotId && l.lotId!==lotId){ const old=lotBy(l.lotId); if(old && old.status!=='vendido'){ old.leadId=null; if(['prioridade','pre-reserva'].includes(old.status)) old.status='livre'; } }
+  l.lotId=lot.id; lot.leadId=l.id; lot.sdrId=l.sdrId; lot.brokerId=l.brokerId;
+  if(reserveIt){
+    lot.status='pre-reserva'; lot.reservedUntil=days(2); lot.reserveReason='Reserva criada pela jornada guiada.';
+    state.reservations=state.reservations.filter(r=>r.lotId!==lot.id);
+    state.reservations.push({id:uid('res'),projectId:project().id,leadId:l.id,lotId:lot.id,status:'pre-reserva',expiresAt:lot.reservedUntil,reason:'Reserva criada pela jornada guiada',createdAt:now(),ownerId:l.brokerId||''});
+    if(stageIndex(l.stage)<stageIndex('reserva')) l.stage='reserva';
+    l.history.push({ts:now(),text:`Lote ${lotLabel(lot.id)} vinculado e reservado pela jornada guiada.`});
+  } else {
+    lot.status=lot.status==='livre'?'prioridade':lot.status;
+    l.history.push({ts:now(),text:`Lote ${lotLabel(lot.id)} vinculado ao lead pela jornada guiada.`});
+  }
+  save(); closeModal(); render(); openDossier(leadId,'acao'); toast(reserveIt?'Lote vinculado e reservado.':'Lote vinculado ao lead.');
+}
+function registerClientCommunicationFromLead(leadId,taskId){
+  const l=leadBy(leadId); if(!l) return;
+  if(l.stage!=='cliente'){ toast('Esta ação é indicada após o lead virar cliente.'); return; }
+  const msg=taskId.includes('obra')?'Diário de obra enviado.':taskId.includes('boas')?'Boas-vindas enviadas.':'Comunicação de pós-venda registrada.';
+  registerClientCom(leadId,msg);
+}
+const _oldOpenReserveLot58 = openReserveLot;
+openReserveLot = function(lotId='',leadId=''){
+  const body=`<div class="reservePanel"><b>Reserva controlada</b><p>Exige lead, prazo, motivo e responsável. Reserva sem próxima ação vira estoque travado.</p></div><div class="formGrid" style="margin-top:14px"><div class="field"><label>Filtrar lote</label><input id="resLotFilter" class="filterInput" placeholder="Quadra, lote, setor..." oninput="filterSelectOptions('resLotFilter','resLot','lot')"></div><div class="field"><label>Lote</label><select id="resLot">${lotOptionsHTML(lotId)}</select></div><div class="field"><label>Filtrar lead</label><input id="resLeadFilter" class="filterInput" placeholder="Nome, cidade, origem..." oninput="filterSelectOptions('resLeadFilter','resLead','lead')"></div><div class="field"><label>Lead</label><select id="resLead">${leadOptionsHTML(leadId)}</select></div><div class="field"><label>Status</label><select id="resStatus"><option value="prioridade">Prioridade</option><option value="pre-reserva">Pré-reserva</option><option value="bloqueado">Bloqueio estratégico</option></select></div><div class="field"><label>Prazo dias</label><input id="resDays" type="number" value="2"></div><div class="field span2"><label>Motivo</label><input id="resReason" placeholder="Ex.: cliente A, proposta aceita"></div><div class="span3"><button class="btn primary" onclick="saveReservation()">Confirmar reserva</button></div></div>`;
+  openModal('Reservar lote','Prioridade, pré-reserva ou bloqueio estratégico.',body,'wide');
+};
+window.filterSelectOptions=filterSelectOptions; window.openLeadSimulator=openLeadSimulator; window.goLotsForLead=goLotsForLead; window.openLotPickerForLead=openLotPickerForLead; window.renderLotPickerResults=renderLotPickerResults; window.assignLotToLead=assignLotToLead; window.registerClientCommunicationFromLead=registerClientCommunicationFromLead;
+window.updateSim=updateSim; window.createProposalFromSimulator=createProposalFromSimulator;
+/* ==== v5.8 guided journey + mobile scroll patch end ==== */
 
 render();
 })();
