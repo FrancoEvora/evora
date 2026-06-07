@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Évora Launch OS v5.8.1.1 — Sistema de Performance Comercial</title>
+  <title>Évora Launch OS v5.8.2.1 — Sistema de Performance Comercial</title>
   <meta name="description" content="Sistema de performance comercial para loteamentos, com sala de guerra, jornada guiada, simulador, reservas, contratos, clientes, pós-venda e relatórios em PDF.">
   <style>
     :root{
@@ -172,7 +172,7 @@
 @media(max-width:600px){.proposalFlow{grid-template-columns:1fr}}
 
 
-/* v5.8.1 report intelligence */
+/* v5.8.2 report intelligence */
 .reportTypeGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
 .reportTypeCard{background:white;border:1px solid var(--line);border-radius:20px;padding:16px;box-shadow:0 8px 24px rgba(23,60,82,.06)}
 .reportTypeCard h3{margin-bottom:7px}
@@ -183,7 +183,7 @@
 .printHint{border:1px solid #C8EFA2;background:#F0FBE9;border-radius:16px;padding:12px;margin-top:12px;color:#3A6F16;font-size:13px;line-height:1.45}
 
 
-/* v5.8.1 login/local RBAC layer */
+/* v5.8.2 login/local RBAC layer */
 .loginPage{min-height:100vh;display:grid;grid-template-columns:1fr 430px;background:#fff}
 .loginHero{background:linear-gradient(135deg,#0E2738,#245E82);color:white;padding:44px;display:flex;flex-direction:column;justify-content:space-between}
 .loginHero img{max-width:270px;display:block}
@@ -204,7 +204,7 @@
 @media(max-width:900px){.loginPage{grid-template-columns:1fr}.loginHero{min-height:360px}}
 
 
-/* v5.8.1 mobile and guided journey refinements */
+/* v5.8.2 mobile and guided journey refinements */
 .actionButtons{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;padding-top:8px;border-top:1px solid var(--line)}
 .actionButtons .btn{font-size:12px;padding:7px 9px;border-radius:10px}
 .selectFilterGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -221,24 +221,41 @@
 }
 
 
-/* v5.8.1 checklist refinement */
+/* v5.8.2 checklist refinement */
 .checkCard .actionButtons{margin-top:12px}
 .checkCard .primaryActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 .checkCard .primaryActions .btn{min-width:132px;justify-content:center}
 .actionNotePreview{margin-top:8px;padding:8px 10px;border-radius:12px;background:#F8FBFC;border:1px dashed var(--line);font-size:12px;color:var(--muted)}
 
+
+/* v5.8.2 proposal and material send center */
+.materialSendGrid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.materialChecklist{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
+.materialItem{border:1px solid var(--line);background:white;border-radius:16px;padding:12px}
+.materialItem b{display:block;margin-bottom:4px}
+.materialHistory{margin-top:10px;border:1px solid var(--line);background:#F8FBFC;border-radius:14px;padding:10px}
+.proposalDetailGrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.proposalRichBox{border:1px solid var(--line);background:white;border-radius:18px;padding:14px}
+.proposalRichBox h3{margin-bottom:8px}
+.negotiationBox{border:1px solid #C8EFA2;background:#F0FBE9;border-radius:18px;padding:14px;margin-top:14px}
+.approvalBanner{border:1px solid #DDE8EE;background:linear-gradient(135deg,#F8FBFC,#FFFFFF);border-radius:18px;padding:14px;margin:14px 0}
+.approvalBanner strong{display:block;margin-bottom:4px}
+.materialBadge{display:inline-flex;border:1px solid #C8EFA2;background:#F0FBE9;color:#3A6F16;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:900;margin:3px 4px 3px 0}
+.contextActionPrimary{background:linear-gradient(135deg,var(--green),var(--blue))!important;color:white!important;border:0!important}
+@media(max-width:950px){.materialSendGrid,.proposalDetailGrid{grid-template-columns:1fr}}
+
 </style>
 </head>
 <body>
-  <div id="app"><div style="padding:30px;font-family:system-ui"><h2>Carregando Évora Launch OS v5.8.1.1...</h2></div></div>
+  <div id="app"><div style="padding:30px;font-family:system-ui"><h2>Carregando Évora Launch OS v5.8.2.1...</h2></div></div>
   <div id="modal-root"></div>
   <div id="toast" class="toast"></div>
 <script>
 (() => {
 'use strict';
-const APP_VERSION = '5.8.1';
+const APP_VERSION = '5.8.2';
 const RELEASE_DATE = '2026-06-05';
-const STORAGE_KEY = 'evora-launch-os-v5810';
+const STORAGE_KEY = 'evora-launch-os-v5820';
 
 const money = new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'});
 const dateFmt = new Intl.DateTimeFormat('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric'});
@@ -648,7 +665,7 @@ function reportHtml(type){
   const {a,origin,broker,stock}=reportData(type);
   const table=(title,rows)=>`<h2>${title}</h2><table><thead><tr>${Object.keys(rows[0]||{}).map(k=>`<th>${k}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr>${Object.values(r).map(v=>`<td>${esc(v)}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
   return `<!doctype html><html><head><meta charset="utf-8"><title>Relatório ${esc(type)}</title><style>body{font-family:Arial,sans-serif;color:#173C52;margin:36px}h1{font-size:26px}h2{margin-top:28px}table{border-collapse:collapse;width:100%;margin-top:8px}th,td{border:1px solid #d8e2e8;padding:8px;text-align:left;font-size:12px}th{background:#f1f6f8}.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.kpi{border:1px solid #d8e2e8;border-radius:12px;padding:12px}.kpi b{display:block;font-size:20px;margin-top:6px}.brand{display:flex;align-items:center;gap:12px}.brand img{height:42px}@media print{button{display:none}}
-/* v5.8.1 login/local RBAC layer */
+/* v5.8.2 login/local RBAC layer */
 .loginPage{min-height:100vh;display:grid;grid-template-columns:1fr 430px;background:#fff}
 .loginHero{background:linear-gradient(135deg,#0E2738,#245E82);color:white;padding:44px;display:flex;flex-direction:column;justify-content:space-between}
 .loginHero img{max-width:270px;display:block}
@@ -669,7 +686,7 @@ function reportHtml(type){
 @media(max-width:900px){.loginPage{grid-template-columns:1fr}.loginHero{min-height:360px}}
 
 
-/* v5.8.1 mobile and guided journey refinements */
+/* v5.8.2 mobile and guided journey refinements */
 .actionButtons{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;padding-top:8px;border-top:1px solid var(--line)}
 .actionButtons .btn{font-size:12px;padding:7px 9px;border-radius:10px}
 .selectFilterGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -686,11 +703,28 @@ function reportHtml(type){
 }
 
 
-/* v5.8.1 checklist refinement */
+/* v5.8.2 checklist refinement */
 .checkCard .actionButtons{margin-top:12px}
 .checkCard .primaryActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 .checkCard .primaryActions .btn{min-width:132px;justify-content:center}
 .actionNotePreview{margin-top:8px;padding:8px 10px;border-radius:12px;background:#F8FBFC;border:1px dashed var(--line);font-size:12px;color:var(--muted)}
+
+
+/* v5.8.2 proposal and material send center */
+.materialSendGrid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.materialChecklist{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
+.materialItem{border:1px solid var(--line);background:white;border-radius:16px;padding:12px}
+.materialItem b{display:block;margin-bottom:4px}
+.materialHistory{margin-top:10px;border:1px solid var(--line);background:#F8FBFC;border-radius:14px;padding:10px}
+.proposalDetailGrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.proposalRichBox{border:1px solid var(--line);background:white;border-radius:18px;padding:14px}
+.proposalRichBox h3{margin-bottom:8px}
+.negotiationBox{border:1px solid #C8EFA2;background:#F0FBE9;border-radius:18px;padding:14px;margin-top:14px}
+.approvalBanner{border:1px solid #DDE8EE;background:linear-gradient(135deg,#F8FBFC,#FFFFFF);border-radius:18px;padding:14px;margin:14px 0}
+.approvalBanner strong{display:block;margin-bottom:4px}
+.materialBadge{display:inline-flex;border:1px solid #C8EFA2;background:#F0FBE9;color:#3A6F16;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:900;margin:3px 4px 3px 0}
+.contextActionPrimary{background:linear-gradient(135deg,var(--green),var(--blue))!important;color:white!important;border:0!important}
+@media(max-width:950px){.materialSendGrid,.proposalDetailGrid{grid-template-columns:1fr}}
 
 </style></head><body><div class="brand"><img src="assets/logo_evora.png"><div><h1>Relatório ${esc(type)} · ${esc(project().name)}</h1><p>${fmtDateTime(now())}</p></div></div><div class="kpis"><div class="kpi">Leads<b>${a.leads.length}</b></div><div class="kpi">Clientes A<b>${a.a}</b></div><div class="kpi">Reservas<b>${a.res.length}</b></div><div class="kpi">Carteira<b>${fmtMoney(a.carteira)}</b></div></div>${table('Origem',origin)}${table('Corretores',broker)}${table('Estoque',stock)}<h2>Alertas</h2><p>Leads parados: ${a.stalled.length}<br>Clientes sem comunicação 30+: ${a.silent.length}</p><button onclick="window.print()">Salvar/Imprimir PDF</button><script>setTimeout(()=>window.print(),400)<\/script></body></html>`;
 }
@@ -774,7 +808,7 @@ function createProposalFromSimulator(){
 function proposalPdfHtml(p){
   const l=leadBy(p.leadId), lot=lotBy(p.lotId);
   return `<!doctype html><html><head><meta charset="utf-8"><title>Proposta ${esc(l.name)}</title><style>body{font-family:Arial,sans-serif;color:#173C52;margin:36px}h1{font-size:26px}.box{border:1px solid #d8e2e8;border-radius:14px;padding:14px;margin:12px 0}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.brand{display:flex;gap:12px;align-items:center}.brand img{height:44px}table{border-collapse:collapse;width:100%}td,th{border:1px solid #d8e2e8;padding:9px;text-align:left}button{padding:10px 14px;border:0;border-radius:10px;background:#245E82;color:white;font-weight:bold}@media print{button{display:none}}
-/* v5.8.1 login/local RBAC layer */
+/* v5.8.2 login/local RBAC layer */
 .loginPage{min-height:100vh;display:grid;grid-template-columns:1fr 430px;background:#fff}
 .loginHero{background:linear-gradient(135deg,#0E2738,#245E82);color:white;padding:44px;display:flex;flex-direction:column;justify-content:space-between}
 .loginHero img{max-width:270px;display:block}
@@ -795,7 +829,7 @@ function proposalPdfHtml(p){
 @media(max-width:900px){.loginPage{grid-template-columns:1fr}.loginHero{min-height:360px}}
 
 
-/* v5.8.1 mobile and guided journey refinements */
+/* v5.8.2 mobile and guided journey refinements */
 .actionButtons{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;padding-top:8px;border-top:1px solid var(--line)}
 .actionButtons .btn{font-size:12px;padding:7px 9px;border-radius:10px}
 .selectFilterGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -812,11 +846,28 @@ function proposalPdfHtml(p){
 }
 
 
-/* v5.8.1 checklist refinement */
+/* v5.8.2 checklist refinement */
 .checkCard .actionButtons{margin-top:12px}
 .checkCard .primaryActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 .checkCard .primaryActions .btn{min-width:132px;justify-content:center}
 .actionNotePreview{margin-top:8px;padding:8px 10px;border-radius:12px;background:#F8FBFC;border:1px dashed var(--line);font-size:12px;color:var(--muted)}
+
+
+/* v5.8.2 proposal and material send center */
+.materialSendGrid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.materialChecklist{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
+.materialItem{border:1px solid var(--line);background:white;border-radius:16px;padding:12px}
+.materialItem b{display:block;margin-bottom:4px}
+.materialHistory{margin-top:10px;border:1px solid var(--line);background:#F8FBFC;border-radius:14px;padding:10px}
+.proposalDetailGrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.proposalRichBox{border:1px solid var(--line);background:white;border-radius:18px;padding:14px}
+.proposalRichBox h3{margin-bottom:8px}
+.negotiationBox{border:1px solid #C8EFA2;background:#F0FBE9;border-radius:18px;padding:14px;margin-top:14px}
+.approvalBanner{border:1px solid #DDE8EE;background:linear-gradient(135deg,#F8FBFC,#FFFFFF);border-radius:18px;padding:14px;margin:14px 0}
+.approvalBanner strong{display:block;margin-bottom:4px}
+.materialBadge{display:inline-flex;border:1px solid #C8EFA2;background:#F0FBE9;color:#3A6F16;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:900;margin:3px 4px 3px 0}
+.contextActionPrimary{background:linear-gradient(135deg,var(--green),var(--blue))!important;color:white!important;border:0!important}
+@media(max-width:950px){.materialSendGrid,.proposalDetailGrid{grid-template-columns:1fr}}
 
 </style></head><body><div class="brand"><img src="assets/logo_evora.png"><div><h1>Proposta comercial</h1><p>${esc(project().name)} · ${fmtDateTime(now())}</p></div></div><div class="box"><b>Cliente:</b> ${esc(l.name)}<br><b>Lote:</b> ${esc(lotLabel(lot.id))} · ${lot.area} m²<br><b>Status:</b> ${esc(p.status)} · <b>Validade:</b> ${fmtDate(p.expiresAt)}</div><table><tr><th>Preço</th><td>${fmtMoney(lot.price)}</td></tr><tr><th>Entrada</th><td>${p.entry}%</td></tr><tr><th>Mensais</th><td>${p.months}x ${fmtMoney(p.monthly)}</td></tr><tr><th>Anuais</th><td>${p.annuals}x ${fmtMoney(p.annual)}</td></tr><tr><th>Correção</th><td>${esc(p.index)} + ${p.interest}% a.m.</td></tr><tr><th>Total nominal</th><td>${fmtMoney(p.total)}</td></tr></table><div class="box"><h2>Confirmação</h2><p>Para seguir, o cliente deve confirmar interesse e enviar documentação para contrato. Esta página serve como modelo da futura página de confirmação online.</p><button onclick="alert('Confirmação demonstrativa registrada. Em produção, este botão gravará o aceite no sistema.')">Confirmar interesse</button></div><button onclick="window.print()">Salvar/Imprimir PDF</button></body></html>`;
 }
@@ -876,7 +927,7 @@ function proposalFlowHtml(p){
 function proposalPdfHtml(p){
   const l=leadBy(p.leadId), lot=lotBy(p.lotId);
   return `<!doctype html><html><head><meta charset="utf-8"><title>Proposta ${esc(l.name)}</title><style>body{font-family:Arial,sans-serif;color:#173C52;margin:36px}h1{font-size:26px}.box{border:1px solid #d8e2e8;border-radius:14px;padding:14px;margin:12px 0}.brand{display:flex;gap:12px;align-items:center}.brand img{height:44px}table{border-collapse:collapse;width:100%;margin-top:14px}td,th{border:1px solid #d8e2e8;padding:9px;text-align:left}th{background:#f3f7f9}button{padding:10px 14px;border:0;border-radius:10px;background:#245E82;color:white;font-weight:bold}.confirm{background:#F0FBE9;border:1px solid #C8EFA2;border-radius:14px;padding:14px;margin-top:16px}@media print{button{display:none}}
-/* v5.8.1 login/local RBAC layer */
+/* v5.8.2 login/local RBAC layer */
 .loginPage{min-height:100vh;display:grid;grid-template-columns:1fr 430px;background:#fff}
 .loginHero{background:linear-gradient(135deg,#0E2738,#245E82);color:white;padding:44px;display:flex;flex-direction:column;justify-content:space-between}
 .loginHero img{max-width:270px;display:block}
@@ -897,7 +948,7 @@ function proposalPdfHtml(p){
 @media(max-width:900px){.loginPage{grid-template-columns:1fr}.loginHero{min-height:360px}}
 
 
-/* v5.8.1 mobile and guided journey refinements */
+/* v5.8.2 mobile and guided journey refinements */
 .actionButtons{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;padding-top:8px;border-top:1px solid var(--line)}
 .actionButtons .btn{font-size:12px;padding:7px 9px;border-radius:10px}
 .selectFilterGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -914,11 +965,28 @@ function proposalPdfHtml(p){
 }
 
 
-/* v5.8.1 checklist refinement */
+/* v5.8.2 checklist refinement */
 .checkCard .actionButtons{margin-top:12px}
 .checkCard .primaryActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 .checkCard .primaryActions .btn{min-width:132px;justify-content:center}
 .actionNotePreview{margin-top:8px;padding:8px 10px;border-radius:12px;background:#F8FBFC;border:1px dashed var(--line);font-size:12px;color:var(--muted)}
+
+
+/* v5.8.2 proposal and material send center */
+.materialSendGrid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.materialChecklist{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
+.materialItem{border:1px solid var(--line);background:white;border-radius:16px;padding:12px}
+.materialItem b{display:block;margin-bottom:4px}
+.materialHistory{margin-top:10px;border:1px solid var(--line);background:#F8FBFC;border-radius:14px;padding:10px}
+.proposalDetailGrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.proposalRichBox{border:1px solid var(--line);background:white;border-radius:18px;padding:14px}
+.proposalRichBox h3{margin-bottom:8px}
+.negotiationBox{border:1px solid #C8EFA2;background:#F0FBE9;border-radius:18px;padding:14px;margin-top:14px}
+.approvalBanner{border:1px solid #DDE8EE;background:linear-gradient(135deg,#F8FBFC,#FFFFFF);border-radius:18px;padding:14px;margin:14px 0}
+.approvalBanner strong{display:block;margin-bottom:4px}
+.materialBadge{display:inline-flex;border:1px solid #C8EFA2;background:#F0FBE9;color:#3A6F16;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:900;margin:3px 4px 3px 0}
+.contextActionPrimary{background:linear-gradient(135deg,var(--green),var(--blue))!important;color:white!important;border:0!important}
+@media(max-width:950px){.materialSendGrid,.proposalDetailGrid{grid-template-columns:1fr}}
 
 </style></head><body><div class="brand"><img src="assets/logo_evora.png"><div><h1>Proposta comercial</h1><p>${esc(project().name)} · ${fmtDateTime(now())}</p></div></div><div class="box"><b>Cliente:</b> ${esc(l.name)}<br><b>Lote:</b> ${esc(lotLabel(lot.id))} · ${lot.area} m²<br><b>Status:</b> ${esc(p.status)} · <b>Validade:</b> ${fmtDate(p.expiresAt)}</div><table><tr><th>Preço do lote</th><td>${fmtMoney(lot.price)}</td></tr><tr><th>Entrada</th><td>${p.entry}%</td></tr><tr><th>Mensais</th><td>${p.months}x ${fmtMoney(p.monthly)}</td></tr><tr><th>Anuais</th><td>${p.annuals}x ${fmtMoney(p.annual)}</td></tr><tr><th>Correção</th><td>${esc(p.index)} + ${p.interest}% a.m.</td></tr><tr><th>Total nominal</th><td>${fmtMoney(p.total)}</td></tr></table><div class="confirm"><h2>Confirmação</h2><p>Esta página representa o ambiente de confirmação. Na versão com backend, o botão gravará o aceite do cliente, data, IP e versão da proposta.</p><button onclick="alert('Confirmação demonstrativa registrada. Em produção, será salvo no sistema.')">Confirmar interesse</button></div><button onclick="window.print()">Salvar/Imprimir PDF</button></body></html>`;
 }
@@ -1004,7 +1072,7 @@ function reportHtml(type){
   const chart3=chartBars(d.brokers,'Corretor','Propostas','#173C52',260);
   const chart4=chartBars(d.origin,'Origem','Leads','#84C225',260);
   return `<!doctype html><html><head><meta charset="utf-8"><title>Relatório ${esc(type)}</title><style>body{font-family:Arial,sans-serif;color:#173C52;margin:34px}h1{font-size:26px;margin:0}h2{margin-top:28px}p{color:#5f7280}.brand{display:flex;align-items:center;gap:12px;margin-bottom:18px}.brand img{height:42px}.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:18px 0}.kpi{border:1px solid #d8e2e8;border-radius:12px;padding:12px}.kpi b{display:block;font-size:20px;margin-top:6px}.chart{border:1px solid #d8e2e8;border-radius:14px;padding:12px;margin:14px 0;page-break-inside:avoid}table{border-collapse:collapse;width:100%;margin-top:8px}th,td{border:1px solid #d8e2e8;padding:8px;text-align:left;font-size:12px}th{background:#f1f6f8}@media print{button{display:none}body{margin:20px}}
-/* v5.8.1 login/local RBAC layer */
+/* v5.8.2 login/local RBAC layer */
 .loginPage{min-height:100vh;display:grid;grid-template-columns:1fr 430px;background:#fff}
 .loginHero{background:linear-gradient(135deg,#0E2738,#245E82);color:white;padding:44px;display:flex;flex-direction:column;justify-content:space-between}
 .loginHero img{max-width:270px;display:block}
@@ -1025,7 +1093,7 @@ function reportHtml(type){
 @media(max-width:900px){.loginPage{grid-template-columns:1fr}.loginHero{min-height:360px}}
 
 
-/* v5.8.1 mobile and guided journey refinements */
+/* v5.8.2 mobile and guided journey refinements */
 .actionButtons{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;padding-top:8px;border-top:1px solid var(--line)}
 .actionButtons .btn{font-size:12px;padding:7px 9px;border-radius:10px}
 .selectFilterGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -1042,18 +1110,35 @@ function reportHtml(type){
 }
 
 
-/* v5.8.1 checklist refinement */
+/* v5.8.2 checklist refinement */
 .checkCard .actionButtons{margin-top:12px}
 .checkCard .primaryActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 .checkCard .primaryActions .btn{min-width:132px;justify-content:center}
 .actionNotePreview{margin-top:8px;padding:8px 10px;border-radius:12px;background:#F8FBFC;border:1px dashed var(--line);font-size:12px;color:var(--muted)}
+
+
+/* v5.8.2 proposal and material send center */
+.materialSendGrid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.materialChecklist{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
+.materialItem{border:1px solid var(--line);background:white;border-radius:16px;padding:12px}
+.materialItem b{display:block;margin-bottom:4px}
+.materialHistory{margin-top:10px;border:1px solid var(--line);background:#F8FBFC;border-radius:14px;padding:10px}
+.proposalDetailGrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.proposalRichBox{border:1px solid var(--line);background:white;border-radius:18px;padding:14px}
+.proposalRichBox h3{margin-bottom:8px}
+.negotiationBox{border:1px solid #C8EFA2;background:#F0FBE9;border-radius:18px;padding:14px;margin-top:14px}
+.approvalBanner{border:1px solid #DDE8EE;background:linear-gradient(135deg,#F8FBFC,#FFFFFF);border-radius:18px;padding:14px;margin:14px 0}
+.approvalBanner strong{display:block;margin-bottom:4px}
+.materialBadge{display:inline-flex;border:1px solid #C8EFA2;background:#F0FBE9;color:#3A6F16;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:900;margin:3px 4px 3px 0}
+.contextActionPrimary{background:linear-gradient(135deg,var(--green),var(--blue))!important;color:white!important;border:0!important}
+@media(max-width:950px){.materialSendGrid,.proposalDetailGrid{grid-template-columns:1fr}}
 
 </style></head><body><div class="brand"><img src="assets/logo_evora.png"><div><h1>Relatório ${esc(type)} · ${esc(project().name)}</h1><p>${fmtDateTime(now())}</p></div></div><div class="kpis"><div class="kpi">Leads<b>${d.a.leads.length}</b></div><div class="kpi">Clientes A<b>${d.a.a}</b></div><div class="kpi">Reservas<b>${d.a.res.length}</b></div><div class="kpi">Carteira<b>${fmtMoney(d.a.carteira)}</b></div></div><div class="chart"><h2>Funil de vendas</h2>${chart1}</div><div class="chart"><h2>Projeção de caixa 12 meses</h2>${chart2}</div><div class="chart"><h2>Performance de corretores</h2>${chart3}</div><div class="chart"><h2>Origem dos leads</h2>${chart4}</div>${tableHtml('Financeiro',d.financial)}${tableHtml('SDR',d.sdrs)}${tableHtml('Corretores',d.brokers)}${tableHtml('Campanhas',d.campaigns)}${tableHtml('Estoque',d.stock)}<h2>Alertas</h2><p>Leads parados: ${d.a.stalled.length}<br>Clientes sem comunicação 30+: ${d.a.silent.length}</p><button onclick="window.print()">Salvar/Imprimir PDF</button><script>setTimeout(()=>window.print(),500)<\/script></body></html>`;
 }
 window.printProposal=printProposal; window.openProposalConfirmation=openProposalConfirmation; window.sendProposalEmail=sendProposalEmail; window.sendProposalWhatsApp=sendProposalWhatsApp; window.markProposalSent=markProposalSent;
 /* ==== v4.2 patch end ==== */
 
-/* ==== v5.8.1 sector-specific reports patch start ==== */
+/* ==== v5.8.2 sector-specific reports patch start ==== */
 function reportDefinitions(){
   return [
     {id:'executivo', title:'Executivo diário', desc:'Resumo para diretoria: pressão de compra, gargalos, alertas e próximos comandos.', tags:['Diretoria','Diário','Decisão']},
@@ -1186,7 +1271,7 @@ function reportHtml(type){
   const d=reportData(type);
   const blocks=reportBlocks(type,d);
   return `<!doctype html><html><head><meta charset="utf-8"><title>${esc(reportTitle(type))}</title><style>body{font-family:Arial,sans-serif;color:#173C52;margin:34px}h1{font-size:26px;margin:0}h2{margin-top:28px}p{color:#5f7280}.brand{display:flex;align-items:center;gap:12px;margin-bottom:18px}.brand img{height:42px}.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:18px 0}.kpi{border:1px solid #d8e2e8;border-radius:12px;padding:12px}.kpi b{display:block;font-size:20px;margin-top:6px}.chart{border:1px solid #d8e2e8;border-radius:14px;padding:12px;margin:14px 0;page-break-inside:avoid}table{border-collapse:collapse;width:100%;margin-top:8px;page-break-inside:auto}th,td{border:1px solid #d8e2e8;padding:8px;text-align:left;font-size:12px}th{background:#f1f6f8}.summary{border:1px solid #C8EFA2;background:#F0FBE9;border-radius:14px;padding:14px;margin:16px 0}@media print{button{display:none}body{margin:20px}.chart{break-inside:avoid}}
-/* v5.8.1 login/local RBAC layer */
+/* v5.8.2 login/local RBAC layer */
 .loginPage{min-height:100vh;display:grid;grid-template-columns:1fr 430px;background:#fff}
 .loginHero{background:linear-gradient(135deg,#0E2738,#245E82);color:white;padding:44px;display:flex;flex-direction:column;justify-content:space-between}
 .loginHero img{max-width:270px;display:block}
@@ -1207,7 +1292,7 @@ function reportHtml(type){
 @media(max-width:900px){.loginPage{grid-template-columns:1fr}.loginHero{min-height:360px}}
 
 
-/* v5.8.1 mobile and guided journey refinements */
+/* v5.8.2 mobile and guided journey refinements */
 .actionButtons{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;padding-top:8px;border-top:1px solid var(--line)}
 .actionButtons .btn{font-size:12px;padding:7px 9px;border-radius:10px}
 .selectFilterGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -1224,11 +1309,28 @@ function reportHtml(type){
 }
 
 
-/* v5.8.1 checklist refinement */
+/* v5.8.2 checklist refinement */
 .checkCard .actionButtons{margin-top:12px}
 .checkCard .primaryActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 .checkCard .primaryActions .btn{min-width:132px;justify-content:center}
 .actionNotePreview{margin-top:8px;padding:8px 10px;border-radius:12px;background:#F8FBFC;border:1px dashed var(--line);font-size:12px;color:var(--muted)}
+
+
+/* v5.8.2 proposal and material send center */
+.materialSendGrid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.materialChecklist{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
+.materialItem{border:1px solid var(--line);background:white;border-radius:16px;padding:12px}
+.materialItem b{display:block;margin-bottom:4px}
+.materialHistory{margin-top:10px;border:1px solid var(--line);background:#F8FBFC;border-radius:14px;padding:10px}
+.proposalDetailGrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.proposalRichBox{border:1px solid var(--line);background:white;border-radius:18px;padding:14px}
+.proposalRichBox h3{margin-bottom:8px}
+.negotiationBox{border:1px solid #C8EFA2;background:#F0FBE9;border-radius:18px;padding:14px;margin-top:14px}
+.approvalBanner{border:1px solid #DDE8EE;background:linear-gradient(135deg,#F8FBFC,#FFFFFF);border-radius:18px;padding:14px;margin:14px 0}
+.approvalBanner strong{display:block;margin-bottom:4px}
+.materialBadge{display:inline-flex;border:1px solid #C8EFA2;background:#F0FBE9;color:#3A6F16;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:900;margin:3px 4px 3px 0}
+.contextActionPrimary{background:linear-gradient(135deg,var(--green),var(--blue))!important;color:white!important;border:0!important}
+@media(max-width:950px){.materialSendGrid,.proposalDetailGrid{grid-template-columns:1fr}}
 
 </style></head><body><div class="brand"><img src="assets/logo_evora.png"><div><h1>${esc(reportTitle(type))} · ${esc(project().name)}</h1><p>${fmtDateTime(now())}</p></div></div><div class="kpis"><div class="kpi">Leads<b>${d.a.leads.length}</b></div><div class="kpi">Clientes A<b>${d.a.a}</b></div><div class="kpi">Reservas<b>${d.a.res.length}</b></div><div class="kpi">Carteira<b>${fmtMoney(d.a.carteira)}</b></div></div><div class="summary"><b>Leitura automática:</b> ${reportInsight(type,d)}</div>${blocks}<button onclick="window.print()">Salvar/Imprimir PDF</button><script>setTimeout(()=>window.print(),500)<\/script></body></html>`;
 }
@@ -1249,8 +1351,8 @@ function reportInsight(type,d){
 window.markProposalSent=markProposalSent;
 /* ==== v4.2 patch end ==== */
 
-/* ==== v5.8.1 local login + RBAC layer start ==== */
-const AUTH_SESSION_KEY = 'evora-launch-os-v581-session';
+/* ==== v5.8.2 local login + RBAC layer start ==== */
+const AUTH_SESSION_KEY = 'evora-launch-os-v582-session';
 function localHash(value){ let h=5381; const s=String(value||''); for(let i=0;i<s.length;i++) h=((h<<5)+h)+s.charCodeAt(i); return 'h'+Math.abs(h); }
 function defaultPermissions(){
   return [
@@ -1314,7 +1416,7 @@ function authLog(action,entity,entityId,details=''){ ensureAuthState(); state.au
 function renderLogin(){
   ensureAuthState();
   const root=document.getElementById('app');
-  root.innerHTML=`<div class="loginPage"><section class="loginHero"><div><img src="assets/logo_evora_white.png" alt="Évora"><h1>Launch OS v5.8.1</h1><p>Évora Launch OS — inteligência comercial para vender com velocidade, método e controle.</p></div><small>Primeiro acesso: admin@evora.local · Evora@2026!</small></section><section class="loginCard"><h2>Entrar no sistema</h2><p>Controle local de usuários e permissões. Os dados permanecem no navegador.</p><form id="loginForm"><div class="field"><label>E-mail</label><input id="loginEmail" value="admin@evora.local"></div><div class="field"><label>Senha</label><input id="loginPassword" type="password" value="Evora@2026!"></div><button class="btn primary" style="width:100%;justify-content:center" type="submit">Entrar</button></form><div class="authNotice"><b>Modo sem banco:</b> usuários e leads ficam no localStorage deste navegador.</div></section></div>`;
+  root.innerHTML=`<div class="loginPage"><section class="loginHero"><div><img src="assets/logo_evora_white.png" alt="Évora"><h1>Launch OS v5.8.2</h1><p>Évora Launch OS — inteligência comercial para vender com velocidade, método e controle.</p></div><small>Primeiro acesso: admin@evora.local · Evora@2026!</small></section><section class="loginCard"><h2>Entrar no sistema</h2><p>Controle local de usuários e permissões. Os dados permanecem no navegador.</p><form id="loginForm"><div class="field"><label>E-mail</label><input id="loginEmail" value="admin@evora.local"></div><div class="field"><label>Senha</label><input id="loginPassword" type="password" value="Evora@2026!"></div><button class="btn primary" style="width:100%;justify-content:center" type="submit">Entrar</button></form><div class="authNotice"><b>Modo sem banco:</b> usuários e leads ficam no localStorage deste navegador.</div></section></div>`;
   document.getElementById('loginForm').addEventListener('submit',e=>{ e.preventDefault(); const email=document.getElementById('loginEmail').value.trim().toLowerCase(); const pw=document.getElementById('loginPassword').value; const u=state.auth.users.find(x=>String(x.email).toLowerCase()===email && x.active); if(!u || u.passwordHash!==localHash(pw)){ toast('E-mail ou senha inválidos.'); return; } sessionStorage.setItem(AUTH_SESSION_KEY,u.id); authLog('login','user',u.id,u.email); render(); toast('Login realizado.'); });
 }
 const _v56Render = render;
@@ -1344,7 +1446,7 @@ renderSidebar = function(){
   <div class="authUserPanel"><b>${esc(u.name)}</b><br>${esc(u.email)}<br>${esc(r?.name||'Sem papel')}<div style="margin-top:8px"><button class="btn small" onclick="localLogout()">Sair</button></div></div>
   <div class="projectBox"><label>Empreendimento</label><select onchange="selectProject(this.value)">${state.projects.map(p=>`<option value="${p.id}" ${p.id===state.selectedProjectId?'selected':''}>${esc(p.name)} · ${esc(p.city)}/${esc(p.uf)}</option>`).join('')}</select></div>
   <div class="nav">${allowed.map(([id,label])=>`<button class="${view===id?'active':''}" onclick="setView('${id}')"><span class="ico">${icon(id)}</span>${label}</button>`).join('')}</div>
-  <div class="principle"><b>Regra v5.8.1</b>Login e permissões foram adicionados sem remover a jornada comercial da v4.3.</div>`;
+  <div class="principle"><b>Regra v5.8.2</b>Login e permissões foram adicionados sem remover a jornada comercial da v4.3.</div>`;
 };
 const _oldRenderTopbar = renderTopbar;
 renderTopbar = function(){
@@ -1502,9 +1604,9 @@ function deleteLeadLocal(id){
 }
 function localLogout(){ const u=authUser(); if(u) authLog('logout','user',u.id,u.email); sessionStorage.removeItem(AUTH_SESSION_KEY); render(); }
 window.openAuthUserForm=openAuthUserForm; window.saveAuthUser=saveAuthUser; window.deleteAuthUser=deleteAuthUser; window.openResetPasswordLocal=openResetPasswordLocal; window.resetPasswordLocal=resetPasswordLocal; window.saveAuthRole=saveAuthRole; window.changeMyPasswordLocal=changeMyPasswordLocal; window.adminResetPasswordLocal=adminResetPasswordLocal; window.exportAuthLogs=exportAuthLogs; window.deleteLeadLocal=deleteLeadLocal; window.localLogout=localLogout;
-/* ==== v5.8.1 local login + RBAC layer end ==== */
+/* ==== v5.8.2 local login + RBAC layer end ==== */
 
-/* ==== v5.8.1 guided journey + mobile scroll patch start ==== */
+/* ==== v5.8.2 guided journey + mobile scroll patch start ==== */
 function scrollToMainContent(){
   setTimeout(()=>{
     const main=document.querySelector('.main');
@@ -1589,11 +1691,28 @@ function proposalPdfHtml(p){
   const entryTotal=(lot?.price||0)*((p.entry||10)/100);
   const entryPart=p.entryInstallmentValue||entryTotal/inst;
   return `<!doctype html><html><head><meta charset="utf-8"><title>Proposta ${esc(l.name)}</title><style>body{font-family:Arial,sans-serif;color:#173C52;margin:36px}h1{font-size:26px}.box{border:1px solid #d8e2e8;border-radius:14px;padding:14px;margin:12px 0}.brand{display:flex;gap:12px;align-items:center}.brand img{height:44px}table{border-collapse:collapse;width:100%;margin-top:14px}td,th{border:1px solid #d8e2e8;padding:9px;text-align:left}th{background:#f3f7f9}button{padding:10px 14px;border:0;border-radius:10px;background:#245E82;color:white;font-weight:bold}.confirm{background:#F0FBE9;border:1px solid #C8EFA2;border-radius:14px;padding:14px;margin-top:16px}@media print{button{display:none}}
-/* v5.8.1 checklist refinement */
+/* v5.8.2 checklist refinement */
 .checkCard .actionButtons{margin-top:12px}
 .checkCard .primaryActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 .checkCard .primaryActions .btn{min-width:132px;justify-content:center}
 .actionNotePreview{margin-top:8px;padding:8px 10px;border-radius:12px;background:#F8FBFC;border:1px dashed var(--line);font-size:12px;color:var(--muted)}
+
+
+/* v5.8.2 proposal and material send center */
+.materialSendGrid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.materialChecklist{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
+.materialItem{border:1px solid var(--line);background:white;border-radius:16px;padding:12px}
+.materialItem b{display:block;margin-bottom:4px}
+.materialHistory{margin-top:10px;border:1px solid var(--line);background:#F8FBFC;border-radius:14px;padding:10px}
+.proposalDetailGrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.proposalRichBox{border:1px solid var(--line);background:white;border-radius:18px;padding:14px}
+.proposalRichBox h3{margin-bottom:8px}
+.negotiationBox{border:1px solid #C8EFA2;background:#F0FBE9;border-radius:18px;padding:14px;margin-top:14px}
+.approvalBanner{border:1px solid #DDE8EE;background:linear-gradient(135deg,#F8FBFC,#FFFFFF);border-radius:18px;padding:14px;margin:14px 0}
+.approvalBanner strong{display:block;margin-bottom:4px}
+.materialBadge{display:inline-flex;border:1px solid #C8EFA2;background:#F0FBE9;color:#3A6F16;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:900;margin:3px 4px 3px 0}
+.contextActionPrimary{background:linear-gradient(135deg,var(--green),var(--blue))!important;color:white!important;border:0!important}
+@media(max-width:950px){.materialSendGrid,.proposalDetailGrid{grid-template-columns:1fr}}
 
 </style></head><body><div class="brand"><img src="assets/logo_evora.png"><div><h1>Proposta comercial</h1><p>${esc(project().name)} · ${fmtDateTime(now())}</p></div></div><div class="box"><b>Cliente:</b> ${esc(l.name)}<br><b>Lote:</b> ${esc(lotLabel(lot.id))} · ${lot.area} m²<br><b>Status:</b> ${esc(p.status)} · <b>Validade:</b> ${fmtDate(p.expiresAt)}</div><table><tr><th>Preço do lote</th><td>${fmtMoney(lot.price)}</td></tr><tr><th>Entrada</th><td>${p.entry}% · ${inst===1?'à vista':`${inst}x de ${fmtMoney(entryPart)}`} · total ${fmtMoney(entryTotal)}</td></tr><tr><th>Mensais</th><td>${p.months}x ${fmtMoney(p.monthly)}</td></tr><tr><th>Anuais</th><td>${p.annuals}x ${fmtMoney(p.annual)}</td></tr><tr><th>Correção</th><td>${esc(p.index)} + ${p.interest}% a.m.</td></tr><tr><th>Total nominal</th><td>${fmtMoney(p.total)}</td></tr></table><div class="confirm"><h2>Confirmação</h2><p>Esta página representa o ambiente de confirmação. Na versão com backend, o botão gravará o aceite do cliente, data, IP e versão da proposta.</p><button onclick="alert('Confirmação demonstrativa registrada. Em produção, será salvo no sistema.')">Confirmar interesse</button></div><button onclick="window.print()">Salvar/Imprimir PDF</button></body></html>`;
 }
@@ -1667,9 +1786,9 @@ openReserveLot = function(lotId='',leadId=''){
 };
 window.filterSelectOptions=filterSelectOptions; window.openLeadSimulator=openLeadSimulator; window.goLotsForLead=goLotsForLead; window.openLotPickerForLead=openLotPickerForLead; window.renderLotPickerResults=renderLotPickerResults; window.assignLotToLead=assignLotToLead; window.registerClientCommunicationFromLead=registerClientCommunicationFromLead;
 window.updateSim=updateSim; window.createProposalFromSimulator=createProposalFromSimulator;
-/* ==== v5.8.1 guided journey + mobile scroll patch end ==== */
+/* ==== v5.8.2 guided journey + mobile scroll patch end ==== */
 
-/* ==== v5.8.1 checklist + slogan patch start ==== */
+/* ==== v5.8.2 checklist + slogan patch start ==== */
 dossierAction = function(l,miss){
   const tasks = TASKS[l.stage] || [];
   return `<div class="grid two" style="margin-top:14px">
@@ -1715,7 +1834,246 @@ function toggleStageNote(leadId,taskId){
   const area=document.getElementById('note-'+taskId);
   if(area && wrap.style.display==='block') setTimeout(()=>area.focus(),60);
 }
-/* ==== v5.8.1 checklist + slogan patch end ==== */
+/* ==== v5.8.2 checklist + slogan patch end ==== */
+
+/* ==== v5.8.2 rich proposal + material send center start ==== */
+function ensureMaterialSendState(){
+  state.materialSends = state.materialSends || [];
+  state.materials = state.materials || [];
+  if(!state.materials.length){
+    state.materials = [
+      {id:'mat-book',name:'Book do Empreendimento',type:'PDF',stage:'Aquecimento',persona:'Todos'},
+      {id:'mat-ipca',name:'Argumentário IPCA + 0,7%',type:'Roteiro',stage:'Simulação',persona:'Investidor'},
+      {id:'mat-mapa',name:'Mapa e tabela de lotes',type:'Mapa',stage:'Escolha de lote',persona:'Todos'},
+      {id:'mat-obra',name:'Diário de Obra — Modelo',type:'Informativo',stage:'Pós-venda',persona:'Cliente'}
+    ];
+  }
+}
+ensureMaterialSendState();
+if(!VIEWS.some(v=>v[0]==='material-send')) VIEWS.splice(Math.max(0,VIEWS.findIndex(v=>v[0]==='reports')),0,['material-send','Envio de Materiais']);
+const _v582OldIcon = icon;
+icon = function(name){
+  if(name==='material-send') return '<svg viewBox="0 0 24 24"><path d="M4 4h16v16H4z"/><path d="M4 8h16"/><path d="M8 13h8M8 17h5"/></svg>';
+  return _v582OldIcon(name);
+};
+const _v582CanView = typeof canView === 'function' ? canView : null;
+canView = function(id){
+  if(id==='material-send') return typeof hasPerm==='function' ? hasPerm('lead:update') : true;
+  return _v582CanView ? _v582CanView(id) : true;
+};
+const _v582Topbar = renderTopbar;
+renderTopbar = function(){
+  if(view==='material-send'){
+    return `<div class="topbar"><div class="title"><h1>Envio de Materiais</h1><p>Central para SDR e corretor registrarem quais materiais foram enviados, quando e por qual canal.</p></div><div class="actions"><button class="btn primary" onclick="sendMaterialsFromForm()">Registrar envio</button></div></div>`;
+  }
+  return _v582Topbar();
+};
+const _v582RenderView = renderView;
+renderView = function(){
+  if(view==='material-send') return renderMaterialSendCenter();
+  return _v582RenderView();
+};
+function materialById(id){ return (state.materials||[]).find(m=>m.id===id); }
+function materialName(id){ return materialById(id)?.name || id; }
+function materialHistoryForLead(leadId){ ensureMaterialSendState(); return state.materialSends.filter(s=>s.leadId===leadId).sort((a,b)=>new Date(b.sentAt)-new Date(a.sentAt)); }
+function materialHistoryHtml(leadId,compact=false){
+  const rows=materialHistoryForLead(leadId);
+  if(!rows.length) return compact?'<div class="tiny">Nenhum material enviado registrado.</div>':'<div class="empty">Nenhum material enviado para este lead.</div>';
+  return `<div class="${compact?'':'materialHistory'}">${rows.slice(0,compact?3:20).map(s=>`<div class="event"><b>${fmtDateTime(s.sentAt)} · ${esc(s.channel)}</b><span>${s.materialIds.map(id=>esc(materialName(id))).join(' · ')}<br>Responsável: ${esc(s.byName||'—')}${s.note?` · ${esc(s.note)}`:''}</span></div>`).join('')}</div>`;
+}
+function openMaterialSendCenter(leadId=''){
+  state.activeMaterialLeadId = leadId || '';
+  closeModal();
+  setView('material-send');
+}
+function renderMaterialSendCenter(){
+  ensureMaterialSendState();
+  const activeLead=state.activeMaterialLeadId || '';
+  const lead=leadBy(activeLead);
+  return `<div class="materialSendGrid">
+    <div class="card">
+      <h2>Novo envio de material</h2>
+      <p>Registre o envio real feito por WhatsApp, e-mail, ligação, visita ou outro canal. O histórico fica vinculado ao lead e aparece no checklist.</p>
+      <div class="formGrid" style="margin-top:14px">
+        <div class="field"><label>Filtrar lead</label><input id="matLeadFilter" class="filterInput" placeholder="Nome, cidade, origem..." oninput="filterSelectOptions('matLeadFilter','matLead','lead')"></div>
+        <div class="field span2"><label>Lead</label><select id="matLead" onchange="renderMaterialLeadHistory()">${leadOptionsHTML(activeLead)}</select></div>
+        <div class="field"><label>Canal</label><select id="matChannel"><option>WhatsApp</option><option>E-mail</option><option>Ligação</option><option>Presencial</option><option>SMS</option><option>Outro</option></select></div>
+        <div class="field"><label>Data/hora</label><input id="matSentAt" type="datetime-local" value="${new Date().toISOString().slice(0,16)}"></div>
+        <div class="field"><label>Responsável</label><input id="matBy" value="${esc((typeof authUser==='function'&&authUser()?.name)||'Equipe comercial')}"></div>
+        <div class="field span3"><label>Observação</label><textarea id="matNote" placeholder="Ex.: enviado book + mapa após atendimento; cliente pediu simulação."></textarea></div>
+      </div>
+      <h3 style="margin-top:14px">Materiais disponíveis</h3>
+      <div class="materialChecklist">${state.materials.map(m=>`<label class="materialItem"><input type="checkbox" class="matCheck" value="${m.id}"> <b>${esc(m.name)}</b><span class="tiny">${esc(m.type||'Material')} · ${esc(m.stage||'Etapa')} · ${esc(m.persona||'Todos')}</span></label>`).join('')}</div>
+      <div class="actions" style="justify-content:flex-start;margin-top:14px">
+        <button class="btn primary" onclick="sendMaterialsFromForm()">Registrar envio</button>
+        <button class="btn" onclick="previewMaterialMessage()">Prévia da mensagem</button>
+      </div>
+      <div id="materialPreview" class="materialHistory" style="display:none"></div>
+    </div>
+    <div class="card">
+      <h2>Histórico do lead</h2>
+      <div id="materialLeadHistory">${lead?materialHistoryHtml(lead.id):'<div class="empty">Selecione um lead para ver o histórico de materiais.</div>'}</div>
+      <div class="authNotice" style="margin-top:12px"><b>Uso recomendado:</b> envie material de acordo com a etapa. No aquecimento, priorize book e mapa. Na simulação, inclua argumentário de condição e IPCA. Na escolha de lote, envie mapa/tabela.</div>
+    </div>
+  </div>`;
+}
+function renderMaterialLeadHistory(){
+  const leadId=v('matLead');
+  const box=document.getElementById('materialLeadHistory');
+  if(box) box.innerHTML = leadId ? materialHistoryHtml(leadId) : '<div class="empty">Selecione um lead.</div>';
+}
+function previewMaterialMessage(){
+  const lead=leadBy(v('matLead'));
+  const ids=[...document.querySelectorAll('.matCheck:checked')].map(x=>x.value);
+  const box=document.getElementById('materialPreview');
+  if(!box) return;
+  if(!lead||!ids.length){ box.style.display='block'; box.innerHTML='<b>Prévia</b><p>Selecione lead e materiais.</p>'; return; }
+  const names=ids.map(materialName).join(', ');
+  const msg=`Olá ${lead.name}, seguem os materiais sobre o ${project().name}: ${names}. Posso te ajudar com uma simulação ou escolha de lote?`;
+  box.style.display='block';
+  box.innerHTML=`<b>Prévia da mensagem</b><p>${esc(msg)}</p>`;
+}
+function sendMaterialsFromForm(){
+  ensureMaterialSendState();
+  const lead=leadBy(v('matLead'));
+  if(!lead) return toast('Selecione um lead.');
+  const ids=[...document.querySelectorAll('.matCheck:checked')].map(x=>x.value);
+  if(!ids.length) return toast('Selecione pelo menos um material.');
+  const sentAtVal=v('matSentAt');
+  const sentAt=sentAtVal?new Date(sentAtVal).toISOString():now();
+  const send={id:uid('mat-send'),leadId:lead.id,projectId:project().id,materialIds:ids,channel:v('matChannel'),sentAt,byName:v('matBy')||((typeof authUser==='function'&&authUser()?.name)||'Equipe comercial'),note:v('matNote'),createdAt:now()};
+  state.materialSends.push(send);
+  lead.materialsSent = lead.materialsSent || [];
+  lead.materialsSent.push(send.id);
+  lead.history = lead.history || [];
+  lead.history.push({ts:now(),text:`Materiais enviados via ${send.channel}: ${ids.map(materialName).join(', ')}.`});
+  // If current stage has material checklist, mark it as completed.
+  if(['aquecimento','cliente'].includes(lead.stage)){
+    const materialTask=(TASKS[lead.stage]||[]).find(([id,label])=>id.includes('material')||label.toLowerCase().includes('material')||label.toLowerCase().includes('boas-vindas'));
+    if(materialTask){
+      lead.actions[lead.stage]=lead.actions[lead.stage]||{};
+      lead.actions[lead.stage][materialTask[0]]={ts:now(),note:`Envio registrado via ${send.channel}: ${ids.map(materialName).join(', ')}`};
+    }
+  }
+  save(); render(); setView('material-send'); toast('Envio de materiais registrado.');
+}
+function materialTaskDetails(l,taskId){
+  const label=((TASKS[l.stage]||[]).find(t=>t[0]===taskId)||[])[1]||'';
+  if(!(taskId.includes('material')||label.toLowerCase().includes('material')||label.toLowerCase().includes('book')||label.toLowerCase().includes('boas-vindas'))) return '';
+  return `<div class="materialHistory"><b>Materiais enviados para este lead</b>${materialHistoryHtml(l.id,true)}</div>`;
+}
+actionControls = function(l,taskId){
+  const b=[];
+  const add=(label,fn,cls='')=>b.push(`<button class="btn small ${cls}" onclick="${fn}">${label}</button>`);
+  const label=((TASKS[l.stage]||[]).find(t=>t[0]===taskId)||[])[1]||'';
+  const materialRelated=taskId.includes('material')||label.toLowerCase().includes('material')||label.toLowerCase().includes('book')||label.toLowerCase().includes('boas-vindas');
+  if(materialRelated) add('Enviar material',`openMaterialSendCenter('${l.id}')`,'contextActionPrimary');
+  if(['simular','sim-exec','sim-ajuste','sim-valid','validar-aceite'].includes(taskId)) add('Abrir simulador',`openLeadSimulator('${l.id}')`,'contextActionPrimary');
+  if(['apresentar-lotes','lote-escolhido','prio-lote'].includes(taskId)){ add('Abrir mapa',`goLotsForLead('${l.id}')`); add('Escolher/travar lote',`openLotPickerForLead('${l.id}')`,'contextActionPrimary'); }
+  if(['emitir-proposta','prop-envio'].includes(taskId)) add('Simular e gerar proposta',`openLeadSimulator('${l.id}')`,'contextActionPrimary');
+  if(['validar-alcada','prop-alcada'].includes(taskId)) add('Abrir propostas',`setView('proposals')`);
+  if(['reservar-lote','prazo-reserva','reserva-lote'].includes(taskId)) add('Reservar lote',`openReserveLot('${l.lotId||''}','${l.id}')`,'contextActionPrimary');
+  if(['docs-obrigatorios','contrato-cadastro','contrato-conjuge'].includes(taskId)) add('Abrir documentos',`openDossier('${l.id}','docs')`,'contextActionPrimary');
+  if(['contrato-gerado','contrato-envio'].includes(taskId)) add('Abrir contratos',`setView('contracts')`);
+  if(['boas-vindas','primeira-comunicacao','entrada-boasvindas','cart-checkin','cart-obra'].includes(taskId)) add('Registrar comunicação',`registerClientCommunicationFromLead('${l.id}','${taskId}')`,'contextActionPrimary');
+  return b.length?`<div class="actionButtons">${b.join('')}</div>`:'';
+};
+dossierAction = function(l,miss){
+  const tasks = TASKS[l.stage] || [];
+  return `<div class="grid two" style="margin-top:14px">
+    <div class="card">
+      <h3>Checklist obrigatório da etapa</h3>
+      <div class="checkGrid">${tasks.map(([id,label])=>{
+        const done = actionDone(l,l.stage,id);
+        const note = l.notesByStage?.[l.stage]?.[id] || '';
+        return `<div class="checkCard ${done?'done':''}">
+          <b>${esc(label)}</b>
+          <div class="tiny">${done ? 'Concluído em '+fmtDateTime(l.actions[l.stage][id].ts) : 'Pendente'}</div>
+          ${note ? `<div class="actionNotePreview">${esc(note)}</div>` : ''}
+          ${materialTaskDetails(l,id)}
+          ${actionControls(l,id)}
+          <div class="primaryActions">
+            <button class="btn small primary" onclick="registerAction('${l.id}','${id}')">Registrar ação</button>
+            <button class="btn small" onclick="toggleStageNote('${l.id}','${id}')">Anotar</button>
+          </div>
+          <div id="note-wrap-${id}" style="display:${note?'block':'none'};margin-top:10px">
+            <textarea id="note-${id}" placeholder="Anote detalhes específicos desta ação..." style="width:100%;min-height:86px;border:1px solid var(--line);border-radius:12px;padding:10px">${esc(note)}</textarea>
+            <div class="actions" style="justify-content:flex-start;margin-top:8px"><button class="btn small" onclick="saveStageNote('${l.id}','${id}')">Salvar anotação</button></div>
+          </div>
+        </div>`;
+      }).join('')}</div>
+    </div>
+    <div class="card">
+      <h3>Avanço da etapa</h3>
+      <div class="timeline">
+        ${miss.length?`<div class="event"><b>Itens pendentes</b><span>${miss.map(x=>esc(x)).join(' · ')}</span></div>`:`<div class="event"><b>Checklist completo</b><span>A etapa já pode ser avançada.</span></div>`}
+        <div class="event"><b>Próximo passo sugerido</b><span>${esc(nextBestAction(l))}</span></div>
+        <div class="event"><b>Atalho operacional</b><span>Use os botões contextuais dentro de cada item para executar a ação certa.</span></div>
+      </div>
+      <div class="actions" style="justify-content:flex-start;margin-top:12px">
+        <button class="btn primary" onclick="advanceLead('${l.id}')">Avançar etapa</button>
+        <button class="btn" onclick="openDossier('${l.id}','simular')">Simular</button>
+      </div>
+    </div>
+  </div>`;
+};
+function proposalReservationInfo(p){
+  const lot=lotBy(p.lotId);
+  const r=(state.reservations||[]).find(x=>x.lotId===p.lotId && x.leadId===p.leadId);
+  if(!lot) return '<div class="proposalRichBox"><h3>Lote</h3><p>Lote não localizado.</p></div>';
+  return `<div class="proposalRichBox"><h3>Lote selecionado e reserva</h3><p><b>${esc(lotLabel(lot.id))}</b> · ${lot.area} m² · ${esc(lot.type)} · ${esc(lot.sector)}<br><b>Preço:</b> ${fmtMoney(lot.price)} · <b>Status:</b> ${lotStatusLabel(lot.status)}<br><b>Topografia:</b> ${esc(lot.topography||'—')} · <b>Face:</b> ${esc(lot.face||'—')}<br><b>Reserva:</b> ${r?`${lotStatusLabel(r.status)} até ${fmtDateTime(r.expiresAt)}`:'Sem reserva registrada'}<br><b>Motivo:</b> ${esc(r?.reason||lot.reserveReason||'—')}</p><div class="actions" style="justify-content:flex-start;margin-top:10px"><button class="btn small" onclick="openLot('${lot.id}')">Abrir lote</button><button class="btn small" onclick="openReserveLot('${lot.id}','${p.leadId}')">Ajustar reserva</button></div></div>`;
+}
+function proposalFinancialInfo(p){
+  const lot=lotBy(p.lotId);
+  const entryTotal=(lot?.price||0)*((p.entry||10)/100);
+  const inst=p.entryInstallments||1;
+  const entryPart=p.entryInstallmentValue||entryTotal/inst;
+  return `<div class="proposalRichBox"><h3>Condição comercial</h3><p><b>Entrada:</b> ${p.entry||10}% · ${inst===1?'à vista':`${inst}x de ${fmtMoney(entryPart)}`} · total ${fmtMoney(entryTotal)}<br><b>Mensais:</b> ${p.months}x ${fmtMoney(p.monthly)}<br><b>Anuais:</b> ${p.annuals}x ${fmtMoney(p.annual)}<br><b>Correção:</b> ${esc(p.index||'IPCA')} + ${p.interest||0.7}% a.m.<br><b>Total nominal:</b> ${fmtMoney(p.total)}</p></div>`;
+}
+function saveProposalNotes(id){
+  const p=byId(state.proposals,id); if(!p) return;
+  p.negotiationNotes=v('propNegotiationNotes');
+  p.updatedAt=now();
+  const l=leadBy(p.leadId);
+  if(l){ l.history.push({ts:now(),text:'Observações de negociação da proposta atualizadas.'}); }
+  save(); openProposal(id); toast('Observações da proposta salvas.');
+}
+openProposalModal = function(p){
+  const l=leadBy(p.leadId); const lot=lotBy(p.lotId); if(!l||!lot) return;
+  const approved=['aprovada','enviada','aceita','convertida'].includes(p.status);
+  const sent=!!p.sentAt || ['enviada','aceita','convertida'].includes(p.status);
+  const accepted=['aceita','convertida'].includes(p.status);
+  const pend=contractPendencies(l);
+  const approvalActions = !approved ? `<button class="btn primary" onclick="approveProposal('${p.id}')">Aprovar proposta</button>` : `<span class="pill green">Aprovada</span>`;
+  const sendActions = approved ? `<button class="btn" onclick="printProposal('${p.id}')">Gerar PDF</button><button class="btn" onclick="sendProposalEmail('${p.id}')">Enviar e-mail</button><button class="btn" onclick="sendProposalWhatsApp('${p.id}')">Enviar WhatsApp</button><button class="btn" onclick="openProposalConfirmation('${p.id}')">Página de confirmação</button><button class="btn" onclick="markProposalSent('${p.id}')">Marcar enviado</button>` : `<span class="pill amber">Envio bloqueado até aprovação</span>`;
+  const acceptAction = (approved||sent) && !accepted ? `<button class="btn success" onclick="acceptProposal('${p.id}')">Registrar aceite/confirm.</button>` : accepted ? `<span class="pill green">Aceite registrado</span>` : '<span class="pill">Aguardando aprovação/envio</span>';
+  const contractAction = accepted ? `<button class="btn primary" onclick="createContract('${p.id}')">Gerar contrato</button>` : `<span class="pill amber">Contrato bloqueado até aceite</span>`;
+  openModal('Aprovação da proposta · '+l.name,`Lote ${lotLabel(lot.id)} · ${fmtMoney(p.total)}`,`
+    <div class="grid four"><div class="card" style="box-shadow:none"><h3>${fmtMoney(p.total)}</h3><p>Total nominal</p></div><div class="card" style="box-shadow:none"><h3>${fmtMoney(p.monthly)}</h3><p>Mensal</p></div><div class="card" style="box-shadow:none"><h3>${fmtMoney(p.annual)}</h3><p>Anual</p></div><div class="card" style="box-shadow:none"><h3>${esc(p.status)}</h3><p>Status</p></div></div>
+    ${typeof proposalFlowHtml==='function'?proposalFlowHtml(p):''}
+    <div class="proposalDetailGrid" style="margin-top:14px">
+      <div class="proposalRichBox"><h3>Cliente e negociação</h3><p><b>Cliente:</b> ${esc(l.name)}<br><b>WhatsApp:</b> ${esc(l.phone||'—')}<br><b>E-mail:</b> ${esc(l.email||'—')}<br><b>Origem:</b> ${esc(l.source||'—')} · <b>Campanha:</b> ${esc(l.campaign||'—')}<br><b>Responsáveis:</b> SDR ${esc(person(l.sdrId))} · Corretor ${esc(person(l.brokerId))}</p></div>
+      ${proposalReservationInfo(p)}
+      ${proposalFinancialInfo(p)}
+      <div class="proposalRichBox"><h3>Prontidão contratual</h3>${pend.length?`<p>Pendências: ${esc(pend.join(' · '))}</p>`:'<p>Cadastro apto para avançar ao contrato, sujeito à revisão jurídica.</p>'}</div>
+    </div>
+    <div class="negotiationBox"><h3>Observações da negociação</h3><textarea id="propNegotiationNotes" placeholder="Ex.: cliente pediu entrada em 6x, quer lote de esquina, depende de aprovação do cônjuge..." style="width:100%;min-height:110px;border:1px solid var(--line);border-radius:13px;padding:10px">${esc(p.negotiationNotes||'')}</textarea><div class="actions" style="justify-content:flex-start;margin-top:10px"><button class="btn" onclick="saveProposalNotes('${p.id}')">Salvar observações</button></div></div>
+    <div class="approvalBanner"><strong>Fluxo correto</strong><span>1. Aprovação interna → 2. Envio ao cliente → 3. Confirmação/aceite → 4. Contrato.</span></div>
+    <div class="card" style="box-shadow:none;margin-top:14px"><h3>1. Aprovação interna</h3><div class="proposalActions">${approvalActions}</div></div>
+    <div class="card" style="box-shadow:none;margin-top:14px"><h3>2. Envio ao cliente</h3><div class="proposalActions">${sendActions}</div></div>
+    <div class="card" style="box-shadow:none;margin-top:14px"><h3>3. Confirmação / aceite</h3><div class="proposalActions">${acceptAction}</div></div>
+    <div class="card" style="box-shadow:none;margin-top:14px"><h3>4. Contrato</h3><div class="proposalActions">${contractAction}</div></div>
+  `,'wide');
+};
+proposalPdfHtml = function(p){
+  const l=leadBy(p.leadId), lot=lotBy(p.lotId);
+  const inst=p.entryInstallments||1;
+  const entryTotal=(lot?.price||0)*((p.entry||10)/100);
+  const entryPart=p.entryInstallmentValue||entryTotal/inst;
+  return `<!doctype html><html><head><meta charset="utf-8"><title>Proposta ${esc(l.name)}</title><style>body{font-family:Arial,sans-serif;color:#173C52;margin:36px}h1{font-size:26px}.box{border:1px solid #d8e2e8;border-radius:14px;padding:14px;margin:12px 0}.brand{display:flex;gap:12px;align-items:center}.brand img{height:44px}table{border-collapse:collapse;width:100%;margin-top:14px}td,th{border:1px solid #d8e2e8;padding:9px;text-align:left}th{background:#f3f7f9}button{padding:10px 14px;border:0;border-radius:10px;background:#245E82;color:white;font-weight:bold}.confirm{background:#F0FBE9;border:1px solid #C8EFA2;border-radius:14px;padding:14px;margin-top:16px}@media print{button{display:none}}</style></head><body><div class="brand"><img src="assets/logo_evora.png"><div><h1>Proposta comercial</h1><p>${esc(project().name)} · ${fmtDateTime(now())}</p></div></div><div class="box"><b>Cliente:</b> ${esc(l.name)}<br><b>Lote:</b> ${esc(lotLabel(lot.id))} · ${lot.area} m² · ${esc(lot.type)} · ${esc(lot.sector)}<br><b>Status proposta:</b> ${esc(p.status)} · <b>Status lote:</b> ${lotStatusLabel(lot.status)}<br><b>Validade:</b> ${fmtDate(p.expiresAt)}</div><table><tr><th>Preço do lote</th><td>${fmtMoney(lot.price)}</td></tr><tr><th>Entrada</th><td>${p.entry}% · ${inst===1?'à vista':`${inst}x de ${fmtMoney(entryPart)}`} · total ${fmtMoney(entryTotal)}</td></tr><tr><th>Mensais</th><td>${p.months}x ${fmtMoney(p.monthly)}</td></tr><tr><th>Anuais</th><td>${p.annuals}x ${fmtMoney(p.annual)}</td></tr><tr><th>Correção</th><td>${esc(p.index)} + ${p.interest}% a.m.</td></tr><tr><th>Total nominal</th><td>${fmtMoney(p.total)}</td></tr></table><div class="box"><b>Observações de negociação:</b><br>${esc(p.negotiationNotes||'—')}</div><div class="confirm"><h2>Confirmação</h2><p>Esta página representa o ambiente de confirmação. Na versão com backend, o botão gravará o aceite do cliente, data, IP e versão da proposta.</p><button onclick="alert('Confirmação demonstrativa registrada. Em produção, será salvo no sistema.')">Confirmar interesse</button></div><button onclick="window.print()">Salvar/Imprimir PDF</button></body></html>`;
+};
+window.openMaterialSendCenter=openMaterialSendCenter; window.renderMaterialLeadHistory=renderMaterialLeadHistory; window.sendMaterialsFromForm=sendMaterialsFromForm; window.previewMaterialMessage=previewMaterialMessage; window.saveProposalNotes=saveProposalNotes;
+/* ==== v5.8.2 rich proposal + material send center end ==== */
 
 render();
 })();

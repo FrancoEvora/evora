@@ -1,14 +1,19 @@
-# Évora Launch OS v5.8.1
+# Évora Launch OS v5.8.2
 
-Ajustes sobre a v5.8:
+Ajustes sobre a v5.8.1:
 
-- checklist obrigatório da etapa refeito para mostrar os botões contextuais dentro de cada item;
-- bloco de anotação expansível por item do checklist;
-- frase técnica da tela inicial substituída por slogan da plataforma.
+- tela de aprovação da proposta com detalhes ricos;
+- exibição do lote selecionado/reservado dentro da proposta;
+- observações de negociação na proposta;
+- proposta PDF inclui lote, reserva, entrada parcelada e observações;
+- nova tela específica de Envio de Materiais;
+- registro de material enviado por lead, canal, data/hora e responsável;
+- checklist de material mostra quais materiais foram enviados, quando e por qual canal.
 
-## Slogan
+## Primeiro acesso
 
-Évora Launch OS — inteligência comercial para vender com velocidade, método e controle.
+admin@evora.local  
+Evora@2026!
 
 ## Deploy
 

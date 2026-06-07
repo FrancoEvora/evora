@@ -1,12 +1,13 @@
 {
   "product": "Évora Launch OS",
-  "version": "5.8.1",
-  "base": "v5.8",
+  "version": "5.8.2",
+  "base": "v5.8.1",
   "mode": "sem banco de dados",
   "target": "Vercel static",
   "changes": [
-    "checklist obrigatório refeito com botões contextuais visíveis",
-    "campo de anotação expandível por item",
-    "slogan da plataforma na tela inicial"
+    "proposta com detalhes ricos e observações de negociação",
+    "histórico de materiais enviados com canal e data",
+    "nova tela Envio de Materiais",
+    "checklist mostra materiais enviados"
   ]
 }
