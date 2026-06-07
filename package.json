@@ -1,9 +1,9 @@
 {
-  "name": "evora-launch-os-v5-7-v43-login-local",
-  "version": "5.7.0",
+  "name": "evora-launch-os-v5-8-jornada-guiada-mobile",
+  "version": "5.8.0",
   "private": true,
   "type": "module",
-  "description": "Évora Launch OS v5.7: v4.3 restaurada com login local, usuários, permissões, corretores, senhas e logs.",
+  "description": "Évora Launch OS v5.8: v4.3 + login local + melhorias mobile, jornada guiada e simulador.",
   "scripts": {
     "build": "echo Build estatico OK: public/",
     "check": "node --check source/app.embedded.js"

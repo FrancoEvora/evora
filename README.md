@@ -1,34 +1,22 @@
-# Évora Launch OS v5.7 — v4.3 restaurada + login local
+# Évora Launch OS v5.8 — Jornada guiada e mobile
 
-Esta versão corrige a falha da v5.6: mantém a aplicação comercial da v4.3 **e** adiciona as telas locais de login, usuários, permissões, senhas e logs.
+Base: v4.3 restaurada + login local da v5.7.
 
-## Mantém da v4.3
+## Ajustes desta versão
 
-- Sala de Guerra
-- Leads
-- SDR
-- Corretores
-- Lotes
-- Simulador
-- Propostas
-- Reservas
-- Contratos
-- Clientes
-- Relatórios setoriais
-- PDF/HTML de relatórios
-- Reserva automática ao gerar proposta
-- Fluxo aprovação → envio → confirmação → contrato
-- Pós-venda e comunicação de clientes
-
-## Adiciona da v5.x
-
-- Tela de login local
-- Usuários
-- Corretores com CRECI/PDF
-- Papéis e permissões
-- Gestão de senhas
-- Logs locais
-- Administrador podendo excluir leads e usuários
+- Em mobile/iPhone, ao clicar no menu, a tela rola automaticamente para o conteúdo.
+- Checklist obrigatório da etapa recebeu botões contextuais:
+  - abrir simulador;
+  - abrir mapa;
+  - escolher/travar lote;
+  - reservar lote;
+  - abrir documentos;
+  - abrir propostas/contratos;
+  - registrar comunicação de pós-venda.
+- Simulador permite parcelar a entrada em até 6x.
+- O simulador mostra valor de cada parcela da entrada.
+- Seleção de lead e lote recebeu campo de filtro por nome, cidade, origem, quadra, setor etc.
+- Reserva também recebeu filtros de lead e lote.
 
 ## Primeiro acesso
 
@@ -36,11 +24,6 @@ Esta versão corrige a falha da v5.6: mantém a aplicação comercial da v4.3 **
 admin@evora.local
 Evora@2026!
 ```
-
-## Sem banco
-
-Os dados ficam no navegador por `localStorage`.  
-A sessão usa `sessionStorage`.
 
 ## Vercel
 
