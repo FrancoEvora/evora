@@ -1,17 +1,16 @@
 {
   "product": "Évora Launch OS",
-  "version": "5.9",
-  "base": "v5.8.2",
+  "version": "5.10",
+  "base": "v5.9.1",
   "mode": "sem banco de dados",
   "target": "Vercel static",
   "changes": [
-    "envio de materiais preparado para backend futuro",
-    "envio de materiais para clientes no pós-venda",
-    "controles financeiros de recebíveis e inadimplência",
-    "margem por metro quadrado",
-    "descontos por período",
-    "preço médio de vendas",
-    "boletos e mensagens de cobrança preparados para backend",
-    "relatórios financeiros"
+    "setor de campanhas",
+    "vínculo de leads com campanhas a qualquer tempo",
+    "campanhas com materiais vinculados",
+    "campanhas com condições comerciais específicas",
+    "métricas de desempenho de campanhas",
+    "relatório de campanhas",
+    "financeiro com VGV projetado e executado"
   ]
 }

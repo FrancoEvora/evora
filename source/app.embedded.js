@@ -1,8 +1,8 @@
 (() => {
 'use strict';
-const APP_VERSION = '5.9';
+const APP_VERSION = '5.10';
 const RELEASE_DATE = '2026-06-05';
-const STORAGE_KEY = 'evora-launch-os-v590';
+const STORAGE_KEY = 'evora-launch-os-v5100';
 
 const money = new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'});
 const dateFmt = new Intl.DateTimeFormat('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric'});
@@ -412,7 +412,7 @@ function reportHtml(type){
   const {a,origin,broker,stock}=reportData(type);
   const table=(title,rows)=>`<h2>${title}</h2><table><thead><tr>${Object.keys(rows[0]||{}).map(k=>`<th>${k}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr>${Object.values(r).map(v=>`<td>${esc(v)}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
   return `<!doctype html><html><head><meta charset="utf-8"><title>Relatório ${esc(type)}</title><style>body{font-family:Arial,sans-serif;color:#173C52;margin:36px}h1{font-size:26px}h2{margin-top:28px}table{border-collapse:collapse;width:100%;margin-top:8px}th,td{border:1px solid #d8e2e8;padding:8px;text-align:left;font-size:12px}th{background:#f1f6f8}.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.kpi{border:1px solid #d8e2e8;border-radius:12px;padding:12px}.kpi b{display:block;font-size:20px;margin-top:6px}.brand{display:flex;align-items:center;gap:12px}.brand img{height:42px}@media print{button{display:none}}
-/* v5.9 login/local RBAC layer */
+/* v5.10 login/local RBAC layer */
 .loginPage{min-height:100vh;display:grid;grid-template-columns:1fr 430px;background:#fff}
 .loginHero{background:linear-gradient(135deg,#0E2738,#245E82);color:white;padding:44px;display:flex;flex-direction:column;justify-content:space-between}
 .loginHero img{max-width:270px;display:block}
@@ -433,7 +433,7 @@ function reportHtml(type){
 @media(max-width:900px){.loginPage{grid-template-columns:1fr}.loginHero{min-height:360px}}
 
 
-/* v5.9 mobile and guided journey refinements */
+/* v5.10 mobile and guided journey refinements */
 .actionButtons{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;padding-top:8px;border-top:1px solid var(--line)}
 .actionButtons .btn{font-size:12px;padding:7px 9px;border-radius:10px}
 .selectFilterGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -450,14 +450,14 @@ function reportHtml(type){
 }
 
 
-/* v5.9 checklist refinement */
+/* v5.10 checklist refinement */
 .checkCard .actionButtons{margin-top:12px}
 .checkCard .primaryActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 .checkCard .primaryActions .btn{min-width:132px;justify-content:center}
 .actionNotePreview{margin-top:8px;padding:8px 10px;border-radius:12px;background:#F8FBFC;border:1px dashed var(--line);font-size:12px;color:var(--muted)}
 
 
-/* v5.9 proposal and material send center */
+/* v5.10 proposal and material send center */
 .materialSendGrid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .materialChecklist{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
 .materialItem{border:1px solid var(--line);background:white;border-radius:16px;padding:12px}
@@ -474,7 +474,7 @@ function reportHtml(type){
 @media(max-width:950px){.materialSendGrid,.proposalDetailGrid{grid-template-columns:1fr}}
 
 
-/* v5.9 finance and backend-ready communications */
+/* v5.10 finance and backend-ready communications */
 .backendBadge{display:inline-flex;border:1px solid #BFDBFE;background:#EFF6FF;color:#1D4ED8;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:900;margin:3px}
 .queueBox{border:1px dashed var(--line);background:#F8FBFC;border-radius:16px;padding:12px;margin-top:10px}
 .financeKpiGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
@@ -489,6 +489,35 @@ function reportHtml(type){
 .materialBackendActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;padding-top:10px;border-top:1px solid var(--line)}
 .billingMessage{border:1px solid #FDE68A;background:#FFFBEB;border-radius:16px;padding:12px;margin-top:10px;color:#92400E}
 @media(max-width:1000px){.financeGrid{grid-template-columns:1fr}.financeToolbar{flex-direction:column;align-items:stretch}.financeToolbar .btn,.financeToolbar input,.financeToolbar select{width:100%}}
+
+
+/* v5.10 finance period and VGV */
+.periodPanel{border:1px solid var(--line);background:white;border-radius:18px;padding:14px;margin:0 0 14px}
+.periodQuick{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.cashFlowGrid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+.cashFlowTable{max-height:360px;overflow:auto;border:1px solid var(--line);border-radius:16px;background:white}
+.cashFlowChart{border:1px solid var(--line);background:white;border-radius:18px;padding:14px}
+.cashFlowChart svg{width:100%;height:auto;display:block}
+.vgvProgress{height:12px;background:#EAF1F4;border-radius:999px;overflow:hidden;margin-top:8px}
+.vgvProgress span{display:block;height:100%;background:linear-gradient(135deg,var(--green),var(--blue));border-radius:999px}
+.financeSub{color:var(--muted);font-size:12px;margin-top:4px;display:block}
+@media(max-width:1000px){.cashFlowGrid{grid-template-columns:1fr}.periodQuick .btn{width:100%;justify-content:center}}
+
+
+/* v5.10 campaigns */
+.campaignGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
+.campaignCard{border:1px solid var(--line);background:white;border-radius:20px;padding:16px;box-shadow:0 8px 24px rgba(23,60,82,.06)}
+.campaignCard h3{margin-bottom:6px}
+.campaignMeta{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+.campaignKpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:12px}
+.campaignKpi{border:1px solid var(--line);background:#F8FBFC;border-radius:14px;padding:9px}
+.campaignKpi span{display:block;color:var(--muted);font-size:11px}.campaignKpi b{font-size:18px}
+.campaignProgress{height:10px;background:#EAF1F4;border-radius:999px;overflow:hidden;margin-top:10px}.campaignProgress span{display:block;height:100%;background:linear-gradient(135deg,var(--green),var(--blue));border-radius:999px}
+.materialChips{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}
+.conditionBox{border:1px solid #C8EFA2;background:#F0FBE9;color:#3A6F16;border-radius:16px;padding:12px;margin-top:12px}
+.campaignSelect{min-width:190px;border:1px solid var(--line);border-radius:10px;padding:6px 8px;background:white}
+.campaignReportBox{border:1px solid var(--line);background:white;border-radius:18px;padding:14px;margin-top:12px}
+@media(max-width:900px){.campaignKpis{grid-template-columns:repeat(2,minmax(0,1fr))}.campaignSelect{width:100%}}
 
 </style></head><body><div class="brand"><img src="assets/logo_evora.png"><div><h1>Relatório ${esc(type)} · ${esc(project().name)}</h1><p>${fmtDateTime(now())}</p></div></div><div class="kpis"><div class="kpi">Leads<b>${a.leads.length}</b></div><div class="kpi">Clientes A<b>${a.a}</b></div><div class="kpi">Reservas<b>${a.res.length}</b></div><div class="kpi">Carteira<b>${fmtMoney(a.carteira)}</b></div></div>${table('Origem',origin)}${table('Corretores',broker)}${table('Estoque',stock)}<h2>Alertas</h2><p>Leads parados: ${a.stalled.length}<br>Clientes sem comunicação 30+: ${a.silent.length}</p><button onclick="window.print()">Salvar/Imprimir PDF</button><script>setTimeout(()=>window.print(),400)<\/script></body></html>`;
 }
@@ -572,7 +601,7 @@ function createProposalFromSimulator(){
 function proposalPdfHtml(p){
   const l=leadBy(p.leadId), lot=lotBy(p.lotId);
   return `<!doctype html><html><head><meta charset="utf-8"><title>Proposta ${esc(l.name)}</title><style>body{font-family:Arial,sans-serif;color:#173C52;margin:36px}h1{font-size:26px}.box{border:1px solid #d8e2e8;border-radius:14px;padding:14px;margin:12px 0}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.brand{display:flex;gap:12px;align-items:center}.brand img{height:44px}table{border-collapse:collapse;width:100%}td,th{border:1px solid #d8e2e8;padding:9px;text-align:left}button{padding:10px 14px;border:0;border-radius:10px;background:#245E82;color:white;font-weight:bold}@media print{button{display:none}}
-/* v5.9 login/local RBAC layer */
+/* v5.10 login/local RBAC layer */
 .loginPage{min-height:100vh;display:grid;grid-template-columns:1fr 430px;background:#fff}
 .loginHero{background:linear-gradient(135deg,#0E2738,#245E82);color:white;padding:44px;display:flex;flex-direction:column;justify-content:space-between}
 .loginHero img{max-width:270px;display:block}
@@ -593,7 +622,7 @@ function proposalPdfHtml(p){
 @media(max-width:900px){.loginPage{grid-template-columns:1fr}.loginHero{min-height:360px}}
 
 
-/* v5.9 mobile and guided journey refinements */
+/* v5.10 mobile and guided journey refinements */
 .actionButtons{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;padding-top:8px;border-top:1px solid var(--line)}
 .actionButtons .btn{font-size:12px;padding:7px 9px;border-radius:10px}
 .selectFilterGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -610,14 +639,14 @@ function proposalPdfHtml(p){
 }
 
 
-/* v5.9 checklist refinement */
+/* v5.10 checklist refinement */
 .checkCard .actionButtons{margin-top:12px}
 .checkCard .primaryActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 .checkCard .primaryActions .btn{min-width:132px;justify-content:center}
 .actionNotePreview{margin-top:8px;padding:8px 10px;border-radius:12px;background:#F8FBFC;border:1px dashed var(--line);font-size:12px;color:var(--muted)}
 
 
-/* v5.9 proposal and material send center */
+/* v5.10 proposal and material send center */
 .materialSendGrid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .materialChecklist{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
 .materialItem{border:1px solid var(--line);background:white;border-radius:16px;padding:12px}
@@ -634,7 +663,7 @@ function proposalPdfHtml(p){
 @media(max-width:950px){.materialSendGrid,.proposalDetailGrid{grid-template-columns:1fr}}
 
 
-/* v5.9 finance and backend-ready communications */
+/* v5.10 finance and backend-ready communications */
 .backendBadge{display:inline-flex;border:1px solid #BFDBFE;background:#EFF6FF;color:#1D4ED8;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:900;margin:3px}
 .queueBox{border:1px dashed var(--line);background:#F8FBFC;border-radius:16px;padding:12px;margin-top:10px}
 .financeKpiGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
@@ -649,6 +678,35 @@ function proposalPdfHtml(p){
 .materialBackendActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;padding-top:10px;border-top:1px solid var(--line)}
 .billingMessage{border:1px solid #FDE68A;background:#FFFBEB;border-radius:16px;padding:12px;margin-top:10px;color:#92400E}
 @media(max-width:1000px){.financeGrid{grid-template-columns:1fr}.financeToolbar{flex-direction:column;align-items:stretch}.financeToolbar .btn,.financeToolbar input,.financeToolbar select{width:100%}}
+
+
+/* v5.10 finance period and VGV */
+.periodPanel{border:1px solid var(--line);background:white;border-radius:18px;padding:14px;margin:0 0 14px}
+.periodQuick{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.cashFlowGrid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+.cashFlowTable{max-height:360px;overflow:auto;border:1px solid var(--line);border-radius:16px;background:white}
+.cashFlowChart{border:1px solid var(--line);background:white;border-radius:18px;padding:14px}
+.cashFlowChart svg{width:100%;height:auto;display:block}
+.vgvProgress{height:12px;background:#EAF1F4;border-radius:999px;overflow:hidden;margin-top:8px}
+.vgvProgress span{display:block;height:100%;background:linear-gradient(135deg,var(--green),var(--blue));border-radius:999px}
+.financeSub{color:var(--muted);font-size:12px;margin-top:4px;display:block}
+@media(max-width:1000px){.cashFlowGrid{grid-template-columns:1fr}.periodQuick .btn{width:100%;justify-content:center}}
+
+
+/* v5.10 campaigns */
+.campaignGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
+.campaignCard{border:1px solid var(--line);background:white;border-radius:20px;padding:16px;box-shadow:0 8px 24px rgba(23,60,82,.06)}
+.campaignCard h3{margin-bottom:6px}
+.campaignMeta{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+.campaignKpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:12px}
+.campaignKpi{border:1px solid var(--line);background:#F8FBFC;border-radius:14px;padding:9px}
+.campaignKpi span{display:block;color:var(--muted);font-size:11px}.campaignKpi b{font-size:18px}
+.campaignProgress{height:10px;background:#EAF1F4;border-radius:999px;overflow:hidden;margin-top:10px}.campaignProgress span{display:block;height:100%;background:linear-gradient(135deg,var(--green),var(--blue));border-radius:999px}
+.materialChips{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}
+.conditionBox{border:1px solid #C8EFA2;background:#F0FBE9;color:#3A6F16;border-radius:16px;padding:12px;margin-top:12px}
+.campaignSelect{min-width:190px;border:1px solid var(--line);border-radius:10px;padding:6px 8px;background:white}
+.campaignReportBox{border:1px solid var(--line);background:white;border-radius:18px;padding:14px;margin-top:12px}
+@media(max-width:900px){.campaignKpis{grid-template-columns:repeat(2,minmax(0,1fr))}.campaignSelect{width:100%}}
 
 </style></head><body><div class="brand"><img src="assets/logo_evora.png"><div><h1>Proposta comercial</h1><p>${esc(project().name)} · ${fmtDateTime(now())}</p></div></div><div class="box"><b>Cliente:</b> ${esc(l.name)}<br><b>Lote:</b> ${esc(lotLabel(lot.id))} · ${lot.area} m²<br><b>Status:</b> ${esc(p.status)} · <b>Validade:</b> ${fmtDate(p.expiresAt)}</div><table><tr><th>Preço</th><td>${fmtMoney(lot.price)}</td></tr><tr><th>Entrada</th><td>${p.entry}%</td></tr><tr><th>Mensais</th><td>${p.months}x ${fmtMoney(p.monthly)}</td></tr><tr><th>Anuais</th><td>${p.annuals}x ${fmtMoney(p.annual)}</td></tr><tr><th>Correção</th><td>${esc(p.index)} + ${p.interest}% a.m.</td></tr><tr><th>Total nominal</th><td>${fmtMoney(p.total)}</td></tr></table><div class="box"><h2>Confirmação</h2><p>Para seguir, o cliente deve confirmar interesse e enviar documentação para contrato. Esta página serve como modelo da futura página de confirmação online.</p><button onclick="alert('Confirmação demonstrativa registrada. Em produção, este botão gravará o aceite no sistema.')">Confirmar interesse</button></div><button onclick="window.print()">Salvar/Imprimir PDF</button></body></html>`;
 }
@@ -708,7 +766,7 @@ function proposalFlowHtml(p){
 function proposalPdfHtml(p){
   const l=leadBy(p.leadId), lot=lotBy(p.lotId);
   return `<!doctype html><html><head><meta charset="utf-8"><title>Proposta ${esc(l.name)}</title><style>body{font-family:Arial,sans-serif;color:#173C52;margin:36px}h1{font-size:26px}.box{border:1px solid #d8e2e8;border-radius:14px;padding:14px;margin:12px 0}.brand{display:flex;gap:12px;align-items:center}.brand img{height:44px}table{border-collapse:collapse;width:100%;margin-top:14px}td,th{border:1px solid #d8e2e8;padding:9px;text-align:left}th{background:#f3f7f9}button{padding:10px 14px;border:0;border-radius:10px;background:#245E82;color:white;font-weight:bold}.confirm{background:#F0FBE9;border:1px solid #C8EFA2;border-radius:14px;padding:14px;margin-top:16px}@media print{button{display:none}}
-/* v5.9 login/local RBAC layer */
+/* v5.10 login/local RBAC layer */
 .loginPage{min-height:100vh;display:grid;grid-template-columns:1fr 430px;background:#fff}
 .loginHero{background:linear-gradient(135deg,#0E2738,#245E82);color:white;padding:44px;display:flex;flex-direction:column;justify-content:space-between}
 .loginHero img{max-width:270px;display:block}
@@ -729,7 +787,7 @@ function proposalPdfHtml(p){
 @media(max-width:900px){.loginPage{grid-template-columns:1fr}.loginHero{min-height:360px}}
 
 
-/* v5.9 mobile and guided journey refinements */
+/* v5.10 mobile and guided journey refinements */
 .actionButtons{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;padding-top:8px;border-top:1px solid var(--line)}
 .actionButtons .btn{font-size:12px;padding:7px 9px;border-radius:10px}
 .selectFilterGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -746,14 +804,14 @@ function proposalPdfHtml(p){
 }
 
 
-/* v5.9 checklist refinement */
+/* v5.10 checklist refinement */
 .checkCard .actionButtons{margin-top:12px}
 .checkCard .primaryActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 .checkCard .primaryActions .btn{min-width:132px;justify-content:center}
 .actionNotePreview{margin-top:8px;padding:8px 10px;border-radius:12px;background:#F8FBFC;border:1px dashed var(--line);font-size:12px;color:var(--muted)}
 
 
-/* v5.9 proposal and material send center */
+/* v5.10 proposal and material send center */
 .materialSendGrid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .materialChecklist{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
 .materialItem{border:1px solid var(--line);background:white;border-radius:16px;padding:12px}
@@ -770,7 +828,7 @@ function proposalPdfHtml(p){
 @media(max-width:950px){.materialSendGrid,.proposalDetailGrid{grid-template-columns:1fr}}
 
 
-/* v5.9 finance and backend-ready communications */
+/* v5.10 finance and backend-ready communications */
 .backendBadge{display:inline-flex;border:1px solid #BFDBFE;background:#EFF6FF;color:#1D4ED8;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:900;margin:3px}
 .queueBox{border:1px dashed var(--line);background:#F8FBFC;border-radius:16px;padding:12px;margin-top:10px}
 .financeKpiGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
@@ -785,6 +843,35 @@ function proposalPdfHtml(p){
 .materialBackendActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;padding-top:10px;border-top:1px solid var(--line)}
 .billingMessage{border:1px solid #FDE68A;background:#FFFBEB;border-radius:16px;padding:12px;margin-top:10px;color:#92400E}
 @media(max-width:1000px){.financeGrid{grid-template-columns:1fr}.financeToolbar{flex-direction:column;align-items:stretch}.financeToolbar .btn,.financeToolbar input,.financeToolbar select{width:100%}}
+
+
+/* v5.10 finance period and VGV */
+.periodPanel{border:1px solid var(--line);background:white;border-radius:18px;padding:14px;margin:0 0 14px}
+.periodQuick{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.cashFlowGrid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+.cashFlowTable{max-height:360px;overflow:auto;border:1px solid var(--line);border-radius:16px;background:white}
+.cashFlowChart{border:1px solid var(--line);background:white;border-radius:18px;padding:14px}
+.cashFlowChart svg{width:100%;height:auto;display:block}
+.vgvProgress{height:12px;background:#EAF1F4;border-radius:999px;overflow:hidden;margin-top:8px}
+.vgvProgress span{display:block;height:100%;background:linear-gradient(135deg,var(--green),var(--blue));border-radius:999px}
+.financeSub{color:var(--muted);font-size:12px;margin-top:4px;display:block}
+@media(max-width:1000px){.cashFlowGrid{grid-template-columns:1fr}.periodQuick .btn{width:100%;justify-content:center}}
+
+
+/* v5.10 campaigns */
+.campaignGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
+.campaignCard{border:1px solid var(--line);background:white;border-radius:20px;padding:16px;box-shadow:0 8px 24px rgba(23,60,82,.06)}
+.campaignCard h3{margin-bottom:6px}
+.campaignMeta{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+.campaignKpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:12px}
+.campaignKpi{border:1px solid var(--line);background:#F8FBFC;border-radius:14px;padding:9px}
+.campaignKpi span{display:block;color:var(--muted);font-size:11px}.campaignKpi b{font-size:18px}
+.campaignProgress{height:10px;background:#EAF1F4;border-radius:999px;overflow:hidden;margin-top:10px}.campaignProgress span{display:block;height:100%;background:linear-gradient(135deg,var(--green),var(--blue));border-radius:999px}
+.materialChips{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}
+.conditionBox{border:1px solid #C8EFA2;background:#F0FBE9;color:#3A6F16;border-radius:16px;padding:12px;margin-top:12px}
+.campaignSelect{min-width:190px;border:1px solid var(--line);border-radius:10px;padding:6px 8px;background:white}
+.campaignReportBox{border:1px solid var(--line);background:white;border-radius:18px;padding:14px;margin-top:12px}
+@media(max-width:900px){.campaignKpis{grid-template-columns:repeat(2,minmax(0,1fr))}.campaignSelect{width:100%}}
 
 </style></head><body><div class="brand"><img src="assets/logo_evora.png"><div><h1>Proposta comercial</h1><p>${esc(project().name)} · ${fmtDateTime(now())}</p></div></div><div class="box"><b>Cliente:</b> ${esc(l.name)}<br><b>Lote:</b> ${esc(lotLabel(lot.id))} · ${lot.area} m²<br><b>Status:</b> ${esc(p.status)} · <b>Validade:</b> ${fmtDate(p.expiresAt)}</div><table><tr><th>Preço do lote</th><td>${fmtMoney(lot.price)}</td></tr><tr><th>Entrada</th><td>${p.entry}%</td></tr><tr><th>Mensais</th><td>${p.months}x ${fmtMoney(p.monthly)}</td></tr><tr><th>Anuais</th><td>${p.annuals}x ${fmtMoney(p.annual)}</td></tr><tr><th>Correção</th><td>${esc(p.index)} + ${p.interest}% a.m.</td></tr><tr><th>Total nominal</th><td>${fmtMoney(p.total)}</td></tr></table><div class="confirm"><h2>Confirmação</h2><p>Esta página representa o ambiente de confirmação. Na versão com backend, o botão gravará o aceite do cliente, data, IP e versão da proposta.</p><button onclick="alert('Confirmação demonstrativa registrada. Em produção, será salvo no sistema.')">Confirmar interesse</button></div><button onclick="window.print()">Salvar/Imprimir PDF</button></body></html>`;
 }
@@ -870,7 +957,7 @@ function reportHtml(type){
   const chart3=chartBars(d.brokers,'Corretor','Propostas','#173C52',260);
   const chart4=chartBars(d.origin,'Origem','Leads','#84C225',260);
   return `<!doctype html><html><head><meta charset="utf-8"><title>Relatório ${esc(type)}</title><style>body{font-family:Arial,sans-serif;color:#173C52;margin:34px}h1{font-size:26px;margin:0}h2{margin-top:28px}p{color:#5f7280}.brand{display:flex;align-items:center;gap:12px;margin-bottom:18px}.brand img{height:42px}.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:18px 0}.kpi{border:1px solid #d8e2e8;border-radius:12px;padding:12px}.kpi b{display:block;font-size:20px;margin-top:6px}.chart{border:1px solid #d8e2e8;border-radius:14px;padding:12px;margin:14px 0;page-break-inside:avoid}table{border-collapse:collapse;width:100%;margin-top:8px}th,td{border:1px solid #d8e2e8;padding:8px;text-align:left;font-size:12px}th{background:#f1f6f8}@media print{button{display:none}body{margin:20px}}
-/* v5.9 login/local RBAC layer */
+/* v5.10 login/local RBAC layer */
 .loginPage{min-height:100vh;display:grid;grid-template-columns:1fr 430px;background:#fff}
 .loginHero{background:linear-gradient(135deg,#0E2738,#245E82);color:white;padding:44px;display:flex;flex-direction:column;justify-content:space-between}
 .loginHero img{max-width:270px;display:block}
@@ -891,7 +978,7 @@ function reportHtml(type){
 @media(max-width:900px){.loginPage{grid-template-columns:1fr}.loginHero{min-height:360px}}
 
 
-/* v5.9 mobile and guided journey refinements */
+/* v5.10 mobile and guided journey refinements */
 .actionButtons{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;padding-top:8px;border-top:1px solid var(--line)}
 .actionButtons .btn{font-size:12px;padding:7px 9px;border-radius:10px}
 .selectFilterGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -908,14 +995,14 @@ function reportHtml(type){
 }
 
 
-/* v5.9 checklist refinement */
+/* v5.10 checklist refinement */
 .checkCard .actionButtons{margin-top:12px}
 .checkCard .primaryActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 .checkCard .primaryActions .btn{min-width:132px;justify-content:center}
 .actionNotePreview{margin-top:8px;padding:8px 10px;border-radius:12px;background:#F8FBFC;border:1px dashed var(--line);font-size:12px;color:var(--muted)}
 
 
-/* v5.9 proposal and material send center */
+/* v5.10 proposal and material send center */
 .materialSendGrid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .materialChecklist{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
 .materialItem{border:1px solid var(--line);background:white;border-radius:16px;padding:12px}
@@ -932,7 +1019,7 @@ function reportHtml(type){
 @media(max-width:950px){.materialSendGrid,.proposalDetailGrid{grid-template-columns:1fr}}
 
 
-/* v5.9 finance and backend-ready communications */
+/* v5.10 finance and backend-ready communications */
 .backendBadge{display:inline-flex;border:1px solid #BFDBFE;background:#EFF6FF;color:#1D4ED8;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:900;margin:3px}
 .queueBox{border:1px dashed var(--line);background:#F8FBFC;border-radius:16px;padding:12px;margin-top:10px}
 .financeKpiGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
@@ -948,12 +1035,41 @@ function reportHtml(type){
 .billingMessage{border:1px solid #FDE68A;background:#FFFBEB;border-radius:16px;padding:12px;margin-top:10px;color:#92400E}
 @media(max-width:1000px){.financeGrid{grid-template-columns:1fr}.financeToolbar{flex-direction:column;align-items:stretch}.financeToolbar .btn,.financeToolbar input,.financeToolbar select{width:100%}}
 
+
+/* v5.10 finance period and VGV */
+.periodPanel{border:1px solid var(--line);background:white;border-radius:18px;padding:14px;margin:0 0 14px}
+.periodQuick{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.cashFlowGrid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+.cashFlowTable{max-height:360px;overflow:auto;border:1px solid var(--line);border-radius:16px;background:white}
+.cashFlowChart{border:1px solid var(--line);background:white;border-radius:18px;padding:14px}
+.cashFlowChart svg{width:100%;height:auto;display:block}
+.vgvProgress{height:12px;background:#EAF1F4;border-radius:999px;overflow:hidden;margin-top:8px}
+.vgvProgress span{display:block;height:100%;background:linear-gradient(135deg,var(--green),var(--blue));border-radius:999px}
+.financeSub{color:var(--muted);font-size:12px;margin-top:4px;display:block}
+@media(max-width:1000px){.cashFlowGrid{grid-template-columns:1fr}.periodQuick .btn{width:100%;justify-content:center}}
+
+
+/* v5.10 campaigns */
+.campaignGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
+.campaignCard{border:1px solid var(--line);background:white;border-radius:20px;padding:16px;box-shadow:0 8px 24px rgba(23,60,82,.06)}
+.campaignCard h3{margin-bottom:6px}
+.campaignMeta{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+.campaignKpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:12px}
+.campaignKpi{border:1px solid var(--line);background:#F8FBFC;border-radius:14px;padding:9px}
+.campaignKpi span{display:block;color:var(--muted);font-size:11px}.campaignKpi b{font-size:18px}
+.campaignProgress{height:10px;background:#EAF1F4;border-radius:999px;overflow:hidden;margin-top:10px}.campaignProgress span{display:block;height:100%;background:linear-gradient(135deg,var(--green),var(--blue));border-radius:999px}
+.materialChips{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}
+.conditionBox{border:1px solid #C8EFA2;background:#F0FBE9;color:#3A6F16;border-radius:16px;padding:12px;margin-top:12px}
+.campaignSelect{min-width:190px;border:1px solid var(--line);border-radius:10px;padding:6px 8px;background:white}
+.campaignReportBox{border:1px solid var(--line);background:white;border-radius:18px;padding:14px;margin-top:12px}
+@media(max-width:900px){.campaignKpis{grid-template-columns:repeat(2,minmax(0,1fr))}.campaignSelect{width:100%}}
+
 </style></head><body><div class="brand"><img src="assets/logo_evora.png"><div><h1>Relatório ${esc(type)} · ${esc(project().name)}</h1><p>${fmtDateTime(now())}</p></div></div><div class="kpis"><div class="kpi">Leads<b>${d.a.leads.length}</b></div><div class="kpi">Clientes A<b>${d.a.a}</b></div><div class="kpi">Reservas<b>${d.a.res.length}</b></div><div class="kpi">Carteira<b>${fmtMoney(d.a.carteira)}</b></div></div><div class="chart"><h2>Funil de vendas</h2>${chart1}</div><div class="chart"><h2>Projeção de caixa 12 meses</h2>${chart2}</div><div class="chart"><h2>Performance de corretores</h2>${chart3}</div><div class="chart"><h2>Origem dos leads</h2>${chart4}</div>${tableHtml('Financeiro',d.financial)}${tableHtml('SDR',d.sdrs)}${tableHtml('Corretores',d.brokers)}${tableHtml('Campanhas',d.campaigns)}${tableHtml('Estoque',d.stock)}<h2>Alertas</h2><p>Leads parados: ${d.a.stalled.length}<br>Clientes sem comunicação 30+: ${d.a.silent.length}</p><button onclick="window.print()">Salvar/Imprimir PDF</button><script>setTimeout(()=>window.print(),500)<\/script></body></html>`;
 }
 window.printProposal=printProposal; window.openProposalConfirmation=openProposalConfirmation; window.sendProposalEmail=sendProposalEmail; window.sendProposalWhatsApp=sendProposalWhatsApp; window.markProposalSent=markProposalSent;
 /* ==== v4.2 patch end ==== */
 
-/* ==== v5.9 sector-specific reports patch start ==== */
+/* ==== v5.10 sector-specific reports patch start ==== */
 function reportDefinitions(){
   return [
     {id:'executivo', title:'Executivo diário', desc:'Resumo para diretoria: pressão de compra, gargalos, alertas e próximos comandos.', tags:['Diretoria','Diário','Decisão']},
@@ -1086,7 +1202,7 @@ function reportHtml(type){
   const d=reportData(type);
   const blocks=reportBlocks(type,d);
   return `<!doctype html><html><head><meta charset="utf-8"><title>${esc(reportTitle(type))}</title><style>body{font-family:Arial,sans-serif;color:#173C52;margin:34px}h1{font-size:26px;margin:0}h2{margin-top:28px}p{color:#5f7280}.brand{display:flex;align-items:center;gap:12px;margin-bottom:18px}.brand img{height:42px}.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:18px 0}.kpi{border:1px solid #d8e2e8;border-radius:12px;padding:12px}.kpi b{display:block;font-size:20px;margin-top:6px}.chart{border:1px solid #d8e2e8;border-radius:14px;padding:12px;margin:14px 0;page-break-inside:avoid}table{border-collapse:collapse;width:100%;margin-top:8px;page-break-inside:auto}th,td{border:1px solid #d8e2e8;padding:8px;text-align:left;font-size:12px}th{background:#f1f6f8}.summary{border:1px solid #C8EFA2;background:#F0FBE9;border-radius:14px;padding:14px;margin:16px 0}@media print{button{display:none}body{margin:20px}.chart{break-inside:avoid}}
-/* v5.9 login/local RBAC layer */
+/* v5.10 login/local RBAC layer */
 .loginPage{min-height:100vh;display:grid;grid-template-columns:1fr 430px;background:#fff}
 .loginHero{background:linear-gradient(135deg,#0E2738,#245E82);color:white;padding:44px;display:flex;flex-direction:column;justify-content:space-between}
 .loginHero img{max-width:270px;display:block}
@@ -1107,7 +1223,7 @@ function reportHtml(type){
 @media(max-width:900px){.loginPage{grid-template-columns:1fr}.loginHero{min-height:360px}}
 
 
-/* v5.9 mobile and guided journey refinements */
+/* v5.10 mobile and guided journey refinements */
 .actionButtons{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;padding-top:8px;border-top:1px solid var(--line)}
 .actionButtons .btn{font-size:12px;padding:7px 9px;border-radius:10px}
 .selectFilterGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -1124,14 +1240,14 @@ function reportHtml(type){
 }
 
 
-/* v5.9 checklist refinement */
+/* v5.10 checklist refinement */
 .checkCard .actionButtons{margin-top:12px}
 .checkCard .primaryActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 .checkCard .primaryActions .btn{min-width:132px;justify-content:center}
 .actionNotePreview{margin-top:8px;padding:8px 10px;border-radius:12px;background:#F8FBFC;border:1px dashed var(--line);font-size:12px;color:var(--muted)}
 
 
-/* v5.9 proposal and material send center */
+/* v5.10 proposal and material send center */
 .materialSendGrid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .materialChecklist{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
 .materialItem{border:1px solid var(--line);background:white;border-radius:16px;padding:12px}
@@ -1148,7 +1264,7 @@ function reportHtml(type){
 @media(max-width:950px){.materialSendGrid,.proposalDetailGrid{grid-template-columns:1fr}}
 
 
-/* v5.9 finance and backend-ready communications */
+/* v5.10 finance and backend-ready communications */
 .backendBadge{display:inline-flex;border:1px solid #BFDBFE;background:#EFF6FF;color:#1D4ED8;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:900;margin:3px}
 .queueBox{border:1px dashed var(--line);background:#F8FBFC;border-radius:16px;padding:12px;margin-top:10px}
 .financeKpiGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
@@ -1163,6 +1279,35 @@ function reportHtml(type){
 .materialBackendActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;padding-top:10px;border-top:1px solid var(--line)}
 .billingMessage{border:1px solid #FDE68A;background:#FFFBEB;border-radius:16px;padding:12px;margin-top:10px;color:#92400E}
 @media(max-width:1000px){.financeGrid{grid-template-columns:1fr}.financeToolbar{flex-direction:column;align-items:stretch}.financeToolbar .btn,.financeToolbar input,.financeToolbar select{width:100%}}
+
+
+/* v5.10 finance period and VGV */
+.periodPanel{border:1px solid var(--line);background:white;border-radius:18px;padding:14px;margin:0 0 14px}
+.periodQuick{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.cashFlowGrid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+.cashFlowTable{max-height:360px;overflow:auto;border:1px solid var(--line);border-radius:16px;background:white}
+.cashFlowChart{border:1px solid var(--line);background:white;border-radius:18px;padding:14px}
+.cashFlowChart svg{width:100%;height:auto;display:block}
+.vgvProgress{height:12px;background:#EAF1F4;border-radius:999px;overflow:hidden;margin-top:8px}
+.vgvProgress span{display:block;height:100%;background:linear-gradient(135deg,var(--green),var(--blue));border-radius:999px}
+.financeSub{color:var(--muted);font-size:12px;margin-top:4px;display:block}
+@media(max-width:1000px){.cashFlowGrid{grid-template-columns:1fr}.periodQuick .btn{width:100%;justify-content:center}}
+
+
+/* v5.10 campaigns */
+.campaignGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
+.campaignCard{border:1px solid var(--line);background:white;border-radius:20px;padding:16px;box-shadow:0 8px 24px rgba(23,60,82,.06)}
+.campaignCard h3{margin-bottom:6px}
+.campaignMeta{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+.campaignKpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:12px}
+.campaignKpi{border:1px solid var(--line);background:#F8FBFC;border-radius:14px;padding:9px}
+.campaignKpi span{display:block;color:var(--muted);font-size:11px}.campaignKpi b{font-size:18px}
+.campaignProgress{height:10px;background:#EAF1F4;border-radius:999px;overflow:hidden;margin-top:10px}.campaignProgress span{display:block;height:100%;background:linear-gradient(135deg,var(--green),var(--blue));border-radius:999px}
+.materialChips{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}
+.conditionBox{border:1px solid #C8EFA2;background:#F0FBE9;color:#3A6F16;border-radius:16px;padding:12px;margin-top:12px}
+.campaignSelect{min-width:190px;border:1px solid var(--line);border-radius:10px;padding:6px 8px;background:white}
+.campaignReportBox{border:1px solid var(--line);background:white;border-radius:18px;padding:14px;margin-top:12px}
+@media(max-width:900px){.campaignKpis{grid-template-columns:repeat(2,minmax(0,1fr))}.campaignSelect{width:100%}}
 
 </style></head><body><div class="brand"><img src="assets/logo_evora.png"><div><h1>${esc(reportTitle(type))} · ${esc(project().name)}</h1><p>${fmtDateTime(now())}</p></div></div><div class="kpis"><div class="kpi">Leads<b>${d.a.leads.length}</b></div><div class="kpi">Clientes A<b>${d.a.a}</b></div><div class="kpi">Reservas<b>${d.a.res.length}</b></div><div class="kpi">Carteira<b>${fmtMoney(d.a.carteira)}</b></div></div><div class="summary"><b>Leitura automática:</b> ${reportInsight(type,d)}</div>${blocks}<button onclick="window.print()">Salvar/Imprimir PDF</button><script>setTimeout(()=>window.print(),500)<\/script></body></html>`;
 }
@@ -1183,8 +1328,8 @@ function reportInsight(type,d){
 window.markProposalSent=markProposalSent;
 /* ==== v4.2 patch end ==== */
 
-/* ==== v5.9 local login + RBAC layer start ==== */
-const AUTH_SESSION_KEY = 'evora-launch-os-v59-session';
+/* ==== v5.10 local login + RBAC layer start ==== */
+const AUTH_SESSION_KEY = 'evora-launch-os-v510-session';
 function localHash(value){ let h=5381; const s=String(value||''); for(let i=0;i<s.length;i++) h=((h<<5)+h)+s.charCodeAt(i); return 'h'+Math.abs(h); }
 function defaultPermissions(){
   return [
@@ -1248,7 +1393,7 @@ function authLog(action,entity,entityId,details=''){ ensureAuthState(); state.au
 function renderLogin(){
   ensureAuthState();
   const root=document.getElementById('app');
-  root.innerHTML=`<div class="loginPage"><section class="loginHero"><div><img src="assets/logo_evora_white.png" alt="Évora"><h1>Launch OS v5.9</h1><p>Évora Launch OS — inteligência comercial para vender com velocidade, método e controle.</p></div><small>Primeiro acesso: admin@evora.local · Evora@2026!</small></section><section class="loginCard"><h2>Entrar no sistema</h2><p>Controle local de usuários e permissões. Os dados permanecem no navegador.</p><form id="loginForm"><div class="field"><label>E-mail</label><input id="loginEmail" value="admin@evora.local"></div><div class="field"><label>Senha</label><input id="loginPassword" type="password" value="Evora@2026!"></div><button class="btn primary" style="width:100%;justify-content:center" type="submit">Entrar</button></form><div class="authNotice"><b>Modo sem banco:</b> usuários e leads ficam no localStorage deste navegador.</div></section></div>`;
+  root.innerHTML=`<div class="loginPage"><section class="loginHero"><div><img src="assets/logo_evora_white.png" alt="Évora"><h1>Launch OS v5.10</h1><p>Évora Launch OS — inteligência comercial para vender com velocidade, método e controle.</p></div><small>Primeiro acesso: admin@evora.local · Evora@2026!</small></section><section class="loginCard"><h2>Entrar no sistema</h2><p>Controle local de usuários e permissões. Os dados permanecem no navegador.</p><form id="loginForm"><div class="field"><label>E-mail</label><input id="loginEmail" value="admin@evora.local"></div><div class="field"><label>Senha</label><input id="loginPassword" type="password" value="Evora@2026!"></div><button class="btn primary" style="width:100%;justify-content:center" type="submit">Entrar</button></form><div class="authNotice"><b>Modo sem banco:</b> usuários e leads ficam no localStorage deste navegador.</div></section></div>`;
   document.getElementById('loginForm').addEventListener('submit',e=>{ e.preventDefault(); const email=document.getElementById('loginEmail').value.trim().toLowerCase(); const pw=document.getElementById('loginPassword').value; const u=state.auth.users.find(x=>String(x.email).toLowerCase()===email && x.active); if(!u || u.passwordHash!==localHash(pw)){ toast('E-mail ou senha inválidos.'); return; } sessionStorage.setItem(AUTH_SESSION_KEY,u.id); authLog('login','user',u.id,u.email); render(); toast('Login realizado.'); });
 }
 const _v56Render = render;
@@ -1278,7 +1423,7 @@ renderSidebar = function(){
   <div class="authUserPanel"><b>${esc(u.name)}</b><br>${esc(u.email)}<br>${esc(r?.name||'Sem papel')}<div style="margin-top:8px"><button class="btn small" onclick="localLogout()">Sair</button></div></div>
   <div class="projectBox"><label>Empreendimento</label><select onchange="selectProject(this.value)">${state.projects.map(p=>`<option value="${p.id}" ${p.id===state.selectedProjectId?'selected':''}>${esc(p.name)} · ${esc(p.city)}/${esc(p.uf)}</option>`).join('')}</select></div>
   <div class="nav">${allowed.map(([id,label])=>`<button class="${view===id?'active':''}" onclick="setView('${id}')"><span class="ico">${icon(id)}</span>${label}</button>`).join('')}</div>
-  <div class="principle"><b>Regra v5.9</b>Login e permissões foram adicionados sem remover a jornada comercial da v4.3.</div>`;
+  <div class="principle"><b>Regra v5.10</b>Login e permissões foram adicionados sem remover a jornada comercial da v4.3.</div>`;
 };
 const _oldRenderTopbar = renderTopbar;
 renderTopbar = function(){
@@ -1436,9 +1581,9 @@ function deleteLeadLocal(id){
 }
 function localLogout(){ const u=authUser(); if(u) authLog('logout','user',u.id,u.email); sessionStorage.removeItem(AUTH_SESSION_KEY); render(); }
 window.openAuthUserForm=openAuthUserForm; window.saveAuthUser=saveAuthUser; window.deleteAuthUser=deleteAuthUser; window.openResetPasswordLocal=openResetPasswordLocal; window.resetPasswordLocal=resetPasswordLocal; window.saveAuthRole=saveAuthRole; window.changeMyPasswordLocal=changeMyPasswordLocal; window.adminResetPasswordLocal=adminResetPasswordLocal; window.exportAuthLogs=exportAuthLogs; window.deleteLeadLocal=deleteLeadLocal; window.localLogout=localLogout;
-/* ==== v5.9 local login + RBAC layer end ==== */
+/* ==== v5.10 local login + RBAC layer end ==== */
 
-/* ==== v5.9 guided journey + mobile scroll patch start ==== */
+/* ==== v5.10 guided journey + mobile scroll patch start ==== */
 function scrollToMainContent(){
   setTimeout(()=>{
     const main=document.querySelector('.main');
@@ -1523,14 +1668,14 @@ function proposalPdfHtml(p){
   const entryTotal=(lot?.price||0)*((p.entry||10)/100);
   const entryPart=p.entryInstallmentValue||entryTotal/inst;
   return `<!doctype html><html><head><meta charset="utf-8"><title>Proposta ${esc(l.name)}</title><style>body{font-family:Arial,sans-serif;color:#173C52;margin:36px}h1{font-size:26px}.box{border:1px solid #d8e2e8;border-radius:14px;padding:14px;margin:12px 0}.brand{display:flex;gap:12px;align-items:center}.brand img{height:44px}table{border-collapse:collapse;width:100%;margin-top:14px}td,th{border:1px solid #d8e2e8;padding:9px;text-align:left}th{background:#f3f7f9}button{padding:10px 14px;border:0;border-radius:10px;background:#245E82;color:white;font-weight:bold}.confirm{background:#F0FBE9;border:1px solid #C8EFA2;border-radius:14px;padding:14px;margin-top:16px}@media print{button{display:none}}
-/* v5.9 checklist refinement */
+/* v5.10 checklist refinement */
 .checkCard .actionButtons{margin-top:12px}
 .checkCard .primaryActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 .checkCard .primaryActions .btn{min-width:132px;justify-content:center}
 .actionNotePreview{margin-top:8px;padding:8px 10px;border-radius:12px;background:#F8FBFC;border:1px dashed var(--line);font-size:12px;color:var(--muted)}
 
 
-/* v5.9 proposal and material send center */
+/* v5.10 proposal and material send center */
 .materialSendGrid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .materialChecklist{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
 .materialItem{border:1px solid var(--line);background:white;border-radius:16px;padding:12px}
@@ -1547,7 +1692,7 @@ function proposalPdfHtml(p){
 @media(max-width:950px){.materialSendGrid,.proposalDetailGrid{grid-template-columns:1fr}}
 
 
-/* v5.9 finance and backend-ready communications */
+/* v5.10 finance and backend-ready communications */
 .backendBadge{display:inline-flex;border:1px solid #BFDBFE;background:#EFF6FF;color:#1D4ED8;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:900;margin:3px}
 .queueBox{border:1px dashed var(--line);background:#F8FBFC;border-radius:16px;padding:12px;margin-top:10px}
 .financeKpiGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
@@ -1562,6 +1707,35 @@ function proposalPdfHtml(p){
 .materialBackendActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;padding-top:10px;border-top:1px solid var(--line)}
 .billingMessage{border:1px solid #FDE68A;background:#FFFBEB;border-radius:16px;padding:12px;margin-top:10px;color:#92400E}
 @media(max-width:1000px){.financeGrid{grid-template-columns:1fr}.financeToolbar{flex-direction:column;align-items:stretch}.financeToolbar .btn,.financeToolbar input,.financeToolbar select{width:100%}}
+
+
+/* v5.10 finance period and VGV */
+.periodPanel{border:1px solid var(--line);background:white;border-radius:18px;padding:14px;margin:0 0 14px}
+.periodQuick{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.cashFlowGrid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+.cashFlowTable{max-height:360px;overflow:auto;border:1px solid var(--line);border-radius:16px;background:white}
+.cashFlowChart{border:1px solid var(--line);background:white;border-radius:18px;padding:14px}
+.cashFlowChart svg{width:100%;height:auto;display:block}
+.vgvProgress{height:12px;background:#EAF1F4;border-radius:999px;overflow:hidden;margin-top:8px}
+.vgvProgress span{display:block;height:100%;background:linear-gradient(135deg,var(--green),var(--blue));border-radius:999px}
+.financeSub{color:var(--muted);font-size:12px;margin-top:4px;display:block}
+@media(max-width:1000px){.cashFlowGrid{grid-template-columns:1fr}.periodQuick .btn{width:100%;justify-content:center}}
+
+
+/* v5.10 campaigns */
+.campaignGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
+.campaignCard{border:1px solid var(--line);background:white;border-radius:20px;padding:16px;box-shadow:0 8px 24px rgba(23,60,82,.06)}
+.campaignCard h3{margin-bottom:6px}
+.campaignMeta{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+.campaignKpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:12px}
+.campaignKpi{border:1px solid var(--line);background:#F8FBFC;border-radius:14px;padding:9px}
+.campaignKpi span{display:block;color:var(--muted);font-size:11px}.campaignKpi b{font-size:18px}
+.campaignProgress{height:10px;background:#EAF1F4;border-radius:999px;overflow:hidden;margin-top:10px}.campaignProgress span{display:block;height:100%;background:linear-gradient(135deg,var(--green),var(--blue));border-radius:999px}
+.materialChips{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}
+.conditionBox{border:1px solid #C8EFA2;background:#F0FBE9;color:#3A6F16;border-radius:16px;padding:12px;margin-top:12px}
+.campaignSelect{min-width:190px;border:1px solid var(--line);border-radius:10px;padding:6px 8px;background:white}
+.campaignReportBox{border:1px solid var(--line);background:white;border-radius:18px;padding:14px;margin-top:12px}
+@media(max-width:900px){.campaignKpis{grid-template-columns:repeat(2,minmax(0,1fr))}.campaignSelect{width:100%}}
 
 </style></head><body><div class="brand"><img src="assets/logo_evora.png"><div><h1>Proposta comercial</h1><p>${esc(project().name)} · ${fmtDateTime(now())}</p></div></div><div class="box"><b>Cliente:</b> ${esc(l.name)}<br><b>Lote:</b> ${esc(lotLabel(lot.id))} · ${lot.area} m²<br><b>Status:</b> ${esc(p.status)} · <b>Validade:</b> ${fmtDate(p.expiresAt)}</div><table><tr><th>Preço do lote</th><td>${fmtMoney(lot.price)}</td></tr><tr><th>Entrada</th><td>${p.entry}% · ${inst===1?'à vista':`${inst}x de ${fmtMoney(entryPart)}`} · total ${fmtMoney(entryTotal)}</td></tr><tr><th>Mensais</th><td>${p.months}x ${fmtMoney(p.monthly)}</td></tr><tr><th>Anuais</th><td>${p.annuals}x ${fmtMoney(p.annual)}</td></tr><tr><th>Correção</th><td>${esc(p.index)} + ${p.interest}% a.m.</td></tr><tr><th>Total nominal</th><td>${fmtMoney(p.total)}</td></tr></table><div class="confirm"><h2>Confirmação</h2><p>Esta página representa o ambiente de confirmação. Na versão com backend, o botão gravará o aceite do cliente, data, IP e versão da proposta.</p><button onclick="alert('Confirmação demonstrativa registrada. Em produção, será salvo no sistema.')">Confirmar interesse</button></div><button onclick="window.print()">Salvar/Imprimir PDF</button></body></html>`;
 }
@@ -1635,9 +1809,9 @@ openReserveLot = function(lotId='',leadId=''){
 };
 window.filterSelectOptions=filterSelectOptions; window.openLeadSimulator=openLeadSimulator; window.goLotsForLead=goLotsForLead; window.openLotPickerForLead=openLotPickerForLead; window.renderLotPickerResults=renderLotPickerResults; window.assignLotToLead=assignLotToLead; window.registerClientCommunicationFromLead=registerClientCommunicationFromLead;
 window.updateSim=updateSim; window.createProposalFromSimulator=createProposalFromSimulator;
-/* ==== v5.9 guided journey + mobile scroll patch end ==== */
+/* ==== v5.10 guided journey + mobile scroll patch end ==== */
 
-/* ==== v5.9 checklist + slogan patch start ==== */
+/* ==== v5.10 checklist + slogan patch start ==== */
 dossierAction = function(l,miss){
   const tasks = TASKS[l.stage] || [];
   return `<div class="grid two" style="margin-top:14px">
@@ -1683,9 +1857,9 @@ function toggleStageNote(leadId,taskId){
   const area=document.getElementById('note-'+taskId);
   if(area && wrap.style.display==='block') setTimeout(()=>area.focus(),60);
 }
-/* ==== v5.9 checklist + slogan patch end ==== */
+/* ==== v5.10 checklist + slogan patch end ==== */
 
-/* ==== v5.9 rich proposal + material send center start ==== */
+/* ==== v5.10 rich proposal + material send center start ==== */
 function ensureMaterialSendState(){
   state.materialSends = state.materialSends || [];
   state.materials = state.materials || [];
@@ -1920,7 +2094,7 @@ proposalPdfHtml = function(p){
   const entryTotal=(lot?.price||0)*((p.entry||10)/100);
   const entryPart=p.entryInstallmentValue||entryTotal/inst;
   return `<!doctype html><html><head><meta charset="utf-8"><title>Proposta ${esc(l.name)}</title><style>body{font-family:Arial,sans-serif;color:#173C52;margin:36px}h1{font-size:26px}.box{border:1px solid #d8e2e8;border-radius:14px;padding:14px;margin:12px 0}.brand{display:flex;gap:12px;align-items:center}.brand img{height:44px}table{border-collapse:collapse;width:100%;margin-top:14px}td,th{border:1px solid #d8e2e8;padding:9px;text-align:left}th{background:#f3f7f9}button{padding:10px 14px;border:0;border-radius:10px;background:#245E82;color:white;font-weight:bold}.confirm{background:#F0FBE9;border:1px solid #C8EFA2;border-radius:14px;padding:14px;margin-top:16px}@media print{button{display:none}}
-/* v5.9 finance and backend-ready communications */
+/* v5.10 finance and backend-ready communications */
 .backendBadge{display:inline-flex;border:1px solid #BFDBFE;background:#EFF6FF;color:#1D4ED8;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:900;margin:3px}
 .queueBox{border:1px dashed var(--line);background:#F8FBFC;border-radius:16px;padding:12px;margin-top:10px}
 .financeKpiGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
@@ -1936,12 +2110,41 @@ proposalPdfHtml = function(p){
 .billingMessage{border:1px solid #FDE68A;background:#FFFBEB;border-radius:16px;padding:12px;margin-top:10px;color:#92400E}
 @media(max-width:1000px){.financeGrid{grid-template-columns:1fr}.financeToolbar{flex-direction:column;align-items:stretch}.financeToolbar .btn,.financeToolbar input,.financeToolbar select{width:100%}}
 
+
+/* v5.10 finance period and VGV */
+.periodPanel{border:1px solid var(--line);background:white;border-radius:18px;padding:14px;margin:0 0 14px}
+.periodQuick{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.cashFlowGrid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+.cashFlowTable{max-height:360px;overflow:auto;border:1px solid var(--line);border-radius:16px;background:white}
+.cashFlowChart{border:1px solid var(--line);background:white;border-radius:18px;padding:14px}
+.cashFlowChart svg{width:100%;height:auto;display:block}
+.vgvProgress{height:12px;background:#EAF1F4;border-radius:999px;overflow:hidden;margin-top:8px}
+.vgvProgress span{display:block;height:100%;background:linear-gradient(135deg,var(--green),var(--blue));border-radius:999px}
+.financeSub{color:var(--muted);font-size:12px;margin-top:4px;display:block}
+@media(max-width:1000px){.cashFlowGrid{grid-template-columns:1fr}.periodQuick .btn{width:100%;justify-content:center}}
+
+
+/* v5.10 campaigns */
+.campaignGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
+.campaignCard{border:1px solid var(--line);background:white;border-radius:20px;padding:16px;box-shadow:0 8px 24px rgba(23,60,82,.06)}
+.campaignCard h3{margin-bottom:6px}
+.campaignMeta{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+.campaignKpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:12px}
+.campaignKpi{border:1px solid var(--line);background:#F8FBFC;border-radius:14px;padding:9px}
+.campaignKpi span{display:block;color:var(--muted);font-size:11px}.campaignKpi b{font-size:18px}
+.campaignProgress{height:10px;background:#EAF1F4;border-radius:999px;overflow:hidden;margin-top:10px}.campaignProgress span{display:block;height:100%;background:linear-gradient(135deg,var(--green),var(--blue));border-radius:999px}
+.materialChips{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}
+.conditionBox{border:1px solid #C8EFA2;background:#F0FBE9;color:#3A6F16;border-radius:16px;padding:12px;margin-top:12px}
+.campaignSelect{min-width:190px;border:1px solid var(--line);border-radius:10px;padding:6px 8px;background:white}
+.campaignReportBox{border:1px solid var(--line);background:white;border-radius:18px;padding:14px;margin-top:12px}
+@media(max-width:900px){.campaignKpis{grid-template-columns:repeat(2,minmax(0,1fr))}.campaignSelect{width:100%}}
+
 </style></head><body><div class="brand"><img src="assets/logo_evora.png"><div><h1>Proposta comercial</h1><p>${esc(project().name)} · ${fmtDateTime(now())}</p></div></div><div class="box"><b>Cliente:</b> ${esc(l.name)}<br><b>Lote:</b> ${esc(lotLabel(lot.id))} · ${lot.area} m² · ${esc(lot.type)} · ${esc(lot.sector)}<br><b>Status proposta:</b> ${esc(p.status)} · <b>Status lote:</b> ${lotStatusLabel(lot.status)}<br><b>Validade:</b> ${fmtDate(p.expiresAt)}</div><table><tr><th>Preço do lote</th><td>${fmtMoney(lot.price)}</td></tr><tr><th>Entrada</th><td>${p.entry}% · ${inst===1?'à vista':`${inst}x de ${fmtMoney(entryPart)}`} · total ${fmtMoney(entryTotal)}</td></tr><tr><th>Mensais</th><td>${p.months}x ${fmtMoney(p.monthly)}</td></tr><tr><th>Anuais</th><td>${p.annuals}x ${fmtMoney(p.annual)}</td></tr><tr><th>Correção</th><td>${esc(p.index)} + ${p.interest}% a.m.</td></tr><tr><th>Total nominal</th><td>${fmtMoney(p.total)}</td></tr></table><div class="box"><b>Observações de negociação:</b><br>${esc(p.negotiationNotes||'—')}</div><div class="confirm"><h2>Confirmação</h2><p>Esta página representa o ambiente de confirmação. Na versão com backend, o botão gravará o aceite do cliente, data, IP e versão da proposta.</p><button onclick="alert('Confirmação demonstrativa registrada. Em produção, será salvo no sistema.')">Confirmar interesse</button></div><button onclick="window.print()">Salvar/Imprimir PDF</button></body></html>`;
 };
 window.openMaterialSendCenter=openMaterialSendCenter; window.renderMaterialLeadHistory=renderMaterialLeadHistory; window.sendMaterialsFromForm=sendMaterialsFromForm; window.previewMaterialMessage=previewMaterialMessage; window.saveProposalNotes=saveProposalNotes;
-/* ==== v5.9 rich proposal + material send center end ==== */
+/* ==== v5.10 rich proposal + material send center end ==== */
 
-/* ==== v5.9 backend-ready sends + financial controls start ==== */
+/* ==== v5.10 backend-ready sends + financial controls start ==== */
 function ensureBackendState(){
   state.backendQueue = state.backendQueue || [];
   state.financeSettings = state.financeSettings || {costM2:650, defaultBillingChannel:'WhatsApp'};
@@ -2277,7 +2480,36 @@ function financeReportHtml(type='financeiro'){
   const a=financeAnalytics();
   const rows=projectReceivables().slice(0,200);
   const tableRows=rows.map(r=>`<tr><td>${esc(leadName(r.leadId))}</td><td>${esc(lotLabel(r.lotId))}</td><td>${esc(r.type)}</td><td>${fmtDate(r.dueDate)}</td><td>${fmtMoney(r.amount)}</td><td>${esc(receivableStatus(r))}</td></tr>`).join('');
-  return `<!doctype html><html><head><meta charset="utf-8"><title>Relatório Financeiro</title><style>body{font-family:Arial,sans-serif;color:#173C52;margin:34px}h1{font-size:26px}.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.kpi{border:1px solid #d8e2e8;border-radius:12px;padding:12px}.kpi b{display:block;font-size:20px;margin-top:5px}table{border-collapse:collapse;width:100%;margin-top:18px}td,th{border:1px solid #d8e2e8;padding:8px;font-size:12px;text-align:left}th{background:#f1f6f8}.chart{border:1px solid #d8e2e8;border-radius:14px;padding:12px;margin-top:18px}@media print{button{display:none}}</style></head><body><h1>Relatório Financeiro · ${esc(project().name)}</h1><p>${fmtDateTime(now())}</p><div class="kpis"><div class="kpi">Recebido<b>${fmtMoney(a.received)}</b></div><div class="kpi">A receber<b>${fmtMoney(a.open)}</b></div><div class="kpi">Vencido<b>${fmtMoney(a.late)}</b></div><div class="kpi">Inadimplência<b>${a.delinquency.toFixed(1)}%</b></div><div class="kpi">Margem/m²<b>${fmtMoney(a.marginM2)}</b></div><div class="kpi">Preço médio/m²<b>${fmtMoney(a.avgM2)}</b></div><div class="kpi">Descontos mês<b>${fmtMoney(a.discountMonth)}</b></div><div class="kpi">Preço médio venda<b>${fmtMoney(a.avgSale)}</b></div></div><div class="chart"><h2>Projeção de recebíveis</h2>${financeChartSvg()}</div><h2>Recebíveis</h2><table><thead><tr><th>Cliente</th><th>Lote</th><th>Tipo</th><th>Vencimento</th><th>Valor</th><th>Status</th></tr></thead><tbody>${tableRows}</tbody></table><h2>Mensagens de cobrança preparadas</h2><table><thead><tr><th>Data</th><th>Cliente</th><th>Canal</th><th>Status</th></tr></thead><tbody>${(state.billingMessages||[]).map(m=>`<tr><td>${fmtDateTime(m.createdAt)}</td><td>${esc(leadName(m.leadId))}</td><td>${esc(m.channel)}</td><td>${esc(m.status)}</td></tr>`).join('')}</tbody></table><button onclick="window.print()">Salvar/Imprimir PDF</button><script>setTimeout(()=>window.print(),500)<\/script></body></html>`;
+  return `<!doctype html><html><head><meta charset="utf-8"><title>Relatório Financeiro</title><style>body{font-family:Arial,sans-serif;color:#173C52;margin:34px}h1{font-size:26px}.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.kpi{border:1px solid #d8e2e8;border-radius:12px;padding:12px}.kpi b{display:block;font-size:20px;margin-top:5px}table{border-collapse:collapse;width:100%;margin-top:18px}td,th{border:1px solid #d8e2e8;padding:8px;font-size:12px;text-align:left}th{background:#f1f6f8}.chart{border:1px solid #d8e2e8;border-radius:14px;padding:12px;margin-top:18px}@media print{button{display:none}}
+/* v5.10 finance period and VGV */
+.periodPanel{border:1px solid var(--line);background:white;border-radius:18px;padding:14px;margin:0 0 14px}
+.periodQuick{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.cashFlowGrid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+.cashFlowTable{max-height:360px;overflow:auto;border:1px solid var(--line);border-radius:16px;background:white}
+.cashFlowChart{border:1px solid var(--line);background:white;border-radius:18px;padding:14px}
+.cashFlowChart svg{width:100%;height:auto;display:block}
+.vgvProgress{height:12px;background:#EAF1F4;border-radius:999px;overflow:hidden;margin-top:8px}
+.vgvProgress span{display:block;height:100%;background:linear-gradient(135deg,var(--green),var(--blue));border-radius:999px}
+.financeSub{color:var(--muted);font-size:12px;margin-top:4px;display:block}
+@media(max-width:1000px){.cashFlowGrid{grid-template-columns:1fr}.periodQuick .btn{width:100%;justify-content:center}}
+
+
+/* v5.10 campaigns */
+.campaignGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
+.campaignCard{border:1px solid var(--line);background:white;border-radius:20px;padding:16px;box-shadow:0 8px 24px rgba(23,60,82,.06)}
+.campaignCard h3{margin-bottom:6px}
+.campaignMeta{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+.campaignKpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:12px}
+.campaignKpi{border:1px solid var(--line);background:#F8FBFC;border-radius:14px;padding:9px}
+.campaignKpi span{display:block;color:var(--muted);font-size:11px}.campaignKpi b{font-size:18px}
+.campaignProgress{height:10px;background:#EAF1F4;border-radius:999px;overflow:hidden;margin-top:10px}.campaignProgress span{display:block;height:100%;background:linear-gradient(135deg,var(--green),var(--blue));border-radius:999px}
+.materialChips{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}
+.conditionBox{border:1px solid #C8EFA2;background:#F0FBE9;color:#3A6F16;border-radius:16px;padding:12px;margin-top:12px}
+.campaignSelect{min-width:190px;border:1px solid var(--line);border-radius:10px;padding:6px 8px;background:white}
+.campaignReportBox{border:1px solid var(--line);background:white;border-radius:18px;padding:14px;margin-top:12px}
+@media(max-width:900px){.campaignKpis{grid-template-columns:repeat(2,minmax(0,1fr))}.campaignSelect{width:100%}}
+
+</style></head><body><h1>Relatório Financeiro · ${esc(project().name)}</h1><p>${fmtDateTime(now())}</p><div class="kpis"><div class="kpi">Recebido<b>${fmtMoney(a.received)}</b></div><div class="kpi">A receber<b>${fmtMoney(a.open)}</b></div><div class="kpi">Vencido<b>${fmtMoney(a.late)}</b></div><div class="kpi">Inadimplência<b>${a.delinquency.toFixed(1)}%</b></div><div class="kpi">Margem/m²<b>${fmtMoney(a.marginM2)}</b></div><div class="kpi">Preço médio/m²<b>${fmtMoney(a.avgM2)}</b></div><div class="kpi">Descontos mês<b>${fmtMoney(a.discountMonth)}</b></div><div class="kpi">Preço médio venda<b>${fmtMoney(a.avgSale)}</b></div></div><div class="chart"><h2>Projeção de recebíveis</h2>${financeChartSvg()}</div><h2>Recebíveis</h2><table><thead><tr><th>Cliente</th><th>Lote</th><th>Tipo</th><th>Vencimento</th><th>Valor</th><th>Status</th></tr></thead><tbody>${tableRows}</tbody></table><h2>Mensagens de cobrança preparadas</h2><table><thead><tr><th>Data</th><th>Cliente</th><th>Canal</th><th>Status</th></tr></thead><tbody>${(state.billingMessages||[]).map(m=>`<tr><td>${fmtDateTime(m.createdAt)}</td><td>${esc(leadName(m.leadId))}</td><td>${esc(m.channel)}</td><td>${esc(m.status)}</td></tr>`).join('')}</tbody></table><button onclick="window.print()">Salvar/Imprimir PDF</button><script>setTimeout(()=>window.print(),500)<\/script></body></html>`;
 }
 function printFinanceReport(type='financeiro'){
   const w=window.open('','_blank'); w.document.write(financeReportHtml(type)); w.document.close();
@@ -2288,7 +2520,450 @@ reportHtml = function(type){
   return _v59OldReportHtml(type);
 };
 window.prepareMaterialWhatsApp=prepareMaterialWhatsApp; window.prepareMaterialEmail=prepareMaterialEmail; window.copyMaterialMessage=copyMaterialMessage; window.enqueueMaterialBackend=enqueueMaterialBackend; window.syncReceivables=syncReceivables; window.renderFinanceiro=renderFinanceiro; window.saveFinanceSettings=saveFinanceSettings; window.generateBoleto=generateBoleto; window.prepareBillingWhatsApp=prepareBillingWhatsApp; window.prepareBillingEmail=prepareBillingEmail; window.markReceivablePaid=markReceivablePaid; window.openManualReceivable=openManualReceivable; window.saveManualReceivable=saveManualReceivable; window.printFinanceReport=printFinanceReport;
-/* ==== v5.9 backend-ready sends + financial controls end ==== */
+/* ==== v5.10 backend-ready sends + financial controls end ==== */
+
+/* ==== v5.10 finance period + VGV patch start ==== */
+function yyyyMMdd(date){
+  const d=new Date(date);
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+function endOfDay(dateStr){
+  const d=new Date(dateStr+'T23:59:59');
+  return d;
+}
+function startOfDay(dateStr){
+  const d=new Date(dateStr+'T00:00:00');
+  return d;
+}
+function firstDayOfMonth(d=new Date()){ return yyyyMMdd(new Date(d.getFullYear(),d.getMonth(),1)); }
+function lastDayOfMonth(d=new Date()){ return yyyyMMdd(new Date(d.getFullYear(),d.getMonth()+1,0)); }
+function firstDayOfYear(d=new Date()){ return yyyyMMdd(new Date(d.getFullYear(),0,1)); }
+function lastDayOfYear(d=new Date()){ return yyyyMMdd(new Date(d.getFullYear(),11,31)); }
+function addDaysDate(n){ const d=new Date(); d.setDate(d.getDate()+n); return yyyyMMdd(d); }
+function ensureFinancePeriod(){
+  ensureFinanceState();
+  state.financePeriod=state.financePeriod||{preset:'ano_atual',start:firstDayOfYear(),end:lastDayOfYear()};
+  if(!state.financePeriod.start || !state.financePeriod.end){
+    state.financePeriod.start=firstDayOfYear();
+    state.financePeriod.end=lastDayOfYear();
+  }
+}
+function periodObject(){
+  ensureFinancePeriod();
+  return {
+    preset:state.financePeriod.preset||'personalizado',
+    start:state.financePeriod.start,
+    end:state.financePeriod.end,
+    startDate:startOfDay(state.financePeriod.start),
+    endDate:endOfDay(state.financePeriod.end)
+  };
+}
+function inFinancePeriod(dateValue,period=periodObject()){
+  if(!dateValue) return false;
+  const d=new Date(dateValue);
+  return d>=period.startDate && d<=period.endDate;
+}
+function setFinanceQuick(preset){
+  ensureFinancePeriod();
+  const today=new Date();
+  let start=state.financePeriod.start, end=state.financePeriod.end;
+  if(preset==='mes_atual'){ start=firstDayOfMonth(today); end=lastDayOfMonth(today); }
+  if(preset==='proximos_90'){ start=yyyyMMdd(today); end=addDaysDate(90); }
+  if(preset==='trimestre_atual'){
+    const q=Math.floor(today.getMonth()/3);
+    start=yyyyMMdd(new Date(today.getFullYear(),q*3,1));
+    end=yyyyMMdd(new Date(today.getFullYear(),q*3+3,0));
+  }
+  if(preset==='ano_atual'){ start=firstDayOfYear(today); end=lastDayOfYear(today); }
+  if(preset==='tudo'){ start='2000-01-01'; end='2099-12-31'; }
+  state.financePeriod={preset,start,end};
+  save(); render();
+}
+function applyFinancePeriod(){
+  ensureFinancePeriod();
+  state.financePeriod.preset='personalizado';
+  state.financePeriod.start=v('finStart')||state.financePeriod.start;
+  state.financePeriod.end=v('finEnd')||state.financePeriod.end;
+  save(); render(); toast('Período financeiro aplicado.');
+}
+function periodLabel(period=periodObject()){
+  if(period.preset==='tudo') return 'Todo o empreendimento';
+  return `${fmtDate(period.start)} a ${fmtDate(period.end)}`;
+}
+function proposalDate(p){
+  return p.acceptedAt || p.approvedAt || p.sentAt || p.createdAt || now();
+}
+function vgvMetrics(period=periodObject()){
+  const lots=projectLots();
+  const vgvProjected=lots.reduce((s,l)=>s+Number(l.price||0),0);
+  const proposals=projectProposals();
+  const realizedStatuses=['aceita','convertida'];
+  const realizedAll=proposals.filter(p=>realizedStatuses.includes(p.status)).reduce((s,p)=>s+salePriceForProposal(p),0);
+  const realizedPeriod=proposals.filter(p=>realizedStatuses.includes(p.status)&&inFinancePeriod(proposalDate(p),period)).reduce((s,p)=>s+salePriceForProposal(p),0);
+  const contracted=projectContracts().filter(c=>c.signedAt).reduce((s,c)=>s+salePriceForProposal(byId(state.proposals,c.proposalId)||{}),0);
+  const inPipeline=proposals.filter(p=>['em-aprovacao','aprovada','enviada'].includes(p.status)).reduce((s,p)=>s+salePriceForProposal(p),0);
+  const soldLots=lots.filter(l=>['contrato','vendido'].includes(l.status)).length;
+  return {vgvProjected,realizedAll,realizedPeriod,contracted,inPipeline,soldLots,progress:vgvProjected?realizedAll/vgvProjected*100:0};
+}
+function financeAnalytics(period=periodObject()){
+  ensureFinanceState();
+  const recAll=projectReceivables();
+  const rec=recAll.filter(r=>inFinancePeriod(r.dueDate,period));
+  const received=rec.filter(r=>receivableStatus(r)==='recebido').reduce((s,r)=>s+Number(r.amount||0),0);
+  const open=rec.filter(r=>receivableStatus(r)==='aberto').reduce((s,r)=>s+Number(r.amount||0),0);
+  const late=rec.filter(r=>receivableStatus(r)==='vencido').reduce((s,r)=>s+Number(r.amount||0),0);
+  const baseLateOpen=open+late;
+  const proposals=projectProposals();
+  const sales=proposals.filter(p=>['aprovada','enviada','aceita','convertida'].includes(p.status)&&inFinancePeriod(proposalDate(p),period));
+  const totalSale=sales.reduce((s,p)=>s+salePriceForProposal(p),0);
+  const totalArea=sales.reduce((s,p)=>s+(lotBy(p.lotId)?.area||0),0);
+  const avgSale=sales.length?totalSale/sales.length:0;
+  const avgM2=totalArea?totalSale/totalArea:0;
+  const costM2=Number(state.financeSettings.costM2)||0;
+  const marginM2=avgM2-costM2;
+  const discountPeriod=sales.reduce((s,p)=>s+proposalDiscount(p),0);
+  const allSales=proposals.filter(p=>['aprovada','enviada','aceita','convertida'].includes(p.status));
+  const discountTotal=allSales.reduce((s,p)=>s+proposalDiscount(p),0);
+  const vgv=vgvMetrics(period);
+  return {rec,recAll,received,open,late,delinquency:baseLateOpen?late/baseLateOpen*100:0,proposals,sales,totalSale,totalArea,avgSale,avgM2,costM2,marginM2,discountTotal,discountPeriod,vgv,period};
+}
+function cashFlowRows(period=periodObject()){
+  const rowsMap={};
+  projectReceivables().filter(r=>inFinancePeriod(r.dueDate,period)).forEach(r=>{
+    const d=new Date(r.dueDate);
+    const key=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+    const label=`${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getFullYear()).slice(2)}`;
+    rowsMap[key]=rowsMap[key]||{key,label,previsto:0,recebido:0,vencido:0,aberto:0};
+    const amount=Number(r.amount||0);
+    rowsMap[key].previsto+=amount;
+    const st=receivableStatus(r);
+    if(st==='recebido') rowsMap[key].recebido+=amount;
+    if(st==='vencido') rowsMap[key].vencido+=amount;
+    if(st==='aberto') rowsMap[key].aberto+=amount;
+  });
+  return Object.values(rowsMap).sort((a,b)=>a.key.localeCompare(b.key));
+}
+function cashFlowSvg(rows){
+  const max=Math.max(1,...rows.map(r=>r.previsto));
+  const w=760, h=250, base=205, barW=Math.max(24,Math.min(54,Math.floor((w-70)/Math.max(1,rows.length))-12));
+  return `<svg viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg"><line x1="40" y1="${base}" x2="${w-20}" y2="${base}" stroke="#DDE8EE"/>${rows.map((r,i)=>{const x=48+i*((w-86)/Math.max(1,rows.length)); const hp=(r.previsto/max)*150; const hr=(r.recebido/max)*150; const hv=(r.vencido/max)*150; return `<rect x="${x}" y="${base-hp}" width="${barW}" height="${hp}" rx="7" fill="#245E82" opacity=".25"/><rect x="${x}" y="${base-hr}" width="${barW}" height="${hr}" rx="7" fill="#84C225"/><rect x="${x+barW+3}" y="${base-hv}" width="${Math.max(8,barW/3)}" height="${hv}" rx="5" fill="#DC2626"/><text x="${x-4}" y="${base+20}" font-size="11" fill="#637887">${r.label}</text>`;}).join('')}<text x="40" y="24" font-size="12" fill="#173C52">Azul claro: previsto · Verde: recebido · Vermelho: vencido</text></svg>`;
+}
+function renderFinancePeriodControls(period=periodObject()){
+  return `<div class="periodPanel">
+    <h3>Período de análise</h3>
+    <div class="formGrid">
+      <div class="field"><label>Início</label><input id="finStart" type="date" value="${period.start}"></div>
+      <div class="field"><label>Fim</label><input id="finEnd" type="date" value="${period.end}"></div>
+      <div class="field"><label>&nbsp;</label><button class="btn primary" onclick="applyFinancePeriod()">Aplicar período</button></div>
+    </div>
+    <div class="periodQuick">
+      <button class="btn small" onclick="setFinanceQuick('mes_atual')">Mês atual</button>
+      <button class="btn small" onclick="setFinanceQuick('proximos_90')">Próximos 90 dias</button>
+      <button class="btn small" onclick="setFinanceQuick('trimestre_atual')">Trimestre</button>
+      <button class="btn small" onclick="setFinanceQuick('ano_atual')">Ano atual</button>
+      <button class="btn small" onclick="setFinanceQuick('tudo')">Todo período</button>
+    </div>
+    <span class="financeSub">Análise atual: ${esc(periodLabel(period))}</span>
+  </div>`;
+}
+function renderFinanceiro(){
+  ensureFinancePeriod();
+  const period=periodObject();
+  const a=financeAnalytics(period);
+  const rows=a.rec.slice().sort((x,y)=>new Date(x.dueDate)-new Date(y.dueDate)).slice(0,300);
+  const cf=cashFlowRows(period);
+  return `${renderFinancePeriodControls(period)}
+  <div class="financeKpiGrid">
+    <div class="financeKpi"><span>VGV projetado do empreendimento</span><b>${fmtMoney(a.vgv.vgvProjected)}</b><div class="vgvProgress"><span style="width:${Math.min(100,a.vgv.progress)}%"></span></div><span class="financeSub">${a.vgv.progress.toFixed(1)}% realizado/contratado</span></div>
+    <div class="financeKpi"><span>VGV realizado total</span><b>${fmtMoney(a.vgv.realizedAll)}</b><span class="financeSub">Aceites e contratos</span></div>
+    <div class="financeKpi"><span>VGV realizado no período</span><b>${fmtMoney(a.vgv.realizedPeriod)}</b><span class="financeSub">${esc(periodLabel(period))}</span></div>
+    <div class="financeKpi"><span>VGV em negociação</span><b>${fmtMoney(a.vgv.inPipeline)}</b><span class="financeSub">Em aprovação, aprovadas e enviadas</span></div>
+    <div class="financeKpi"><span>Recebido no período</span><b>${fmtMoney(a.received)}</b></div>
+    <div class="financeKpi"><span>A receber no período</span><b>${fmtMoney(a.open)}</b></div>
+    <div class="financeKpi"><span>Inadimplência no período</span><b>${fmtMoney(a.late)}</b><span>${a.delinquency.toFixed(1)}%</span></div>
+    <div class="financeKpi"><span>Preço médio venda no período</span><b>${fmtMoney(a.avgSale)}</b></div>
+    <div class="financeKpi"><span>Preço médio/m² no período</span><b>${fmtMoney(a.avgM2)}</b></div>
+    <div class="financeKpi"><span>Margem atual/m²</span><b>${fmtMoney(a.marginM2)}</b><span class="financeSub">Custo/m²: ${fmtMoney(a.costM2)}</span></div>
+    <div class="financeKpi"><span>Descontos no período</span><b>${fmtMoney(a.discountPeriod)}</b></div>
+    <div class="financeKpi"><span>Descontos acumulados</span><b>${fmtMoney(a.discountTotal)}</b></div>
+  </div>
+  <div class="cashFlowGrid">
+    <div class="cashFlowChart"><h2>Fluxo de caixa de recebíveis</h2><p class="muted">Recebíveis agrupados por mês dentro do período selecionado.</p>${cf.length?cashFlowSvg(cf):'<div class="empty">Sem recebíveis no período.</div>'}</div>
+    <div class="card"><h2>Fluxo por período</h2><div class="cashFlowTable"><table><thead><tr><th>Período</th><th>Previsto</th><th>Recebido</th><th>Aberto</th><th>Vencido</th></tr></thead><tbody>${cf.map(r=>`<tr><td>${esc(r.label)}</td><td>${fmtMoney(r.previsto)}</td><td>${fmtMoney(r.recebido)}</td><td>${fmtMoney(r.aberto)}</td><td>${fmtMoney(r.vencido)}</td></tr>`).join('')||'<tr><td colspan="5" class="muted">Sem dados.</td></tr>'}</tbody></table></div></div>
+  </div>
+  <div class="financeGrid" style="margin-top:16px">
+    <div class="card">
+      <h2>Recebíveis do período</h2>
+      <div class="financeToolbar">
+        <button class="btn primary" onclick="syncReceivables()">Sincronizar carteira</button>
+        <button class="btn" onclick="openManualReceivable()">+ Recebível manual</button>
+        <button class="btn" onclick="printFinanceReport('financeiro')">Relatório PDF</button>
+        <button class="btn" onclick="printFinanceReport('cobranca')">Relatório cobrança</button>
+      </div>
+      <div class="tableWrap"><table><thead><tr><th>Cliente/Lote</th><th>Tipo</th><th>Vencimento</th><th>Valor</th><th>Status</th><th>Boleto/Cobrança</th></tr></thead><tbody>${rows.map(r=>`<tr><td><b>${esc(leadName(r.leadId))}</b><div class="tiny">${esc(lotLabel(r.lotId))}</div></td><td>${esc(r.type)} ${r.number||''}/${r.totalNumbers||''}</td><td>${fmtDate(r.dueDate)}</td><td>${fmtMoney(r.amount)}</td><td>${receivableStatusLabel(r)}</td><td><div class="actions"><button class="btn small" onclick="generateBoleto('${r.id}')">Boleto</button><button class="btn small" onclick="prepareBillingWhatsApp('${r.id}')">WhatsApp</button><button class="btn small" onclick="prepareBillingEmail('${r.id}')">E-mail</button><button class="btn small success" onclick="markReceivablePaid('${r.id}')">Recebido</button></div></td></tr>`).join('')||'<tr><td colspan="6" class="muted">Sem recebíveis no período. Clique em sincronizar carteira ou ajuste o período.</td></tr>'}</tbody></table></div>
+    </div>
+    <div class="card">
+      <h2>Parâmetros e integrações</h2>
+      <div class="field"><label>Custo/m² atual</label><input id="finCostM2" type="number" value="${a.costM2}"></div>
+      <button class="btn primary" onclick="saveFinanceSettings()">Salvar parâmetros</button>
+      <h3 style="margin-top:16px">Fila backend</h3>
+      ${backendQueueHtml(8)}
+    </div>
+  </div>`;
+}
+function financeReportHtml(type='financeiro'){
+  const period=periodObject();
+  const a=financeAnalytics(period);
+  const cf=cashFlowRows(period);
+  const rows=a.rec.slice(0,250);
+  const tableRows=rows.map(r=>`<tr><td>${esc(leadName(r.leadId))}</td><td>${esc(lotLabel(r.lotId))}</td><td>${esc(r.type)}</td><td>${fmtDate(r.dueDate)}</td><td>${fmtMoney(r.amount)}</td><td>${esc(receivableStatus(r))}</td></tr>`).join('');
+  return `<!doctype html><html><head><meta charset="utf-8"><title>Relatório Financeiro</title><style>body{font-family:Arial,sans-serif;color:#173C52;margin:34px}h1{font-size:26px}.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.kpi{border:1px solid #d8e2e8;border-radius:12px;padding:12px}.kpi b{display:block;font-size:20px;margin-top:5px}table{border-collapse:collapse;width:100%;margin-top:18px}td,th{border:1px solid #d8e2e8;padding:8px;font-size:12px;text-align:left}th{background:#f1f6f8}.chart{border:1px solid #d8e2e8;border-radius:14px;padding:12px;margin-top:18px}@media print{button{display:none}}
+/* v5.10 campaigns */
+.campaignGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
+.campaignCard{border:1px solid var(--line);background:white;border-radius:20px;padding:16px;box-shadow:0 8px 24px rgba(23,60,82,.06)}
+.campaignCard h3{margin-bottom:6px}
+.campaignMeta{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+.campaignKpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:12px}
+.campaignKpi{border:1px solid var(--line);background:#F8FBFC;border-radius:14px;padding:9px}
+.campaignKpi span{display:block;color:var(--muted);font-size:11px}.campaignKpi b{font-size:18px}
+.campaignProgress{height:10px;background:#EAF1F4;border-radius:999px;overflow:hidden;margin-top:10px}.campaignProgress span{display:block;height:100%;background:linear-gradient(135deg,var(--green),var(--blue));border-radius:999px}
+.materialChips{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}
+.conditionBox{border:1px solid #C8EFA2;background:#F0FBE9;color:#3A6F16;border-radius:16px;padding:12px;margin-top:12px}
+.campaignSelect{min-width:190px;border:1px solid var(--line);border-radius:10px;padding:6px 8px;background:white}
+.campaignReportBox{border:1px solid var(--line);background:white;border-radius:18px;padding:14px;margin-top:12px}
+@media(max-width:900px){.campaignKpis{grid-template-columns:repeat(2,minmax(0,1fr))}.campaignSelect{width:100%}}
+
+</style></head><body><h1>Relatório Financeiro · ${esc(project().name)}</h1><p>Período: ${esc(periodLabel(period))} · ${fmtDateTime(now())}</p><div class="kpis"><div class="kpi">VGV projetado<b>${fmtMoney(a.vgv.vgvProjected)}</b></div><div class="kpi">VGV realizado total<b>${fmtMoney(a.vgv.realizedAll)}</b></div><div class="kpi">VGV realizado período<b>${fmtMoney(a.vgv.realizedPeriod)}</b></div><div class="kpi">VGV em negociação<b>${fmtMoney(a.vgv.inPipeline)}</b></div><div class="kpi">Recebido<b>${fmtMoney(a.received)}</b></div><div class="kpi">A receber<b>${fmtMoney(a.open)}</b></div><div class="kpi">Vencido<b>${fmtMoney(a.late)}</b></div><div class="kpi">Inadimplência<b>${a.delinquency.toFixed(1)}%</b></div><div class="kpi">Margem/m²<b>${fmtMoney(a.marginM2)}</b></div><div class="kpi">Preço médio/m²<b>${fmtMoney(a.avgM2)}</b></div><div class="kpi">Descontos período<b>${fmtMoney(a.discountPeriod)}</b></div><div class="kpi">Preço médio venda<b>${fmtMoney(a.avgSale)}</b></div></div><div class="chart"><h2>Fluxo de caixa de recebíveis</h2>${cashFlowSvg(cf)}</div><h2>Fluxo por período</h2><table><thead><tr><th>Período</th><th>Previsto</th><th>Recebido</th><th>Aberto</th><th>Vencido</th></tr></thead><tbody>${cf.map(r=>`<tr><td>${esc(r.label)}</td><td>${fmtMoney(r.previsto)}</td><td>${fmtMoney(r.recebido)}</td><td>${fmtMoney(r.aberto)}</td><td>${fmtMoney(r.vencido)}</td></tr>`).join('')}</tbody></table><h2>Recebíveis do período</h2><table><thead><tr><th>Cliente</th><th>Lote</th><th>Tipo</th><th>Vencimento</th><th>Valor</th><th>Status</th></tr></thead><tbody>${tableRows}</tbody></table><h2>Mensagens de cobrança preparadas</h2><table><thead><tr><th>Data</th><th>Cliente</th><th>Canal</th><th>Status</th></tr></thead><tbody>${(state.billingMessages||[]).filter(m=>inFinancePeriod(m.createdAt,period)).map(m=>`<tr><td>${fmtDateTime(m.createdAt)}</td><td>${esc(leadName(m.leadId))}</td><td>${esc(m.channel)}</td><td>${esc(m.status)}</td></tr>`).join('')}</tbody></table><button onclick="window.print()">Salvar/Imprimir PDF</button><script>setTimeout(()=>window.print(),500)<\/script></body></html>`;
+}
+window.setFinanceQuick=setFinanceQuick; window.applyFinancePeriod=applyFinancePeriod;
+/* ==== v5.10 finance period + VGV patch end ==== */
+
+/* ==== v5.10 campaigns + VGV executed patch start ==== */
+function slugLocal(value){
+  return String(value||'campanha').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,48) || 'campanha';
+}
+function ensureCampaignState(){
+  state.campaigns = state.campaigns || [];
+  const existingNames = new Set(state.campaigns.map(c=>String(c.name||'').toLowerCase()));
+  const projectId = project()?.id || state.selectedProjectId || 'proj-reserva';
+  const leadCampaigns = [...new Set((state.leads||[]).map(l=>l.campaign).filter(Boolean))];
+  if(!state.campaigns.length){
+    const defaults = leadCampaigns.length ? leadCampaigns : ['Lista VIP','Represamento Pré-lançamento','Indicações de Clientes'];
+    defaults.forEach((name,i)=>{
+      state.campaigns.push({
+        id:'camp-'+slugLocal(name),
+        projectId,
+        name,
+        status:'ativa',
+        objective:i===0?'Represamento':i===1?'Velocidade de vendas':'Indicação',
+        channel:i===2?'Indicação':'Digital',
+        startDate:firstDayOfMonth ? firstDayOfMonth() : new Date().toISOString().slice(0,10),
+        endDate:lastDayOfMonth ? lastDayOfMonth() : new Date(new Date().getFullYear(),new Date().getMonth()+1,0).toISOString().slice(0,10),
+        targetLeads:i===0?300:120,
+        targetSales:i===0?80:30,
+        targetVgv:i===0?projectLots().slice(0,80).reduce((s,l)=>s+Number(l.price||0),0):projectLots().slice(0,30).reduce((s,l)=>s+Number(l.price||0),0),
+        budget:i===2?0:25000,
+        materialIds:(state.materials||[]).slice(0,2).map(m=>m.id),
+        condition:{entryPct:10,entryInstallments:i===0?6:3,months:180,annuals:15,interest:0.7,annualRatio:28.35,maxDiscountPct:i===0?3:0,notes:'Condição padrão vinculada à campanha.'},
+        notes:'Campanha criada automaticamente a partir dos dados existentes.',
+        createdAt:now(),updatedAt:now()
+      });
+    });
+  } else {
+    leadCampaigns.forEach(name=>{
+      if(!existingNames.has(String(name).toLowerCase())){
+        state.campaigns.push({id:'camp-'+slugLocal(name),projectId,name,status:'ativa',objective:'Geral',channel:'Não informado',startDate:firstDayOfMonth(),endDate:lastDayOfMonth(),targetLeads:0,targetSales:0,targetVgv:0,budget:0,materialIds:[],condition:{entryPct:10,entryInstallments:1,months:180,annuals:15,interest:0.7,annualRatio:28.35,maxDiscountPct:0,notes:''},notes:'Campanha importada dos leads.',createdAt:now(),updatedAt:now()});
+      }
+    });
+  }
+  const byName=Object.fromEntries(state.campaigns.map(c=>[String(c.name||'').toLowerCase(),c]));
+  (state.leads||[]).forEach(l=>{
+    if(!l.campaignId && l.campaign && byName[String(l.campaign).toLowerCase()]) l.campaignId=byName[String(l.campaign).toLowerCase()].id;
+    if(l.campaignId && !l.campaign) l.campaign=campaignName(l.campaignId);
+  });
+}
+ensureCampaignState();
+if(!VIEWS.some(v=>v[0]==='campaigns')) VIEWS.splice(Math.max(0,VIEWS.findIndex(v=>v[0]==='leads')+1),0,['campaigns','Campanhas']);
+const _v510OldIcon = icon;
+icon = function(name){
+  if(name==='campaigns') return '<svg viewBox="0 0 24 24"><path d="M3 11l18-7-4 18-5-7-7-4z"/><path d="M12 15l-4 4"/></svg>';
+  return _v510OldIcon(name);
+};
+const _v510OldCanView = typeof canView==='function' ? canView : null;
+canView = function(id){
+  if(id==='campaigns') return typeof hasPerm==='function' ? hasPerm('lead:view') : true;
+  return _v510OldCanView ? _v510OldCanView(id) : true;
+};
+const _v510OldTopbar = renderTopbar;
+renderTopbar = function(){
+  if(view==='campaigns'){
+    return `<div class="topbar"><div class="title"><h1>Campanhas e Represamento</h1><p>Crie, gerencie e acompanhe campanhas, materiais, condições específicas, metas e conversão em vendas.</p></div><div class="actions"><button class="btn primary" onclick="openCampaignForm()">+ Campanha</button><button class="btn" onclick="printCampaignsReport()">PDF campanhas</button></div></div>`;
+  }
+  return _v510OldTopbar();
+};
+const _v510OldRenderView = renderView;
+renderView = function(){
+  if(view==='campaigns') return renderCampaigns();
+  return _v510OldRenderView();
+};
+function projectCampaigns(){ ensureCampaignState(); return state.campaigns.filter(c=>!c.projectId || c.projectId===project().id); }
+function campaignById(id){ ensureCampaignState(); return state.campaigns.find(c=>c.id===id); }
+function campaignName(id){ return campaignById(id)?.name || 'Sem campanha'; }
+function campaignOptionsHTML(selected='',includeEmpty=true){
+  const opts=projectCampaigns().map(c=>`<option value="${c.id}" ${c.id===selected?'selected':''}>${esc(c.name)} · ${esc(c.objective||'')}</option>`).join('');
+  return `${includeEmpty?'<option value="">Sem campanha</option>':''}${opts}`;
+}
+function campaignMaterials(c){ return (c.materialIds||[]).map(id=>materialById ? materialById(id) : (state.materials||[]).find(m=>m.id===id)).filter(Boolean); }
+function campaignCondition(c){ return c?.condition || {entryPct:10,entryInstallments:1,months:180,annuals:15,interest:0.7,annualRatio:28.35,maxDiscountPct:0,notes:''}; }
+function campaignMetrics(c){
+  const leads=projectLeads().filter(l=>l.campaignId===c.id || (!l.campaignId && l.campaign===c.name));
+  const leadIds=new Set(leads.map(l=>l.id));
+  const props=projectProposals().filter(p=>leadIds.has(p.leadId));
+  const reservations=projectReservations().filter(r=>leadIds.has(r.leadId));
+  const contracts=projectContracts().filter(ct=>leadIds.has(ct.leadId));
+  const clients=leads.filter(l=>l.stage==='cliente'||contracts.some(ct=>ct.leadId===l.id&&ct.signedAt));
+  const hot=leads.filter(l=>l.score>=80).length;
+  const vgvPipeline=props.filter(p=>['em-aprovacao','aprovada','enviada'].includes(p.status)).reduce((s,p)=>s+salePriceForProposal(p),0);
+  const vgvRealized=props.filter(p=>['aceita','convertida'].includes(p.status)).reduce((s,p)=>s+salePriceForProposal(p),0);
+  const vgvExecuted=contracts.filter(ct=>ct.signedAt).reduce((s,ct)=>s+salePriceForProposal(byId(state.proposals,ct.proposalId)||{}),0);
+  const conversion=leads.length?clients.length/leads.length*100:0;
+  const cpl=leads.length?(Number(c.budget)||0)/leads.length:0;
+  const cps=clients.length?(Number(c.budget)||0)/clients.length:0;
+  return {leads,props,reservations,contracts,clients,hot,vgvPipeline,vgvRealized,vgvExecuted,conversion,cpl,cps};
+}
+function renderCampaigns(){
+  ensureCampaignState();
+  const cards=projectCampaigns().map(c=>{
+    const m=campaignMetrics(c), cond=campaignCondition(c);
+    const progress=(Number(c.targetVgv)||0)?m.vgvRealized/Number(c.targetVgv)*100:0;
+    return `<div class="campaignCard">
+      <div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start"><div><h3>${esc(c.name)}</h3><p class="tiny">${esc(c.objective||'—')} · ${esc(c.channel||'—')} · ${esc(c.status||'ativa')}</p></div><span class="pill ${c.status==='ativa'?'green':'amber'}">${esc(c.status||'ativa')}</span></div>
+      <div class="campaignMeta"><span class="pill">Meta leads: ${Number(c.targetLeads)||0}</span><span class="pill">Meta vendas: ${Number(c.targetSales)||0}</span><span class="pill">Meta VGV: ${fmtMoney(c.targetVgv||0)}</span></div>
+      <div class="campaignKpis"><div class="campaignKpi"><span>Leads</span><b>${m.leads.length}</b></div><div class="campaignKpi"><span>Clientes A</span><b>${m.hot}</b></div><div class="campaignKpi"><span>Propostas</span><b>${m.props.length}</b></div><div class="campaignKpi"><span>VGV realizado</span><b>${fmtMoney(m.vgvRealized)}</b></div></div>
+      <div class="campaignProgress"><span style="width:${Math.min(100,progress)}%"></span></div><span class="tiny">${progress.toFixed(1)}% da meta de VGV</span>
+      <div class="conditionBox"><b>Condição vinculada</b><br>Entrada ${cond.entryPct||10}% em ${cond.entryInstallments||1}x · ${cond.months||180} mensais · ${cond.annuals||15} anuais · ${cond.interest||0.7}% a.m. · desconto limite ${cond.maxDiscountPct||0}%</div>
+      <div class="materialChips">${campaignMaterials(c).map(m=>`<span class="materialBadge">${esc(m.name)}</span>`).join('') || '<span class="tiny">Sem materiais vinculados.</span>'}</div>
+      <div class="actions" style="justify-content:flex-start;margin-top:12px"><button class="btn small primary" onclick="openCampaign('${c.id}')">Abrir</button><button class="btn small" onclick="openCampaignForm('${c.id}')">Editar</button><button class="btn small" onclick="printCampaignReport('${c.id}')">PDF</button></div>
+    </div>`;
+  }).join('');
+  return `<div class="grid four"><div class="card"><h3>Campanhas</h3><p>${projectCampaigns().length}</p></div><div class="card"><h3>Leads vinculados</h3><p>${projectLeads().filter(l=>l.campaignId).length}</p></div><div class="card"><h3>VGV em campanhas</h3><p>${fmtMoney(projectCampaigns().reduce((s,c)=>s+campaignMetrics(c).vgvRealized,0))}</p></div><div class="card"><h3>Represamento</h3><p>${projectCampaigns().filter(c=>(c.objective||'').toLowerCase().includes('repres')).length}</p></div></div><div class="campaignGrid" style="margin-top:16px">${cards||'<div class="empty">Nenhuma campanha criada.</div>'}</div>`;
+}
+function openCampaign(id){
+  const c=campaignById(id); if(!c) return;
+  const m=campaignMetrics(c), cond=campaignCondition(c);
+  const leadRows=m.leads.slice(0,80).map(l=>`<tr><td><b>${esc(l.name)}</b><div class="tiny">${esc(l.city||'')} · ${esc(l.source||'')}</div></td><td>${esc(stage(l.stage).label)}</td><td>${l.score}</td><td>${l.lotId?esc(lotLabel(l.lotId)):'—'}</td><td><button class="btn small" onclick="openDossier('${l.id}')">Dossiê</button></td></tr>`).join('');
+  openModal('Campanha · '+c.name,`${c.objective||''} · ${c.channel||''}`,`<div class="grid four"><div class="miniStat"><span>Leads</span><b>${m.leads.length}</b></div><div class="miniStat"><span>Propostas</span><b>${m.props.length}</b></div><div class="miniStat"><span>VGV realizado</span><b>${fmtMoney(m.vgvRealized)}</b></div><div class="miniStat"><span>Conversão</span><b>${m.conversion.toFixed(1)}%</b></div></div><div class="proposalDetailGrid" style="margin-top:14px"><div class="proposalRichBox"><h3>Metas e desempenho</h3><p><b>Meta leads:</b> ${c.targetLeads||0}<br><b>Meta vendas:</b> ${c.targetSales||0}<br><b>Meta VGV:</b> ${fmtMoney(c.targetVgv||0)}<br><b>Budget:</b> ${fmtMoney(c.budget||0)}<br><b>CPL:</b> ${fmtMoney(m.cpl)} · <b>Custo por venda:</b> ${fmtMoney(m.cps)}</p></div><div class="proposalRichBox"><h3>Condição específica</h3><p>Entrada ${cond.entryPct||10}% em ${cond.entryInstallments||1}x<br>${cond.months||180} mensais · ${cond.annuals||15} anuais<br>${cond.interest||0.7}% a.m. · fator anual ${cond.annualRatio||28.35}<br>Desconto máximo: ${cond.maxDiscountPct||0}%<br>${esc(cond.notes||'')}</p></div></div><div class="campaignReportBox"><h3>Materiais vinculados</h3>${campaignMaterials(c).map(m=>`<span class="materialBadge">${esc(m.name)}</span>`).join('')||'<p class="muted">Sem materiais vinculados.</p>'}</div><div class="campaignReportBox"><h3>Leads da campanha</h3><div class="tableWrap"><table><thead><tr><th>Lead</th><th>Etapa</th><th>Score</th><th>Lote</th><th>Ação</th></tr></thead><tbody>${leadRows||'<tr><td colspan="5" class="muted">Sem leads vinculados.</td></tr>'}</tbody></table></div></div><div class="actions" style="justify-content:flex-start;margin-top:14px"><button class="btn primary" onclick="openCampaignForm('${c.id}')">Editar campanha</button><button class="btn" onclick="printCampaignReport('${c.id}')">Gerar PDF</button></div>`,'wide');
+}
+function openCampaignForm(id=''){
+  const c=id?campaignById(id):null;
+  const cond=campaignCondition(c);
+  openModal(id?'Editar campanha':'Nova campanha','Campanhas podem vincular materiais, metas e condições comerciais.',`<div class="formGrid"><div class="field"><label>Nome</label><input id="campName" value="${esc(c?.name||'')}"></div><div class="field"><label>Status</label><select id="campStatus"><option ${c?.status==='ativa'?'selected':''}>ativa</option><option ${c?.status==='pausada'?'selected':''}>pausada</option><option ${c?.status==='encerrada'?'selected':''}>encerrada</option></select></div><div class="field"><label>Objetivo</label><select id="campObjective"><option ${c?.objective==='Represamento'?'selected':''}>Represamento</option><option ${c?.objective==='Velocidade de vendas'?'selected':''}>Velocidade de vendas</option><option ${c?.objective==='Indicação'?'selected':''}>Indicação</option><option ${c?.objective==='Pós-venda'?'selected':''}>Pós-venda</option><option ${c?.objective==='Geral'?'selected':''}>Geral</option></select></div><div class="field"><label>Canal</label><input id="campChannel" value="${esc(c?.channel||'Digital')}"></div><div class="field"><label>Início</label><input id="campStart" type="date" value="${c?.startDate||firstDayOfMonth()}"></div><div class="field"><label>Fim</label><input id="campEnd" type="date" value="${c?.endDate||lastDayOfMonth()}"></div><div class="field"><label>Meta leads</label><input id="campTargetLeads" type="number" value="${c?.targetLeads||0}"></div><div class="field"><label>Meta vendas</label><input id="campTargetSales" type="number" value="${c?.targetSales||0}"></div><div class="field"><label>Meta VGV</label><input id="campTargetVgv" type="number" value="${c?.targetVgv||0}"></div><div class="field"><label>Budget</label><input id="campBudget" type="number" value="${c?.budget||0}"></div><div class="field"><label>Entrada %</label><input id="campEntryPct" type="number" value="${cond.entryPct||10}"></div><div class="field"><label>Entrada parcelas</label><select id="campEntryInst">${[1,2,3,4,5,6].map(n=>`<option value="${n}" ${Number(cond.entryInstallments||1)===n?'selected':''}>${n}x</option>`).join('')}</select></div><div class="field"><label>Mensais</label><input id="campMonths" type="number" value="${cond.months||180}"></div><div class="field"><label>Anuais</label><input id="campAnnuals" type="number" value="${cond.annuals||15}"></div><div class="field"><label>Juros a.m.</label><input id="campInterest" type="number" step="0.01" value="${cond.interest||0.7}"></div><div class="field"><label>Fator anual</label><input id="campAnnualRatio" type="number" step="0.01" value="${cond.annualRatio||28.35}"></div><div class="field"><label>Desconto máx. %</label><input id="campDiscount" type="number" step="0.1" value="${cond.maxDiscountPct||0}"></div><div class="field span3"><label>Materiais vinculados</label><div class="materialChecklist">${(state.materials||[]).map(m=>`<label class="materialItem"><input type="checkbox" class="campMat" value="${m.id}" ${(c?.materialIds||[]).includes(m.id)?'checked':''}> <b>${esc(m.name)}</b><span class="tiny">${esc(m.type||'Material')} · ${esc(m.stage||'')}</span></label>`).join('')}</div></div><div class="field span3"><label>Observações da campanha</label><textarea id="campNotes">${esc(c?.notes||'')}</textarea></div><div class="field span3"><label>Observações da condição</label><textarea id="campCondNotes">${esc(cond.notes||'')}</textarea></div><div class="span3 actions"><button class="btn primary" onclick="saveCampaign('${id}')">Salvar campanha</button>${id?`<button class="btn danger" onclick="deleteCampaign('${id}')">Excluir campanha</button>`:''}</div></div>`,'wide');
+}
+function saveCampaign(id=''){
+  ensureCampaignState();
+  const existing=id?campaignById(id):null;
+  const name=v('campName').trim();
+  if(!name) return toast('Nome da campanha é obrigatório.');
+  const campaign={id:id||uid('camp'),projectId:project().id,name,status:v('campStatus'),objective:v('campObjective'),channel:v('campChannel'),startDate:v('campStart'),endDate:v('campEnd'),targetLeads:Number(v('campTargetLeads'))||0,targetSales:Number(v('campTargetSales'))||0,targetVgv:Number(v('campTargetVgv'))||0,budget:Number(v('campBudget'))||0,materialIds:[...document.querySelectorAll('.campMat:checked')].map(x=>x.value),condition:{entryPct:Number(v('campEntryPct'))||10,entryInstallments:Number(v('campEntryInst'))||1,months:Number(v('campMonths'))||180,annuals:Number(v('campAnnuals'))||15,interest:Number(v('campInterest'))||0.7,annualRatio:Number(v('campAnnualRatio'))||28.35,maxDiscountPct:Number(v('campDiscount'))||0,notes:v('campCondNotes')},notes:v('campNotes'),createdAt:existing?.createdAt||now(),updatedAt:now()};
+  if(existing) Object.assign(existing,campaign); else state.campaigns.push(campaign);
+  save(); closeModal(); render(); toast('Campanha salva.');
+}
+function deleteCampaign(id){
+  const c=campaignById(id); if(!c) return;
+  if(!confirm('Excluir campanha? Leads vinculados ficarão sem campanha.')) return;
+  projectLeads().forEach(l=>{ if(l.campaignId===id){ l.campaignId=''; l.campaign=''; } });
+  state.campaigns=state.campaigns.filter(x=>x.id!==id);
+  save(); closeModal(); render(); toast('Campanha excluída.');
+}
+function saveLeadCampaign(leadId,campaignId){
+  const l=leadBy(leadId); if(!l) return;
+  l.campaignId=campaignId||'';
+  l.campaign=campaignId?campaignName(campaignId):'';
+  l.history=l.history||[];
+  l.history.push({ts:now(),text:`Lead vinculado à campanha: ${l.campaign||'sem campanha'}.`});
+  save(); render(); toast('Campanha do lead atualizada.');
+}
+const _v510OldRenderLeads = renderLeads;
+renderLeads = function(){
+  ensureCampaignState();
+  if(typeof hasPerm==='function' && !hasPerm('lead:view')) return `<div class="authDanger">Acesso negado.</div>`;
+  const q=filters.search.toLowerCase();
+  const leads=projectLeads().filter(l=>!q||[l.name,l.city,l.source,l.campaign,campaignName(l.campaignId),l.purpose,l.profile,stage(l.stage).label].join(' ').toLowerCase().includes(q));
+  return `<div class="card"><div class="actions" style="justify-content:flex-start;margin-bottom:12px"><input style="min-width:280px;border:1px solid var(--line);border-radius:13px;padding:10px" placeholder="Buscar lead..." value="${esc(filters.search)}" oninput="setFilter('search',this.value)"><button class="btn" onclick="setView('campaigns')">Campanhas</button>${typeof hasPerm==='function'&&!hasPerm('lead:create')?'':'<button class="btn primary" onclick="openNewLead()">+ Lead</button>'}</div><div class="tableWrap"><table><thead><tr><th>Lead</th><th>Campanha</th><th>Jornada</th><th>Score</th><th>Próxima ação</th><th>Responsáveis</th><th>Ações</th></tr></thead><tbody>${leads.map(l=>{const t=temp(l.score); return `<tr><td><div class="leadName">${esc(l.name)}</div><div class="tiny">${esc(l.city)}/${esc(l.uf)} · ${esc(l.source)}</div></td><td><select class="campaignSelect" onchange="saveLeadCampaign('${l.id}',this.value)">${campaignOptionsHTML(l.campaignId||'',true)}</select></td><td>${esc(stage(l.stage).label)}<div class="tiny">${stage(l.stage).n} · ${stage(l.stage).owner}</div></td><td><span class="pill ${t[1]}">Cliente ${t[0]} · ${l.score}</span></td><td>${esc(nextBestAction(l))}<div class="tiny">Prazo: ${fmtDateTime(l.nextDue)}</div></td><td>SDR: ${esc(person(l.sdrId))}<br><span class="tiny">Corretor: ${esc(person(l.brokerId))}</span></td><td><div class="actions"><button class="btn small primary" onclick="openDossier('${l.id}')">Dossiê</button>${typeof hasPerm==='function'&&hasPerm('lead:delete')?`<button class="btn small danger" onclick="deleteLeadLocal('${l.id}')">Excluir</button>`:''}</div></td></tr>`;}).join('')||'<tr><td colspan="7" class="muted">Nenhum lead.</td></tr>'}</tbody></table></div></div>`;
+};
+openNewLead = function(){
+  ensureCampaignState();
+  openModal('Novo lead','Cadastro mínimo para velocidade.',`<div class="formGrid"><div class="field"><label>Nome</label><input id="newName"></div><div class="field"><label>WhatsApp</label><input id="newPhone"></div><div class="field"><label>Cidade</label><input id="newCity" value="${esc(project().city)}"></div><div class="field"><label>Origem</label><input id="newSource" value="WhatsApp orgânico"></div><div class="field"><label>Campanha</label><select id="newCampaign">${campaignOptionsHTML('',true)}</select></div><div class="field"><label>Finalidade</label><input id="newPurpose" value="Moradia"></div><div class="field"><label>Perfil</label><input id="newProfile" value="Família"></div><div class="span3"><button class="btn primary" onclick="saveNewLead()">Cadastrar</button></div></div>`,'wide');
+};
+saveNewLead = function(){
+  const campId=v('newCampaign');
+  const l=lead(normalizeName(v('newName')),v('newCity'),v('newSource'),campId?campaignName(campId):'',v('newPurpose'),v('newProfile'),'captado',35,team('SDR')[0]?.id||'', '', null);
+  l.phone=v('newPhone'); l.campaignId=campId||'';
+  state.leads.push(l); save(); closeModal(); render(); toast('Lead cadastrado.');
+};
+dossierData = function(l){
+  ensureCampaignState();
+  return `<div class="card" style="margin-top:14px"><h3>Cadastro progressivo</h3><div class="formGrid"><div class="field"><label>Nome</label><input id="leadName" value="${esc(l.name)}"></div><div class="field"><label>WhatsApp</label><input id="leadPhone" value="${esc(l.phone)}"></div><div class="field"><label>E-mail</label><input id="leadEmail" value="${esc(l.email)}"></div><div class="field"><label>Cidade</label><input id="leadCity" value="${esc(l.city)}"></div><div class="field"><label>Campanha</label><select id="leadCampaignId">${campaignOptionsHTML(l.campaignId||'',true)}</select></div><div class="field"><label>Finalidade</label><input id="leadPurpose" value="${esc(l.purpose)}"></div><div class="field"><label>Perfil</label><input id="leadProfile" value="${esc(l.profile)}"></div><div class="field"><label>CPF/CNPJ</label><input id="leadDoc" value="${esc(l.document||'')}"></div><div class="field"><label>Estado civil</label><select id="leadMarital"><option ${l.maritalStatus==='Solteiro(a)'?'selected':''}>Solteiro(a)</option><option ${l.maritalStatus==='Casado(a)'?'selected':''}>Casado(a)</option><option ${l.maritalStatus==='União estável'?'selected':''}>União estável</option></select></div><div class="field"><label>Score</label><input id="leadScore" type="number" value="${l.score}"></div><div class="span3 actions" style="justify-content:flex-start"><button class="btn primary" onclick="saveLeadData('${l.id}')">Salvar cadastro</button></div></div></div>`;
+};
+saveLeadData = function(id){
+  const l=leadBy(id); if(!l) return;
+  l.name=normalizeName(v('leadName')); l.phone=v('leadPhone'); l.email=v('leadEmail'); l.city=v('leadCity'); l.purpose=v('leadPurpose'); l.profile=v('leadProfile'); l.document=v('leadDoc'); l.maritalStatus=v('leadMarital'); l.score=+v('leadScore')||l.score;
+  l.campaignId=v('leadCampaignId')||''; l.campaign=l.campaignId?campaignName(l.campaignId):'';
+  l.updatedAt=now(); l.history.push({ts:now(),text:`Cadastro atualizado. Campanha: ${l.campaign||'sem campanha'}.`}); save(); render(); openDossier(id,'dados'); toast('Cadastro salvo.');
+};
+function campaignForLead(leadId){ const l=leadBy(leadId); return l?.campaignId?campaignById(l.campaignId):null; }
+const _v510OldSimulatorForm = simulatorForm;
+simulatorForm = function(lotId='',leadId=''){
+  const c=campaignForLead(leadId);
+  const cond=c?campaignCondition(c):{entryPct:10,entryInstallments:1,months:180,annuals:15,interest:0.7,annualRatio:28.35};
+  const lot=lotBy(lotId)||projectLots()[0];
+  const result=lot?simulate(lot.price,cond.entryPct||10,cond.months||180,cond.annuals||15,cond.interest||0.7,cond.annualRatio||28.35):null;
+  return `<div class="mobileHint">Depois de escolher itens no menu, a tela rola automaticamente para o conteúdo.</div>${c?`<div class="conditionBox"><b>Condição da campanha ${esc(c.name)}</b><br>Entrada ${cond.entryPct}% em ${cond.entryInstallments||1}x · ${cond.months} mensais · ${cond.annuals} anuais · ${cond.interest}% a.m. · desconto limite ${cond.maxDiscountPct||0}%</div>`:''}<div class="formGrid" style="margin-top:14px"><div class="field"><label>Filtrar lead</label><input id="simLeadFilter" class="filterInput" placeholder="Digite nome, cidade, origem..." oninput="filterSelectOptions('simLeadFilter','simLead','lead')"></div><div class="field"><label>Lead</label><select id="simLead" onchange="openSimulator(document.getElementById('simLot').value,this.value)">${leadOptionsHTML(leadId)}</select></div><div class="field"><label>Filtrar lote</label><input id="simLotFilter" class="filterInput" placeholder="Quadra, lote, setor..." oninput="filterSelectOptions('simLotFilter','simLot','lot')"></div><div class="field"><label>Lote</label><select id="simLot" onchange="updateSim()">${lotOptionsHTML(lot?.id||lotId)}</select></div><div class="field"><label>Entrada %</label><input id="simEntry" type="number" value="${cond.entryPct||10}" oninput="updateSim()"></div><div class="field"><label>Parcelar entrada</label><select id="simEntryInstallments" onchange="updateSim()">${[1,2,3,4,5,6].map(n=>`<option value="${n}" ${Number(cond.entryInstallments||1)===n?'selected':''}>${n===1?'À vista':n+'x'}</option>`).join('')}</select></div><div class="field"><label>Mensais</label><input id="simMonths" type="number" value="${cond.months||180}" oninput="updateSim()"></div><div class="field"><label>Anuais</label><input id="simAnnuals" type="number" value="${cond.annuals||15}" oninput="updateSim()"></div><div class="field"><label>Juros a.m.</label><input id="simInterest" type="number" step="0.01" value="${cond.interest||0.7}" oninput="updateSim()"></div><div class="field"><label>Índice</label><select id="simIndex"><option>IPCA</option><option>IGP-M</option><option>INCC</option></select></div><div class="field"><label>Fator anual</label><input id="simRatio" type="number" step="0.01" value="${cond.annualRatio||28.35}" oninput="updateSim()"></div><div class="span3" id="simResult">${simResultHtml(lot,result,cond.entryInstallments||1)}</div><div class="span3 actions" style="justify-content:flex-start"><button class="btn" onclick="openReserveLot(document.getElementById('simLot').value,document.getElementById('simLead').value)">Reservar lote</button><button class="btn primary" onclick="createProposalFromSimulator()">Gerar proposta</button></div></div>`;
+};
+const _v510OldCreateProposal = createProposalFromSimulator;
+createProposalFromSimulator = function(){
+  const lot=lotBy(v('simLot')), l=leadBy(v('simLead')); if(!lot)return toast('Selecione lote.'); if(!l)return toast('Selecione lead para proposta.');
+  const inst=entryInstallments();
+  const res=simulate(lot.price,+v('simEntry'),+v('simMonths'),+v('simAnnuals'),+v('simInterest'),+v('simRatio'));
+  const c=campaignForLead(l.id);
+  const p={id:uid('prop'),projectId:project().id,leadId:l.id,lotId:lot.id,campaignId:l.campaignId||'',status:'em-aprovacao',entry:+v('simEntry'),entryInstallments:inst,entryInstallmentValue:res.entry/inst,months:+v('simMonths'),annuals:+v('simAnnuals'),interest:+v('simInterest'),index:v('simIndex'),monthly:res.monthly,annual:res.annual,total:res.total,createdAt:now(),expiresAt:days(5),sentAt:null,approvedAt:null,acceptedAt:null,confirmedAt:null,negotiationNotes:c?`Condição aplicada da campanha ${c.name}. ${campaignCondition(c).notes||''}`:''};
+  state.proposals.push(p);
+  if(typeof ensureProposalReserve==='function') ensureProposalReserve(p); else { lot.status='pre-reserva'; lot.leadId=l.id; lot.sdrId=l.sdrId; lot.brokerId=l.brokerId; lot.reservedUntil=days(2); l.lotId=lot.id; state.reservations.push({id:uid('res'),projectId:project().id,leadId:l.id,lotId:lot.id,status:'pre-reserva',expiresAt:lot.reservedUntil,reason:'Reserva automática da proposta',createdAt:now(),ownerId:l.brokerId||''}); }
+  l.stage='reserva'; l.history.push({ts:now(),text:`Proposta criada pela campanha ${l.campaign||'sem campanha'} e lote reservado automaticamente.`});
+  save(); closeModal(); render(); openProposal(p.id); toast('Proposta criada, campanha vinculada e lote reservado.');
+};
+function campaignReportHtml(id=''){
+  const campaigns=id?[campaignById(id)].filter(Boolean):projectCampaigns();
+  const rows=campaigns.map(c=>{ const m=campaignMetrics(c); return `<tr><td>${esc(c.name)}</td><td>${esc(c.objective||'')}</td><td>${m.leads.length}</td><td>${m.hot}</td><td>${m.props.length}</td><td>${m.reservations.length}</td><td>${m.clients.length}</td><td>${fmtMoney(m.vgvRealized)}</td><td>${fmtMoney(m.vgvExecuted)}</td><td>${m.conversion.toFixed(1)}%</td><td>${fmtMoney(m.cpl)}</td></tr>`; }).join('');
+  return `<!doctype html><html><head><meta charset="utf-8"><title>Relatório Campanhas</title><style>body{font-family:Arial,sans-serif;color:#173C52;margin:34px}h1{font-size:26px}table{border-collapse:collapse;width:100%;margin-top:18px}td,th{border:1px solid #d8e2e8;padding:8px;font-size:12px;text-align:left}th{background:#f1f6f8}.box{border:1px solid #d8e2e8;border-radius:14px;padding:14px;margin:12px 0}@media print{button{display:none}}</style></head><body><h1>Relatório de Campanhas · ${esc(project().name)}</h1><p>${fmtDateTime(now())}</p><table><thead><tr><th>Campanha</th><th>Objetivo</th><th>Leads</th><th>A</th><th>Propostas</th><th>Reservas</th><th>Clientes</th><th>VGV Realizado</th><th>VGV Executado</th><th>Conversão</th><th>CPL</th></tr></thead><tbody>${rows}</tbody></table><button onclick="window.print()">Salvar/Imprimir PDF</button><script>setTimeout(()=>window.print(),500)<\/script></body></html>`;
+}
+function printCampaignReport(id){ const w=window.open('','_blank'); w.document.write(campaignReportHtml(id)); w.document.close(); }
+function printCampaignsReport(){ printCampaignReport(''); }
+const _v510OldRenderReports = renderReports;
+renderReports = function(){
+  const base=_v510OldRenderReports();
+  return `<div class="card" style="margin-bottom:16px"><h2>Relatório de Campanhas</h2><p>Desempenho por campanha, metas, VGV, materiais, condições e conversão.</p><div class="actions" style="justify-content:flex-start;margin-top:10px"><button class="btn primary" onclick="printCampaignsReport()">Gerar PDF campanhas</button><button class="btn" onclick="setView('campaigns')">Abrir campanhas</button></div></div>${base}`;
+};
+function vgvMetrics(period=periodObject()){
+  const lots=projectLots();
+  const vgvProjected=lots.reduce((s,l)=>s+Number(l.price||0),0);
+  const proposals=projectProposals();
+  const realizedStatuses=['aceita','convertida'];
+  const realizedAll=proposals.filter(p=>realizedStatuses.includes(p.status)).reduce((s,p)=>s+salePriceForProposal(p),0);
+  const realizedPeriod=proposals.filter(p=>realizedStatuses.includes(p.status)&&inFinancePeriod(proposalDate(p),period)).reduce((s,p)=>s+salePriceForProposal(p),0);
+  const executed=projectContracts().filter(c=>c.signedAt).reduce((s,c)=>s+salePriceForProposal(byId(state.proposals,c.proposalId)||{}),0);
+  const inPipeline=proposals.filter(p=>['em-aprovacao','aprovada','enviada'].includes(p.status)).reduce((s,p)=>s+salePriceForProposal(p),0);
+  const soldLots=lots.filter(l=>['contrato','vendido'].includes(l.status)).length;
+  return {vgvProjected,realizedAll,realizedPeriod,contracted:executed,executed,inPipeline,soldLots,progress:vgvProjected?executed/vgvProjected*100:0};
+}
+const _v510OldRenderFinanceiro = renderFinanceiro;
+renderFinanceiro = function(){
+  const html=_v510OldRenderFinanceiro();
+  const a=financeAnalytics(periodObject());
+  return html.replace('<div class="financeKpi"><span>VGV realizado total</span><b>'+fmtMoney(a.vgv.realizedAll)+'</b><span class="financeSub">Aceites e contratos</span></div>', '<div class="financeKpi"><span>VGV executado do empreendimento</span><b>'+fmtMoney(a.vgv.executed||a.vgv.contracted||0)+'</b><span class="financeSub">Contratos assinados</span></div><div class="financeKpi"><span>VGV realizado total</span><b>'+fmtMoney(a.vgv.realizedAll)+'</b><span class="financeSub">Aceites e contratos</span></div>');
+};
+window.openCampaignForm=openCampaignForm; window.saveCampaign=saveCampaign; window.deleteCampaign=deleteCampaign; window.openCampaign=openCampaign; window.saveLeadCampaign=saveLeadCampaign; window.printCampaignReport=printCampaignReport; window.printCampaignsReport=printCampaignsReport;
+/* ==== v5.10 campaigns + VGV executed patch end ==== */
 
 render();
 })();
