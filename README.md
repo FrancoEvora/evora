@@ -1,44 +1,61 @@
-# Évora Launch OS v5.9
+# Évora Launch OS v5.10
 
-Evolução da v5.8.2 com envios preparados para backend e controles financeiros.
+Evolução da v5.9.1 com setor completo de campanhas e reforço do VGV financeiro.
 
-## Envios preparados para backend
+## Campanhas
 
-A tela de Envio de Materiais agora permite:
+Novo módulo **Campanhas e Represamento**:
 
-- registrar envio realizado;
-- preparar WhatsApp;
-- preparar e-mail;
-- copiar mensagem;
-- enfileirar payload para backend futuro;
-- enviar materiais para leads e clientes de pós-venda.
+- criação e edição de campanhas;
+- objetivo da campanha;
+- canal;
+- período;
+- metas de leads, vendas e VGV;
+- budget;
+- materiais vinculados;
+- condições comerciais específicas:
+  - entrada;
+  - parcelamento da entrada;
+  - mensais;
+  - anuais;
+  - juros;
+  - fator anual;
+  - desconto máximo;
+- métricas por campanha:
+  - leads;
+  - clientes A;
+  - propostas;
+  - reservas;
+  - clientes;
+  - VGV realizado;
+  - VGV executado;
+  - conversão;
+  - CPL;
+  - custo por venda.
 
-A fila de backend grava os payloads para futura integração com:
+## Leads e campanhas
 
-- WhatsApp Cloud API;
-- e-mail transacional;
-- storage de materiais;
-- logs de entrega/leitura.
+Os leads podem ser vinculados ou alterados de campanha a qualquer momento:
+
+- pela lista de leads;
+- pelo dossiê do lead;
+- no cadastro de novo lead.
+
+## Condições por campanha
+
+Ao abrir o simulador a partir de um lead vinculado a uma campanha, o sistema aplica automaticamente a condição da campanha.
 
 ## Financeiro
 
-Novo módulo Financeiro e Carteira:
+O financeiro agora destaca também:
 
-- recebíveis;
-- inadimplência;
-- margem atual por m²;
-- preço médio de vendas;
-- preço médio por m²;
-- descontos no mês e acumulados;
-- geração preparada de boletos;
-- mensagens de alerta e cobrança por WhatsApp/e-mail;
-- relatório financeiro em PDF.
+- VGV projetado do empreendimento;
+- VGV executado do empreendimento;
+- VGV realizado total;
+- VGV realizado no período;
+- VGV em negociação.
 
-## Sem banco de dados
-
-Continua usando localStorage.
-
-## Vercel
+## Deploy
 
 Build Command: npm run build  
 Output Directory: public  
