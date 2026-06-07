@@ -1,8 +1,8 @@
 (() => {
 'use strict';
-const APP_VERSION = '5.12';
+const APP_VERSION = '5.13';
 const RELEASE_DATE = '2026-06-05';
-const STORAGE_KEY = 'evora-launch-os-v5120';
+const STORAGE_KEY = 'evora-launch-os-v5130';
 
 const money = new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'});
 const dateFmt = new Intl.DateTimeFormat('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric'});
@@ -412,7 +412,7 @@ function reportHtml(type){
   const {a,origin,broker,stock}=reportData(type);
   const table=(title,rows)=>`<h2>${title}</h2><table><thead><tr>${Object.keys(rows[0]||{}).map(k=>`<th>${k}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr>${Object.values(r).map(v=>`<td>${esc(v)}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
   return `<!doctype html><html><head><meta charset="utf-8"><title>Relatório ${esc(type)}</title><style>body{font-family:Arial,sans-serif;color:#173C52;margin:36px}h1{font-size:26px}h2{margin-top:28px}table{border-collapse:collapse;width:100%;margin-top:8px}th,td{border:1px solid #d8e2e8;padding:8px;text-align:left;font-size:12px}th{background:#f1f6f8}.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.kpi{border:1px solid #d8e2e8;border-radius:12px;padding:12px}.kpi b{display:block;font-size:20px;margin-top:6px}.brand{display:flex;align-items:center;gap:12px}.brand img{height:42px}@media print{button{display:none}}
-/* v5.12 login/local RBAC layer */
+/* v5.13 login/local RBAC layer */
 .loginPage{min-height:100vh;display:grid;grid-template-columns:1fr 430px;background:#fff}
 .loginHero{background:linear-gradient(135deg,#0E2738,#245E82);color:white;padding:44px;display:flex;flex-direction:column;justify-content:space-between}
 .loginHero img{max-width:270px;display:block}
@@ -433,7 +433,7 @@ function reportHtml(type){
 @media(max-width:900px){.loginPage{grid-template-columns:1fr}.loginHero{min-height:360px}}
 
 
-/* v5.12 mobile and guided journey refinements */
+/* v5.13 mobile and guided journey refinements */
 .actionButtons{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;padding-top:8px;border-top:1px solid var(--line)}
 .actionButtons .btn{font-size:12px;padding:7px 9px;border-radius:10px}
 .selectFilterGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -450,14 +450,14 @@ function reportHtml(type){
 }
 
 
-/* v5.12 checklist refinement */
+/* v5.13 checklist refinement */
 .checkCard .actionButtons{margin-top:12px}
 .checkCard .primaryActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 .checkCard .primaryActions .btn{min-width:132px;justify-content:center}
 .actionNotePreview{margin-top:8px;padding:8px 10px;border-radius:12px;background:#F8FBFC;border:1px dashed var(--line);font-size:12px;color:var(--muted)}
 
 
-/* v5.12 proposal and material send center */
+/* v5.13 proposal and material send center */
 .materialSendGrid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .materialChecklist{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
 .materialItem{border:1px solid var(--line);background:white;border-radius:16px;padding:12px}
@@ -474,7 +474,7 @@ function reportHtml(type){
 @media(max-width:950px){.materialSendGrid,.proposalDetailGrid{grid-template-columns:1fr}}
 
 
-/* v5.12 finance and backend-ready communications */
+/* v5.13 finance and backend-ready communications */
 .backendBadge{display:inline-flex;border:1px solid #BFDBFE;background:#EFF6FF;color:#1D4ED8;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:900;margin:3px}
 .queueBox{border:1px dashed var(--line);background:#F8FBFC;border-radius:16px;padding:12px;margin-top:10px}
 .financeKpiGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
@@ -491,7 +491,7 @@ function reportHtml(type){
 @media(max-width:1000px){.financeGrid{grid-template-columns:1fr}.financeToolbar{flex-direction:column;align-items:stretch}.financeToolbar .btn,.financeToolbar input,.financeToolbar select{width:100%}}
 
 
-/* v5.12 finance period and VGV */
+/* v5.13 finance period and VGV */
 .periodPanel{border:1px solid var(--line);background:white;border-radius:18px;padding:14px;margin:0 0 14px}
 .periodQuick{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
 .cashFlowGrid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
@@ -504,7 +504,7 @@ function reportHtml(type){
 @media(max-width:1000px){.cashFlowGrid{grid-template-columns:1fr}.periodQuick .btn{width:100%;justify-content:center}}
 
 
-/* v5.12 campaigns */
+/* v5.13 campaigns */
 .campaignGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
 .campaignCard{border:1px solid var(--line);background:white;border-radius:20px;padding:16px;box-shadow:0 8px 24px rgba(23,60,82,.06)}
 .campaignCard h3{margin-bottom:6px}
@@ -520,7 +520,7 @@ function reportHtml(type){
 @media(max-width:900px){.campaignKpis{grid-template-columns:repeat(2,minmax(0,1fr))}.campaignSelect{width:100%}}
 
 
-/* v5.12 campaigns advanced */
+/* v5.13 campaigns advanced */
 .campaignKpis{grid-template-columns:repeat(2,minmax(0,1fr))!important}
 .campaignKpi{min-height:72px;overflow:hidden}
 .campaignKpi b{font-size:16px!important;line-height:1.12;word-break:break-word;overflow-wrap:anywhere}
@@ -541,7 +541,7 @@ function reportHtml(type){
 @media(max-width:950px){.campaignPeopleGrid{grid-template-columns:1fr}.campaignKpis{grid-template-columns:1fr!important}}
 
 
-/* v5.12 campaign attention lists */
+/* v5.13 campaign attention lists */
 .campaignLeadBuckets{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
 .campaignLeadBucket{border:1px solid var(--line);background:white;border-radius:18px;padding:14px}
 .campaignLeadBucket h3{margin-bottom:6px}
@@ -554,6 +554,76 @@ function reportHtml(type){
 .campaignKpis{grid-template-columns:repeat(2,minmax(0,1fr))!important}
 .campaignKpi b{font-size:15px!important;line-height:1.14;overflow-wrap:anywhere}
 @media(max-width:950px){.campaignLeadBuckets{grid-template-columns:1fr}}
+
+
+/* v5.13 campaign attention treatment and standardized charts */
+.standardChart,
+.campaignComparison,
+.campaignVgvPanel,
+.cashFlowChart,
+.chartMini{
+  border:1px solid var(--line);
+  background:white;
+  border-radius:18px;
+  padding:12px;
+}
+.standardChart svg,
+.campaignComparison svg,
+.campaignVgvPanel svg,
+.cashFlowChart svg,
+.chartMini svg{
+  width:100%;
+  max-height:180px;
+  height:auto;
+  display:block;
+}
+.campaignComparison,
+.campaignVgvPanel{
+  margin-top:12px;
+}
+.campaignComparison h3,
+.campaignVgvPanel h3{
+  font-size:15px;
+  margin-bottom:6px;
+}
+.attentionItem.treated{
+  border-left-color:#84C225;
+  background:#F0FBE9;
+}
+.attentionActions{
+  display:flex;
+  gap:7px;
+  flex-wrap:wrap;
+  margin-top:8px;
+}
+.treatmentNote{
+  border:1px solid #C8EFA2;
+  background:#F0FBE9;
+  color:#3A6F16;
+  border-radius:14px;
+  padding:9px 10px;
+  font-size:12px;
+  margin-top:8px;
+}
+.chartLegend{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-top:8px;
+  color:var(--muted);
+  font-size:11px;
+}
+.chartLegend span{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+}
+.chartLegend i{
+  display:inline-block;
+  width:10px;
+  height:10px;
+  border-radius:999px;
+}
 
 </style></head><body><div class="brand"><img src="assets/logo_evora.png"><div><h1>Relatório ${esc(type)} · ${esc(project().name)}</h1><p>${fmtDateTime(now())}</p></div></div><div class="kpis"><div class="kpi">Leads<b>${a.leads.length}</b></div><div class="kpi">Clientes A<b>${a.a}</b></div><div class="kpi">Reservas<b>${a.res.length}</b></div><div class="kpi">Carteira<b>${fmtMoney(a.carteira)}</b></div></div>${table('Origem',origin)}${table('Corretores',broker)}${table('Estoque',stock)}<h2>Alertas</h2><p>Leads parados: ${a.stalled.length}<br>Clientes sem comunicação 30+: ${a.silent.length}</p><button onclick="window.print()">Salvar/Imprimir PDF</button><script>setTimeout(()=>window.print(),400)<\/script></body></html>`;
 }
@@ -637,7 +707,7 @@ function createProposalFromSimulator(){
 function proposalPdfHtml(p){
   const l=leadBy(p.leadId), lot=lotBy(p.lotId);
   return `<!doctype html><html><head><meta charset="utf-8"><title>Proposta ${esc(l.name)}</title><style>body{font-family:Arial,sans-serif;color:#173C52;margin:36px}h1{font-size:26px}.box{border:1px solid #d8e2e8;border-radius:14px;padding:14px;margin:12px 0}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.brand{display:flex;gap:12px;align-items:center}.brand img{height:44px}table{border-collapse:collapse;width:100%}td,th{border:1px solid #d8e2e8;padding:9px;text-align:left}button{padding:10px 14px;border:0;border-radius:10px;background:#245E82;color:white;font-weight:bold}@media print{button{display:none}}
-/* v5.12 login/local RBAC layer */
+/* v5.13 login/local RBAC layer */
 .loginPage{min-height:100vh;display:grid;grid-template-columns:1fr 430px;background:#fff}
 .loginHero{background:linear-gradient(135deg,#0E2738,#245E82);color:white;padding:44px;display:flex;flex-direction:column;justify-content:space-between}
 .loginHero img{max-width:270px;display:block}
@@ -658,7 +728,7 @@ function proposalPdfHtml(p){
 @media(max-width:900px){.loginPage{grid-template-columns:1fr}.loginHero{min-height:360px}}
 
 
-/* v5.12 mobile and guided journey refinements */
+/* v5.13 mobile and guided journey refinements */
 .actionButtons{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;padding-top:8px;border-top:1px solid var(--line)}
 .actionButtons .btn{font-size:12px;padding:7px 9px;border-radius:10px}
 .selectFilterGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -675,14 +745,14 @@ function proposalPdfHtml(p){
 }
 
 
-/* v5.12 checklist refinement */
+/* v5.13 checklist refinement */
 .checkCard .actionButtons{margin-top:12px}
 .checkCard .primaryActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 .checkCard .primaryActions .btn{min-width:132px;justify-content:center}
 .actionNotePreview{margin-top:8px;padding:8px 10px;border-radius:12px;background:#F8FBFC;border:1px dashed var(--line);font-size:12px;color:var(--muted)}
 
 
-/* v5.12 proposal and material send center */
+/* v5.13 proposal and material send center */
 .materialSendGrid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .materialChecklist{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
 .materialItem{border:1px solid var(--line);background:white;border-radius:16px;padding:12px}
@@ -699,7 +769,7 @@ function proposalPdfHtml(p){
 @media(max-width:950px){.materialSendGrid,.proposalDetailGrid{grid-template-columns:1fr}}
 
 
-/* v5.12 finance and backend-ready communications */
+/* v5.13 finance and backend-ready communications */
 .backendBadge{display:inline-flex;border:1px solid #BFDBFE;background:#EFF6FF;color:#1D4ED8;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:900;margin:3px}
 .queueBox{border:1px dashed var(--line);background:#F8FBFC;border-radius:16px;padding:12px;margin-top:10px}
 .financeKpiGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
@@ -716,7 +786,7 @@ function proposalPdfHtml(p){
 @media(max-width:1000px){.financeGrid{grid-template-columns:1fr}.financeToolbar{flex-direction:column;align-items:stretch}.financeToolbar .btn,.financeToolbar input,.financeToolbar select{width:100%}}
 
 
-/* v5.12 finance period and VGV */
+/* v5.13 finance period and VGV */
 .periodPanel{border:1px solid var(--line);background:white;border-radius:18px;padding:14px;margin:0 0 14px}
 .periodQuick{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
 .cashFlowGrid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
@@ -729,7 +799,7 @@ function proposalPdfHtml(p){
 @media(max-width:1000px){.cashFlowGrid{grid-template-columns:1fr}.periodQuick .btn{width:100%;justify-content:center}}
 
 
-/* v5.12 campaigns */
+/* v5.13 campaigns */
 .campaignGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
 .campaignCard{border:1px solid var(--line);background:white;border-radius:20px;padding:16px;box-shadow:0 8px 24px rgba(23,60,82,.06)}
 .campaignCard h3{margin-bottom:6px}
@@ -745,7 +815,7 @@ function proposalPdfHtml(p){
 @media(max-width:900px){.campaignKpis{grid-template-columns:repeat(2,minmax(0,1fr))}.campaignSelect{width:100%}}
 
 
-/* v5.12 campaigns advanced */
+/* v5.13 campaigns advanced */
 .campaignKpis{grid-template-columns:repeat(2,minmax(0,1fr))!important}
 .campaignKpi{min-height:72px;overflow:hidden}
 .campaignKpi b{font-size:16px!important;line-height:1.12;word-break:break-word;overflow-wrap:anywhere}
@@ -766,7 +836,7 @@ function proposalPdfHtml(p){
 @media(max-width:950px){.campaignPeopleGrid{grid-template-columns:1fr}.campaignKpis{grid-template-columns:1fr!important}}
 
 
-/* v5.12 campaign attention lists */
+/* v5.13 campaign attention lists */
 .campaignLeadBuckets{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
 .campaignLeadBucket{border:1px solid var(--line);background:white;border-radius:18px;padding:14px}
 .campaignLeadBucket h3{margin-bottom:6px}
@@ -779,6 +849,76 @@ function proposalPdfHtml(p){
 .campaignKpis{grid-template-columns:repeat(2,minmax(0,1fr))!important}
 .campaignKpi b{font-size:15px!important;line-height:1.14;overflow-wrap:anywhere}
 @media(max-width:950px){.campaignLeadBuckets{grid-template-columns:1fr}}
+
+
+/* v5.13 campaign attention treatment and standardized charts */
+.standardChart,
+.campaignComparison,
+.campaignVgvPanel,
+.cashFlowChart,
+.chartMini{
+  border:1px solid var(--line);
+  background:white;
+  border-radius:18px;
+  padding:12px;
+}
+.standardChart svg,
+.campaignComparison svg,
+.campaignVgvPanel svg,
+.cashFlowChart svg,
+.chartMini svg{
+  width:100%;
+  max-height:180px;
+  height:auto;
+  display:block;
+}
+.campaignComparison,
+.campaignVgvPanel{
+  margin-top:12px;
+}
+.campaignComparison h3,
+.campaignVgvPanel h3{
+  font-size:15px;
+  margin-bottom:6px;
+}
+.attentionItem.treated{
+  border-left-color:#84C225;
+  background:#F0FBE9;
+}
+.attentionActions{
+  display:flex;
+  gap:7px;
+  flex-wrap:wrap;
+  margin-top:8px;
+}
+.treatmentNote{
+  border:1px solid #C8EFA2;
+  background:#F0FBE9;
+  color:#3A6F16;
+  border-radius:14px;
+  padding:9px 10px;
+  font-size:12px;
+  margin-top:8px;
+}
+.chartLegend{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-top:8px;
+  color:var(--muted);
+  font-size:11px;
+}
+.chartLegend span{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+}
+.chartLegend i{
+  display:inline-block;
+  width:10px;
+  height:10px;
+  border-radius:999px;
+}
 
 </style></head><body><div class="brand"><img src="assets/logo_evora.png"><div><h1>Proposta comercial</h1><p>${esc(project().name)} · ${fmtDateTime(now())}</p></div></div><div class="box"><b>Cliente:</b> ${esc(l.name)}<br><b>Lote:</b> ${esc(lotLabel(lot.id))} · ${lot.area} m²<br><b>Status:</b> ${esc(p.status)} · <b>Validade:</b> ${fmtDate(p.expiresAt)}</div><table><tr><th>Preço</th><td>${fmtMoney(lot.price)}</td></tr><tr><th>Entrada</th><td>${p.entry}%</td></tr><tr><th>Mensais</th><td>${p.months}x ${fmtMoney(p.monthly)}</td></tr><tr><th>Anuais</th><td>${p.annuals}x ${fmtMoney(p.annual)}</td></tr><tr><th>Correção</th><td>${esc(p.index)} + ${p.interest}% a.m.</td></tr><tr><th>Total nominal</th><td>${fmtMoney(p.total)}</td></tr></table><div class="box"><h2>Confirmação</h2><p>Para seguir, o cliente deve confirmar interesse e enviar documentação para contrato. Esta página serve como modelo da futura página de confirmação online.</p><button onclick="alert('Confirmação demonstrativa registrada. Em produção, este botão gravará o aceite no sistema.')">Confirmar interesse</button></div><button onclick="window.print()">Salvar/Imprimir PDF</button></body></html>`;
 }
@@ -838,7 +978,7 @@ function proposalFlowHtml(p){
 function proposalPdfHtml(p){
   const l=leadBy(p.leadId), lot=lotBy(p.lotId);
   return `<!doctype html><html><head><meta charset="utf-8"><title>Proposta ${esc(l.name)}</title><style>body{font-family:Arial,sans-serif;color:#173C52;margin:36px}h1{font-size:26px}.box{border:1px solid #d8e2e8;border-radius:14px;padding:14px;margin:12px 0}.brand{display:flex;gap:12px;align-items:center}.brand img{height:44px}table{border-collapse:collapse;width:100%;margin-top:14px}td,th{border:1px solid #d8e2e8;padding:9px;text-align:left}th{background:#f3f7f9}button{padding:10px 14px;border:0;border-radius:10px;background:#245E82;color:white;font-weight:bold}.confirm{background:#F0FBE9;border:1px solid #C8EFA2;border-radius:14px;padding:14px;margin-top:16px}@media print{button{display:none}}
-/* v5.12 login/local RBAC layer */
+/* v5.13 login/local RBAC layer */
 .loginPage{min-height:100vh;display:grid;grid-template-columns:1fr 430px;background:#fff}
 .loginHero{background:linear-gradient(135deg,#0E2738,#245E82);color:white;padding:44px;display:flex;flex-direction:column;justify-content:space-between}
 .loginHero img{max-width:270px;display:block}
@@ -859,7 +999,7 @@ function proposalPdfHtml(p){
 @media(max-width:900px){.loginPage{grid-template-columns:1fr}.loginHero{min-height:360px}}
 
 
-/* v5.12 mobile and guided journey refinements */
+/* v5.13 mobile and guided journey refinements */
 .actionButtons{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;padding-top:8px;border-top:1px solid var(--line)}
 .actionButtons .btn{font-size:12px;padding:7px 9px;border-radius:10px}
 .selectFilterGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -876,14 +1016,14 @@ function proposalPdfHtml(p){
 }
 
 
-/* v5.12 checklist refinement */
+/* v5.13 checklist refinement */
 .checkCard .actionButtons{margin-top:12px}
 .checkCard .primaryActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 .checkCard .primaryActions .btn{min-width:132px;justify-content:center}
 .actionNotePreview{margin-top:8px;padding:8px 10px;border-radius:12px;background:#F8FBFC;border:1px dashed var(--line);font-size:12px;color:var(--muted)}
 
 
-/* v5.12 proposal and material send center */
+/* v5.13 proposal and material send center */
 .materialSendGrid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .materialChecklist{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
 .materialItem{border:1px solid var(--line);background:white;border-radius:16px;padding:12px}
@@ -900,7 +1040,7 @@ function proposalPdfHtml(p){
 @media(max-width:950px){.materialSendGrid,.proposalDetailGrid{grid-template-columns:1fr}}
 
 
-/* v5.12 finance and backend-ready communications */
+/* v5.13 finance and backend-ready communications */
 .backendBadge{display:inline-flex;border:1px solid #BFDBFE;background:#EFF6FF;color:#1D4ED8;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:900;margin:3px}
 .queueBox{border:1px dashed var(--line);background:#F8FBFC;border-radius:16px;padding:12px;margin-top:10px}
 .financeKpiGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
@@ -917,7 +1057,7 @@ function proposalPdfHtml(p){
 @media(max-width:1000px){.financeGrid{grid-template-columns:1fr}.financeToolbar{flex-direction:column;align-items:stretch}.financeToolbar .btn,.financeToolbar input,.financeToolbar select{width:100%}}
 
 
-/* v5.12 finance period and VGV */
+/* v5.13 finance period and VGV */
 .periodPanel{border:1px solid var(--line);background:white;border-radius:18px;padding:14px;margin:0 0 14px}
 .periodQuick{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
 .cashFlowGrid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
@@ -930,7 +1070,7 @@ function proposalPdfHtml(p){
 @media(max-width:1000px){.cashFlowGrid{grid-template-columns:1fr}.periodQuick .btn{width:100%;justify-content:center}}
 
 
-/* v5.12 campaigns */
+/* v5.13 campaigns */
 .campaignGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
 .campaignCard{border:1px solid var(--line);background:white;border-radius:20px;padding:16px;box-shadow:0 8px 24px rgba(23,60,82,.06)}
 .campaignCard h3{margin-bottom:6px}
@@ -946,7 +1086,7 @@ function proposalPdfHtml(p){
 @media(max-width:900px){.campaignKpis{grid-template-columns:repeat(2,minmax(0,1fr))}.campaignSelect{width:100%}}
 
 
-/* v5.12 campaigns advanced */
+/* v5.13 campaigns advanced */
 .campaignKpis{grid-template-columns:repeat(2,minmax(0,1fr))!important}
 .campaignKpi{min-height:72px;overflow:hidden}
 .campaignKpi b{font-size:16px!important;line-height:1.12;word-break:break-word;overflow-wrap:anywhere}
@@ -967,7 +1107,7 @@ function proposalPdfHtml(p){
 @media(max-width:950px){.campaignPeopleGrid{grid-template-columns:1fr}.campaignKpis{grid-template-columns:1fr!important}}
 
 
-/* v5.12 campaign attention lists */
+/* v5.13 campaign attention lists */
 .campaignLeadBuckets{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
 .campaignLeadBucket{border:1px solid var(--line);background:white;border-radius:18px;padding:14px}
 .campaignLeadBucket h3{margin-bottom:6px}
@@ -980,6 +1120,76 @@ function proposalPdfHtml(p){
 .campaignKpis{grid-template-columns:repeat(2,minmax(0,1fr))!important}
 .campaignKpi b{font-size:15px!important;line-height:1.14;overflow-wrap:anywhere}
 @media(max-width:950px){.campaignLeadBuckets{grid-template-columns:1fr}}
+
+
+/* v5.13 campaign attention treatment and standardized charts */
+.standardChart,
+.campaignComparison,
+.campaignVgvPanel,
+.cashFlowChart,
+.chartMini{
+  border:1px solid var(--line);
+  background:white;
+  border-radius:18px;
+  padding:12px;
+}
+.standardChart svg,
+.campaignComparison svg,
+.campaignVgvPanel svg,
+.cashFlowChart svg,
+.chartMini svg{
+  width:100%;
+  max-height:180px;
+  height:auto;
+  display:block;
+}
+.campaignComparison,
+.campaignVgvPanel{
+  margin-top:12px;
+}
+.campaignComparison h3,
+.campaignVgvPanel h3{
+  font-size:15px;
+  margin-bottom:6px;
+}
+.attentionItem.treated{
+  border-left-color:#84C225;
+  background:#F0FBE9;
+}
+.attentionActions{
+  display:flex;
+  gap:7px;
+  flex-wrap:wrap;
+  margin-top:8px;
+}
+.treatmentNote{
+  border:1px solid #C8EFA2;
+  background:#F0FBE9;
+  color:#3A6F16;
+  border-radius:14px;
+  padding:9px 10px;
+  font-size:12px;
+  margin-top:8px;
+}
+.chartLegend{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-top:8px;
+  color:var(--muted);
+  font-size:11px;
+}
+.chartLegend span{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+}
+.chartLegend i{
+  display:inline-block;
+  width:10px;
+  height:10px;
+  border-radius:999px;
+}
 
 </style></head><body><div class="brand"><img src="assets/logo_evora.png"><div><h1>Proposta comercial</h1><p>${esc(project().name)} · ${fmtDateTime(now())}</p></div></div><div class="box"><b>Cliente:</b> ${esc(l.name)}<br><b>Lote:</b> ${esc(lotLabel(lot.id))} · ${lot.area} m²<br><b>Status:</b> ${esc(p.status)} · <b>Validade:</b> ${fmtDate(p.expiresAt)}</div><table><tr><th>Preço do lote</th><td>${fmtMoney(lot.price)}</td></tr><tr><th>Entrada</th><td>${p.entry}%</td></tr><tr><th>Mensais</th><td>${p.months}x ${fmtMoney(p.monthly)}</td></tr><tr><th>Anuais</th><td>${p.annuals}x ${fmtMoney(p.annual)}</td></tr><tr><th>Correção</th><td>${esc(p.index)} + ${p.interest}% a.m.</td></tr><tr><th>Total nominal</th><td>${fmtMoney(p.total)}</td></tr></table><div class="confirm"><h2>Confirmação</h2><p>Esta página representa o ambiente de confirmação. Na versão com backend, o botão gravará o aceite do cliente, data, IP e versão da proposta.</p><button onclick="alert('Confirmação demonstrativa registrada. Em produção, será salvo no sistema.')">Confirmar interesse</button></div><button onclick="window.print()">Salvar/Imprimir PDF</button></body></html>`;
 }
@@ -1065,7 +1275,7 @@ function reportHtml(type){
   const chart3=chartBars(d.brokers,'Corretor','Propostas','#173C52',260);
   const chart4=chartBars(d.origin,'Origem','Leads','#84C225',260);
   return `<!doctype html><html><head><meta charset="utf-8"><title>Relatório ${esc(type)}</title><style>body{font-family:Arial,sans-serif;color:#173C52;margin:34px}h1{font-size:26px;margin:0}h2{margin-top:28px}p{color:#5f7280}.brand{display:flex;align-items:center;gap:12px;margin-bottom:18px}.brand img{height:42px}.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:18px 0}.kpi{border:1px solid #d8e2e8;border-radius:12px;padding:12px}.kpi b{display:block;font-size:20px;margin-top:6px}.chart{border:1px solid #d8e2e8;border-radius:14px;padding:12px;margin:14px 0;page-break-inside:avoid}table{border-collapse:collapse;width:100%;margin-top:8px}th,td{border:1px solid #d8e2e8;padding:8px;text-align:left;font-size:12px}th{background:#f1f6f8}@media print{button{display:none}body{margin:20px}}
-/* v5.12 login/local RBAC layer */
+/* v5.13 login/local RBAC layer */
 .loginPage{min-height:100vh;display:grid;grid-template-columns:1fr 430px;background:#fff}
 .loginHero{background:linear-gradient(135deg,#0E2738,#245E82);color:white;padding:44px;display:flex;flex-direction:column;justify-content:space-between}
 .loginHero img{max-width:270px;display:block}
@@ -1086,7 +1296,7 @@ function reportHtml(type){
 @media(max-width:900px){.loginPage{grid-template-columns:1fr}.loginHero{min-height:360px}}
 
 
-/* v5.12 mobile and guided journey refinements */
+/* v5.13 mobile and guided journey refinements */
 .actionButtons{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;padding-top:8px;border-top:1px solid var(--line)}
 .actionButtons .btn{font-size:12px;padding:7px 9px;border-radius:10px}
 .selectFilterGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -1103,14 +1313,14 @@ function reportHtml(type){
 }
 
 
-/* v5.12 checklist refinement */
+/* v5.13 checklist refinement */
 .checkCard .actionButtons{margin-top:12px}
 .checkCard .primaryActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 .checkCard .primaryActions .btn{min-width:132px;justify-content:center}
 .actionNotePreview{margin-top:8px;padding:8px 10px;border-radius:12px;background:#F8FBFC;border:1px dashed var(--line);font-size:12px;color:var(--muted)}
 
 
-/* v5.12 proposal and material send center */
+/* v5.13 proposal and material send center */
 .materialSendGrid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .materialChecklist{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
 .materialItem{border:1px solid var(--line);background:white;border-radius:16px;padding:12px}
@@ -1127,7 +1337,7 @@ function reportHtml(type){
 @media(max-width:950px){.materialSendGrid,.proposalDetailGrid{grid-template-columns:1fr}}
 
 
-/* v5.12 finance and backend-ready communications */
+/* v5.13 finance and backend-ready communications */
 .backendBadge{display:inline-flex;border:1px solid #BFDBFE;background:#EFF6FF;color:#1D4ED8;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:900;margin:3px}
 .queueBox{border:1px dashed var(--line);background:#F8FBFC;border-radius:16px;padding:12px;margin-top:10px}
 .financeKpiGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
@@ -1144,7 +1354,7 @@ function reportHtml(type){
 @media(max-width:1000px){.financeGrid{grid-template-columns:1fr}.financeToolbar{flex-direction:column;align-items:stretch}.financeToolbar .btn,.financeToolbar input,.financeToolbar select{width:100%}}
 
 
-/* v5.12 finance period and VGV */
+/* v5.13 finance period and VGV */
 .periodPanel{border:1px solid var(--line);background:white;border-radius:18px;padding:14px;margin:0 0 14px}
 .periodQuick{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
 .cashFlowGrid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
@@ -1157,7 +1367,7 @@ function reportHtml(type){
 @media(max-width:1000px){.cashFlowGrid{grid-template-columns:1fr}.periodQuick .btn{width:100%;justify-content:center}}
 
 
-/* v5.12 campaigns */
+/* v5.13 campaigns */
 .campaignGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
 .campaignCard{border:1px solid var(--line);background:white;border-radius:20px;padding:16px;box-shadow:0 8px 24px rgba(23,60,82,.06)}
 .campaignCard h3{margin-bottom:6px}
@@ -1173,7 +1383,7 @@ function reportHtml(type){
 @media(max-width:900px){.campaignKpis{grid-template-columns:repeat(2,minmax(0,1fr))}.campaignSelect{width:100%}}
 
 
-/* v5.12 campaigns advanced */
+/* v5.13 campaigns advanced */
 .campaignKpis{grid-template-columns:repeat(2,minmax(0,1fr))!important}
 .campaignKpi{min-height:72px;overflow:hidden}
 .campaignKpi b{font-size:16px!important;line-height:1.12;word-break:break-word;overflow-wrap:anywhere}
@@ -1194,7 +1404,7 @@ function reportHtml(type){
 @media(max-width:950px){.campaignPeopleGrid{grid-template-columns:1fr}.campaignKpis{grid-template-columns:1fr!important}}
 
 
-/* v5.12 campaign attention lists */
+/* v5.13 campaign attention lists */
 .campaignLeadBuckets{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
 .campaignLeadBucket{border:1px solid var(--line);background:white;border-radius:18px;padding:14px}
 .campaignLeadBucket h3{margin-bottom:6px}
@@ -1208,12 +1418,82 @@ function reportHtml(type){
 .campaignKpi b{font-size:15px!important;line-height:1.14;overflow-wrap:anywhere}
 @media(max-width:950px){.campaignLeadBuckets{grid-template-columns:1fr}}
 
+
+/* v5.13 campaign attention treatment and standardized charts */
+.standardChart,
+.campaignComparison,
+.campaignVgvPanel,
+.cashFlowChart,
+.chartMini{
+  border:1px solid var(--line);
+  background:white;
+  border-radius:18px;
+  padding:12px;
+}
+.standardChart svg,
+.campaignComparison svg,
+.campaignVgvPanel svg,
+.cashFlowChart svg,
+.chartMini svg{
+  width:100%;
+  max-height:180px;
+  height:auto;
+  display:block;
+}
+.campaignComparison,
+.campaignVgvPanel{
+  margin-top:12px;
+}
+.campaignComparison h3,
+.campaignVgvPanel h3{
+  font-size:15px;
+  margin-bottom:6px;
+}
+.attentionItem.treated{
+  border-left-color:#84C225;
+  background:#F0FBE9;
+}
+.attentionActions{
+  display:flex;
+  gap:7px;
+  flex-wrap:wrap;
+  margin-top:8px;
+}
+.treatmentNote{
+  border:1px solid #C8EFA2;
+  background:#F0FBE9;
+  color:#3A6F16;
+  border-radius:14px;
+  padding:9px 10px;
+  font-size:12px;
+  margin-top:8px;
+}
+.chartLegend{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-top:8px;
+  color:var(--muted);
+  font-size:11px;
+}
+.chartLegend span{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+}
+.chartLegend i{
+  display:inline-block;
+  width:10px;
+  height:10px;
+  border-radius:999px;
+}
+
 </style></head><body><div class="brand"><img src="assets/logo_evora.png"><div><h1>Relatório ${esc(type)} · ${esc(project().name)}</h1><p>${fmtDateTime(now())}</p></div></div><div class="kpis"><div class="kpi">Leads<b>${d.a.leads.length}</b></div><div class="kpi">Clientes A<b>${d.a.a}</b></div><div class="kpi">Reservas<b>${d.a.res.length}</b></div><div class="kpi">Carteira<b>${fmtMoney(d.a.carteira)}</b></div></div><div class="chart"><h2>Funil de vendas</h2>${chart1}</div><div class="chart"><h2>Projeção de caixa 12 meses</h2>${chart2}</div><div class="chart"><h2>Performance de corretores</h2>${chart3}</div><div class="chart"><h2>Origem dos leads</h2>${chart4}</div>${tableHtml('Financeiro',d.financial)}${tableHtml('SDR',d.sdrs)}${tableHtml('Corretores',d.brokers)}${tableHtml('Campanhas',d.campaigns)}${tableHtml('Estoque',d.stock)}<h2>Alertas</h2><p>Leads parados: ${d.a.stalled.length}<br>Clientes sem comunicação 30+: ${d.a.silent.length}</p><button onclick="window.print()">Salvar/Imprimir PDF</button><script>setTimeout(()=>window.print(),500)<\/script></body></html>`;
 }
 window.printProposal=printProposal; window.openProposalConfirmation=openProposalConfirmation; window.sendProposalEmail=sendProposalEmail; window.sendProposalWhatsApp=sendProposalWhatsApp; window.markProposalSent=markProposalSent;
 /* ==== v4.2 patch end ==== */
 
-/* ==== v5.12 sector-specific reports patch start ==== */
+/* ==== v5.13 sector-specific reports patch start ==== */
 function reportDefinitions(){
   return [
     {id:'executivo', title:'Executivo diário', desc:'Resumo para diretoria: pressão de compra, gargalos, alertas e próximos comandos.', tags:['Diretoria','Diário','Decisão']},
@@ -1346,7 +1626,7 @@ function reportHtml(type){
   const d=reportData(type);
   const blocks=reportBlocks(type,d);
   return `<!doctype html><html><head><meta charset="utf-8"><title>${esc(reportTitle(type))}</title><style>body{font-family:Arial,sans-serif;color:#173C52;margin:34px}h1{font-size:26px;margin:0}h2{margin-top:28px}p{color:#5f7280}.brand{display:flex;align-items:center;gap:12px;margin-bottom:18px}.brand img{height:42px}.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:18px 0}.kpi{border:1px solid #d8e2e8;border-radius:12px;padding:12px}.kpi b{display:block;font-size:20px;margin-top:6px}.chart{border:1px solid #d8e2e8;border-radius:14px;padding:12px;margin:14px 0;page-break-inside:avoid}table{border-collapse:collapse;width:100%;margin-top:8px;page-break-inside:auto}th,td{border:1px solid #d8e2e8;padding:8px;text-align:left;font-size:12px}th{background:#f1f6f8}.summary{border:1px solid #C8EFA2;background:#F0FBE9;border-radius:14px;padding:14px;margin:16px 0}@media print{button{display:none}body{margin:20px}.chart{break-inside:avoid}}
-/* v5.12 login/local RBAC layer */
+/* v5.13 login/local RBAC layer */
 .loginPage{min-height:100vh;display:grid;grid-template-columns:1fr 430px;background:#fff}
 .loginHero{background:linear-gradient(135deg,#0E2738,#245E82);color:white;padding:44px;display:flex;flex-direction:column;justify-content:space-between}
 .loginHero img{max-width:270px;display:block}
@@ -1367,7 +1647,7 @@ function reportHtml(type){
 @media(max-width:900px){.loginPage{grid-template-columns:1fr}.loginHero{min-height:360px}}
 
 
-/* v5.12 mobile and guided journey refinements */
+/* v5.13 mobile and guided journey refinements */
 .actionButtons{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;padding-top:8px;border-top:1px solid var(--line)}
 .actionButtons .btn{font-size:12px;padding:7px 9px;border-radius:10px}
 .selectFilterGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -1384,14 +1664,14 @@ function reportHtml(type){
 }
 
 
-/* v5.12 checklist refinement */
+/* v5.13 checklist refinement */
 .checkCard .actionButtons{margin-top:12px}
 .checkCard .primaryActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 .checkCard .primaryActions .btn{min-width:132px;justify-content:center}
 .actionNotePreview{margin-top:8px;padding:8px 10px;border-radius:12px;background:#F8FBFC;border:1px dashed var(--line);font-size:12px;color:var(--muted)}
 
 
-/* v5.12 proposal and material send center */
+/* v5.13 proposal and material send center */
 .materialSendGrid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .materialChecklist{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
 .materialItem{border:1px solid var(--line);background:white;border-radius:16px;padding:12px}
@@ -1408,7 +1688,7 @@ function reportHtml(type){
 @media(max-width:950px){.materialSendGrid,.proposalDetailGrid{grid-template-columns:1fr}}
 
 
-/* v5.12 finance and backend-ready communications */
+/* v5.13 finance and backend-ready communications */
 .backendBadge{display:inline-flex;border:1px solid #BFDBFE;background:#EFF6FF;color:#1D4ED8;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:900;margin:3px}
 .queueBox{border:1px dashed var(--line);background:#F8FBFC;border-radius:16px;padding:12px;margin-top:10px}
 .financeKpiGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
@@ -1425,7 +1705,7 @@ function reportHtml(type){
 @media(max-width:1000px){.financeGrid{grid-template-columns:1fr}.financeToolbar{flex-direction:column;align-items:stretch}.financeToolbar .btn,.financeToolbar input,.financeToolbar select{width:100%}}
 
 
-/* v5.12 finance period and VGV */
+/* v5.13 finance period and VGV */
 .periodPanel{border:1px solid var(--line);background:white;border-radius:18px;padding:14px;margin:0 0 14px}
 .periodQuick{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
 .cashFlowGrid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
@@ -1438,7 +1718,7 @@ function reportHtml(type){
 @media(max-width:1000px){.cashFlowGrid{grid-template-columns:1fr}.periodQuick .btn{width:100%;justify-content:center}}
 
 
-/* v5.12 campaigns */
+/* v5.13 campaigns */
 .campaignGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
 .campaignCard{border:1px solid var(--line);background:white;border-radius:20px;padding:16px;box-shadow:0 8px 24px rgba(23,60,82,.06)}
 .campaignCard h3{margin-bottom:6px}
@@ -1454,7 +1734,7 @@ function reportHtml(type){
 @media(max-width:900px){.campaignKpis{grid-template-columns:repeat(2,minmax(0,1fr))}.campaignSelect{width:100%}}
 
 
-/* v5.12 campaigns advanced */
+/* v5.13 campaigns advanced */
 .campaignKpis{grid-template-columns:repeat(2,minmax(0,1fr))!important}
 .campaignKpi{min-height:72px;overflow:hidden}
 .campaignKpi b{font-size:16px!important;line-height:1.12;word-break:break-word;overflow-wrap:anywhere}
@@ -1475,7 +1755,7 @@ function reportHtml(type){
 @media(max-width:950px){.campaignPeopleGrid{grid-template-columns:1fr}.campaignKpis{grid-template-columns:1fr!important}}
 
 
-/* v5.12 campaign attention lists */
+/* v5.13 campaign attention lists */
 .campaignLeadBuckets{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
 .campaignLeadBucket{border:1px solid var(--line);background:white;border-radius:18px;padding:14px}
 .campaignLeadBucket h3{margin-bottom:6px}
@@ -1488,6 +1768,76 @@ function reportHtml(type){
 .campaignKpis{grid-template-columns:repeat(2,minmax(0,1fr))!important}
 .campaignKpi b{font-size:15px!important;line-height:1.14;overflow-wrap:anywhere}
 @media(max-width:950px){.campaignLeadBuckets{grid-template-columns:1fr}}
+
+
+/* v5.13 campaign attention treatment and standardized charts */
+.standardChart,
+.campaignComparison,
+.campaignVgvPanel,
+.cashFlowChart,
+.chartMini{
+  border:1px solid var(--line);
+  background:white;
+  border-radius:18px;
+  padding:12px;
+}
+.standardChart svg,
+.campaignComparison svg,
+.campaignVgvPanel svg,
+.cashFlowChart svg,
+.chartMini svg{
+  width:100%;
+  max-height:180px;
+  height:auto;
+  display:block;
+}
+.campaignComparison,
+.campaignVgvPanel{
+  margin-top:12px;
+}
+.campaignComparison h3,
+.campaignVgvPanel h3{
+  font-size:15px;
+  margin-bottom:6px;
+}
+.attentionItem.treated{
+  border-left-color:#84C225;
+  background:#F0FBE9;
+}
+.attentionActions{
+  display:flex;
+  gap:7px;
+  flex-wrap:wrap;
+  margin-top:8px;
+}
+.treatmentNote{
+  border:1px solid #C8EFA2;
+  background:#F0FBE9;
+  color:#3A6F16;
+  border-radius:14px;
+  padding:9px 10px;
+  font-size:12px;
+  margin-top:8px;
+}
+.chartLegend{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-top:8px;
+  color:var(--muted);
+  font-size:11px;
+}
+.chartLegend span{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+}
+.chartLegend i{
+  display:inline-block;
+  width:10px;
+  height:10px;
+  border-radius:999px;
+}
 
 </style></head><body><div class="brand"><img src="assets/logo_evora.png"><div><h1>${esc(reportTitle(type))} · ${esc(project().name)}</h1><p>${fmtDateTime(now())}</p></div></div><div class="kpis"><div class="kpi">Leads<b>${d.a.leads.length}</b></div><div class="kpi">Clientes A<b>${d.a.a}</b></div><div class="kpi">Reservas<b>${d.a.res.length}</b></div><div class="kpi">Carteira<b>${fmtMoney(d.a.carteira)}</b></div></div><div class="summary"><b>Leitura automática:</b> ${reportInsight(type,d)}</div>${blocks}<button onclick="window.print()">Salvar/Imprimir PDF</button><script>setTimeout(()=>window.print(),500)<\/script></body></html>`;
 }
@@ -1508,8 +1858,8 @@ function reportInsight(type,d){
 window.markProposalSent=markProposalSent;
 /* ==== v4.2 patch end ==== */
 
-/* ==== v5.12 local login + RBAC layer start ==== */
-const AUTH_SESSION_KEY = 'evora-launch-os-v512-session';
+/* ==== v5.13 local login + RBAC layer start ==== */
+const AUTH_SESSION_KEY = 'evora-launch-os-v513-session';
 function localHash(value){ let h=5381; const s=String(value||''); for(let i=0;i<s.length;i++) h=((h<<5)+h)+s.charCodeAt(i); return 'h'+Math.abs(h); }
 function defaultPermissions(){
   return [
@@ -1573,7 +1923,7 @@ function authLog(action,entity,entityId,details=''){ ensureAuthState(); state.au
 function renderLogin(){
   ensureAuthState();
   const root=document.getElementById('app');
-  root.innerHTML=`<div class="loginPage"><section class="loginHero"><div><img src="assets/logo_evora_white.png" alt="Évora"><h1>Launch OS v5.12</h1><p>Évora Launch OS — inteligência comercial para vender com velocidade, método e controle.</p></div><small>Primeiro acesso: admin@evora.local · Evora@2026!</small></section><section class="loginCard"><h2>Entrar no sistema</h2><p>Controle local de usuários e permissões. Os dados permanecem no navegador.</p><form id="loginForm"><div class="field"><label>E-mail</label><input id="loginEmail" value="admin@evora.local"></div><div class="field"><label>Senha</label><input id="loginPassword" type="password" value="Evora@2026!"></div><button class="btn primary" style="width:100%;justify-content:center" type="submit">Entrar</button></form><div class="authNotice"><b>Modo sem banco:</b> usuários e leads ficam no localStorage deste navegador.</div></section></div>`;
+  root.innerHTML=`<div class="loginPage"><section class="loginHero"><div><img src="assets/logo_evora_white.png" alt="Évora"><h1>Launch OS v5.13</h1><p>Évora Launch OS — inteligência comercial para vender com velocidade, método e controle.</p></div><small>Primeiro acesso: admin@evora.local · Evora@2026!</small></section><section class="loginCard"><h2>Entrar no sistema</h2><p>Controle local de usuários e permissões. Os dados permanecem no navegador.</p><form id="loginForm"><div class="field"><label>E-mail</label><input id="loginEmail" value="admin@evora.local"></div><div class="field"><label>Senha</label><input id="loginPassword" type="password" value="Evora@2026!"></div><button class="btn primary" style="width:100%;justify-content:center" type="submit">Entrar</button></form><div class="authNotice"><b>Modo sem banco:</b> usuários e leads ficam no localStorage deste navegador.</div></section></div>`;
   document.getElementById('loginForm').addEventListener('submit',e=>{ e.preventDefault(); const email=document.getElementById('loginEmail').value.trim().toLowerCase(); const pw=document.getElementById('loginPassword').value; const u=state.auth.users.find(x=>String(x.email).toLowerCase()===email && x.active); if(!u || u.passwordHash!==localHash(pw)){ toast('E-mail ou senha inválidos.'); return; } sessionStorage.setItem(AUTH_SESSION_KEY,u.id); authLog('login','user',u.id,u.email); render(); toast('Login realizado.'); });
 }
 const _v56Render = render;
@@ -1603,7 +1953,7 @@ renderSidebar = function(){
   <div class="authUserPanel"><b>${esc(u.name)}</b><br>${esc(u.email)}<br>${esc(r?.name||'Sem papel')}<div style="margin-top:8px"><button class="btn small" onclick="localLogout()">Sair</button></div></div>
   <div class="projectBox"><label>Empreendimento</label><select onchange="selectProject(this.value)">${state.projects.map(p=>`<option value="${p.id}" ${p.id===state.selectedProjectId?'selected':''}>${esc(p.name)} · ${esc(p.city)}/${esc(p.uf)}</option>`).join('')}</select></div>
   <div class="nav">${allowed.map(([id,label])=>`<button class="${view===id?'active':''}" onclick="setView('${id}')"><span class="ico">${icon(id)}</span>${label}</button>`).join('')}</div>
-  <div class="principle"><b>Regra v5.12</b>Login e permissões foram adicionados sem remover a jornada comercial da v4.3.</div>`;
+  <div class="principle"><b>Regra v5.13</b>Login e permissões foram adicionados sem remover a jornada comercial da v4.3.</div>`;
 };
 const _oldRenderTopbar = renderTopbar;
 renderTopbar = function(){
@@ -1761,9 +2111,9 @@ function deleteLeadLocal(id){
 }
 function localLogout(){ const u=authUser(); if(u) authLog('logout','user',u.id,u.email); sessionStorage.removeItem(AUTH_SESSION_KEY); render(); }
 window.openAuthUserForm=openAuthUserForm; window.saveAuthUser=saveAuthUser; window.deleteAuthUser=deleteAuthUser; window.openResetPasswordLocal=openResetPasswordLocal; window.resetPasswordLocal=resetPasswordLocal; window.saveAuthRole=saveAuthRole; window.changeMyPasswordLocal=changeMyPasswordLocal; window.adminResetPasswordLocal=adminResetPasswordLocal; window.exportAuthLogs=exportAuthLogs; window.deleteLeadLocal=deleteLeadLocal; window.localLogout=localLogout;
-/* ==== v5.12 local login + RBAC layer end ==== */
+/* ==== v5.13 local login + RBAC layer end ==== */
 
-/* ==== v5.12 guided journey + mobile scroll patch start ==== */
+/* ==== v5.13 guided journey + mobile scroll patch start ==== */
 function scrollToMainContent(){
   setTimeout(()=>{
     const main=document.querySelector('.main');
@@ -1848,14 +2198,14 @@ function proposalPdfHtml(p){
   const entryTotal=(lot?.price||0)*((p.entry||10)/100);
   const entryPart=p.entryInstallmentValue||entryTotal/inst;
   return `<!doctype html><html><head><meta charset="utf-8"><title>Proposta ${esc(l.name)}</title><style>body{font-family:Arial,sans-serif;color:#173C52;margin:36px}h1{font-size:26px}.box{border:1px solid #d8e2e8;border-radius:14px;padding:14px;margin:12px 0}.brand{display:flex;gap:12px;align-items:center}.brand img{height:44px}table{border-collapse:collapse;width:100%;margin-top:14px}td,th{border:1px solid #d8e2e8;padding:9px;text-align:left}th{background:#f3f7f9}button{padding:10px 14px;border:0;border-radius:10px;background:#245E82;color:white;font-weight:bold}.confirm{background:#F0FBE9;border:1px solid #C8EFA2;border-radius:14px;padding:14px;margin-top:16px}@media print{button{display:none}}
-/* v5.12 checklist refinement */
+/* v5.13 checklist refinement */
 .checkCard .actionButtons{margin-top:12px}
 .checkCard .primaryActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 .checkCard .primaryActions .btn{min-width:132px;justify-content:center}
 .actionNotePreview{margin-top:8px;padding:8px 10px;border-radius:12px;background:#F8FBFC;border:1px dashed var(--line);font-size:12px;color:var(--muted)}
 
 
-/* v5.12 proposal and material send center */
+/* v5.13 proposal and material send center */
 .materialSendGrid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .materialChecklist{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
 .materialItem{border:1px solid var(--line);background:white;border-radius:16px;padding:12px}
@@ -1872,7 +2222,7 @@ function proposalPdfHtml(p){
 @media(max-width:950px){.materialSendGrid,.proposalDetailGrid{grid-template-columns:1fr}}
 
 
-/* v5.12 finance and backend-ready communications */
+/* v5.13 finance and backend-ready communications */
 .backendBadge{display:inline-flex;border:1px solid #BFDBFE;background:#EFF6FF;color:#1D4ED8;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:900;margin:3px}
 .queueBox{border:1px dashed var(--line);background:#F8FBFC;border-radius:16px;padding:12px;margin-top:10px}
 .financeKpiGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
@@ -1889,7 +2239,7 @@ function proposalPdfHtml(p){
 @media(max-width:1000px){.financeGrid{grid-template-columns:1fr}.financeToolbar{flex-direction:column;align-items:stretch}.financeToolbar .btn,.financeToolbar input,.financeToolbar select{width:100%}}
 
 
-/* v5.12 finance period and VGV */
+/* v5.13 finance period and VGV */
 .periodPanel{border:1px solid var(--line);background:white;border-radius:18px;padding:14px;margin:0 0 14px}
 .periodQuick{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
 .cashFlowGrid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
@@ -1902,7 +2252,7 @@ function proposalPdfHtml(p){
 @media(max-width:1000px){.cashFlowGrid{grid-template-columns:1fr}.periodQuick .btn{width:100%;justify-content:center}}
 
 
-/* v5.12 campaigns */
+/* v5.13 campaigns */
 .campaignGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
 .campaignCard{border:1px solid var(--line);background:white;border-radius:20px;padding:16px;box-shadow:0 8px 24px rgba(23,60,82,.06)}
 .campaignCard h3{margin-bottom:6px}
@@ -1918,7 +2268,7 @@ function proposalPdfHtml(p){
 @media(max-width:900px){.campaignKpis{grid-template-columns:repeat(2,minmax(0,1fr))}.campaignSelect{width:100%}}
 
 
-/* v5.12 campaigns advanced */
+/* v5.13 campaigns advanced */
 .campaignKpis{grid-template-columns:repeat(2,minmax(0,1fr))!important}
 .campaignKpi{min-height:72px;overflow:hidden}
 .campaignKpi b{font-size:16px!important;line-height:1.12;word-break:break-word;overflow-wrap:anywhere}
@@ -1939,7 +2289,7 @@ function proposalPdfHtml(p){
 @media(max-width:950px){.campaignPeopleGrid{grid-template-columns:1fr}.campaignKpis{grid-template-columns:1fr!important}}
 
 
-/* v5.12 campaign attention lists */
+/* v5.13 campaign attention lists */
 .campaignLeadBuckets{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
 .campaignLeadBucket{border:1px solid var(--line);background:white;border-radius:18px;padding:14px}
 .campaignLeadBucket h3{margin-bottom:6px}
@@ -1952,6 +2302,76 @@ function proposalPdfHtml(p){
 .campaignKpis{grid-template-columns:repeat(2,minmax(0,1fr))!important}
 .campaignKpi b{font-size:15px!important;line-height:1.14;overflow-wrap:anywhere}
 @media(max-width:950px){.campaignLeadBuckets{grid-template-columns:1fr}}
+
+
+/* v5.13 campaign attention treatment and standardized charts */
+.standardChart,
+.campaignComparison,
+.campaignVgvPanel,
+.cashFlowChart,
+.chartMini{
+  border:1px solid var(--line);
+  background:white;
+  border-radius:18px;
+  padding:12px;
+}
+.standardChart svg,
+.campaignComparison svg,
+.campaignVgvPanel svg,
+.cashFlowChart svg,
+.chartMini svg{
+  width:100%;
+  max-height:180px;
+  height:auto;
+  display:block;
+}
+.campaignComparison,
+.campaignVgvPanel{
+  margin-top:12px;
+}
+.campaignComparison h3,
+.campaignVgvPanel h3{
+  font-size:15px;
+  margin-bottom:6px;
+}
+.attentionItem.treated{
+  border-left-color:#84C225;
+  background:#F0FBE9;
+}
+.attentionActions{
+  display:flex;
+  gap:7px;
+  flex-wrap:wrap;
+  margin-top:8px;
+}
+.treatmentNote{
+  border:1px solid #C8EFA2;
+  background:#F0FBE9;
+  color:#3A6F16;
+  border-radius:14px;
+  padding:9px 10px;
+  font-size:12px;
+  margin-top:8px;
+}
+.chartLegend{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-top:8px;
+  color:var(--muted);
+  font-size:11px;
+}
+.chartLegend span{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+}
+.chartLegend i{
+  display:inline-block;
+  width:10px;
+  height:10px;
+  border-radius:999px;
+}
 
 </style></head><body><div class="brand"><img src="assets/logo_evora.png"><div><h1>Proposta comercial</h1><p>${esc(project().name)} · ${fmtDateTime(now())}</p></div></div><div class="box"><b>Cliente:</b> ${esc(l.name)}<br><b>Lote:</b> ${esc(lotLabel(lot.id))} · ${lot.area} m²<br><b>Status:</b> ${esc(p.status)} · <b>Validade:</b> ${fmtDate(p.expiresAt)}</div><table><tr><th>Preço do lote</th><td>${fmtMoney(lot.price)}</td></tr><tr><th>Entrada</th><td>${p.entry}% · ${inst===1?'à vista':`${inst}x de ${fmtMoney(entryPart)}`} · total ${fmtMoney(entryTotal)}</td></tr><tr><th>Mensais</th><td>${p.months}x ${fmtMoney(p.monthly)}</td></tr><tr><th>Anuais</th><td>${p.annuals}x ${fmtMoney(p.annual)}</td></tr><tr><th>Correção</th><td>${esc(p.index)} + ${p.interest}% a.m.</td></tr><tr><th>Total nominal</th><td>${fmtMoney(p.total)}</td></tr></table><div class="confirm"><h2>Confirmação</h2><p>Esta página representa o ambiente de confirmação. Na versão com backend, o botão gravará o aceite do cliente, data, IP e versão da proposta.</p><button onclick="alert('Confirmação demonstrativa registrada. Em produção, será salvo no sistema.')">Confirmar interesse</button></div><button onclick="window.print()">Salvar/Imprimir PDF</button></body></html>`;
 }
@@ -2025,9 +2445,9 @@ openReserveLot = function(lotId='',leadId=''){
 };
 window.filterSelectOptions=filterSelectOptions; window.openLeadSimulator=openLeadSimulator; window.goLotsForLead=goLotsForLead; window.openLotPickerForLead=openLotPickerForLead; window.renderLotPickerResults=renderLotPickerResults; window.assignLotToLead=assignLotToLead; window.registerClientCommunicationFromLead=registerClientCommunicationFromLead;
 window.updateSim=updateSim; window.createProposalFromSimulator=createProposalFromSimulator;
-/* ==== v5.12 guided journey + mobile scroll patch end ==== */
+/* ==== v5.13 guided journey + mobile scroll patch end ==== */
 
-/* ==== v5.12 checklist + slogan patch start ==== */
+/* ==== v5.13 checklist + slogan patch start ==== */
 dossierAction = function(l,miss){
   const tasks = TASKS[l.stage] || [];
   return `<div class="grid two" style="margin-top:14px">
@@ -2073,9 +2493,9 @@ function toggleStageNote(leadId,taskId){
   const area=document.getElementById('note-'+taskId);
   if(area && wrap.style.display==='block') setTimeout(()=>area.focus(),60);
 }
-/* ==== v5.12 checklist + slogan patch end ==== */
+/* ==== v5.13 checklist + slogan patch end ==== */
 
-/* ==== v5.12 rich proposal + material send center start ==== */
+/* ==== v5.13 rich proposal + material send center start ==== */
 function ensureMaterialSendState(){
   state.materialSends = state.materialSends || [];
   state.materials = state.materials || [];
@@ -2310,7 +2730,7 @@ proposalPdfHtml = function(p){
   const entryTotal=(lot?.price||0)*((p.entry||10)/100);
   const entryPart=p.entryInstallmentValue||entryTotal/inst;
   return `<!doctype html><html><head><meta charset="utf-8"><title>Proposta ${esc(l.name)}</title><style>body{font-family:Arial,sans-serif;color:#173C52;margin:36px}h1{font-size:26px}.box{border:1px solid #d8e2e8;border-radius:14px;padding:14px;margin:12px 0}.brand{display:flex;gap:12px;align-items:center}.brand img{height:44px}table{border-collapse:collapse;width:100%;margin-top:14px}td,th{border:1px solid #d8e2e8;padding:9px;text-align:left}th{background:#f3f7f9}button{padding:10px 14px;border:0;border-radius:10px;background:#245E82;color:white;font-weight:bold}.confirm{background:#F0FBE9;border:1px solid #C8EFA2;border-radius:14px;padding:14px;margin-top:16px}@media print{button{display:none}}
-/* v5.12 finance and backend-ready communications */
+/* v5.13 finance and backend-ready communications */
 .backendBadge{display:inline-flex;border:1px solid #BFDBFE;background:#EFF6FF;color:#1D4ED8;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:900;margin:3px}
 .queueBox{border:1px dashed var(--line);background:#F8FBFC;border-radius:16px;padding:12px;margin-top:10px}
 .financeKpiGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
@@ -2327,7 +2747,7 @@ proposalPdfHtml = function(p){
 @media(max-width:1000px){.financeGrid{grid-template-columns:1fr}.financeToolbar{flex-direction:column;align-items:stretch}.financeToolbar .btn,.financeToolbar input,.financeToolbar select{width:100%}}
 
 
-/* v5.12 finance period and VGV */
+/* v5.13 finance period and VGV */
 .periodPanel{border:1px solid var(--line);background:white;border-radius:18px;padding:14px;margin:0 0 14px}
 .periodQuick{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
 .cashFlowGrid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
@@ -2340,7 +2760,7 @@ proposalPdfHtml = function(p){
 @media(max-width:1000px){.cashFlowGrid{grid-template-columns:1fr}.periodQuick .btn{width:100%;justify-content:center}}
 
 
-/* v5.12 campaigns */
+/* v5.13 campaigns */
 .campaignGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
 .campaignCard{border:1px solid var(--line);background:white;border-radius:20px;padding:16px;box-shadow:0 8px 24px rgba(23,60,82,.06)}
 .campaignCard h3{margin-bottom:6px}
@@ -2356,7 +2776,7 @@ proposalPdfHtml = function(p){
 @media(max-width:900px){.campaignKpis{grid-template-columns:repeat(2,minmax(0,1fr))}.campaignSelect{width:100%}}
 
 
-/* v5.12 campaigns advanced */
+/* v5.13 campaigns advanced */
 .campaignKpis{grid-template-columns:repeat(2,minmax(0,1fr))!important}
 .campaignKpi{min-height:72px;overflow:hidden}
 .campaignKpi b{font-size:16px!important;line-height:1.12;word-break:break-word;overflow-wrap:anywhere}
@@ -2377,7 +2797,7 @@ proposalPdfHtml = function(p){
 @media(max-width:950px){.campaignPeopleGrid{grid-template-columns:1fr}.campaignKpis{grid-template-columns:1fr!important}}
 
 
-/* v5.12 campaign attention lists */
+/* v5.13 campaign attention lists */
 .campaignLeadBuckets{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
 .campaignLeadBucket{border:1px solid var(--line);background:white;border-radius:18px;padding:14px}
 .campaignLeadBucket h3{margin-bottom:6px}
@@ -2391,12 +2811,82 @@ proposalPdfHtml = function(p){
 .campaignKpi b{font-size:15px!important;line-height:1.14;overflow-wrap:anywhere}
 @media(max-width:950px){.campaignLeadBuckets{grid-template-columns:1fr}}
 
+
+/* v5.13 campaign attention treatment and standardized charts */
+.standardChart,
+.campaignComparison,
+.campaignVgvPanel,
+.cashFlowChart,
+.chartMini{
+  border:1px solid var(--line);
+  background:white;
+  border-radius:18px;
+  padding:12px;
+}
+.standardChart svg,
+.campaignComparison svg,
+.campaignVgvPanel svg,
+.cashFlowChart svg,
+.chartMini svg{
+  width:100%;
+  max-height:180px;
+  height:auto;
+  display:block;
+}
+.campaignComparison,
+.campaignVgvPanel{
+  margin-top:12px;
+}
+.campaignComparison h3,
+.campaignVgvPanel h3{
+  font-size:15px;
+  margin-bottom:6px;
+}
+.attentionItem.treated{
+  border-left-color:#84C225;
+  background:#F0FBE9;
+}
+.attentionActions{
+  display:flex;
+  gap:7px;
+  flex-wrap:wrap;
+  margin-top:8px;
+}
+.treatmentNote{
+  border:1px solid #C8EFA2;
+  background:#F0FBE9;
+  color:#3A6F16;
+  border-radius:14px;
+  padding:9px 10px;
+  font-size:12px;
+  margin-top:8px;
+}
+.chartLegend{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-top:8px;
+  color:var(--muted);
+  font-size:11px;
+}
+.chartLegend span{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+}
+.chartLegend i{
+  display:inline-block;
+  width:10px;
+  height:10px;
+  border-radius:999px;
+}
+
 </style></head><body><div class="brand"><img src="assets/logo_evora.png"><div><h1>Proposta comercial</h1><p>${esc(project().name)} · ${fmtDateTime(now())}</p></div></div><div class="box"><b>Cliente:</b> ${esc(l.name)}<br><b>Lote:</b> ${esc(lotLabel(lot.id))} · ${lot.area} m² · ${esc(lot.type)} · ${esc(lot.sector)}<br><b>Status proposta:</b> ${esc(p.status)} · <b>Status lote:</b> ${lotStatusLabel(lot.status)}<br><b>Validade:</b> ${fmtDate(p.expiresAt)}</div><table><tr><th>Preço do lote</th><td>${fmtMoney(lot.price)}</td></tr><tr><th>Entrada</th><td>${p.entry}% · ${inst===1?'à vista':`${inst}x de ${fmtMoney(entryPart)}`} · total ${fmtMoney(entryTotal)}</td></tr><tr><th>Mensais</th><td>${p.months}x ${fmtMoney(p.monthly)}</td></tr><tr><th>Anuais</th><td>${p.annuals}x ${fmtMoney(p.annual)}</td></tr><tr><th>Correção</th><td>${esc(p.index)} + ${p.interest}% a.m.</td></tr><tr><th>Total nominal</th><td>${fmtMoney(p.total)}</td></tr></table><div class="box"><b>Observações de negociação:</b><br>${esc(p.negotiationNotes||'—')}</div><div class="confirm"><h2>Confirmação</h2><p>Esta página representa o ambiente de confirmação. Na versão com backend, o botão gravará o aceite do cliente, data, IP e versão da proposta.</p><button onclick="alert('Confirmação demonstrativa registrada. Em produção, será salvo no sistema.')">Confirmar interesse</button></div><button onclick="window.print()">Salvar/Imprimir PDF</button></body></html>`;
 };
 window.openMaterialSendCenter=openMaterialSendCenter; window.renderMaterialLeadHistory=renderMaterialLeadHistory; window.sendMaterialsFromForm=sendMaterialsFromForm; window.previewMaterialMessage=previewMaterialMessage; window.saveProposalNotes=saveProposalNotes;
-/* ==== v5.12 rich proposal + material send center end ==== */
+/* ==== v5.13 rich proposal + material send center end ==== */
 
-/* ==== v5.12 backend-ready sends + financial controls start ==== */
+/* ==== v5.13 backend-ready sends + financial controls start ==== */
 function ensureBackendState(){
   state.backendQueue = state.backendQueue || [];
   state.financeSettings = state.financeSettings || {costM2:650, defaultBillingChannel:'WhatsApp'};
@@ -2733,7 +3223,7 @@ function financeReportHtml(type='financeiro'){
   const rows=projectReceivables().slice(0,200);
   const tableRows=rows.map(r=>`<tr><td>${esc(leadName(r.leadId))}</td><td>${esc(lotLabel(r.lotId))}</td><td>${esc(r.type)}</td><td>${fmtDate(r.dueDate)}</td><td>${fmtMoney(r.amount)}</td><td>${esc(receivableStatus(r))}</td></tr>`).join('');
   return `<!doctype html><html><head><meta charset="utf-8"><title>Relatório Financeiro</title><style>body{font-family:Arial,sans-serif;color:#173C52;margin:34px}h1{font-size:26px}.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.kpi{border:1px solid #d8e2e8;border-radius:12px;padding:12px}.kpi b{display:block;font-size:20px;margin-top:5px}table{border-collapse:collapse;width:100%;margin-top:18px}td,th{border:1px solid #d8e2e8;padding:8px;font-size:12px;text-align:left}th{background:#f1f6f8}.chart{border:1px solid #d8e2e8;border-radius:14px;padding:12px;margin-top:18px}@media print{button{display:none}}
-/* v5.12 finance period and VGV */
+/* v5.13 finance period and VGV */
 .periodPanel{border:1px solid var(--line);background:white;border-radius:18px;padding:14px;margin:0 0 14px}
 .periodQuick{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
 .cashFlowGrid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
@@ -2746,7 +3236,7 @@ function financeReportHtml(type='financeiro'){
 @media(max-width:1000px){.cashFlowGrid{grid-template-columns:1fr}.periodQuick .btn{width:100%;justify-content:center}}
 
 
-/* v5.12 campaigns */
+/* v5.13 campaigns */
 .campaignGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
 .campaignCard{border:1px solid var(--line);background:white;border-radius:20px;padding:16px;box-shadow:0 8px 24px rgba(23,60,82,.06)}
 .campaignCard h3{margin-bottom:6px}
@@ -2762,7 +3252,7 @@ function financeReportHtml(type='financeiro'){
 @media(max-width:900px){.campaignKpis{grid-template-columns:repeat(2,minmax(0,1fr))}.campaignSelect{width:100%}}
 
 
-/* v5.12 campaigns advanced */
+/* v5.13 campaigns advanced */
 .campaignKpis{grid-template-columns:repeat(2,minmax(0,1fr))!important}
 .campaignKpi{min-height:72px;overflow:hidden}
 .campaignKpi b{font-size:16px!important;line-height:1.12;word-break:break-word;overflow-wrap:anywhere}
@@ -2783,7 +3273,7 @@ function financeReportHtml(type='financeiro'){
 @media(max-width:950px){.campaignPeopleGrid{grid-template-columns:1fr}.campaignKpis{grid-template-columns:1fr!important}}
 
 
-/* v5.12 campaign attention lists */
+/* v5.13 campaign attention lists */
 .campaignLeadBuckets{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
 .campaignLeadBucket{border:1px solid var(--line);background:white;border-radius:18px;padding:14px}
 .campaignLeadBucket h3{margin-bottom:6px}
@@ -2797,6 +3287,76 @@ function financeReportHtml(type='financeiro'){
 .campaignKpi b{font-size:15px!important;line-height:1.14;overflow-wrap:anywhere}
 @media(max-width:950px){.campaignLeadBuckets{grid-template-columns:1fr}}
 
+
+/* v5.13 campaign attention treatment and standardized charts */
+.standardChart,
+.campaignComparison,
+.campaignVgvPanel,
+.cashFlowChart,
+.chartMini{
+  border:1px solid var(--line);
+  background:white;
+  border-radius:18px;
+  padding:12px;
+}
+.standardChart svg,
+.campaignComparison svg,
+.campaignVgvPanel svg,
+.cashFlowChart svg,
+.chartMini svg{
+  width:100%;
+  max-height:180px;
+  height:auto;
+  display:block;
+}
+.campaignComparison,
+.campaignVgvPanel{
+  margin-top:12px;
+}
+.campaignComparison h3,
+.campaignVgvPanel h3{
+  font-size:15px;
+  margin-bottom:6px;
+}
+.attentionItem.treated{
+  border-left-color:#84C225;
+  background:#F0FBE9;
+}
+.attentionActions{
+  display:flex;
+  gap:7px;
+  flex-wrap:wrap;
+  margin-top:8px;
+}
+.treatmentNote{
+  border:1px solid #C8EFA2;
+  background:#F0FBE9;
+  color:#3A6F16;
+  border-radius:14px;
+  padding:9px 10px;
+  font-size:12px;
+  margin-top:8px;
+}
+.chartLegend{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-top:8px;
+  color:var(--muted);
+  font-size:11px;
+}
+.chartLegend span{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+}
+.chartLegend i{
+  display:inline-block;
+  width:10px;
+  height:10px;
+  border-radius:999px;
+}
+
 </style></head><body><h1>Relatório Financeiro · ${esc(project().name)}</h1><p>${fmtDateTime(now())}</p><div class="kpis"><div class="kpi">Recebido<b>${fmtMoney(a.received)}</b></div><div class="kpi">A receber<b>${fmtMoney(a.open)}</b></div><div class="kpi">Vencido<b>${fmtMoney(a.late)}</b></div><div class="kpi">Inadimplência<b>${a.delinquency.toFixed(1)}%</b></div><div class="kpi">Margem/m²<b>${fmtMoney(a.marginM2)}</b></div><div class="kpi">Preço médio/m²<b>${fmtMoney(a.avgM2)}</b></div><div class="kpi">Descontos mês<b>${fmtMoney(a.discountMonth)}</b></div><div class="kpi">Preço médio venda<b>${fmtMoney(a.avgSale)}</b></div></div><div class="chart"><h2>Projeção de recebíveis</h2>${financeChartSvg()}</div><h2>Recebíveis</h2><table><thead><tr><th>Cliente</th><th>Lote</th><th>Tipo</th><th>Vencimento</th><th>Valor</th><th>Status</th></tr></thead><tbody>${tableRows}</tbody></table><h2>Mensagens de cobrança preparadas</h2><table><thead><tr><th>Data</th><th>Cliente</th><th>Canal</th><th>Status</th></tr></thead><tbody>${(state.billingMessages||[]).map(m=>`<tr><td>${fmtDateTime(m.createdAt)}</td><td>${esc(leadName(m.leadId))}</td><td>${esc(m.channel)}</td><td>${esc(m.status)}</td></tr>`).join('')}</tbody></table><button onclick="window.print()">Salvar/Imprimir PDF</button><script>setTimeout(()=>window.print(),500)<\/script></body></html>`;
 }
 function printFinanceReport(type='financeiro'){
@@ -2808,9 +3368,9 @@ reportHtml = function(type){
   return _v59OldReportHtml(type);
 };
 window.prepareMaterialWhatsApp=prepareMaterialWhatsApp; window.prepareMaterialEmail=prepareMaterialEmail; window.copyMaterialMessage=copyMaterialMessage; window.enqueueMaterialBackend=enqueueMaterialBackend; window.syncReceivables=syncReceivables; window.renderFinanceiro=renderFinanceiro; window.saveFinanceSettings=saveFinanceSettings; window.generateBoleto=generateBoleto; window.prepareBillingWhatsApp=prepareBillingWhatsApp; window.prepareBillingEmail=prepareBillingEmail; window.markReceivablePaid=markReceivablePaid; window.openManualReceivable=openManualReceivable; window.saveManualReceivable=saveManualReceivable; window.printFinanceReport=printFinanceReport;
-/* ==== v5.12 backend-ready sends + financial controls end ==== */
+/* ==== v5.13 backend-ready sends + financial controls end ==== */
 
-/* ==== v5.12 finance period + VGV patch start ==== */
+/* ==== v5.13 finance period + VGV patch start ==== */
 function yyyyMMdd(date){
   const d=new Date(date);
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
@@ -3006,7 +3566,7 @@ function financeReportHtml(type='financeiro'){
   const rows=a.rec.slice(0,250);
   const tableRows=rows.map(r=>`<tr><td>${esc(leadName(r.leadId))}</td><td>${esc(lotLabel(r.lotId))}</td><td>${esc(r.type)}</td><td>${fmtDate(r.dueDate)}</td><td>${fmtMoney(r.amount)}</td><td>${esc(receivableStatus(r))}</td></tr>`).join('');
   return `<!doctype html><html><head><meta charset="utf-8"><title>Relatório Financeiro</title><style>body{font-family:Arial,sans-serif;color:#173C52;margin:34px}h1{font-size:26px}.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.kpi{border:1px solid #d8e2e8;border-radius:12px;padding:12px}.kpi b{display:block;font-size:20px;margin-top:5px}table{border-collapse:collapse;width:100%;margin-top:18px}td,th{border:1px solid #d8e2e8;padding:8px;font-size:12px;text-align:left}th{background:#f1f6f8}.chart{border:1px solid #d8e2e8;border-radius:14px;padding:12px;margin-top:18px}@media print{button{display:none}}
-/* v5.12 campaigns */
+/* v5.13 campaigns */
 .campaignGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
 .campaignCard{border:1px solid var(--line);background:white;border-radius:20px;padding:16px;box-shadow:0 8px 24px rgba(23,60,82,.06)}
 .campaignCard h3{margin-bottom:6px}
@@ -3022,7 +3582,7 @@ function financeReportHtml(type='financeiro'){
 @media(max-width:900px){.campaignKpis{grid-template-columns:repeat(2,minmax(0,1fr))}.campaignSelect{width:100%}}
 
 
-/* v5.12 campaigns advanced */
+/* v5.13 campaigns advanced */
 .campaignKpis{grid-template-columns:repeat(2,minmax(0,1fr))!important}
 .campaignKpi{min-height:72px;overflow:hidden}
 .campaignKpi b{font-size:16px!important;line-height:1.12;word-break:break-word;overflow-wrap:anywhere}
@@ -3043,7 +3603,7 @@ function financeReportHtml(type='financeiro'){
 @media(max-width:950px){.campaignPeopleGrid{grid-template-columns:1fr}.campaignKpis{grid-template-columns:1fr!important}}
 
 
-/* v5.12 campaign attention lists */
+/* v5.13 campaign attention lists */
 .campaignLeadBuckets{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
 .campaignLeadBucket{border:1px solid var(--line);background:white;border-radius:18px;padding:14px}
 .campaignLeadBucket h3{margin-bottom:6px}
@@ -3057,12 +3617,82 @@ function financeReportHtml(type='financeiro'){
 .campaignKpi b{font-size:15px!important;line-height:1.14;overflow-wrap:anywhere}
 @media(max-width:950px){.campaignLeadBuckets{grid-template-columns:1fr}}
 
+
+/* v5.13 campaign attention treatment and standardized charts */
+.standardChart,
+.campaignComparison,
+.campaignVgvPanel,
+.cashFlowChart,
+.chartMini{
+  border:1px solid var(--line);
+  background:white;
+  border-radius:18px;
+  padding:12px;
+}
+.standardChart svg,
+.campaignComparison svg,
+.campaignVgvPanel svg,
+.cashFlowChart svg,
+.chartMini svg{
+  width:100%;
+  max-height:180px;
+  height:auto;
+  display:block;
+}
+.campaignComparison,
+.campaignVgvPanel{
+  margin-top:12px;
+}
+.campaignComparison h3,
+.campaignVgvPanel h3{
+  font-size:15px;
+  margin-bottom:6px;
+}
+.attentionItem.treated{
+  border-left-color:#84C225;
+  background:#F0FBE9;
+}
+.attentionActions{
+  display:flex;
+  gap:7px;
+  flex-wrap:wrap;
+  margin-top:8px;
+}
+.treatmentNote{
+  border:1px solid #C8EFA2;
+  background:#F0FBE9;
+  color:#3A6F16;
+  border-radius:14px;
+  padding:9px 10px;
+  font-size:12px;
+  margin-top:8px;
+}
+.chartLegend{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-top:8px;
+  color:var(--muted);
+  font-size:11px;
+}
+.chartLegend span{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+}
+.chartLegend i{
+  display:inline-block;
+  width:10px;
+  height:10px;
+  border-radius:999px;
+}
+
 </style></head><body><h1>Relatório Financeiro · ${esc(project().name)}</h1><p>Período: ${esc(periodLabel(period))} · ${fmtDateTime(now())}</p><div class="kpis"><div class="kpi">VGV projetado<b>${fmtMoney(a.vgv.vgvProjected)}</b></div><div class="kpi">VGV realizado total<b>${fmtMoney(a.vgv.realizedAll)}</b></div><div class="kpi">VGV realizado período<b>${fmtMoney(a.vgv.realizedPeriod)}</b></div><div class="kpi">VGV em negociação<b>${fmtMoney(a.vgv.inPipeline)}</b></div><div class="kpi">Recebido<b>${fmtMoney(a.received)}</b></div><div class="kpi">A receber<b>${fmtMoney(a.open)}</b></div><div class="kpi">Vencido<b>${fmtMoney(a.late)}</b></div><div class="kpi">Inadimplência<b>${a.delinquency.toFixed(1)}%</b></div><div class="kpi">Margem/m²<b>${fmtMoney(a.marginM2)}</b></div><div class="kpi">Preço médio/m²<b>${fmtMoney(a.avgM2)}</b></div><div class="kpi">Descontos período<b>${fmtMoney(a.discountPeriod)}</b></div><div class="kpi">Preço médio venda<b>${fmtMoney(a.avgSale)}</b></div></div><div class="chart"><h2>Fluxo de caixa de recebíveis</h2>${cashFlowSvg(cf)}</div><h2>Fluxo por período</h2><table><thead><tr><th>Período</th><th>Previsto</th><th>Recebido</th><th>Aberto</th><th>Vencido</th></tr></thead><tbody>${cf.map(r=>`<tr><td>${esc(r.label)}</td><td>${fmtMoney(r.previsto)}</td><td>${fmtMoney(r.recebido)}</td><td>${fmtMoney(r.aberto)}</td><td>${fmtMoney(r.vencido)}</td></tr>`).join('')}</tbody></table><h2>Recebíveis do período</h2><table><thead><tr><th>Cliente</th><th>Lote</th><th>Tipo</th><th>Vencimento</th><th>Valor</th><th>Status</th></tr></thead><tbody>${tableRows}</tbody></table><h2>Mensagens de cobrança preparadas</h2><table><thead><tr><th>Data</th><th>Cliente</th><th>Canal</th><th>Status</th></tr></thead><tbody>${(state.billingMessages||[]).filter(m=>inFinancePeriod(m.createdAt,period)).map(m=>`<tr><td>${fmtDateTime(m.createdAt)}</td><td>${esc(leadName(m.leadId))}</td><td>${esc(m.channel)}</td><td>${esc(m.status)}</td></tr>`).join('')}</tbody></table><button onclick="window.print()">Salvar/Imprimir PDF</button><script>setTimeout(()=>window.print(),500)<\/script></body></html>`;
 }
 window.setFinanceQuick=setFinanceQuick; window.applyFinancePeriod=applyFinancePeriod;
-/* ==== v5.12 finance period + VGV patch end ==== */
+/* ==== v5.13 finance period + VGV patch end ==== */
 
-/* ==== v5.12 campaigns + VGV executed patch start ==== */
+/* ==== v5.13 campaigns + VGV executed patch start ==== */
 function slugLocal(value){
   return String(value||'campanha').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,48) || 'campanha';
 }
@@ -3260,7 +3890,7 @@ function campaignReportHtml(id=''){
   const campaigns=id?[campaignById(id)].filter(Boolean):projectCampaigns();
   const rows=campaigns.map(c=>{ const m=campaignMetrics(c); return `<tr><td>${esc(c.name)}</td><td>${esc(c.objective||'')}</td><td>${m.leads.length}</td><td>${m.hot}</td><td>${m.props.length}</td><td>${m.reservations.length}</td><td>${m.clients.length}</td><td>${fmtMoney(m.vgvRealized)}</td><td>${fmtMoney(m.vgvExecuted)}</td><td>${m.conversion.toFixed(1)}%</td><td>${fmtMoney(m.cpl)}</td></tr>`; }).join('');
   return `<!doctype html><html><head><meta charset="utf-8"><title>Relatório Campanhas</title><style>body{font-family:Arial,sans-serif;color:#173C52;margin:34px}h1{font-size:26px}table{border-collapse:collapse;width:100%;margin-top:18px}td,th{border:1px solid #d8e2e8;padding:8px;font-size:12px;text-align:left}th{background:#f1f6f8}.box{border:1px solid #d8e2e8;border-radius:14px;padding:14px;margin:12px 0}@media print{button{display:none}}
-/* v5.12 campaigns advanced */
+/* v5.13 campaigns advanced */
 .campaignKpis{grid-template-columns:repeat(2,minmax(0,1fr))!important}
 .campaignKpi{min-height:72px;overflow:hidden}
 .campaignKpi b{font-size:16px!important;line-height:1.12;word-break:break-word;overflow-wrap:anywhere}
@@ -3281,7 +3911,7 @@ function campaignReportHtml(id=''){
 @media(max-width:950px){.campaignPeopleGrid{grid-template-columns:1fr}.campaignKpis{grid-template-columns:1fr!important}}
 
 
-/* v5.12 campaign attention lists */
+/* v5.13 campaign attention lists */
 .campaignLeadBuckets{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
 .campaignLeadBucket{border:1px solid var(--line);background:white;border-radius:18px;padding:14px}
 .campaignLeadBucket h3{margin-bottom:6px}
@@ -3294,6 +3924,76 @@ function campaignReportHtml(id=''){
 .campaignKpis{grid-template-columns:repeat(2,minmax(0,1fr))!important}
 .campaignKpi b{font-size:15px!important;line-height:1.14;overflow-wrap:anywhere}
 @media(max-width:950px){.campaignLeadBuckets{grid-template-columns:1fr}}
+
+
+/* v5.13 campaign attention treatment and standardized charts */
+.standardChart,
+.campaignComparison,
+.campaignVgvPanel,
+.cashFlowChart,
+.chartMini{
+  border:1px solid var(--line);
+  background:white;
+  border-radius:18px;
+  padding:12px;
+}
+.standardChart svg,
+.campaignComparison svg,
+.campaignVgvPanel svg,
+.cashFlowChart svg,
+.chartMini svg{
+  width:100%;
+  max-height:180px;
+  height:auto;
+  display:block;
+}
+.campaignComparison,
+.campaignVgvPanel{
+  margin-top:12px;
+}
+.campaignComparison h3,
+.campaignVgvPanel h3{
+  font-size:15px;
+  margin-bottom:6px;
+}
+.attentionItem.treated{
+  border-left-color:#84C225;
+  background:#F0FBE9;
+}
+.attentionActions{
+  display:flex;
+  gap:7px;
+  flex-wrap:wrap;
+  margin-top:8px;
+}
+.treatmentNote{
+  border:1px solid #C8EFA2;
+  background:#F0FBE9;
+  color:#3A6F16;
+  border-radius:14px;
+  padding:9px 10px;
+  font-size:12px;
+  margin-top:8px;
+}
+.chartLegend{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-top:8px;
+  color:var(--muted);
+  font-size:11px;
+}
+.chartLegend span{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+}
+.chartLegend i{
+  display:inline-block;
+  width:10px;
+  height:10px;
+  border-radius:999px;
+}
 
 </style></head><body><h1>Relatório de Campanhas · ${esc(project().name)}</h1><p>${fmtDateTime(now())}</p><table><thead><tr><th>Campanha</th><th>Objetivo</th><th>Leads</th><th>A</th><th>Propostas</th><th>Reservas</th><th>Clientes</th><th>VGV Realizado</th><th>VGV Executado</th><th>Conversão</th><th>CPL</th></tr></thead><tbody>${rows}</tbody></table><button onclick="window.print()">Salvar/Imprimir PDF</button><script>setTimeout(()=>window.print(),500)<\/script></body></html>`;
 }
@@ -3323,9 +4023,9 @@ renderFinanceiro = function(){
   return html.replace('<div class="financeKpi"><span>VGV realizado total</span><b>'+fmtMoney(a.vgv.realizedAll)+'</b><span class="financeSub">Aceites e contratos</span></div>', '<div class="financeKpi"><span>VGV executado do empreendimento</span><b>'+fmtMoney(a.vgv.executed||a.vgv.contracted||0)+'</b><span class="financeSub">Contratos assinados</span></div><div class="financeKpi"><span>VGV realizado total</span><b>'+fmtMoney(a.vgv.realizedAll)+'</b><span class="financeSub">Aceites e contratos</span></div>');
 };
 window.openCampaignForm=openCampaignForm; window.saveCampaign=saveCampaign; window.deleteCampaign=deleteCampaign; window.openCampaign=openCampaign; window.saveLeadCampaign=saveLeadCampaign; window.printCampaignReport=printCampaignReport; window.printCampaignsReport=printCampaignsReport;
-/* ==== v5.12 campaigns + VGV executed patch end ==== */
+/* ==== v5.13 campaigns + VGV executed patch end ==== */
 
-/* ==== v5.12 advanced campaigns patch start ==== */
+/* ==== v5.13 advanced campaigns patch start ==== */
 function campaignVgvComparisonSvg(c){
   const m = campaignMetrics(c);
   const projected = Number(c.targetVgv)||0;
@@ -3440,7 +4140,7 @@ function campaignReportHtml(id=''){
   const campaigns=id?[campaignById(id)].filter(Boolean):projectCampaigns();
   const rows=campaigns.map(c=>{ const m=campaignMetrics(c); return `<tr><td>${esc(c.name)}</td><td>${esc(c.objective||'')}</td><td>${m.leads.length}</td><td>${m.hot}</td><td>${m.props.length}</td><td>${m.reservations.length}</td><td>${m.clients.length}</td><td>${fmtMoney(c.targetVgv||0)}</td><td>${fmtMoney(m.vgvPipeline)}</td><td>${fmtMoney(m.vgvRealized)}</td><td>${fmtMoney(m.vgvExecuted)}</td><td>${m.conversion.toFixed(1)}%</td><td>${fmtMoney(m.cpl)}</td></tr>`; }).join('');
   return `<!doctype html><html><head><meta charset="utf-8"><title>Relatório Campanhas</title><style>body{font-family:Arial,sans-serif;color:#173C52;margin:34px}h1{font-size:26px}table{border-collapse:collapse;width:100%;margin-top:18px}td,th{border:1px solid #d8e2e8;padding:8px;font-size:12px;text-align:left}th{background:#f1f6f8}.box{border:1px solid #d8e2e8;border-radius:14px;padding:14px;margin:12px 0}@media print{button{display:none}}
-/* v5.12 campaign attention lists */
+/* v5.13 campaign attention lists */
 .campaignLeadBuckets{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
 .campaignLeadBucket{border:1px solid var(--line);background:white;border-radius:18px;padding:14px}
 .campaignLeadBucket h3{margin-bottom:6px}
@@ -3453,6 +4153,76 @@ function campaignReportHtml(id=''){
 .campaignKpis{grid-template-columns:repeat(2,minmax(0,1fr))!important}
 .campaignKpi b{font-size:15px!important;line-height:1.14;overflow-wrap:anywhere}
 @media(max-width:950px){.campaignLeadBuckets{grid-template-columns:1fr}}
+
+
+/* v5.13 campaign attention treatment and standardized charts */
+.standardChart,
+.campaignComparison,
+.campaignVgvPanel,
+.cashFlowChart,
+.chartMini{
+  border:1px solid var(--line);
+  background:white;
+  border-radius:18px;
+  padding:12px;
+}
+.standardChart svg,
+.campaignComparison svg,
+.campaignVgvPanel svg,
+.cashFlowChart svg,
+.chartMini svg{
+  width:100%;
+  max-height:180px;
+  height:auto;
+  display:block;
+}
+.campaignComparison,
+.campaignVgvPanel{
+  margin-top:12px;
+}
+.campaignComparison h3,
+.campaignVgvPanel h3{
+  font-size:15px;
+  margin-bottom:6px;
+}
+.attentionItem.treated{
+  border-left-color:#84C225;
+  background:#F0FBE9;
+}
+.attentionActions{
+  display:flex;
+  gap:7px;
+  flex-wrap:wrap;
+  margin-top:8px;
+}
+.treatmentNote{
+  border:1px solid #C8EFA2;
+  background:#F0FBE9;
+  color:#3A6F16;
+  border-radius:14px;
+  padding:9px 10px;
+  font-size:12px;
+  margin-top:8px;
+}
+.chartLegend{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-top:8px;
+  color:var(--muted);
+  font-size:11px;
+}
+.chartLegend span{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+}
+.chartLegend i{
+  display:inline-block;
+  width:10px;
+  height:10px;
+  border-radius:999px;
+}
 
 </style></head><body><h1>Relatório de Campanhas · ${esc(project().name)}</h1><p>${fmtDateTime(now())}</p><table><thead><tr><th>Campanha</th><th>Objetivo</th><th>Leads</th><th>A</th><th>Propostas</th><th>Reservas</th><th>Clientes</th><th>VGV Projetado</th><th>VGV Negociação</th><th>VGV Realizado</th><th>VGV Executado</th><th>Conversão</th><th>CPL</th></tr></thead><tbody>${rows}</tbody></table><button onclick="window.print()">Salvar/Imprimir PDF</button><script>setTimeout(()=>window.print(),500)<\/script></body></html>`;
 }
@@ -3499,9 +4269,9 @@ function deleteMaterial(id){
   save(); render(); toast('Material excluído.');
 }
 window.openCampaignGuides=openCampaignGuides; window.saveCampaignGuides=saveCampaignGuides; window.openCampaignLeadForm=openCampaignLeadForm; window.saveCampaignLead=saveCampaignLead; window.openCampaignLinkLeads=openCampaignLinkLeads; window.renderCampaignLeadLinkList=renderCampaignLeadLinkList; window.saveCampaignLeadLinks=saveCampaignLeadLinks; window.openMaterialForm=openMaterialForm; window.saveMaterial=saveMaterial; window.deleteMaterial=deleteMaterial;
-/* ==== v5.12 advanced campaigns patch end ==== */
+/* ==== v5.13 advanced campaigns patch end ==== */
 
-/* ==== v5.12 campaign atendimento + attention + VGV simplification start ==== */
+/* ==== v5.13 campaign atendimento + attention + VGV simplification start ==== */
 function leadAttentionReason(l){
   const reasons=[];
   if(typeof isStalled==='function' && isStalled(l)) reasons.push('lead parado / ação vencida');
@@ -3597,7 +4367,77 @@ function renderCampaigns(){
 function campaignReportHtml(id=''){
   const campaigns=id?[campaignById(id)].filter(Boolean):projectCampaigns();
   const rows=campaigns.map(c=>{ const m=campaignMetrics(c); return `<tr><td>${esc(c.name)}</td><td>${esc(c.objective||'')}</td><td>${m.leads.length}</td><td>${m.atendimento.length}</td><td>${m.atencao.length}</td><td>${m.hot}</td><td>${m.props.length}</td><td>${m.reservations.length}</td><td>${m.clients.length}</td><td>${fmtMoney(c.targetVgv||0)}</td><td>${fmtMoney(m.vgvPipeline)}</td><td>${fmtMoney(m.vgvRealized)}</td><td>${m.conversion.toFixed(1)}%</td><td>${fmtMoney(m.cpl)}</td></tr>`; }).join('');
-  return `<!doctype html><html><head><meta charset="utf-8"><title>Relatório Campanhas</title><style>body{font-family:Arial,sans-serif;color:#173C52;margin:34px}h1{font-size:26px}table{border-collapse:collapse;width:100%;margin-top:18px}td,th{border:1px solid #d8e2e8;padding:8px;font-size:12px;text-align:left}th{background:#f1f6f8}.box{border:1px solid #d8e2e8;border-radius:14px;padding:14px;margin:12px 0}@media print{button{display:none}}</style></head><body><h1>Relatório de Campanhas · ${esc(project().name)}</h1><p>${fmtDateTime(now())}</p><table><thead><tr><th>Campanha</th><th>Objetivo</th><th>Leads</th><th>Em atendimento</th><th>Merecem atenção</th><th>Clientes A</th><th>Propostas</th><th>Reservas</th><th>Clientes</th><th>VGV Projetado</th><th>VGV Negociação</th><th>VGV Realizado</th><th>Conversão</th><th>CPL</th></tr></thead><tbody>${rows}</tbody></table>${campaigns.map(c=>`<h2>${esc(c.name)} · Leads que merecem atenção</h2><table><thead><tr><th>Lead</th><th>Etapa</th><th>Motivo</th></tr></thead><tbody>${campaignMetrics(c).atencao.map(x=>`<tr><td>${esc(x.lead.name)}</td><td>${esc(stage(x.lead.stage).label)}</td><td>${esc(x.reason)}</td></tr>`).join('')||'<tr><td colspan="3">Sem alertas</td></tr>'}</tbody></table>`).join('')}<button onclick="window.print()">Salvar/Imprimir PDF</button><script>setTimeout(()=>window.print(),500)<\/script></body></html>`;
+  return `<!doctype html><html><head><meta charset="utf-8"><title>Relatório Campanhas</title><style>body{font-family:Arial,sans-serif;color:#173C52;margin:34px}h1{font-size:26px}table{border-collapse:collapse;width:100%;margin-top:18px}td,th{border:1px solid #d8e2e8;padding:8px;font-size:12px;text-align:left}th{background:#f1f6f8}.box{border:1px solid #d8e2e8;border-radius:14px;padding:14px;margin:12px 0}@media print{button{display:none}}
+/* v5.13 campaign attention treatment and standardized charts */
+.standardChart,
+.campaignComparison,
+.campaignVgvPanel,
+.cashFlowChart,
+.chartMini{
+  border:1px solid var(--line);
+  background:white;
+  border-radius:18px;
+  padding:12px;
+}
+.standardChart svg,
+.campaignComparison svg,
+.campaignVgvPanel svg,
+.cashFlowChart svg,
+.chartMini svg{
+  width:100%;
+  max-height:180px;
+  height:auto;
+  display:block;
+}
+.campaignComparison,
+.campaignVgvPanel{
+  margin-top:12px;
+}
+.campaignComparison h3,
+.campaignVgvPanel h3{
+  font-size:15px;
+  margin-bottom:6px;
+}
+.attentionItem.treated{
+  border-left-color:#84C225;
+  background:#F0FBE9;
+}
+.attentionActions{
+  display:flex;
+  gap:7px;
+  flex-wrap:wrap;
+  margin-top:8px;
+}
+.treatmentNote{
+  border:1px solid #C8EFA2;
+  background:#F0FBE9;
+  color:#3A6F16;
+  border-radius:14px;
+  padding:9px 10px;
+  font-size:12px;
+  margin-top:8px;
+}
+.chartLegend{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-top:8px;
+  color:var(--muted);
+  font-size:11px;
+}
+.chartLegend span{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+}
+.chartLegend i{
+  display:inline-block;
+  width:10px;
+  height:10px;
+  border-radius:999px;
+}
+
+</style></head><body><h1>Relatório de Campanhas · ${esc(project().name)}</h1><p>${fmtDateTime(now())}</p><table><thead><tr><th>Campanha</th><th>Objetivo</th><th>Leads</th><th>Em atendimento</th><th>Merecem atenção</th><th>Clientes A</th><th>Propostas</th><th>Reservas</th><th>Clientes</th><th>VGV Projetado</th><th>VGV Negociação</th><th>VGV Realizado</th><th>Conversão</th><th>CPL</th></tr></thead><tbody>${rows}</tbody></table>${campaigns.map(c=>`<h2>${esc(c.name)} · Leads que merecem atenção</h2><table><thead><tr><th>Lead</th><th>Etapa</th><th>Motivo</th></tr></thead><tbody>${campaignMetrics(c).atencao.map(x=>`<tr><td>${esc(x.lead.name)}</td><td>${esc(stage(x.lead.stage).label)}</td><td>${esc(x.reason)}</td></tr>`).join('')||'<tr><td colspan="3">Sem alertas</td></tr>'}</tbody></table>`).join('')}<button onclick="window.print()">Salvar/Imprimir PDF</button><script>setTimeout(()=>window.print(),500)<\/script></body></html>`;
 }
 function vgvMetrics(period=periodObject()){
   const lots=projectLots();
@@ -3618,7 +4458,194 @@ renderFinanceiro = function(){
   return html;
 };
 window.leadAttentionReason=leadAttentionReason;
-/* ==== v5.12 campaign atendimento + attention + VGV simplification end ==== */
+/* ==== v5.13 campaign atendimento + attention + VGV simplification end ==== */
+
+/* ==== v5.13 campaign treatment + chart standardization start ==== */
+function standardMoneyShort(v){
+  v = Number(v)||0;
+  if(Math.abs(v)>=1000000) return 'R$ '+(v/1000000).toFixed(1).replace('.',',')+' mi';
+  if(Math.abs(v)>=1000) return 'R$ '+(v/1000).toFixed(0).replace('.',',')+' mil';
+  return fmtMoney(v);
+}
+function standardHorizontalBars(rows, opts={}){
+  const width = opts.width || 560;
+  const labelW = opts.labelW || 138;
+  const valueW = opts.valueW || 92;
+  const barH = opts.barH || 18;
+  const gap = opts.gap || 13;
+  const top = opts.top || 18;
+  const height = Math.max(92, top + rows.length*(barH+gap) + 18);
+  const max = Math.max(1, ...rows.map(r=>Number(r.value)||0));
+  const barMax = width - labelW - valueW - 34;
+  return `<svg viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg" role="img">${rows.map((r,i)=>{
+    const y = top + i*(barH+gap);
+    const val = Number(r.value)||0;
+    const bw = Math.max(val>0?4:0, (val/max)*barMax);
+    return `<text x="8" y="${y+barH-4}" font-size="11" fill="#173C52">${esc(String(r.label||'').slice(0,24))}</text><rect x="${labelW}" y="${y}" width="${bw}" height="${barH}" rx="7" fill="${r.color||'#245E82'}"/><text x="${labelW+bw+8}" y="${y+barH-4}" font-size="11" fill="#173C52">${esc(r.valueLabel||standardMoneyShort(val))}</text>`;
+  }).join('')}</svg>`;
+}
+function standardVerticalBars(rows, opts={}){
+  const width = opts.width || 620;
+  const height = opts.height || 176;
+  const base = height - 34;
+  const left = 34;
+  const top = 24;
+  const max = Math.max(1, ...rows.flatMap(r=>[Number(r.previsto)||0, Number(r.recebido)||0, Number(r.vencido)||0, Number(r.value)||0]));
+  const step = (width-left-28)/Math.max(1,rows.length);
+  const barW = Math.max(10, Math.min(28, step/4));
+  return `<svg viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg"><line x1="${left}" y1="${base}" x2="${width-16}" y2="${base}" stroke="#DDE8EE"/>${rows.map((r,i)=>{
+    const x = left + i*step + step/2 - barW;
+    const prev = Number(r.previsto ?? r.value ?? 0);
+    const rec = Number(r.recebido)||0;
+    const late = Number(r.vencido)||0;
+    const hp = Math.max(0,(prev/max)*(base-top));
+    const hr = Math.max(0,(rec/max)*(base-top));
+    const hv = Math.max(0,(late/max)*(base-top));
+    return `<rect x="${x}" y="${base-hp}" width="${barW}" height="${hp}" rx="5" fill="#245E82" opacity=".22"/><rect x="${x}" y="${base-hr}" width="${barW}" height="${hr}" rx="5" fill="#84C225"/><rect x="${x+barW+3}" y="${base-hv}" width="${Math.max(7,barW/2)}" height="${hv}" rx="5" fill="#DC2626"/><text x="${x-5}" y="${base+18}" font-size="10" fill="#637887">${esc(r.label||'')}</text>`;
+  }).join('')}</svg>`;
+}
+function chartBars(rows,labelKey,valueKey,color='#245E82',height=220){
+  return standardHorizontalBars(rows.slice(0,12).map(r=>({label:r[labelKey], value:Number(r[valueKey])||0, valueLabel:String(r[valueKey]??0), color})), {width:620,labelW:170});
+}
+function chartLine(values,color='#84C225'){
+  const rows = values.map(v=>({label:v.label, value:v.value, previsto:v.value, recebido:v.value, vencido:0}));
+  return standardVerticalBars(rows,{width:620,height:176});
+}
+function campaignVgvComparisonSvg(c){
+  const m = campaignMetrics(c);
+  const rows = [
+    {label:'VGV projetado', value:Number(c.targetVgv)||0, color:'#245E82'},
+    {label:'Em negociação', value:Number(m.vgvPipeline)||0, color:'#F59E0B'},
+    {label:'VGV realizado', value:Number(m.vgvRealized)||0, color:'#84C225'}
+  ];
+  return `<div class="standardChart">${standardHorizontalBars(rows,{width:560,labelW:128,valueW:104,barH:16,gap:12,top:14})}<div class="chartLegend"><span><i style="background:#245E82"></i>Projetado</span><span><i style="background:#F59E0B"></i>Negociação</span><span><i style="background:#84C225"></i>Realizado</span></div></div>`;
+}
+function cashFlowSvg(rows){
+  return `${standardVerticalBars(rows,{width:620,height:176})}<div class="chartLegend"><span><i style="background:#245E82;opacity:.35"></i>Previsto</span><span><i style="background:#84C225"></i>Recebido</span><span><i style="background:#DC2626"></i>Vencido</span></div>`;
+}
+function financeChartSvg(){
+  const rec=projectReceivables ? projectReceivables() : [];
+  const months=[];
+  for(let i=0;i<6;i++){ const d=new Date(); d.setMonth(d.getMonth()+i); const key=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'); months.push({key,label:String(d.getMonth()+1).padStart(2,'0')+'/'+String(d.getFullYear()).slice(2),previsto:0,recebido:0,vencido:0}); }
+  rec.forEach(r=>{ const d=new Date(r.dueDate); const key=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'); const m=months.find(x=>x.key===key); if(m){ const amount=Number(r.amount)||0; m.previsto+=amount; if(receivableStatus(r)==='recebido') m.recebido+=amount; if(receivableStatus(r)==='vencido') m.vencido+=amount; } });
+  return cashFlowSvg(months);
+}
+function rawLeadAttentionReason(l){
+  const reasons=[];
+  if(typeof isStalled==='function' && isStalled(l)) reasons.push('lead parado / ação vencida');
+  if(stageIndex(l.stage)>=4 && !l.brokerId) reasons.push('sem corretor atribuído');
+  if(['escolha','proposta','reserva','contrato'].includes(l.stage) && !l.lotId) reasons.push('sem lote vinculado');
+  if(l.lotId){
+    const lot=lotBy(l.lotId);
+    if(lot && ['prioridade','pre-reserva'].includes(lot.status) && lot.reservedUntil && new Date(lot.reservedUntil)<new Date()) reasons.push('reserva vencida');
+  }
+  if(l.score>=80 && stageIndex(l.stage)<stageIndex('simulacao')) reasons.push('cliente A ainda não avançou');
+  if(l.stage==='proposta'){
+    const props=projectProposals().filter(p=>p.leadId===l.id && !['aceita','convertida'].includes(p.status));
+    if(props.some(p=>p.expiresAt && new Date(p.expiresAt)<new Date())) reasons.push('proposta vencida');
+  }
+  return reasons.join(' · ');
+}
+function attentionSignature(l, reason=''){
+  const lot=l.lotId?lotBy(l.lotId):null;
+  const props=projectProposals().filter(p=>p.leadId===l.id).map(p=>`${p.id}:${p.status}:${p.expiresAt||''}`).join('|');
+  return [reason,l.stage,l.score,l.brokerId||'',l.lotId||'',lot?.status||'',lot?.reservedUntil||'',l.nextDue||'',props].join('§');
+}
+function attentionTreatmentKey(campaignId,leadId){ return `${campaignId||'global'}:${leadId}`; }
+function isCampaignAttentionTreated(campaignId,l,reason){
+  state.campaignAttentionTreatments = state.campaignAttentionTreatments || {};
+  const t = state.campaignAttentionTreatments[attentionTreatmentKey(campaignId,l.id)];
+  return !!(t && t.signature===attentionSignature(l,reason));
+}
+function leadAttentionReason(l,campaignId=''){
+  const reason = rawLeadAttentionReason(l);
+  if(!reason) return '';
+  if(campaignId && isCampaignAttentionTreated(campaignId,l,reason)) return '';
+  return reason;
+}
+function markCampaignAttentionTreated(campaignId,leadId){
+  const l=leadBy(leadId), c=campaignById(campaignId);
+  if(!l||!c) return;
+  const reason=rawLeadAttentionReason(l);
+  if(!reason) return toast('Este lead não possui alerta ativo.');
+  state.campaignAttentionTreatments = state.campaignAttentionTreatments || {};
+  state.campaignAttentionTreatments[attentionTreatmentKey(campaignId,leadId)] = {leadId,campaignId,reason,signature:attentionSignature(l,reason),treatedAt:now(),by:(typeof authUser==='function'&&authUser()?.name)||'Equipe'};
+  l.history=l.history||[];
+  l.history.push({ts:now(),text:`Alerta da campanha "${c.name}" marcado como tratado: ${reason}.`});
+  save();
+  openCampaign(campaignId);
+  toast('Lead removido da lista de atenção desta campanha.');
+}
+function campaignLeadBuckets(c){
+  const m=campaignMetrics(c);
+  const atendimento=m.leads.filter(l=>['diagnostico','encaixe','aquecimento','simulacao','escolha','proposta','reserva','contrato'].includes(l.stage));
+  const atencao=m.leads.map(l=>({lead:l,reason:leadAttentionReason(l,c.id),rawReason:rawLeadAttentionReason(l)})).filter(x=>x.reason);
+  return {atendimento,atencao};
+}
+function campaignMetrics(c){
+  const leads=projectLeads().filter(l=>l.campaignId===c.id || (!l.campaignId && l.campaign===c.name));
+  const leadIds=new Set(leads.map(l=>l.id));
+  const props=projectProposals().filter(p=>leadIds.has(p.leadId));
+  const reservations=projectReservations().filter(r=>leadIds.has(r.leadId));
+  const contracts=projectContracts().filter(ct=>leadIds.has(ct.leadId));
+  const clients=leads.filter(l=>l.stage==='cliente'||contracts.some(ct=>ct.leadId===l.id&&ct.signedAt));
+  const hot=leads.filter(l=>l.score>=80).length;
+  const vgvPipeline=props.filter(p=>['em-aprovacao','aprovada','enviada'].includes(p.status)).reduce((s,p)=>s+salePriceForProposal(p),0);
+  const vgvRealized=props.filter(p=>['aceita','convertida'].includes(p.status)).reduce((s,p)=>s+salePriceForProposal(p),0);
+  const conversion=leads.length?clients.length/leads.length*100:0;
+  const cpl=leads.length?(Number(c.budget)||0)/leads.length:0;
+  const cps=clients.length?(Number(c.budget)||0)/clients.length:0;
+  const atendimento=leads.filter(l=>['diagnostico','encaixe','aquecimento','simulacao','escolha','proposta','reserva','contrato'].includes(l.stage));
+  const atencao=leads.map(l=>({lead:l,reason:leadAttentionReason(l,c.id),rawReason:rawLeadAttentionReason(l)})).filter(x=>x.reason);
+  return {leads,props,reservations,contracts,clients,hot,vgvPipeline,vgvRealized,vgvExecuted:vgvRealized,conversion,cpl,cps,atendimento,atencao};
+}
+function campaignLeadBucketsHtml(c){
+  const b=campaignLeadBuckets(c);
+  const atendimentoRows=b.atendimento.slice(0,30).map(l=>`<div class="attentionItem"><b>${esc(l.name)}</b><span>${esc(stage(l.stage).label)} · score ${l.score} · ${esc(nextBestAction(l))}</span><div class="attentionActions"><button class="btn small" onclick="openDossier('${l.id}')">Dossiê</button></div></div>`).join('');
+  const attentionRows=b.atencao.slice(0,30).map(x=>`<div class="attentionItem danger"><b>${esc(x.lead.name)}</b><span>${esc(stage(x.lead.stage).label)} · ${esc(x.reason)}</span><div class="attentionActions"><button class="btn small warn" onclick="openDossier('${x.lead.id}')">Tratar no dossiê</button><button class="btn small success" onclick="markCampaignAttentionTreated('${c.id}','${x.lead.id}')">Marcar tratado</button></div></div>`).join('');
+  return `<div class="campaignLeadBuckets"><div class="campaignLeadBucket"><h3>Leads em atendimento · ${b.atendimento.length}</h3>${atendimentoRows||'<div class="empty">Nenhum lead em atendimento nesta campanha.</div>'}</div><div class="campaignLeadBucket"><h3>Leads que merecem atenção · ${b.atencao.length}</h3>${attentionRows||'<div class="empty">Nenhum alerta relevante nesta campanha.</div>'}</div></div>`;
+}
+function openCampaign(id){
+  const c=campaignById(id); if(!c) return;
+  const m=campaignMetrics(c), cond=campaignCondition(c);
+  const leadRows=m.leads.slice(0,120).map(l=>`<tr><td><b>${esc(l.name)}</b><div class="tiny">${esc(l.city||'')} · ${esc(l.source||'')}</div></td><td>${esc(stage(l.stage).label)}</td><td>${l.score}</td><td>${l.lotId?esc(lotLabel(l.lotId)):'—'}</td><td><button class="btn small" onclick="openDossier('${l.id}')">Dossiê</button></td></tr>`).join('');
+  openModal('Campanha · '+c.name,`${c.objective||''} · ${c.channel||''}`,`
+    <div class="grid four"><div class="miniStat"><span>Leads</span><b>${m.leads.length}</b></div><div class="miniStat"><span>Em atendimento</span><b>${m.atendimento.length}</b></div><div class="miniStat"><span>Merecem atenção</span><b>${m.atencao.length}</b></div><div class="miniStat"><span>VGV realizado</span><b>${fmtMoney(m.vgvRealized)}</b></div></div>
+    <div class="campaignComparison"><h3>Comparativo de VGV da campanha</h3>${campaignVgvComparisonSvg(c)}</div>
+    ${campaignLeadBucketsHtml(c)}
+    <div class="proposalDetailGrid" style="margin-top:14px"><div class="proposalRichBox"><h3>Metas e desempenho</h3><p><b>Meta leads:</b> ${c.targetLeads||0}<br><b>Meta vendas:</b> ${c.targetSales||0}<br><b>Meta VGV:</b> ${fmtMoney(c.targetVgv||0)}<br><b>Budget:</b> ${fmtMoney(c.budget||0)}<br><b>CPL:</b> ${fmtMoney(m.cpl)} · <b>Custo por venda:</b> ${fmtMoney(m.cps)}<br><b>Conversão:</b> ${m.conversion.toFixed(1)}%</p></div><div class="proposalRichBox"><h3>Condição específica</h3><p>Entrada ${cond.entryPct||10}% em ${cond.entryInstallments||1}x<br>${cond.months||180} mensais · ${cond.annuals||15} anuais<br>${cond.interest||0.7}% a.m. · fator anual ${cond.annualRatio||28.35}<br>Desconto máximo: ${cond.maxDiscountPct||0}%<br>${esc(cond.notes||'')}</p></div></div>
+    <div class="campaignPeopleGrid"><div class="campaignReportBox"><h3>SDRs participantes e ranking</h3>${campaignPeopleTable(c,'sdr')}</div><div class="campaignReportBox"><h3>Corretores participantes e ranking</h3>${campaignPeopleTable(c,'broker')}</div></div>
+    <div class="campaignReportBox"><h3>Materiais vinculados</h3>${campaignMaterials(c).map(m=>`<span class="materialBadge">${esc(m.name)}</span>`).join('')||'<p class="muted">Sem materiais vinculados.</p>'}</div>
+    ${campaignGuidesHtml(c)}
+    <div class="campaignReportBox"><h3>Leads da campanha</h3><div class="actions" style="justify-content:flex-start;margin-bottom:10px"><button class="btn primary" onclick="openCampaignLeadForm('${c.id}')">+ Lead nesta campanha</button><button class="btn" onclick="openCampaignLinkLeads('${c.id}')">Vincular leads existentes</button></div><div class="tableWrap"><table><thead><tr><th>Lead</th><th>Etapa</th><th>Score</th><th>Lote</th><th>Ação</th></tr></thead><tbody>${leadRows||'<tr><td colspan="5" class="muted">Sem leads vinculados.</td></tr>'}</tbody></table></div></div>
+    <div class="actions" style="justify-content:flex-start;margin-top:14px"><button class="btn primary" onclick="openCampaignForm('${c.id}')">Editar campanha</button><button class="btn" onclick="printCampaignReport('${c.id}')">Gerar PDF</button></div>`,'wide');
+}
+function renderCampaigns(){
+  ensureCampaignState();
+  const cards=projectCampaigns().map(c=>{
+    const m=campaignMetrics(c), cond=campaignCondition(c);
+    const progress=(Number(c.targetVgv)||0)?m.vgvRealized/Number(c.targetVgv)*100:0;
+    return `<div class="campaignCard">
+      <div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start"><div><h3>${esc(c.name)}</h3><p class="tiny">${esc(c.objective||'—')} · ${esc(c.channel||'—')} · ${esc(c.status||'ativa')}</p></div><span class="pill ${c.status==='ativa'?'green':'amber'}">${esc(c.status||'ativa')}</span></div>
+      <div class="campaignMeta"><span class="pill">Meta leads: ${Number(c.targetLeads)||0}</span><span class="pill">Meta vendas: ${Number(c.targetSales)||0}</span><span class="pill">Meta VGV: ${fmtMoney(c.targetVgv||0)}</span></div>
+      <div class="campaignKpis"><div class="campaignKpi"><span>Leads</span><b>${m.leads.length}</b></div><div class="campaignKpi"><span>Em atendimento</span><b>${m.atendimento.length}</b></div><div class="campaignKpi"><span>Merecem atenção</span><b>${m.atencao.length}</b></div><div class="campaignKpi"><span>VGV projetado</span><b>${fmtMoney(c.targetVgv||0)}</b></div><div class="campaignKpi"><span>VGV negociação</span><b>${fmtMoney(m.vgvPipeline)}</b></div><div class="campaignKpi"><span>VGV realizado</span><b>${fmtMoney(m.vgvRealized)}</b></div></div>
+      <div class="campaignProgress"><span style="width:${Math.min(100,progress)}%"></span></div><span class="tiny">${progress.toFixed(1)}% da meta de VGV realizado</span>
+      <div class="campaignComparison">${campaignVgvComparisonSvg(c)}</div>
+      <div class="conditionBox"><b>Condição vinculada</b><br>Entrada ${cond.entryPct||10}% em ${cond.entryInstallments||1}x · ${cond.months||180} mensais · ${cond.annuals||15} anuais · ${cond.interest||0.7}% a.m. · desconto limite ${cond.maxDiscountPct||0}%</div>
+      <div class="materialChips">${campaignMaterials(c).map(m=>`<span class="materialBadge">${esc(m.name)}</span>`).join('') || '<span class="tiny">Sem materiais vinculados.</span>'}</div>
+      <div class="actions" style="justify-content:flex-start;margin-top:12px"><button class="btn small primary" onclick="openCampaign('${c.id}')">Abrir</button><button class="btn small" onclick="openCampaignLeadForm('${c.id}')">+ Lead</button><button class="btn small" onclick="openCampaignLinkLeads('${c.id}')">Vincular leads</button><button class="btn small" onclick="openCampaignForm('${c.id}')">Editar</button><button class="btn small" onclick="printCampaignReport('${c.id}')">PDF</button></div>
+    </div>`;
+  }).join('');
+  const all=projectCampaigns().reduce((acc,c)=>{const m=campaignMetrics(c); acc.att+=m.atendimento.length; acc.warn+=m.atencao.length; acc.vgv+=m.vgvRealized; return acc;},{att:0,warn:0,vgv:0});
+  return `<div class="grid four"><div class="card"><h3>Campanhas</h3><p>${projectCampaigns().length}</p></div><div class="card"><h3>Leads em atendimento</h3><p>${all.att}</p></div><div class="card"><h3>Merecem atenção</h3><p>${all.warn}</p></div><div class="card"><h3>VGV realizado</h3><p>${fmtMoney(all.vgv)}</p></div></div><div class="campaignGrid" style="margin-top:16px">${cards||'<div class="empty">Nenhuma campanha criada.</div>'}</div>`;
+}
+function campaignReportHtml(id=''){
+  const campaigns=id?[campaignById(id)].filter(Boolean):projectCampaigns();
+  const rows=campaigns.map(c=>{ const m=campaignMetrics(c); return `<tr><td>${esc(c.name)}</td><td>${esc(c.objective||'')}</td><td>${m.leads.length}</td><td>${m.atendimento.length}</td><td>${m.atencao.length}</td><td>${m.hot}</td><td>${m.props.length}</td><td>${m.reservations.length}</td><td>${m.clients.length}</td><td>${fmtMoney(c.targetVgv||0)}</td><td>${fmtMoney(m.vgvPipeline)}</td><td>${fmtMoney(m.vgvRealized)}</td><td>${m.conversion.toFixed(1)}%</td><td>${fmtMoney(m.cpl)}</td></tr>`; }).join('');
+  return `<!doctype html><html><head><meta charset="utf-8"><title>Relatório Campanhas</title><style>body{font-family:Arial,sans-serif;color:#173C52;margin:34px}h1{font-size:26px}table{border-collapse:collapse;width:100%;margin-top:18px}td,th{border:1px solid #d8e2e8;padding:8px;font-size:12px;text-align:left}th{background:#f1f6f8}.box{border:1px solid #d8e2e8;border-radius:14px;padding:14px;margin:12px 0}@media print{button{display:none}}</style></head><body><h1>Relatório de Campanhas · ${esc(project().name)}</h1><p>${fmtDateTime(now())}</p><table><thead><tr><th>Campanha</th><th>Objetivo</th><th>Leads</th><th>Em atendimento</th><th>Merecem atenção</th><th>Clientes A</th><th>Propostas</th><th>Reservas</th><th>Clientes</th><th>VGV Projetado</th><th>VGV Negociação</th><th>VGV Realizado</th><th>Conversão</th><th>CPL</th></tr></thead><tbody>${rows}</tbody></table>${campaigns.map(c=>`<h2>${esc(c.name)} · Leads que merecem atenção</h2><table><thead><tr><th>Lead</th><th>Etapa</th><th>Motivo</th></tr></thead><tbody>${campaignMetrics(c).atencao.map(x=>`<tr><td>${esc(x.lead.name)}</td><td>${esc(stage(x.lead.stage).label)}</td><td>${esc(x.reason)}</td></tr>`).join('')||'<tr><td colspan="3">Sem alertas</td></tr>'}</tbody></table>`).join('')}<button onclick="window.print()">Salvar/Imprimir PDF</button><script>setTimeout(()=>window.print(),500)<\/script></body></html>`;
+}
+window.markCampaignAttentionTreated=markCampaignAttentionTreated;
+/* ==== v5.13 campaign treatment + chart standardization end ==== */
 
 render();
 })();
