@@ -1,9 +1,9 @@
 {
-  "name": "evora-launch-os-v5-8-2-proposta-materiais",
-  "version": "5.8.2",
+  "name": "evora-launch-os-v5-9-financeiro-backend-ready",
+  "version": "5.9.0",
   "private": true,
   "type": "module",
-  "description": "Évora Launch OS v5.8.2: proposta rica e central de envio de materiais.",
+  "description": "Évora Launch OS v5.9: envios preparados para backend e controles financeiros.",
   "scripts": {
     "build": "echo Build estatico OK: public/",
     "check": "node --check source/app.embedded.js"

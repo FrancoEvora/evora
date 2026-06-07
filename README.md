@@ -1,21 +1,44 @@
-# Évora Launch OS v5.8.2
+# Évora Launch OS v5.9
 
-Ajustes sobre a v5.8.1:
+Evolução da v5.8.2 com envios preparados para backend e controles financeiros.
 
-- tela de aprovação da proposta com detalhes ricos;
-- exibição do lote selecionado/reservado dentro da proposta;
-- observações de negociação na proposta;
-- proposta PDF inclui lote, reserva, entrada parcelada e observações;
-- nova tela específica de Envio de Materiais;
-- registro de material enviado por lead, canal, data/hora e responsável;
-- checklist de material mostra quais materiais foram enviados, quando e por qual canal.
+## Envios preparados para backend
 
-## Primeiro acesso
+A tela de Envio de Materiais agora permite:
 
-admin@evora.local  
-Evora@2026!
+- registrar envio realizado;
+- preparar WhatsApp;
+- preparar e-mail;
+- copiar mensagem;
+- enfileirar payload para backend futuro;
+- enviar materiais para leads e clientes de pós-venda.
 
-## Deploy
+A fila de backend grava os payloads para futura integração com:
+
+- WhatsApp Cloud API;
+- e-mail transacional;
+- storage de materiais;
+- logs de entrega/leitura.
+
+## Financeiro
+
+Novo módulo Financeiro e Carteira:
+
+- recebíveis;
+- inadimplência;
+- margem atual por m²;
+- preço médio de vendas;
+- preço médio por m²;
+- descontos no mês e acumulados;
+- geração preparada de boletos;
+- mensagens de alerta e cobrança por WhatsApp/e-mail;
+- relatório financeiro em PDF.
+
+## Sem banco de dados
+
+Continua usando localStorage.
+
+## Vercel
 
 Build Command: npm run build  
 Output Directory: public  

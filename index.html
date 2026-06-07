@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Évora Launch OS v5.8.2.1 — Sistema de Performance Comercial</title>
+  <title>Évora Launch OS v5.9.1 — Sistema de Performance Comercial</title>
   <meta name="description" content="Sistema de performance comercial para loteamentos, com sala de guerra, jornada guiada, simulador, reservas, contratos, clientes, pós-venda e relatórios em PDF.">
   <style>
     :root{
@@ -172,7 +172,7 @@
 @media(max-width:600px){.proposalFlow{grid-template-columns:1fr}}
 
 
-/* v5.8.2 report intelligence */
+/* v5.9 report intelligence */
 .reportTypeGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
 .reportTypeCard{background:white;border:1px solid var(--line);border-radius:20px;padding:16px;box-shadow:0 8px 24px rgba(23,60,82,.06)}
 .reportTypeCard h3{margin-bottom:7px}
@@ -183,7 +183,7 @@
 .printHint{border:1px solid #C8EFA2;background:#F0FBE9;border-radius:16px;padding:12px;margin-top:12px;color:#3A6F16;font-size:13px;line-height:1.45}
 
 
-/* v5.8.2 login/local RBAC layer */
+/* v5.9 login/local RBAC layer */
 .loginPage{min-height:100vh;display:grid;grid-template-columns:1fr 430px;background:#fff}
 .loginHero{background:linear-gradient(135deg,#0E2738,#245E82);color:white;padding:44px;display:flex;flex-direction:column;justify-content:space-between}
 .loginHero img{max-width:270px;display:block}
@@ -204,7 +204,7 @@
 @media(max-width:900px){.loginPage{grid-template-columns:1fr}.loginHero{min-height:360px}}
 
 
-/* v5.8.2 mobile and guided journey refinements */
+/* v5.9 mobile and guided journey refinements */
 .actionButtons{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;padding-top:8px;border-top:1px solid var(--line)}
 .actionButtons .btn{font-size:12px;padding:7px 9px;border-radius:10px}
 .selectFilterGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -221,14 +221,14 @@
 }
 
 
-/* v5.8.2 checklist refinement */
+/* v5.9 checklist refinement */
 .checkCard .actionButtons{margin-top:12px}
 .checkCard .primaryActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 .checkCard .primaryActions .btn{min-width:132px;justify-content:center}
 .actionNotePreview{margin-top:8px;padding:8px 10px;border-radius:12px;background:#F8FBFC;border:1px dashed var(--line);font-size:12px;color:var(--muted)}
 
 
-/* v5.8.2 proposal and material send center */
+/* v5.9 proposal and material send center */
 .materialSendGrid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .materialChecklist{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
 .materialItem{border:1px solid var(--line);background:white;border-radius:16px;padding:12px}
@@ -244,18 +244,35 @@
 .contextActionPrimary{background:linear-gradient(135deg,var(--green),var(--blue))!important;color:white!important;border:0!important}
 @media(max-width:950px){.materialSendGrid,.proposalDetailGrid{grid-template-columns:1fr}}
 
+
+/* v5.9 finance and backend-ready communications */
+.backendBadge{display:inline-flex;border:1px solid #BFDBFE;background:#EFF6FF;color:#1D4ED8;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:900;margin:3px}
+.queueBox{border:1px dashed var(--line);background:#F8FBFC;border-radius:16px;padding:12px;margin-top:10px}
+.financeKpiGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
+.financeKpi{border:1px solid var(--line);background:white;border-radius:18px;padding:14px;box-shadow:0 6px 18px rgba(36,94,130,.05)}
+.financeKpi span{display:block;color:var(--muted);font-size:12px}
+.financeKpi b{display:block;font-size:23px;margin-top:5px;letter-spacing:-.04em}
+.financeGrid{display:grid;grid-template-columns:1.1fr .9fr;gap:16px}
+.financeToolbar{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+.statusOpen{color:#1D4ED8;font-weight:900}.statusPaid{color:#15803D;font-weight:900}.statusLate{color:#B91C1C;font-weight:900}
+.chartMini{border:1px solid var(--line);background:#fff;border-radius:18px;padding:14px;margin-top:12px}
+.chartMini svg{width:100%;height:auto}
+.materialBackendActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;padding-top:10px;border-top:1px solid var(--line)}
+.billingMessage{border:1px solid #FDE68A;background:#FFFBEB;border-radius:16px;padding:12px;margin-top:10px;color:#92400E}
+@media(max-width:1000px){.financeGrid{grid-template-columns:1fr}.financeToolbar{flex-direction:column;align-items:stretch}.financeToolbar .btn,.financeToolbar input,.financeToolbar select{width:100%}}
+
 </style>
 </head>
 <body>
-  <div id="app"><div style="padding:30px;font-family:system-ui"><h2>Carregando Évora Launch OS v5.8.2.1...</h2></div></div>
+  <div id="app"><div style="padding:30px;font-family:system-ui"><h2>Carregando Évora Launch OS v5.9.1...</h2></div></div>
   <div id="modal-root"></div>
   <div id="toast" class="toast"></div>
 <script>
 (() => {
 'use strict';
-const APP_VERSION = '5.8.2';
+const APP_VERSION = '5.9';
 const RELEASE_DATE = '2026-06-05';
-const STORAGE_KEY = 'evora-launch-os-v5820';
+const STORAGE_KEY = 'evora-launch-os-v590';
 
 const money = new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'});
 const dateFmt = new Intl.DateTimeFormat('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric'});
@@ -665,7 +682,7 @@ function reportHtml(type){
   const {a,origin,broker,stock}=reportData(type);
   const table=(title,rows)=>`<h2>${title}</h2><table><thead><tr>${Object.keys(rows[0]||{}).map(k=>`<th>${k}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr>${Object.values(r).map(v=>`<td>${esc(v)}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
   return `<!doctype html><html><head><meta charset="utf-8"><title>Relatório ${esc(type)}</title><style>body{font-family:Arial,sans-serif;color:#173C52;margin:36px}h1{font-size:26px}h2{margin-top:28px}table{border-collapse:collapse;width:100%;margin-top:8px}th,td{border:1px solid #d8e2e8;padding:8px;text-align:left;font-size:12px}th{background:#f1f6f8}.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.kpi{border:1px solid #d8e2e8;border-radius:12px;padding:12px}.kpi b{display:block;font-size:20px;margin-top:6px}.brand{display:flex;align-items:center;gap:12px}.brand img{height:42px}@media print{button{display:none}}
-/* v5.8.2 login/local RBAC layer */
+/* v5.9 login/local RBAC layer */
 .loginPage{min-height:100vh;display:grid;grid-template-columns:1fr 430px;background:#fff}
 .loginHero{background:linear-gradient(135deg,#0E2738,#245E82);color:white;padding:44px;display:flex;flex-direction:column;justify-content:space-between}
 .loginHero img{max-width:270px;display:block}
@@ -686,7 +703,7 @@ function reportHtml(type){
 @media(max-width:900px){.loginPage{grid-template-columns:1fr}.loginHero{min-height:360px}}
 
 
-/* v5.8.2 mobile and guided journey refinements */
+/* v5.9 mobile and guided journey refinements */
 .actionButtons{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;padding-top:8px;border-top:1px solid var(--line)}
 .actionButtons .btn{font-size:12px;padding:7px 9px;border-radius:10px}
 .selectFilterGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -703,14 +720,14 @@ function reportHtml(type){
 }
 
 
-/* v5.8.2 checklist refinement */
+/* v5.9 checklist refinement */
 .checkCard .actionButtons{margin-top:12px}
 .checkCard .primaryActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 .checkCard .primaryActions .btn{min-width:132px;justify-content:center}
 .actionNotePreview{margin-top:8px;padding:8px 10px;border-radius:12px;background:#F8FBFC;border:1px dashed var(--line);font-size:12px;color:var(--muted)}
 
 
-/* v5.8.2 proposal and material send center */
+/* v5.9 proposal and material send center */
 .materialSendGrid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .materialChecklist{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
 .materialItem{border:1px solid var(--line);background:white;border-radius:16px;padding:12px}
@@ -725,6 +742,23 @@ function reportHtml(type){
 .materialBadge{display:inline-flex;border:1px solid #C8EFA2;background:#F0FBE9;color:#3A6F16;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:900;margin:3px 4px 3px 0}
 .contextActionPrimary{background:linear-gradient(135deg,var(--green),var(--blue))!important;color:white!important;border:0!important}
 @media(max-width:950px){.materialSendGrid,.proposalDetailGrid{grid-template-columns:1fr}}
+
+
+/* v5.9 finance and backend-ready communications */
+.backendBadge{display:inline-flex;border:1px solid #BFDBFE;background:#EFF6FF;color:#1D4ED8;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:900;margin:3px}
+.queueBox{border:1px dashed var(--line);background:#F8FBFC;border-radius:16px;padding:12px;margin-top:10px}
+.financeKpiGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
+.financeKpi{border:1px solid var(--line);background:white;border-radius:18px;padding:14px;box-shadow:0 6px 18px rgba(36,94,130,.05)}
+.financeKpi span{display:block;color:var(--muted);font-size:12px}
+.financeKpi b{display:block;font-size:23px;margin-top:5px;letter-spacing:-.04em}
+.financeGrid{display:grid;grid-template-columns:1.1fr .9fr;gap:16px}
+.financeToolbar{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+.statusOpen{color:#1D4ED8;font-weight:900}.statusPaid{color:#15803D;font-weight:900}.statusLate{color:#B91C1C;font-weight:900}
+.chartMini{border:1px solid var(--line);background:#fff;border-radius:18px;padding:14px;margin-top:12px}
+.chartMini svg{width:100%;height:auto}
+.materialBackendActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;padding-top:10px;border-top:1px solid var(--line)}
+.billingMessage{border:1px solid #FDE68A;background:#FFFBEB;border-radius:16px;padding:12px;margin-top:10px;color:#92400E}
+@media(max-width:1000px){.financeGrid{grid-template-columns:1fr}.financeToolbar{flex-direction:column;align-items:stretch}.financeToolbar .btn,.financeToolbar input,.financeToolbar select{width:100%}}
 
 </style></head><body><div class="brand"><img src="assets/logo_evora.png"><div><h1>Relatório ${esc(type)} · ${esc(project().name)}</h1><p>${fmtDateTime(now())}</p></div></div><div class="kpis"><div class="kpi">Leads<b>${a.leads.length}</b></div><div class="kpi">Clientes A<b>${a.a}</b></div><div class="kpi">Reservas<b>${a.res.length}</b></div><div class="kpi">Carteira<b>${fmtMoney(a.carteira)}</b></div></div>${table('Origem',origin)}${table('Corretores',broker)}${table('Estoque',stock)}<h2>Alertas</h2><p>Leads parados: ${a.stalled.length}<br>Clientes sem comunicação 30+: ${a.silent.length}</p><button onclick="window.print()">Salvar/Imprimir PDF</button><script>setTimeout(()=>window.print(),400)<\/script></body></html>`;
 }
@@ -808,7 +842,7 @@ function createProposalFromSimulator(){
 function proposalPdfHtml(p){
   const l=leadBy(p.leadId), lot=lotBy(p.lotId);
   return `<!doctype html><html><head><meta charset="utf-8"><title>Proposta ${esc(l.name)}</title><style>body{font-family:Arial,sans-serif;color:#173C52;margin:36px}h1{font-size:26px}.box{border:1px solid #d8e2e8;border-radius:14px;padding:14px;margin:12px 0}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.brand{display:flex;gap:12px;align-items:center}.brand img{height:44px}table{border-collapse:collapse;width:100%}td,th{border:1px solid #d8e2e8;padding:9px;text-align:left}button{padding:10px 14px;border:0;border-radius:10px;background:#245E82;color:white;font-weight:bold}@media print{button{display:none}}
-/* v5.8.2 login/local RBAC layer */
+/* v5.9 login/local RBAC layer */
 .loginPage{min-height:100vh;display:grid;grid-template-columns:1fr 430px;background:#fff}
 .loginHero{background:linear-gradient(135deg,#0E2738,#245E82);color:white;padding:44px;display:flex;flex-direction:column;justify-content:space-between}
 .loginHero img{max-width:270px;display:block}
@@ -829,7 +863,7 @@ function proposalPdfHtml(p){
 @media(max-width:900px){.loginPage{grid-template-columns:1fr}.loginHero{min-height:360px}}
 
 
-/* v5.8.2 mobile and guided journey refinements */
+/* v5.9 mobile and guided journey refinements */
 .actionButtons{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;padding-top:8px;border-top:1px solid var(--line)}
 .actionButtons .btn{font-size:12px;padding:7px 9px;border-radius:10px}
 .selectFilterGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -846,14 +880,14 @@ function proposalPdfHtml(p){
 }
 
 
-/* v5.8.2 checklist refinement */
+/* v5.9 checklist refinement */
 .checkCard .actionButtons{margin-top:12px}
 .checkCard .primaryActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 .checkCard .primaryActions .btn{min-width:132px;justify-content:center}
 .actionNotePreview{margin-top:8px;padding:8px 10px;border-radius:12px;background:#F8FBFC;border:1px dashed var(--line);font-size:12px;color:var(--muted)}
 
 
-/* v5.8.2 proposal and material send center */
+/* v5.9 proposal and material send center */
 .materialSendGrid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .materialChecklist{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
 .materialItem{border:1px solid var(--line);background:white;border-radius:16px;padding:12px}
@@ -868,6 +902,23 @@ function proposalPdfHtml(p){
 .materialBadge{display:inline-flex;border:1px solid #C8EFA2;background:#F0FBE9;color:#3A6F16;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:900;margin:3px 4px 3px 0}
 .contextActionPrimary{background:linear-gradient(135deg,var(--green),var(--blue))!important;color:white!important;border:0!important}
 @media(max-width:950px){.materialSendGrid,.proposalDetailGrid{grid-template-columns:1fr}}
+
+
+/* v5.9 finance and backend-ready communications */
+.backendBadge{display:inline-flex;border:1px solid #BFDBFE;background:#EFF6FF;color:#1D4ED8;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:900;margin:3px}
+.queueBox{border:1px dashed var(--line);background:#F8FBFC;border-radius:16px;padding:12px;margin-top:10px}
+.financeKpiGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
+.financeKpi{border:1px solid var(--line);background:white;border-radius:18px;padding:14px;box-shadow:0 6px 18px rgba(36,94,130,.05)}
+.financeKpi span{display:block;color:var(--muted);font-size:12px}
+.financeKpi b{display:block;font-size:23px;margin-top:5px;letter-spacing:-.04em}
+.financeGrid{display:grid;grid-template-columns:1.1fr .9fr;gap:16px}
+.financeToolbar{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+.statusOpen{color:#1D4ED8;font-weight:900}.statusPaid{color:#15803D;font-weight:900}.statusLate{color:#B91C1C;font-weight:900}
+.chartMini{border:1px solid var(--line);background:#fff;border-radius:18px;padding:14px;margin-top:12px}
+.chartMini svg{width:100%;height:auto}
+.materialBackendActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;padding-top:10px;border-top:1px solid var(--line)}
+.billingMessage{border:1px solid #FDE68A;background:#FFFBEB;border-radius:16px;padding:12px;margin-top:10px;color:#92400E}
+@media(max-width:1000px){.financeGrid{grid-template-columns:1fr}.financeToolbar{flex-direction:column;align-items:stretch}.financeToolbar .btn,.financeToolbar input,.financeToolbar select{width:100%}}
 
 </style></head><body><div class="brand"><img src="assets/logo_evora.png"><div><h1>Proposta comercial</h1><p>${esc(project().name)} · ${fmtDateTime(now())}</p></div></div><div class="box"><b>Cliente:</b> ${esc(l.name)}<br><b>Lote:</b> ${esc(lotLabel(lot.id))} · ${lot.area} m²<br><b>Status:</b> ${esc(p.status)} · <b>Validade:</b> ${fmtDate(p.expiresAt)}</div><table><tr><th>Preço</th><td>${fmtMoney(lot.price)}</td></tr><tr><th>Entrada</th><td>${p.entry}%</td></tr><tr><th>Mensais</th><td>${p.months}x ${fmtMoney(p.monthly)}</td></tr><tr><th>Anuais</th><td>${p.annuals}x ${fmtMoney(p.annual)}</td></tr><tr><th>Correção</th><td>${esc(p.index)} + ${p.interest}% a.m.</td></tr><tr><th>Total nominal</th><td>${fmtMoney(p.total)}</td></tr></table><div class="box"><h2>Confirmação</h2><p>Para seguir, o cliente deve confirmar interesse e enviar documentação para contrato. Esta página serve como modelo da futura página de confirmação online.</p><button onclick="alert('Confirmação demonstrativa registrada. Em produção, este botão gravará o aceite no sistema.')">Confirmar interesse</button></div><button onclick="window.print()">Salvar/Imprimir PDF</button></body></html>`;
 }
@@ -927,7 +978,7 @@ function proposalFlowHtml(p){
 function proposalPdfHtml(p){
   const l=leadBy(p.leadId), lot=lotBy(p.lotId);
   return `<!doctype html><html><head><meta charset="utf-8"><title>Proposta ${esc(l.name)}</title><style>body{font-family:Arial,sans-serif;color:#173C52;margin:36px}h1{font-size:26px}.box{border:1px solid #d8e2e8;border-radius:14px;padding:14px;margin:12px 0}.brand{display:flex;gap:12px;align-items:center}.brand img{height:44px}table{border-collapse:collapse;width:100%;margin-top:14px}td,th{border:1px solid #d8e2e8;padding:9px;text-align:left}th{background:#f3f7f9}button{padding:10px 14px;border:0;border-radius:10px;background:#245E82;color:white;font-weight:bold}.confirm{background:#F0FBE9;border:1px solid #C8EFA2;border-radius:14px;padding:14px;margin-top:16px}@media print{button{display:none}}
-/* v5.8.2 login/local RBAC layer */
+/* v5.9 login/local RBAC layer */
 .loginPage{min-height:100vh;display:grid;grid-template-columns:1fr 430px;background:#fff}
 .loginHero{background:linear-gradient(135deg,#0E2738,#245E82);color:white;padding:44px;display:flex;flex-direction:column;justify-content:space-between}
 .loginHero img{max-width:270px;display:block}
@@ -948,7 +999,7 @@ function proposalPdfHtml(p){
 @media(max-width:900px){.loginPage{grid-template-columns:1fr}.loginHero{min-height:360px}}
 
 
-/* v5.8.2 mobile and guided journey refinements */
+/* v5.9 mobile and guided journey refinements */
 .actionButtons{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;padding-top:8px;border-top:1px solid var(--line)}
 .actionButtons .btn{font-size:12px;padding:7px 9px;border-radius:10px}
 .selectFilterGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -965,14 +1016,14 @@ function proposalPdfHtml(p){
 }
 
 
-/* v5.8.2 checklist refinement */
+/* v5.9 checklist refinement */
 .checkCard .actionButtons{margin-top:12px}
 .checkCard .primaryActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 .checkCard .primaryActions .btn{min-width:132px;justify-content:center}
 .actionNotePreview{margin-top:8px;padding:8px 10px;border-radius:12px;background:#F8FBFC;border:1px dashed var(--line);font-size:12px;color:var(--muted)}
 
 
-/* v5.8.2 proposal and material send center */
+/* v5.9 proposal and material send center */
 .materialSendGrid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .materialChecklist{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
 .materialItem{border:1px solid var(--line);background:white;border-radius:16px;padding:12px}
@@ -987,6 +1038,23 @@ function proposalPdfHtml(p){
 .materialBadge{display:inline-flex;border:1px solid #C8EFA2;background:#F0FBE9;color:#3A6F16;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:900;margin:3px 4px 3px 0}
 .contextActionPrimary{background:linear-gradient(135deg,var(--green),var(--blue))!important;color:white!important;border:0!important}
 @media(max-width:950px){.materialSendGrid,.proposalDetailGrid{grid-template-columns:1fr}}
+
+
+/* v5.9 finance and backend-ready communications */
+.backendBadge{display:inline-flex;border:1px solid #BFDBFE;background:#EFF6FF;color:#1D4ED8;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:900;margin:3px}
+.queueBox{border:1px dashed var(--line);background:#F8FBFC;border-radius:16px;padding:12px;margin-top:10px}
+.financeKpiGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
+.financeKpi{border:1px solid var(--line);background:white;border-radius:18px;padding:14px;box-shadow:0 6px 18px rgba(36,94,130,.05)}
+.financeKpi span{display:block;color:var(--muted);font-size:12px}
+.financeKpi b{display:block;font-size:23px;margin-top:5px;letter-spacing:-.04em}
+.financeGrid{display:grid;grid-template-columns:1.1fr .9fr;gap:16px}
+.financeToolbar{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+.statusOpen{color:#1D4ED8;font-weight:900}.statusPaid{color:#15803D;font-weight:900}.statusLate{color:#B91C1C;font-weight:900}
+.chartMini{border:1px solid var(--line);background:#fff;border-radius:18px;padding:14px;margin-top:12px}
+.chartMini svg{width:100%;height:auto}
+.materialBackendActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;padding-top:10px;border-top:1px solid var(--line)}
+.billingMessage{border:1px solid #FDE68A;background:#FFFBEB;border-radius:16px;padding:12px;margin-top:10px;color:#92400E}
+@media(max-width:1000px){.financeGrid{grid-template-columns:1fr}.financeToolbar{flex-direction:column;align-items:stretch}.financeToolbar .btn,.financeToolbar input,.financeToolbar select{width:100%}}
 
 </style></head><body><div class="brand"><img src="assets/logo_evora.png"><div><h1>Proposta comercial</h1><p>${esc(project().name)} · ${fmtDateTime(now())}</p></div></div><div class="box"><b>Cliente:</b> ${esc(l.name)}<br><b>Lote:</b> ${esc(lotLabel(lot.id))} · ${lot.area} m²<br><b>Status:</b> ${esc(p.status)} · <b>Validade:</b> ${fmtDate(p.expiresAt)}</div><table><tr><th>Preço do lote</th><td>${fmtMoney(lot.price)}</td></tr><tr><th>Entrada</th><td>${p.entry}%</td></tr><tr><th>Mensais</th><td>${p.months}x ${fmtMoney(p.monthly)}</td></tr><tr><th>Anuais</th><td>${p.annuals}x ${fmtMoney(p.annual)}</td></tr><tr><th>Correção</th><td>${esc(p.index)} + ${p.interest}% a.m.</td></tr><tr><th>Total nominal</th><td>${fmtMoney(p.total)}</td></tr></table><div class="confirm"><h2>Confirmação</h2><p>Esta página representa o ambiente de confirmação. Na versão com backend, o botão gravará o aceite do cliente, data, IP e versão da proposta.</p><button onclick="alert('Confirmação demonstrativa registrada. Em produção, será salvo no sistema.')">Confirmar interesse</button></div><button onclick="window.print()">Salvar/Imprimir PDF</button></body></html>`;
 }
@@ -1072,7 +1140,7 @@ function reportHtml(type){
   const chart3=chartBars(d.brokers,'Corretor','Propostas','#173C52',260);
   const chart4=chartBars(d.origin,'Origem','Leads','#84C225',260);
   return `<!doctype html><html><head><meta charset="utf-8"><title>Relatório ${esc(type)}</title><style>body{font-family:Arial,sans-serif;color:#173C52;margin:34px}h1{font-size:26px;margin:0}h2{margin-top:28px}p{color:#5f7280}.brand{display:flex;align-items:center;gap:12px;margin-bottom:18px}.brand img{height:42px}.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:18px 0}.kpi{border:1px solid #d8e2e8;border-radius:12px;padding:12px}.kpi b{display:block;font-size:20px;margin-top:6px}.chart{border:1px solid #d8e2e8;border-radius:14px;padding:12px;margin:14px 0;page-break-inside:avoid}table{border-collapse:collapse;width:100%;margin-top:8px}th,td{border:1px solid #d8e2e8;padding:8px;text-align:left;font-size:12px}th{background:#f1f6f8}@media print{button{display:none}body{margin:20px}}
-/* v5.8.2 login/local RBAC layer */
+/* v5.9 login/local RBAC layer */
 .loginPage{min-height:100vh;display:grid;grid-template-columns:1fr 430px;background:#fff}
 .loginHero{background:linear-gradient(135deg,#0E2738,#245E82);color:white;padding:44px;display:flex;flex-direction:column;justify-content:space-between}
 .loginHero img{max-width:270px;display:block}
@@ -1093,7 +1161,7 @@ function reportHtml(type){
 @media(max-width:900px){.loginPage{grid-template-columns:1fr}.loginHero{min-height:360px}}
 
 
-/* v5.8.2 mobile and guided journey refinements */
+/* v5.9 mobile and guided journey refinements */
 .actionButtons{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;padding-top:8px;border-top:1px solid var(--line)}
 .actionButtons .btn{font-size:12px;padding:7px 9px;border-radius:10px}
 .selectFilterGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -1110,14 +1178,14 @@ function reportHtml(type){
 }
 
 
-/* v5.8.2 checklist refinement */
+/* v5.9 checklist refinement */
 .checkCard .actionButtons{margin-top:12px}
 .checkCard .primaryActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 .checkCard .primaryActions .btn{min-width:132px;justify-content:center}
 .actionNotePreview{margin-top:8px;padding:8px 10px;border-radius:12px;background:#F8FBFC;border:1px dashed var(--line);font-size:12px;color:var(--muted)}
 
 
-/* v5.8.2 proposal and material send center */
+/* v5.9 proposal and material send center */
 .materialSendGrid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .materialChecklist{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
 .materialItem{border:1px solid var(--line);background:white;border-radius:16px;padding:12px}
@@ -1133,12 +1201,29 @@ function reportHtml(type){
 .contextActionPrimary{background:linear-gradient(135deg,var(--green),var(--blue))!important;color:white!important;border:0!important}
 @media(max-width:950px){.materialSendGrid,.proposalDetailGrid{grid-template-columns:1fr}}
 
+
+/* v5.9 finance and backend-ready communications */
+.backendBadge{display:inline-flex;border:1px solid #BFDBFE;background:#EFF6FF;color:#1D4ED8;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:900;margin:3px}
+.queueBox{border:1px dashed var(--line);background:#F8FBFC;border-radius:16px;padding:12px;margin-top:10px}
+.financeKpiGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
+.financeKpi{border:1px solid var(--line);background:white;border-radius:18px;padding:14px;box-shadow:0 6px 18px rgba(36,94,130,.05)}
+.financeKpi span{display:block;color:var(--muted);font-size:12px}
+.financeKpi b{display:block;font-size:23px;margin-top:5px;letter-spacing:-.04em}
+.financeGrid{display:grid;grid-template-columns:1.1fr .9fr;gap:16px}
+.financeToolbar{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+.statusOpen{color:#1D4ED8;font-weight:900}.statusPaid{color:#15803D;font-weight:900}.statusLate{color:#B91C1C;font-weight:900}
+.chartMini{border:1px solid var(--line);background:#fff;border-radius:18px;padding:14px;margin-top:12px}
+.chartMini svg{width:100%;height:auto}
+.materialBackendActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;padding-top:10px;border-top:1px solid var(--line)}
+.billingMessage{border:1px solid #FDE68A;background:#FFFBEB;border-radius:16px;padding:12px;margin-top:10px;color:#92400E}
+@media(max-width:1000px){.financeGrid{grid-template-columns:1fr}.financeToolbar{flex-direction:column;align-items:stretch}.financeToolbar .btn,.financeToolbar input,.financeToolbar select{width:100%}}
+
 </style></head><body><div class="brand"><img src="assets/logo_evora.png"><div><h1>Relatório ${esc(type)} · ${esc(project().name)}</h1><p>${fmtDateTime(now())}</p></div></div><div class="kpis"><div class="kpi">Leads<b>${d.a.leads.length}</b></div><div class="kpi">Clientes A<b>${d.a.a}</b></div><div class="kpi">Reservas<b>${d.a.res.length}</b></div><div class="kpi">Carteira<b>${fmtMoney(d.a.carteira)}</b></div></div><div class="chart"><h2>Funil de vendas</h2>${chart1}</div><div class="chart"><h2>Projeção de caixa 12 meses</h2>${chart2}</div><div class="chart"><h2>Performance de corretores</h2>${chart3}</div><div class="chart"><h2>Origem dos leads</h2>${chart4}</div>${tableHtml('Financeiro',d.financial)}${tableHtml('SDR',d.sdrs)}${tableHtml('Corretores',d.brokers)}${tableHtml('Campanhas',d.campaigns)}${tableHtml('Estoque',d.stock)}<h2>Alertas</h2><p>Leads parados: ${d.a.stalled.length}<br>Clientes sem comunicação 30+: ${d.a.silent.length}</p><button onclick="window.print()">Salvar/Imprimir PDF</button><script>setTimeout(()=>window.print(),500)<\/script></body></html>`;
 }
 window.printProposal=printProposal; window.openProposalConfirmation=openProposalConfirmation; window.sendProposalEmail=sendProposalEmail; window.sendProposalWhatsApp=sendProposalWhatsApp; window.markProposalSent=markProposalSent;
 /* ==== v4.2 patch end ==== */
 
-/* ==== v5.8.2 sector-specific reports patch start ==== */
+/* ==== v5.9 sector-specific reports patch start ==== */
 function reportDefinitions(){
   return [
     {id:'executivo', title:'Executivo diário', desc:'Resumo para diretoria: pressão de compra, gargalos, alertas e próximos comandos.', tags:['Diretoria','Diário','Decisão']},
@@ -1271,7 +1356,7 @@ function reportHtml(type){
   const d=reportData(type);
   const blocks=reportBlocks(type,d);
   return `<!doctype html><html><head><meta charset="utf-8"><title>${esc(reportTitle(type))}</title><style>body{font-family:Arial,sans-serif;color:#173C52;margin:34px}h1{font-size:26px;margin:0}h2{margin-top:28px}p{color:#5f7280}.brand{display:flex;align-items:center;gap:12px;margin-bottom:18px}.brand img{height:42px}.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:18px 0}.kpi{border:1px solid #d8e2e8;border-radius:12px;padding:12px}.kpi b{display:block;font-size:20px;margin-top:6px}.chart{border:1px solid #d8e2e8;border-radius:14px;padding:12px;margin:14px 0;page-break-inside:avoid}table{border-collapse:collapse;width:100%;margin-top:8px;page-break-inside:auto}th,td{border:1px solid #d8e2e8;padding:8px;text-align:left;font-size:12px}th{background:#f1f6f8}.summary{border:1px solid #C8EFA2;background:#F0FBE9;border-radius:14px;padding:14px;margin:16px 0}@media print{button{display:none}body{margin:20px}.chart{break-inside:avoid}}
-/* v5.8.2 login/local RBAC layer */
+/* v5.9 login/local RBAC layer */
 .loginPage{min-height:100vh;display:grid;grid-template-columns:1fr 430px;background:#fff}
 .loginHero{background:linear-gradient(135deg,#0E2738,#245E82);color:white;padding:44px;display:flex;flex-direction:column;justify-content:space-between}
 .loginHero img{max-width:270px;display:block}
@@ -1292,7 +1377,7 @@ function reportHtml(type){
 @media(max-width:900px){.loginPage{grid-template-columns:1fr}.loginHero{min-height:360px}}
 
 
-/* v5.8.2 mobile and guided journey refinements */
+/* v5.9 mobile and guided journey refinements */
 .actionButtons{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;padding-top:8px;border-top:1px solid var(--line)}
 .actionButtons .btn{font-size:12px;padding:7px 9px;border-radius:10px}
 .selectFilterGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -1309,14 +1394,14 @@ function reportHtml(type){
 }
 
 
-/* v5.8.2 checklist refinement */
+/* v5.9 checklist refinement */
 .checkCard .actionButtons{margin-top:12px}
 .checkCard .primaryActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 .checkCard .primaryActions .btn{min-width:132px;justify-content:center}
 .actionNotePreview{margin-top:8px;padding:8px 10px;border-radius:12px;background:#F8FBFC;border:1px dashed var(--line);font-size:12px;color:var(--muted)}
 
 
-/* v5.8.2 proposal and material send center */
+/* v5.9 proposal and material send center */
 .materialSendGrid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .materialChecklist{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
 .materialItem{border:1px solid var(--line);background:white;border-radius:16px;padding:12px}
@@ -1331,6 +1416,23 @@ function reportHtml(type){
 .materialBadge{display:inline-flex;border:1px solid #C8EFA2;background:#F0FBE9;color:#3A6F16;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:900;margin:3px 4px 3px 0}
 .contextActionPrimary{background:linear-gradient(135deg,var(--green),var(--blue))!important;color:white!important;border:0!important}
 @media(max-width:950px){.materialSendGrid,.proposalDetailGrid{grid-template-columns:1fr}}
+
+
+/* v5.9 finance and backend-ready communications */
+.backendBadge{display:inline-flex;border:1px solid #BFDBFE;background:#EFF6FF;color:#1D4ED8;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:900;margin:3px}
+.queueBox{border:1px dashed var(--line);background:#F8FBFC;border-radius:16px;padding:12px;margin-top:10px}
+.financeKpiGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
+.financeKpi{border:1px solid var(--line);background:white;border-radius:18px;padding:14px;box-shadow:0 6px 18px rgba(36,94,130,.05)}
+.financeKpi span{display:block;color:var(--muted);font-size:12px}
+.financeKpi b{display:block;font-size:23px;margin-top:5px;letter-spacing:-.04em}
+.financeGrid{display:grid;grid-template-columns:1.1fr .9fr;gap:16px}
+.financeToolbar{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+.statusOpen{color:#1D4ED8;font-weight:900}.statusPaid{color:#15803D;font-weight:900}.statusLate{color:#B91C1C;font-weight:900}
+.chartMini{border:1px solid var(--line);background:#fff;border-radius:18px;padding:14px;margin-top:12px}
+.chartMini svg{width:100%;height:auto}
+.materialBackendActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;padding-top:10px;border-top:1px solid var(--line)}
+.billingMessage{border:1px solid #FDE68A;background:#FFFBEB;border-radius:16px;padding:12px;margin-top:10px;color:#92400E}
+@media(max-width:1000px){.financeGrid{grid-template-columns:1fr}.financeToolbar{flex-direction:column;align-items:stretch}.financeToolbar .btn,.financeToolbar input,.financeToolbar select{width:100%}}
 
 </style></head><body><div class="brand"><img src="assets/logo_evora.png"><div><h1>${esc(reportTitle(type))} · ${esc(project().name)}</h1><p>${fmtDateTime(now())}</p></div></div><div class="kpis"><div class="kpi">Leads<b>${d.a.leads.length}</b></div><div class="kpi">Clientes A<b>${d.a.a}</b></div><div class="kpi">Reservas<b>${d.a.res.length}</b></div><div class="kpi">Carteira<b>${fmtMoney(d.a.carteira)}</b></div></div><div class="summary"><b>Leitura automática:</b> ${reportInsight(type,d)}</div>${blocks}<button onclick="window.print()">Salvar/Imprimir PDF</button><script>setTimeout(()=>window.print(),500)<\/script></body></html>`;
 }
@@ -1351,8 +1453,8 @@ function reportInsight(type,d){
 window.markProposalSent=markProposalSent;
 /* ==== v4.2 patch end ==== */
 
-/* ==== v5.8.2 local login + RBAC layer start ==== */
-const AUTH_SESSION_KEY = 'evora-launch-os-v582-session';
+/* ==== v5.9 local login + RBAC layer start ==== */
+const AUTH_SESSION_KEY = 'evora-launch-os-v59-session';
 function localHash(value){ let h=5381; const s=String(value||''); for(let i=0;i<s.length;i++) h=((h<<5)+h)+s.charCodeAt(i); return 'h'+Math.abs(h); }
 function defaultPermissions(){
   return [
@@ -1416,7 +1518,7 @@ function authLog(action,entity,entityId,details=''){ ensureAuthState(); state.au
 function renderLogin(){
   ensureAuthState();
   const root=document.getElementById('app');
-  root.innerHTML=`<div class="loginPage"><section class="loginHero"><div><img src="assets/logo_evora_white.png" alt="Évora"><h1>Launch OS v5.8.2</h1><p>Évora Launch OS — inteligência comercial para vender com velocidade, método e controle.</p></div><small>Primeiro acesso: admin@evora.local · Evora@2026!</small></section><section class="loginCard"><h2>Entrar no sistema</h2><p>Controle local de usuários e permissões. Os dados permanecem no navegador.</p><form id="loginForm"><div class="field"><label>E-mail</label><input id="loginEmail" value="admin@evora.local"></div><div class="field"><label>Senha</label><input id="loginPassword" type="password" value="Evora@2026!"></div><button class="btn primary" style="width:100%;justify-content:center" type="submit">Entrar</button></form><div class="authNotice"><b>Modo sem banco:</b> usuários e leads ficam no localStorage deste navegador.</div></section></div>`;
+  root.innerHTML=`<div class="loginPage"><section class="loginHero"><div><img src="assets/logo_evora_white.png" alt="Évora"><h1>Launch OS v5.9</h1><p>Évora Launch OS — inteligência comercial para vender com velocidade, método e controle.</p></div><small>Primeiro acesso: admin@evora.local · Evora@2026!</small></section><section class="loginCard"><h2>Entrar no sistema</h2><p>Controle local de usuários e permissões. Os dados permanecem no navegador.</p><form id="loginForm"><div class="field"><label>E-mail</label><input id="loginEmail" value="admin@evora.local"></div><div class="field"><label>Senha</label><input id="loginPassword" type="password" value="Evora@2026!"></div><button class="btn primary" style="width:100%;justify-content:center" type="submit">Entrar</button></form><div class="authNotice"><b>Modo sem banco:</b> usuários e leads ficam no localStorage deste navegador.</div></section></div>`;
   document.getElementById('loginForm').addEventListener('submit',e=>{ e.preventDefault(); const email=document.getElementById('loginEmail').value.trim().toLowerCase(); const pw=document.getElementById('loginPassword').value; const u=state.auth.users.find(x=>String(x.email).toLowerCase()===email && x.active); if(!u || u.passwordHash!==localHash(pw)){ toast('E-mail ou senha inválidos.'); return; } sessionStorage.setItem(AUTH_SESSION_KEY,u.id); authLog('login','user',u.id,u.email); render(); toast('Login realizado.'); });
 }
 const _v56Render = render;
@@ -1446,7 +1548,7 @@ renderSidebar = function(){
   <div class="authUserPanel"><b>${esc(u.name)}</b><br>${esc(u.email)}<br>${esc(r?.name||'Sem papel')}<div style="margin-top:8px"><button class="btn small" onclick="localLogout()">Sair</button></div></div>
   <div class="projectBox"><label>Empreendimento</label><select onchange="selectProject(this.value)">${state.projects.map(p=>`<option value="${p.id}" ${p.id===state.selectedProjectId?'selected':''}>${esc(p.name)} · ${esc(p.city)}/${esc(p.uf)}</option>`).join('')}</select></div>
   <div class="nav">${allowed.map(([id,label])=>`<button class="${view===id?'active':''}" onclick="setView('${id}')"><span class="ico">${icon(id)}</span>${label}</button>`).join('')}</div>
-  <div class="principle"><b>Regra v5.8.2</b>Login e permissões foram adicionados sem remover a jornada comercial da v4.3.</div>`;
+  <div class="principle"><b>Regra v5.9</b>Login e permissões foram adicionados sem remover a jornada comercial da v4.3.</div>`;
 };
 const _oldRenderTopbar = renderTopbar;
 renderTopbar = function(){
@@ -1604,9 +1706,9 @@ function deleteLeadLocal(id){
 }
 function localLogout(){ const u=authUser(); if(u) authLog('logout','user',u.id,u.email); sessionStorage.removeItem(AUTH_SESSION_KEY); render(); }
 window.openAuthUserForm=openAuthUserForm; window.saveAuthUser=saveAuthUser; window.deleteAuthUser=deleteAuthUser; window.openResetPasswordLocal=openResetPasswordLocal; window.resetPasswordLocal=resetPasswordLocal; window.saveAuthRole=saveAuthRole; window.changeMyPasswordLocal=changeMyPasswordLocal; window.adminResetPasswordLocal=adminResetPasswordLocal; window.exportAuthLogs=exportAuthLogs; window.deleteLeadLocal=deleteLeadLocal; window.localLogout=localLogout;
-/* ==== v5.8.2 local login + RBAC layer end ==== */
+/* ==== v5.9 local login + RBAC layer end ==== */
 
-/* ==== v5.8.2 guided journey + mobile scroll patch start ==== */
+/* ==== v5.9 guided journey + mobile scroll patch start ==== */
 function scrollToMainContent(){
   setTimeout(()=>{
     const main=document.querySelector('.main');
@@ -1691,14 +1793,14 @@ function proposalPdfHtml(p){
   const entryTotal=(lot?.price||0)*((p.entry||10)/100);
   const entryPart=p.entryInstallmentValue||entryTotal/inst;
   return `<!doctype html><html><head><meta charset="utf-8"><title>Proposta ${esc(l.name)}</title><style>body{font-family:Arial,sans-serif;color:#173C52;margin:36px}h1{font-size:26px}.box{border:1px solid #d8e2e8;border-radius:14px;padding:14px;margin:12px 0}.brand{display:flex;gap:12px;align-items:center}.brand img{height:44px}table{border-collapse:collapse;width:100%;margin-top:14px}td,th{border:1px solid #d8e2e8;padding:9px;text-align:left}th{background:#f3f7f9}button{padding:10px 14px;border:0;border-radius:10px;background:#245E82;color:white;font-weight:bold}.confirm{background:#F0FBE9;border:1px solid #C8EFA2;border-radius:14px;padding:14px;margin-top:16px}@media print{button{display:none}}
-/* v5.8.2 checklist refinement */
+/* v5.9 checklist refinement */
 .checkCard .actionButtons{margin-top:12px}
 .checkCard .primaryActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 .checkCard .primaryActions .btn{min-width:132px;justify-content:center}
 .actionNotePreview{margin-top:8px;padding:8px 10px;border-radius:12px;background:#F8FBFC;border:1px dashed var(--line);font-size:12px;color:var(--muted)}
 
 
-/* v5.8.2 proposal and material send center */
+/* v5.9 proposal and material send center */
 .materialSendGrid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .materialChecklist{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
 .materialItem{border:1px solid var(--line);background:white;border-radius:16px;padding:12px}
@@ -1713,6 +1815,23 @@ function proposalPdfHtml(p){
 .materialBadge{display:inline-flex;border:1px solid #C8EFA2;background:#F0FBE9;color:#3A6F16;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:900;margin:3px 4px 3px 0}
 .contextActionPrimary{background:linear-gradient(135deg,var(--green),var(--blue))!important;color:white!important;border:0!important}
 @media(max-width:950px){.materialSendGrid,.proposalDetailGrid{grid-template-columns:1fr}}
+
+
+/* v5.9 finance and backend-ready communications */
+.backendBadge{display:inline-flex;border:1px solid #BFDBFE;background:#EFF6FF;color:#1D4ED8;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:900;margin:3px}
+.queueBox{border:1px dashed var(--line);background:#F8FBFC;border-radius:16px;padding:12px;margin-top:10px}
+.financeKpiGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
+.financeKpi{border:1px solid var(--line);background:white;border-radius:18px;padding:14px;box-shadow:0 6px 18px rgba(36,94,130,.05)}
+.financeKpi span{display:block;color:var(--muted);font-size:12px}
+.financeKpi b{display:block;font-size:23px;margin-top:5px;letter-spacing:-.04em}
+.financeGrid{display:grid;grid-template-columns:1.1fr .9fr;gap:16px}
+.financeToolbar{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+.statusOpen{color:#1D4ED8;font-weight:900}.statusPaid{color:#15803D;font-weight:900}.statusLate{color:#B91C1C;font-weight:900}
+.chartMini{border:1px solid var(--line);background:#fff;border-radius:18px;padding:14px;margin-top:12px}
+.chartMini svg{width:100%;height:auto}
+.materialBackendActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;padding-top:10px;border-top:1px solid var(--line)}
+.billingMessage{border:1px solid #FDE68A;background:#FFFBEB;border-radius:16px;padding:12px;margin-top:10px;color:#92400E}
+@media(max-width:1000px){.financeGrid{grid-template-columns:1fr}.financeToolbar{flex-direction:column;align-items:stretch}.financeToolbar .btn,.financeToolbar input,.financeToolbar select{width:100%}}
 
 </style></head><body><div class="brand"><img src="assets/logo_evora.png"><div><h1>Proposta comercial</h1><p>${esc(project().name)} · ${fmtDateTime(now())}</p></div></div><div class="box"><b>Cliente:</b> ${esc(l.name)}<br><b>Lote:</b> ${esc(lotLabel(lot.id))} · ${lot.area} m²<br><b>Status:</b> ${esc(p.status)} · <b>Validade:</b> ${fmtDate(p.expiresAt)}</div><table><tr><th>Preço do lote</th><td>${fmtMoney(lot.price)}</td></tr><tr><th>Entrada</th><td>${p.entry}% · ${inst===1?'à vista':`${inst}x de ${fmtMoney(entryPart)}`} · total ${fmtMoney(entryTotal)}</td></tr><tr><th>Mensais</th><td>${p.months}x ${fmtMoney(p.monthly)}</td></tr><tr><th>Anuais</th><td>${p.annuals}x ${fmtMoney(p.annual)}</td></tr><tr><th>Correção</th><td>${esc(p.index)} + ${p.interest}% a.m.</td></tr><tr><th>Total nominal</th><td>${fmtMoney(p.total)}</td></tr></table><div class="confirm"><h2>Confirmação</h2><p>Esta página representa o ambiente de confirmação. Na versão com backend, o botão gravará o aceite do cliente, data, IP e versão da proposta.</p><button onclick="alert('Confirmação demonstrativa registrada. Em produção, será salvo no sistema.')">Confirmar interesse</button></div><button onclick="window.print()">Salvar/Imprimir PDF</button></body></html>`;
 }
@@ -1786,9 +1905,9 @@ openReserveLot = function(lotId='',leadId=''){
 };
 window.filterSelectOptions=filterSelectOptions; window.openLeadSimulator=openLeadSimulator; window.goLotsForLead=goLotsForLead; window.openLotPickerForLead=openLotPickerForLead; window.renderLotPickerResults=renderLotPickerResults; window.assignLotToLead=assignLotToLead; window.registerClientCommunicationFromLead=registerClientCommunicationFromLead;
 window.updateSim=updateSim; window.createProposalFromSimulator=createProposalFromSimulator;
-/* ==== v5.8.2 guided journey + mobile scroll patch end ==== */
+/* ==== v5.9 guided journey + mobile scroll patch end ==== */
 
-/* ==== v5.8.2 checklist + slogan patch start ==== */
+/* ==== v5.9 checklist + slogan patch start ==== */
 dossierAction = function(l,miss){
   const tasks = TASKS[l.stage] || [];
   return `<div class="grid two" style="margin-top:14px">
@@ -1834,9 +1953,9 @@ function toggleStageNote(leadId,taskId){
   const area=document.getElementById('note-'+taskId);
   if(area && wrap.style.display==='block') setTimeout(()=>area.focus(),60);
 }
-/* ==== v5.8.2 checklist + slogan patch end ==== */
+/* ==== v5.9 checklist + slogan patch end ==== */
 
-/* ==== v5.8.2 rich proposal + material send center start ==== */
+/* ==== v5.9 rich proposal + material send center start ==== */
 function ensureMaterialSendState(){
   state.materialSends = state.materialSends || [];
   state.materials = state.materials || [];
@@ -2070,10 +2189,376 @@ proposalPdfHtml = function(p){
   const inst=p.entryInstallments||1;
   const entryTotal=(lot?.price||0)*((p.entry||10)/100);
   const entryPart=p.entryInstallmentValue||entryTotal/inst;
-  return `<!doctype html><html><head><meta charset="utf-8"><title>Proposta ${esc(l.name)}</title><style>body{font-family:Arial,sans-serif;color:#173C52;margin:36px}h1{font-size:26px}.box{border:1px solid #d8e2e8;border-radius:14px;padding:14px;margin:12px 0}.brand{display:flex;gap:12px;align-items:center}.brand img{height:44px}table{border-collapse:collapse;width:100%;margin-top:14px}td,th{border:1px solid #d8e2e8;padding:9px;text-align:left}th{background:#f3f7f9}button{padding:10px 14px;border:0;border-radius:10px;background:#245E82;color:white;font-weight:bold}.confirm{background:#F0FBE9;border:1px solid #C8EFA2;border-radius:14px;padding:14px;margin-top:16px}@media print{button{display:none}}</style></head><body><div class="brand"><img src="assets/logo_evora.png"><div><h1>Proposta comercial</h1><p>${esc(project().name)} · ${fmtDateTime(now())}</p></div></div><div class="box"><b>Cliente:</b> ${esc(l.name)}<br><b>Lote:</b> ${esc(lotLabel(lot.id))} · ${lot.area} m² · ${esc(lot.type)} · ${esc(lot.sector)}<br><b>Status proposta:</b> ${esc(p.status)} · <b>Status lote:</b> ${lotStatusLabel(lot.status)}<br><b>Validade:</b> ${fmtDate(p.expiresAt)}</div><table><tr><th>Preço do lote</th><td>${fmtMoney(lot.price)}</td></tr><tr><th>Entrada</th><td>${p.entry}% · ${inst===1?'à vista':`${inst}x de ${fmtMoney(entryPart)}`} · total ${fmtMoney(entryTotal)}</td></tr><tr><th>Mensais</th><td>${p.months}x ${fmtMoney(p.monthly)}</td></tr><tr><th>Anuais</th><td>${p.annuals}x ${fmtMoney(p.annual)}</td></tr><tr><th>Correção</th><td>${esc(p.index)} + ${p.interest}% a.m.</td></tr><tr><th>Total nominal</th><td>${fmtMoney(p.total)}</td></tr></table><div class="box"><b>Observações de negociação:</b><br>${esc(p.negotiationNotes||'—')}</div><div class="confirm"><h2>Confirmação</h2><p>Esta página representa o ambiente de confirmação. Na versão com backend, o botão gravará o aceite do cliente, data, IP e versão da proposta.</p><button onclick="alert('Confirmação demonstrativa registrada. Em produção, será salvo no sistema.')">Confirmar interesse</button></div><button onclick="window.print()">Salvar/Imprimir PDF</button></body></html>`;
+  return `<!doctype html><html><head><meta charset="utf-8"><title>Proposta ${esc(l.name)}</title><style>body{font-family:Arial,sans-serif;color:#173C52;margin:36px}h1{font-size:26px}.box{border:1px solid #d8e2e8;border-radius:14px;padding:14px;margin:12px 0}.brand{display:flex;gap:12px;align-items:center}.brand img{height:44px}table{border-collapse:collapse;width:100%;margin-top:14px}td,th{border:1px solid #d8e2e8;padding:9px;text-align:left}th{background:#f3f7f9}button{padding:10px 14px;border:0;border-radius:10px;background:#245E82;color:white;font-weight:bold}.confirm{background:#F0FBE9;border:1px solid #C8EFA2;border-radius:14px;padding:14px;margin-top:16px}@media print{button{display:none}}
+/* v5.9 finance and backend-ready communications */
+.backendBadge{display:inline-flex;border:1px solid #BFDBFE;background:#EFF6FF;color:#1D4ED8;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:900;margin:3px}
+.queueBox{border:1px dashed var(--line);background:#F8FBFC;border-radius:16px;padding:12px;margin-top:10px}
+.financeKpiGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
+.financeKpi{border:1px solid var(--line);background:white;border-radius:18px;padding:14px;box-shadow:0 6px 18px rgba(36,94,130,.05)}
+.financeKpi span{display:block;color:var(--muted);font-size:12px}
+.financeKpi b{display:block;font-size:23px;margin-top:5px;letter-spacing:-.04em}
+.financeGrid{display:grid;grid-template-columns:1.1fr .9fr;gap:16px}
+.financeToolbar{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+.statusOpen{color:#1D4ED8;font-weight:900}.statusPaid{color:#15803D;font-weight:900}.statusLate{color:#B91C1C;font-weight:900}
+.chartMini{border:1px solid var(--line);background:#fff;border-radius:18px;padding:14px;margin-top:12px}
+.chartMini svg{width:100%;height:auto}
+.materialBackendActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;padding-top:10px;border-top:1px solid var(--line)}
+.billingMessage{border:1px solid #FDE68A;background:#FFFBEB;border-radius:16px;padding:12px;margin-top:10px;color:#92400E}
+@media(max-width:1000px){.financeGrid{grid-template-columns:1fr}.financeToolbar{flex-direction:column;align-items:stretch}.financeToolbar .btn,.financeToolbar input,.financeToolbar select{width:100%}}
+
+</style></head><body><div class="brand"><img src="assets/logo_evora.png"><div><h1>Proposta comercial</h1><p>${esc(project().name)} · ${fmtDateTime(now())}</p></div></div><div class="box"><b>Cliente:</b> ${esc(l.name)}<br><b>Lote:</b> ${esc(lotLabel(lot.id))} · ${lot.area} m² · ${esc(lot.type)} · ${esc(lot.sector)}<br><b>Status proposta:</b> ${esc(p.status)} · <b>Status lote:</b> ${lotStatusLabel(lot.status)}<br><b>Validade:</b> ${fmtDate(p.expiresAt)}</div><table><tr><th>Preço do lote</th><td>${fmtMoney(lot.price)}</td></tr><tr><th>Entrada</th><td>${p.entry}% · ${inst===1?'à vista':`${inst}x de ${fmtMoney(entryPart)}`} · total ${fmtMoney(entryTotal)}</td></tr><tr><th>Mensais</th><td>${p.months}x ${fmtMoney(p.monthly)}</td></tr><tr><th>Anuais</th><td>${p.annuals}x ${fmtMoney(p.annual)}</td></tr><tr><th>Correção</th><td>${esc(p.index)} + ${p.interest}% a.m.</td></tr><tr><th>Total nominal</th><td>${fmtMoney(p.total)}</td></tr></table><div class="box"><b>Observações de negociação:</b><br>${esc(p.negotiationNotes||'—')}</div><div class="confirm"><h2>Confirmação</h2><p>Esta página representa o ambiente de confirmação. Na versão com backend, o botão gravará o aceite do cliente, data, IP e versão da proposta.</p><button onclick="alert('Confirmação demonstrativa registrada. Em produção, será salvo no sistema.')">Confirmar interesse</button></div><button onclick="window.print()">Salvar/Imprimir PDF</button></body></html>`;
 };
 window.openMaterialSendCenter=openMaterialSendCenter; window.renderMaterialLeadHistory=renderMaterialLeadHistory; window.sendMaterialsFromForm=sendMaterialsFromForm; window.previewMaterialMessage=previewMaterialMessage; window.saveProposalNotes=saveProposalNotes;
-/* ==== v5.8.2 rich proposal + material send center end ==== */
+/* ==== v5.9 rich proposal + material send center end ==== */
+
+/* ==== v5.9 backend-ready sends + financial controls start ==== */
+function ensureBackendState(){
+  state.backendQueue = state.backendQueue || [];
+  state.financeSettings = state.financeSettings || {costM2:650, defaultBillingChannel:'WhatsApp'};
+  state.receivables = state.receivables || [];
+  state.materialSends = state.materialSends || [];
+  state.billingMessages = state.billingMessages || [];
+}
+ensureBackendState();
+if(!VIEWS.some(v=>v[0]==='financeiro')) VIEWS.splice(Math.max(0,VIEWS.findIndex(v=>v[0]==='reports')),0,['financeiro','Financeiro']);
+const _v59OldIcon = icon;
+icon = function(name){
+  if(name==='financeiro') return '<svg viewBox="0 0 24 24"><path d="M12 1v22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/><path d="M4 19h16"/></svg>';
+  return _v59OldIcon(name);
+};
+const _v59OldCanView = typeof canView==='function' ? canView : null;
+canView = function(id){
+  if(id==='financeiro') return typeof hasPerm==='function' ? hasPerm('report:view') : true;
+  return _v59OldCanView ? _v59OldCanView(id) : true;
+};
+const _v59OldTopbar = renderTopbar;
+renderTopbar = function(){
+  if(view==='financeiro'){
+    return `<div class="topbar"><div class="title"><h1>Financeiro e Carteira</h1><p>Recebíveis, inadimplência, margem por metro quadrado, descontos, preço médio, boletos, alertas de cobrança e relatórios.</p></div><div class="actions"><button class="btn primary" onclick="syncReceivables()">Sincronizar carteira</button><button class="btn" onclick="printFinanceReport('financeiro')">PDF financeiro</button></div></div>`;
+  }
+  return _v59OldTopbar();
+};
+const _v59OldRenderView = renderView;
+renderView = function(){
+  if(view==='financeiro') return renderFinanceiro();
+  return _v59OldRenderView();
+};
+function queueBackendTask(type,payload){
+  ensureBackendState();
+  const task={id:uid('queue'),type,status:'pendente_backend',payload,createdAt:now(),updatedAt:now()};
+  state.backendQueue.unshift(task);
+  return task;
+}
+function backendQueueHtml(limit=10){
+  ensureBackendState();
+  const rows=state.backendQueue.slice(0,limit);
+  if(!rows.length) return '<div class="empty">Nenhuma integração pendente.</div>';
+  return `<div class="timeline">${rows.map(q=>`<div class="event"><b>${fmtDateTime(q.createdAt)} · ${esc(q.type)} · ${esc(q.status)}</b><span>${esc(JSON.stringify(q.payload||{}).slice(0,170))}</span></div>`).join('')}</div>`;
+}
+function materialRecipientOptionsHTML(type='lead',selected='',query=''){
+  const q=String(query||'').toLowerCase();
+  const source=type==='cliente'?clients():projectLeads();
+  const list=source.filter(l=>!q||[l.name,l.city,l.phone,l.email,l.source,l.campaign,l.purpose,l.profile].join(' ').toLowerCase().includes(q));
+  return `<option value="">Selecione</option>`+list.map(l=>`<option value="${l.id}" ${l.id===selected?'selected':''}>${esc(l.name)} · ${esc(l.city||'')} · ${type==='cliente'?'cliente':'lead'} · ${l.score||''}</option>`).join('');
+}
+function filterMaterialRecipients(){
+  const type=v('matAudience')||'lead';
+  const selected=v('matLead');
+  const q=v('matLeadFilter');
+  const select=document.getElementById('matLead');
+  if(select){ select.innerHTML=materialRecipientOptionsHTML(type,selected,q); if([...select.options].some(o=>o.value===selected)) select.value=selected; }
+  renderMaterialLeadHistory();
+}
+function materialSendPayload(status='manual_registrado'){
+  ensureMaterialSendState(); ensureBackendState();
+  const lead=leadBy(v('matLead'));
+  const ids=[...document.querySelectorAll('.matCheck:checked')].map(x=>x.value);
+  if(!lead) throw new Error('Selecione um lead/cliente.');
+  if(!ids.length) throw new Error('Selecione pelo menos um material.');
+  const sentAtVal=v('matSentAt');
+  const sentAt=sentAtVal?new Date(sentAtVal).toISOString():now();
+  const materials=ids.map(id=>materialById(id)).filter(Boolean);
+  const message=`Olá ${lead.name}, seguem os materiais sobre o ${project().name}: ${materials.map(m=>m.name).join(', ')}. Posso te ajudar com uma simulação, escolha de lote ou próxima etapa?`;
+  return {
+    id:uid('mat-send'),leadId:lead.id,projectId:project().id,audience:v('matAudience')||'lead',materialIds:ids,channel:v('matChannel'),sentAt,byName:v('matBy')||((typeof authUser==='function'&&authUser()?.name)||'Equipe comercial'),note:v('matNote'),status,createdAt:now(),
+    backendPayload:{recipient:{name:lead.name,phone:lead.phone,email:lead.email},channel:v('matChannel'),message,materials:materials.map(m=>({id:m.id,name:m.name,type:m.type||'',url:m.url||null})),leadId:lead.id,projectId:project().id}
+  };
+}
+function registerMaterialSendRecord(send,queue=false){
+  state.materialSends.push(send);
+  const lead=leadBy(send.leadId);
+  if(lead){
+    lead.materialsSent=lead.materialsSent||[];
+    lead.materialsSent.push(send.id);
+    lead.history=lead.history||[];
+    lead.history.push({ts:now(),text:`Materiais ${queue?'preparados para envio backend':'registrados como enviados'} via ${send.channel}: ${send.materialIds.map(materialName).join(', ')}.`});
+    if(['aquecimento','cliente'].includes(lead.stage)){
+      const materialTask=(TASKS[lead.stage]||[]).find(([id,label])=>id.includes('material')||label.toLowerCase().includes('material')||label.toLowerCase().includes('boas-vindas'));
+      if(materialTask){
+        lead.actions[lead.stage]=lead.actions[lead.stage]||{};
+        lead.actions[lead.stage][materialTask[0]]={ts:now(),note:`Envio via ${send.channel}: ${send.materialIds.map(materialName).join(', ')}`};
+      }
+    }
+  }
+  if(queue) queueBackendTask('material.send',send.backendPayload);
+  save();
+}
+function prepareMaterialWhatsApp(){
+  try{
+    const send=materialSendPayload('preparado_whatsapp');
+    const phone=String(send.backendPayload.recipient.phone||'').replace(/\D/g,'');
+    window.open(`https://wa.me/${phone?('55'+phone):''}?text=${encodeURIComponent(send.backendPayload.message)}`,'_blank');
+    registerMaterialSendRecord(send,false);
+    render(); setView('material-send'); toast('WhatsApp preparado e envio registrado.');
+  }catch(e){ toast(e.message); }
+}
+function prepareMaterialEmail(){
+  try{
+    const send=materialSendPayload('preparado_email');
+    const subject=encodeURIComponent('Materiais · '+project().name);
+    const body=encodeURIComponent(send.backendPayload.message);
+    window.location.href=`mailto:${send.backendPayload.recipient.email||''}?subject=${subject}&body=${body}`;
+    registerMaterialSendRecord(send,false);
+    render(); setView('material-send'); toast('E-mail preparado e envio registrado.');
+  }catch(e){ toast(e.message); }
+}
+function copyMaterialMessage(){
+  try{
+    const send=materialSendPayload('mensagem_copiada');
+    navigator.clipboard?.writeText(send.backendPayload.message);
+    toast('Mensagem copiada para envio manual.');
+  }catch(e){ toast(e.message); }
+}
+function enqueueMaterialBackend(){
+  try{
+    const send=materialSendPayload('pendente_backend');
+    registerMaterialSendRecord(send,true);
+    render(); setView('material-send'); toast('Envio preparado para backend futuro.');
+  }catch(e){ toast(e.message); }
+}
+sendMaterialsFromForm = function(){
+  try{
+    const send=materialSendPayload('manual_registrado');
+    registerMaterialSendRecord(send,false);
+    render(); setView('material-send'); toast('Envio realizado registrado.');
+  }catch(e){ toast(e.message); }
+};
+renderMaterialSendCenter = function(){
+  ensureMaterialSendState(); ensureBackendState();
+  const activeLead=state.activeMaterialLeadId || '';
+  const lead=leadBy(activeLead);
+  const audience=(lead&&lead.stage==='cliente')?'cliente':'lead';
+  return `<div class="materialSendGrid">
+    <div class="card">
+      <h2>Novo envio de material</h2>
+      <p>Preparado para backend futuro: hoje abre WhatsApp/e-mail, copia mensagem, registra manualmente ou enfileira payload para integração.</p>
+      <div class="formGrid" style="margin-top:14px">
+        <div class="field"><label>Destino</label><select id="matAudience" onchange="filterMaterialRecipients()"><option value="lead" ${audience==='lead'?'selected':''}>Lead / oportunidade</option><option value="cliente" ${audience==='cliente'?'selected':''}>Cliente / pós-venda</option></select></div>
+        <div class="field"><label>Filtrar destinatário</label><input id="matLeadFilter" class="filterInput" placeholder="Nome, cidade, origem..." oninput="filterMaterialRecipients()"></div>
+        <div class="field"><label>Lead/Cliente</label><select id="matLead" onchange="renderMaterialLeadHistory()">${materialRecipientOptionsHTML(audience,activeLead)}</select></div>
+        <div class="field"><label>Canal</label><select id="matChannel"><option>WhatsApp</option><option>E-mail</option><option>Ligação</option><option>Presencial</option><option>SMS</option><option>Backend automático futuro</option><option>Outro</option></select></div>
+        <div class="field"><label>Data/hora</label><input id="matSentAt" type="datetime-local" value="${new Date().toISOString().slice(0,16)}"></div>
+        <div class="field"><label>Responsável</label><input id="matBy" value="${esc((typeof authUser==='function'&&authUser()?.name)||'Equipe comercial')}"></div>
+        <div class="field span3"><label>Observação</label><textarea id="matNote" placeholder="Ex.: enviado book + mapa após atendimento; cliente pediu simulação."></textarea></div>
+      </div>
+      <h3 style="margin-top:14px">Materiais disponíveis</h3>
+      <div class="materialChecklist">${state.materials.map(m=>`<label class="materialItem"><input type="checkbox" class="matCheck" value="${m.id}"> <b>${esc(m.name)}</b><span class="tiny">${esc(m.type||'Material')} · ${esc(m.stage||'Etapa')} · ${esc(m.persona||'Todos')}</span></label>`).join('')}</div>
+      <div class="materialBackendActions">
+        <button class="btn primary" onclick="sendMaterialsFromForm()">Registrar envio realizado</button>
+        <button class="btn" onclick="prepareMaterialWhatsApp()">Preparar WhatsApp</button>
+        <button class="btn" onclick="prepareMaterialEmail()">Preparar e-mail</button>
+        <button class="btn" onclick="copyMaterialMessage()">Copiar mensagem</button>
+        <button class="btn warn" onclick="enqueueMaterialBackend()">Enfileirar backend futuro</button>
+      </div>
+      <div class="queueBox"><b>Backend futuro</b><p class="tiny">O botão “Enfileirar backend futuro” grava um payload estruturado para WhatsApp Cloud API, e-mail transacional ou outro provedor. Depois bastará conectar a API real.</p></div>
+      <div id="materialPreview" class="materialHistory" style="display:none"></div>
+    </div>
+    <div class="card">
+      <h2>Histórico do destinatário</h2>
+      <div id="materialLeadHistory">${lead?materialHistoryHtml(lead.id):'<div class="empty">Selecione um lead ou cliente para ver o histórico de materiais.</div>'}</div>
+      <h3 style="margin-top:16px">Fila de integração</h3>
+      ${backendQueueHtml(6)}
+    </div>
+  </div>`;
+};
+const _v59OldRenderClients = renderClients;
+renderClients = function(){
+  const cls=clients();
+  return `<div class="grid three"><div class="card"><h3>Clientes ativos</h3><p>${cls.length}</p></div><div class="card"><h3>Sem comunicação 30+</h3><p>${cls.filter(clientSilent).length}</p></div><div class="card"><h3>Materiais pós-venda</h3><p>${(state.materialSends||[]).filter(s=>s.audience==='cliente').length}</p></div></div><div class="grid two" style="margin-top:16px">${cls.map(l=>`<div class="card ${clientSilent(l)?'task warn':''}"><h3>${esc(l.name)}</h3><p>${esc(lotLabel(l.lotId))} · último contato: ${fmtDateTime(lastClientCom(l))}</p><div class="actions" style="justify-content:flex-start;margin-top:12px"><button class="btn small" onclick="openClient('${l.id}')">Abrir</button><button class="btn small" onclick="openMaterialSendCenter('${l.id}')">Enviar material</button><button class="btn small" onclick="registerClientCom('${l.id}','Diário de obra enviado ao cliente.')">Diário de obra</button><button class="btn small" onclick="registerClientCom('${l.id}','Check-in de relacionamento realizado.')">Check-in</button></div></div>`).join('')||'<div class="empty">Nenhum cliente ainda.</div>'}</div>`;
+};
+/* Financial module */
+function ensureFinanceState(){
+  ensureBackendState();
+  state.financeSettings = state.financeSettings || {costM2:650, defaultBillingChannel:'WhatsApp'};
+  state.receivables = state.receivables || [];
+  state.billingMessages = state.billingMessages || [];
+}
+function salePriceForProposal(p){
+  const lot=lotBy(p.lotId);
+  const base=lot?.price||p.price||0;
+  return Math.max(0,base-(Number(p.discountAmount)||0));
+}
+function proposalDiscount(p){ return Number(p.discountAmount)||0; }
+function receivableStatus(r){
+  if(r.status==='recebido') return 'recebido';
+  if(new Date(r.dueDate)<new Date()) return 'vencido';
+  return r.status||'aberto';
+}
+function syncReceivables(){
+  ensureFinanceState();
+  const validStatuses=['aprovada','enviada','aceita','convertida','em-aprovacao'];
+  projectProposals().filter(p=>validStatuses.includes(p.status)).forEach(p=>{
+    const lot=lotBy(p.lotId); if(!lot) return;
+    const already=state.receivables.some(r=>r.proposalId===p.id);
+    if(already) return;
+    const sale=salePriceForProposal(p);
+    const entryTotal=sale*((p.entry||10)/100);
+    const inst=Math.max(1,Math.min(6,Number(p.entryInstallments)||1));
+    for(let i=1;i<=inst;i++){
+      state.receivables.push({id:uid('rec'),projectId:project().id,proposalId:p.id,leadId:p.leadId,lotId:p.lotId,type:'entrada',number:i,totalNumbers:inst,dueDate:days(30*(i-1)),amount:entryTotal/inst,status:'aberto',createdAt:now()});
+    }
+    const monthlyCount=Math.min(Number(p.months)||0,60);
+    for(let i=1;i<=monthlyCount;i++){
+      state.receivables.push({id:uid('rec'),projectId:project().id,proposalId:p.id,leadId:p.leadId,lotId:p.lotId,type:'mensal',number:i,totalNumbers:Number(p.months)||0,dueDate:days(30*i),amount:Number(p.monthly)||0,status:'aberto',createdAt:now()});
+    }
+    const annualCount=Math.min(Number(p.annuals)||0,10);
+    for(let i=1;i<=annualCount;i++){
+      state.receivables.push({id:uid('rec'),projectId:project().id,proposalId:p.id,leadId:p.leadId,lotId:p.lotId,type:'anual',number:i,totalNumbers:Number(p.annuals)||0,dueDate:days(365*i),amount:Number(p.annual)||0,status:'aberto',createdAt:now()});
+    }
+  });
+  save(); render(); toast('Carteira de recebíveis sincronizada.');
+}
+function projectReceivables(){ ensureFinanceState(); return state.receivables.filter(r=>r.projectId===project().id); }
+function financeAnalytics(){
+  ensureFinanceState();
+  const rec=projectReceivables();
+  const received=rec.filter(r=>receivableStatus(r)==='recebido').reduce((s,r)=>s+Number(r.amount||0),0);
+  const open=rec.filter(r=>receivableStatus(r)==='aberto').reduce((s,r)=>s+Number(r.amount||0),0);
+  const late=rec.filter(r=>receivableStatus(r)==='vencido').reduce((s,r)=>s+Number(r.amount||0),0);
+  const baseLateOpen=open+late;
+  const proposals=projectProposals();
+  const sales=proposals.filter(p=>['aprovada','enviada','aceita','convertida'].includes(p.status));
+  const totalSale=sales.reduce((s,p)=>s+salePriceForProposal(p),0);
+  const totalArea=sales.reduce((s,p)=>s+(lotBy(p.lotId)?.area||0),0);
+  const avgSale=sales.length?totalSale/sales.length:0;
+  const avgM2=totalArea?totalSale/totalArea:0;
+  const costM2=Number(state.financeSettings.costM2)||0;
+  const marginM2=avgM2-costM2;
+  const discountTotal=sales.reduce((s,p)=>s+proposalDiscount(p),0);
+  const month=new Date().getMonth(), year=new Date().getFullYear();
+  const discountMonth=sales.filter(p=>{const d=new Date(p.createdAt||now()); return d.getMonth()===month&&d.getFullYear()===year;}).reduce((s,p)=>s+proposalDiscount(p),0);
+  return {rec,received,open,late,delinquency:baseLateOpen?late/baseLateOpen*100:0,proposals,sales,totalSale,totalArea,avgSale,avgM2,costM2,marginM2,discountTotal,discountMonth};
+}
+function renderFinanceiro(){
+  ensureFinanceState();
+  const a=financeAnalytics();
+  const rows=a.rec.slice().sort((x,y)=>new Date(x.dueDate)-new Date(y.dueDate)).slice(0,300);
+  return `<div class="financeKpiGrid">
+    <div class="financeKpi"><span>Recebido</span><b>${fmtMoney(a.received)}</b></div>
+    <div class="financeKpi"><span>A receber</span><b>${fmtMoney(a.open)}</b></div>
+    <div class="financeKpi"><span>Inadimplência</span><b>${fmtMoney(a.late)}</b><span>${a.delinquency.toFixed(1)}%</span></div>
+    <div class="financeKpi"><span>Preço médio venda</span><b>${fmtMoney(a.avgSale)}</b></div>
+    <div class="financeKpi"><span>Preço médio/m²</span><b>${fmtMoney(a.avgM2)}</b></div>
+    <div class="financeKpi"><span>Margem atual/m²</span><b>${fmtMoney(a.marginM2)}</b></div>
+    <div class="financeKpi"><span>Descontos no mês</span><b>${fmtMoney(a.discountMonth)}</b></div>
+    <div class="financeKpi"><span>Descontos total</span><b>${fmtMoney(a.discountTotal)}</b></div>
+  </div>
+  <div class="financeGrid" style="margin-top:16px">
+    <div class="card">
+      <h2>Recebíveis</h2>
+      <div class="financeToolbar">
+        <button class="btn primary" onclick="syncReceivables()">Sincronizar carteira</button>
+        <button class="btn" onclick="openManualReceivable()">+ Recebível manual</button>
+        <button class="btn" onclick="printFinanceReport('financeiro')">Relatório PDF</button>
+        <button class="btn" onclick="printFinanceReport('cobranca')">Relatório cobrança</button>
+      </div>
+      <div class="tableWrap"><table><thead><tr><th>Cliente/Lote</th><th>Tipo</th><th>Vencimento</th><th>Valor</th><th>Status</th><th>Boleto/Cobrança</th></tr></thead><tbody>${rows.map(r=>`<tr><td><b>${esc(leadName(r.leadId))}</b><div class="tiny">${esc(lotLabel(r.lotId))}</div></td><td>${esc(r.type)} ${r.number||''}/${r.totalNumbers||''}</td><td>${fmtDate(r.dueDate)}</td><td>${fmtMoney(r.amount)}</td><td>${receivableStatusLabel(r)}</td><td><div class="actions"><button class="btn small" onclick="generateBoleto('${r.id}')">Boleto</button><button class="btn small" onclick="prepareBillingWhatsApp('${r.id}')">WhatsApp</button><button class="btn small" onclick="prepareBillingEmail('${r.id}')">E-mail</button><button class="btn small success" onclick="markReceivablePaid('${r.id}')">Recebido</button></div></td></tr>`).join('')||'<tr><td colspan="6" class="muted">Sem recebíveis. Clique em sincronizar carteira.</td></tr>'}</tbody></table></div>
+    </div>
+    <div class="card">
+      <h2>Parâmetros e integrações</h2>
+      <div class="field"><label>Custo/m² atual</label><input id="finCostM2" type="number" value="${a.costM2}"></div>
+      <button class="btn primary" onclick="saveFinanceSettings()">Salvar parâmetros</button>
+      <div class="chartMini"><h3>Projeção simplificada</h3>${financeChartSvg()}</div>
+      <h3 style="margin-top:16px">Fila backend</h3>
+      ${backendQueueHtml(8)}
+    </div>
+  </div>`;
+}
+function receivableStatusLabel(r){
+  const s=receivableStatus(r);
+  if(s==='recebido') return '<span class="statusPaid">Recebido</span>';
+  if(s==='vencido') return '<span class="statusLate">Vencido</span>';
+  return '<span class="statusOpen">Aberto</span>';
+}
+function saveFinanceSettings(){
+  ensureFinanceState();
+  state.financeSettings.costM2=Number(v('finCostM2'))||0;
+  save(); render(); toast('Parâmetros financeiros salvos.');
+}
+function receivableById(id){ return (state.receivables||[]).find(r=>r.id===id); }
+function markReceivablePaid(id){
+  const r=receivableById(id); if(!r) return;
+  r.status='recebido'; r.paidAt=now(); save(); render(); toast('Recebível marcado como recebido.');
+}
+function generateBoleto(id){
+  const r=receivableById(id); if(!r) return;
+  r.boleto=r.boleto||{id:'bol-'+id,status:'pendente_backend',url:`https://backend-futuro.evora/boletos/${id}`,createdAt:now()};
+  queueBackendTask('billing.issue_boleto',{receivableId:id,leadId:r.leadId,amount:r.amount,dueDate:r.dueDate,provider:'boleto_pix_future'});
+  save(); render(); toast('Boleto preparado para backend futuro.');
+}
+function billingMessage(r){
+  const lead=leadBy(r.leadId);
+  return `Olá ${lead?.name||''}, lembramos sobre a parcela ${r.type} do ${project().name}, lote ${lotLabel(r.lotId)}, no valor de ${fmtMoney(r.amount)}, vencimento em ${fmtDate(r.dueDate)}. Posso te enviar a segunda via do boleto/Pix?`;
+}
+function prepareBillingWhatsApp(id){
+  const r=receivableById(id); if(!r) return; const lead=leadBy(r.leadId);
+  const msg=billingMessage(r);
+  const phone=String(lead?.phone||'').replace(/\D/g,'');
+  window.open(`https://wa.me/${phone?('55'+phone):''}?text=${encodeURIComponent(msg)}`,'_blank');
+  state.billingMessages.push({id:uid('bill-msg'),receivableId:id,leadId:r.leadId,channel:'WhatsApp',message:msg,createdAt:now(),status:'preparado_manual'});
+  save(); render(); toast('Mensagem de cobrança preparada no WhatsApp.');
+}
+function prepareBillingEmail(id){
+  const r=receivableById(id); if(!r) return; const lead=leadBy(r.leadId);
+  const msg=billingMessage(r);
+  window.location.href=`mailto:${lead?.email||''}?subject=${encodeURIComponent('Lembrete de vencimento · '+project().name)}&body=${encodeURIComponent(msg)}`;
+  state.billingMessages.push({id:uid('bill-msg'),receivableId:id,leadId:r.leadId,channel:'E-mail',message:msg,createdAt:now(),status:'preparado_manual'});
+  save(); render(); toast('E-mail de cobrança preparado.');
+}
+function openManualReceivable(){
+  openModal('Recebível manual','Cadastro local de recebível avulso.',`<div class="formGrid"><div class="field"><label>Filtrar lead</label><input id="manualLeadFilter" class="filterInput" oninput="filterSelectOptions('manualLeadFilter','manualLead','lead')"></div><div class="field"><label>Lead</label><select id="manualLead">${leadOptionsHTML('')}</select></div><div class="field"><label>Tipo</label><select id="manualType"><option>entrada</option><option>mensal</option><option>anual</option><option>taxa</option><option>outro</option></select></div><div class="field"><label>Vencimento</label><input id="manualDue" type="date" value="${new Date().toISOString().slice(0,10)}"></div><div class="field"><label>Valor</label><input id="manualAmount" type="number" value="0"></div><div class="field span3"><button class="btn primary" onclick="saveManualReceivable()">Salvar recebível</button></div></div>`,'wide');
+}
+function saveManualReceivable(){
+  ensureFinanceState();
+  const lead=leadBy(v('manualLead'));
+  if(!lead) return toast('Selecione o lead.');
+  state.receivables.push({id:uid('rec'),projectId:project().id,proposalId:null,leadId:lead.id,lotId:lead.lotId||null,type:v('manualType'),number:1,totalNumbers:1,dueDate:new Date(v('manualDue')).toISOString(),amount:Number(v('manualAmount'))||0,status:'aberto',manual:true,createdAt:now()});
+  save(); closeModal(); render(); toast('Recebível manual criado.');
+}
+function financeChartSvg(){
+  const rec=projectReceivables();
+  const months=[];
+  for(let i=0;i<6;i++){ const d=new Date(); d.setMonth(d.getMonth()+i); const key=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'); months.push({key,label:String(d.getMonth()+1).padStart(2,'0')+'/'+String(d.getFullYear()).slice(2),value:0}); }
+  rec.forEach(r=>{ const d=new Date(r.dueDate); const key=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'); const m=months.find(x=>x.key===key); if(m&&receivableStatus(r)!=='recebido') m.value+=Number(r.amount)||0; });
+  const max=Math.max(1,...months.map(m=>m.value));
+  return `<svg viewBox="0 0 720 220" xmlns="http://www.w3.org/2000/svg">${months.map((m,i)=>{const x=40+i*110; const h=Math.max(4,(m.value/max)*150); return `<rect x="${x}" y="${180-h}" width="68" height="${h}" rx="8" fill="#245E82"/><text x="${x}" y="204" font-size="13" fill="#637887">${m.label}</text><text x="${x}" y="${170-h}" font-size="12" fill="#173C52">${m.value?fmtMoney(m.value).replace('R$',''):''}</text>`;}).join('')}</svg>`;
+}
+function financeReportHtml(type='financeiro'){
+  const a=financeAnalytics();
+  const rows=projectReceivables().slice(0,200);
+  const tableRows=rows.map(r=>`<tr><td>${esc(leadName(r.leadId))}</td><td>${esc(lotLabel(r.lotId))}</td><td>${esc(r.type)}</td><td>${fmtDate(r.dueDate)}</td><td>${fmtMoney(r.amount)}</td><td>${esc(receivableStatus(r))}</td></tr>`).join('');
+  return `<!doctype html><html><head><meta charset="utf-8"><title>Relatório Financeiro</title><style>body{font-family:Arial,sans-serif;color:#173C52;margin:34px}h1{font-size:26px}.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.kpi{border:1px solid #d8e2e8;border-radius:12px;padding:12px}.kpi b{display:block;font-size:20px;margin-top:5px}table{border-collapse:collapse;width:100%;margin-top:18px}td,th{border:1px solid #d8e2e8;padding:8px;font-size:12px;text-align:left}th{background:#f1f6f8}.chart{border:1px solid #d8e2e8;border-radius:14px;padding:12px;margin-top:18px}@media print{button{display:none}}</style></head><body><h1>Relatório Financeiro · ${esc(project().name)}</h1><p>${fmtDateTime(now())}</p><div class="kpis"><div class="kpi">Recebido<b>${fmtMoney(a.received)}</b></div><div class="kpi">A receber<b>${fmtMoney(a.open)}</b></div><div class="kpi">Vencido<b>${fmtMoney(a.late)}</b></div><div class="kpi">Inadimplência<b>${a.delinquency.toFixed(1)}%</b></div><div class="kpi">Margem/m²<b>${fmtMoney(a.marginM2)}</b></div><div class="kpi">Preço médio/m²<b>${fmtMoney(a.avgM2)}</b></div><div class="kpi">Descontos mês<b>${fmtMoney(a.discountMonth)}</b></div><div class="kpi">Preço médio venda<b>${fmtMoney(a.avgSale)}</b></div></div><div class="chart"><h2>Projeção de recebíveis</h2>${financeChartSvg()}</div><h2>Recebíveis</h2><table><thead><tr><th>Cliente</th><th>Lote</th><th>Tipo</th><th>Vencimento</th><th>Valor</th><th>Status</th></tr></thead><tbody>${tableRows}</tbody></table><h2>Mensagens de cobrança preparadas</h2><table><thead><tr><th>Data</th><th>Cliente</th><th>Canal</th><th>Status</th></tr></thead><tbody>${(state.billingMessages||[]).map(m=>`<tr><td>${fmtDateTime(m.createdAt)}</td><td>${esc(leadName(m.leadId))}</td><td>${esc(m.channel)}</td><td>${esc(m.status)}</td></tr>`).join('')}</tbody></table><button onclick="window.print()">Salvar/Imprimir PDF</button><script>setTimeout(()=>window.print(),500)<\/script></body></html>`;
+}
+function printFinanceReport(type='financeiro'){
+  const w=window.open('','_blank'); w.document.write(financeReportHtml(type)); w.document.close();
+}
+const _v59OldReportHtml = reportHtml;
+reportHtml = function(type){
+  if(type==='financeiro') return financeReportHtml(type);
+  return _v59OldReportHtml(type);
+};
+window.prepareMaterialWhatsApp=prepareMaterialWhatsApp; window.prepareMaterialEmail=prepareMaterialEmail; window.copyMaterialMessage=copyMaterialMessage; window.enqueueMaterialBackend=enqueueMaterialBackend; window.syncReceivables=syncReceivables; window.renderFinanceiro=renderFinanceiro; window.saveFinanceSettings=saveFinanceSettings; window.generateBoleto=generateBoleto; window.prepareBillingWhatsApp=prepareBillingWhatsApp; window.prepareBillingEmail=prepareBillingEmail; window.markReceivablePaid=markReceivablePaid; window.openManualReceivable=openManualReceivable; window.saveManualReceivable=saveManualReceivable; window.printFinanceReport=printFinanceReport;
+/* ==== v5.9 backend-ready sends + financial controls end ==== */
 
 render();
 })();
