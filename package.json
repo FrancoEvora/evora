@@ -1,9 +1,9 @@
 {
-  "name": "evora-launch-os-v5-8-jornada-guiada-mobile",
-  "version": "5.8.0",
+  "name": "evora-launch-os-v5-8-1-checklist-slogan",
+  "version": "5.8.1",
   "private": true,
   "type": "module",
-  "description": "Évora Launch OS v5.8: v4.3 + login local + melhorias mobile, jornada guiada e simulador.",
+  "description": "Évora Launch OS v5.8.1: ajuste do checklist guiado e slogan da tela inicial.",
   "scripts": {
     "build": "echo Build estatico OK: public/",
     "check": "node --check source/app.embedded.js"
