@@ -1,33 +1,45 @@
-# Évora Launch OS v5.11
+# Évora Launch OS v5.12
 
-Evolução da v5.10 com campanhas avançadas.
+Evolução da v5.11 com foco no acompanhamento operacional das campanhas.
 
 ## Campanhas
 
-- Correção visual dos cards de VGV para evitar sobreposição.
-- VGV projetado, em negociação, realizado e executado.
-- Gráficos comparativos de VGV.
-- Cadastro de novo lead diretamente dentro da campanha.
-- Vinculação de leads existentes à campanha.
-- Métricas de desempenho por campanha.
-- Ranking de SDRs participantes.
-- Ranking de corretores participantes.
-- Roteiros de atendimento por campanha.
-- Scripts de WhatsApp e ligação por campanha.
-- FAQs por campanha.
+Agora cada campanha mostra:
 
-## Materiais
+- quantidade de leads em atendimento;
+- lista de leads em atendimento;
+- quantidade de leads que merecem atenção;
+- lista de leads que merecem atenção;
+- motivo do alerta de atenção;
+- comparativo de VGV projetado, em negociação e realizado.
 
-Nas Configurações, agora é possível cadastrar, editar e excluir materiais.
+## Relatórios
 
-Materiais podem ter:
+O relatório de campanhas agora inclui:
 
-- nome;
-- tipo;
-- etapa;
-- persona;
-- link/URL;
-- descrição.
+- leads;
+- leads em atendimento;
+- leads que merecem atenção;
+- clientes A;
+- propostas;
+- reservas;
+- clientes;
+- VGV projetado;
+- VGV em negociação;
+- VGV realizado;
+- conversão;
+- CPL.
+
+Também inclui uma tabela com os leads que merecem atenção e o respectivo motivo.
+
+## VGV
+
+Removida a redundância entre VGV realizado e VGV executado.  
+A partir desta versão, trabalhamos com:
+
+- VGV projetado;
+- VGV em negociação;
+- VGV realizado.
 
 ## Deploy
 

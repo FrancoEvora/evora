@@ -1,9 +1,9 @@
 {
-  "name": "evora-launch-os-v5-11-campanhas-avancadas",
-  "version": "5.11.0",
+  "name": "evora-launch-os-v5-12-campanhas-atendimento",
+  "version": "5.12.0",
   "private": true,
   "type": "module",
-  "description": "Évora Launch OS v5.11: campanhas avançadas, ranking de equipe, scripts/FAQs e materiais.",
+  "description": "Évora Launch OS v5.12: campanhas com leads em atendimento, atenção e VGV simplificado.",
   "scripts": {
     "build": "echo Build estatico OK: public/",
     "check": "node --check source/app.embedded.js"
