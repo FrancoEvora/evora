@@ -1,45 +1,27 @@
-# Évora Launch OS v5.12
+# Évora Launch OS v5.13
 
-Evolução da v5.11 com foco no acompanhamento operacional das campanhas.
+Evolução da v5.12 com tratamento de leads em atenção e padronização visual de gráficos.
 
-## Campanhas
+## Leads que merecem atenção
 
-Agora cada campanha mostra:
+Na campanha, os leads que merecem atenção agora têm a opção:
 
-- quantidade de leads em atendimento;
-- lista de leads em atendimento;
-- quantidade de leads que merecem atenção;
-- lista de leads que merecem atenção;
-- motivo do alerta de atenção;
-- comparativo de VGV projetado, em negociação e realizado.
+**Marcar tratado**
 
-## Relatórios
+Ao marcar como tratado, o lead sai da lista de atenção daquela campanha.
 
-O relatório de campanhas agora inclui:
+Se o problema mudar depois, por exemplo nova proposta vencida, nova reserva vencida ou mudança relevante no lead, o alerta volta a aparecer.
 
-- leads;
-- leads em atendimento;
-- leads que merecem atenção;
-- clientes A;
-- propostas;
-- reservas;
-- clientes;
-- VGV projetado;
-- VGV em negociação;
-- VGV realizado;
-- conversão;
-- CPL.
+## Gráficos
 
-Também inclui uma tabela com os leads que merecem atenção e o respectivo motivo.
+Os gráficos de **Comparativo de VGV da campanha** foram reduzidos e padronizados.
 
-## VGV
+Também foram padronizados gráficos similares:
 
-Removida a redundância entre VGV realizado e VGV executado.  
-A partir desta versão, trabalhamos com:
-
-- VGV projetado;
-- VGV em negociação;
-- VGV realizado.
+- barras horizontais;
+- comparação de VGV;
+- fluxo de caixa;
+- gráficos usados em relatórios.
 
 ## Deploy
 
