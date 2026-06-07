@@ -1,16 +1,15 @@
 {
   "product": "Évora Launch OS",
-  "version": "5.10",
-  "base": "v5.9.1",
+  "version": "5.11",
+  "base": "v5.10",
   "mode": "sem banco de dados",
   "target": "Vercel static",
   "changes": [
-    "setor de campanhas",
-    "vínculo de leads com campanhas a qualquer tempo",
-    "campanhas com materiais vinculados",
-    "campanhas com condições comerciais específicas",
-    "métricas de desempenho de campanhas",
-    "relatório de campanhas",
-    "financeiro com VGV projetado e executado"
+    "correção visual do VGV realizado em campanhas",
+    "VGV projetado/realizado/executado com gráficos comparativos",
+    "vínculo e cadastro de leads dentro da campanha",
+    "ranking de SDRs e corretores por campanha",
+    "roteiros, scripts e FAQs por campanha",
+    "cadastro de materiais nas configurações"
   ]
 }

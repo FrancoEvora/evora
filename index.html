@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Évora Launch OS v5.10.1.1 — Sistema de Performance Comercial</title>
+  <title>Évora Launch OS v5.11.1.1 — Sistema de Performance Comercial</title>
   <meta name="description" content="Sistema de performance comercial para loteamentos, com sala de guerra, jornada guiada, simulador, reservas, contratos, clientes, pós-venda e relatórios em PDF.">
   <style>
     :root{
@@ -172,7 +172,7 @@
 @media(max-width:600px){.proposalFlow{grid-template-columns:1fr}}
 
 
-/* v5.10 report intelligence */
+/* v5.11 report intelligence */
 .reportTypeGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
 .reportTypeCard{background:white;border:1px solid var(--line);border-radius:20px;padding:16px;box-shadow:0 8px 24px rgba(23,60,82,.06)}
 .reportTypeCard h3{margin-bottom:7px}
@@ -183,7 +183,7 @@
 .printHint{border:1px solid #C8EFA2;background:#F0FBE9;border-radius:16px;padding:12px;margin-top:12px;color:#3A6F16;font-size:13px;line-height:1.45}
 
 
-/* v5.10 login/local RBAC layer */
+/* v5.11 login/local RBAC layer */
 .loginPage{min-height:100vh;display:grid;grid-template-columns:1fr 430px;background:#fff}
 .loginHero{background:linear-gradient(135deg,#0E2738,#245E82);color:white;padding:44px;display:flex;flex-direction:column;justify-content:space-between}
 .loginHero img{max-width:270px;display:block}
@@ -204,7 +204,7 @@
 @media(max-width:900px){.loginPage{grid-template-columns:1fr}.loginHero{min-height:360px}}
 
 
-/* v5.10 mobile and guided journey refinements */
+/* v5.11 mobile and guided journey refinements */
 .actionButtons{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;padding-top:8px;border-top:1px solid var(--line)}
 .actionButtons .btn{font-size:12px;padding:7px 9px;border-radius:10px}
 .selectFilterGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -221,14 +221,14 @@
 }
 
 
-/* v5.10 checklist refinement */
+/* v5.11 checklist refinement */
 .checkCard .actionButtons{margin-top:12px}
 .checkCard .primaryActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 .checkCard .primaryActions .btn{min-width:132px;justify-content:center}
 .actionNotePreview{margin-top:8px;padding:8px 10px;border-radius:12px;background:#F8FBFC;border:1px dashed var(--line);font-size:12px;color:var(--muted)}
 
 
-/* v5.10 proposal and material send center */
+/* v5.11 proposal and material send center */
 .materialSendGrid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .materialChecklist{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
 .materialItem{border:1px solid var(--line);background:white;border-radius:16px;padding:12px}
@@ -245,7 +245,7 @@
 @media(max-width:950px){.materialSendGrid,.proposalDetailGrid{grid-template-columns:1fr}}
 
 
-/* v5.10 finance and backend-ready communications */
+/* v5.11 finance and backend-ready communications */
 .backendBadge{display:inline-flex;border:1px solid #BFDBFE;background:#EFF6FF;color:#1D4ED8;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:900;margin:3px}
 .queueBox{border:1px dashed var(--line);background:#F8FBFC;border-radius:16px;padding:12px;margin-top:10px}
 .financeKpiGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
@@ -262,7 +262,7 @@
 @media(max-width:1000px){.financeGrid{grid-template-columns:1fr}.financeToolbar{flex-direction:column;align-items:stretch}.financeToolbar .btn,.financeToolbar input,.financeToolbar select{width:100%}}
 
 
-/* v5.10 finance period and VGV */
+/* v5.11 finance period and VGV */
 .periodPanel{border:1px solid var(--line);background:white;border-radius:18px;padding:14px;margin:0 0 14px}
 .periodQuick{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
 .cashFlowGrid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
@@ -275,7 +275,7 @@
 @media(max-width:1000px){.cashFlowGrid{grid-template-columns:1fr}.periodQuick .btn{width:100%;justify-content:center}}
 
 
-/* v5.10 campaigns */
+/* v5.11 campaigns */
 .campaignGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
 .campaignCard{border:1px solid var(--line);background:white;border-radius:20px;padding:16px;box-shadow:0 8px 24px rgba(23,60,82,.06)}
 .campaignCard h3{margin-bottom:6px}
@@ -290,18 +290,39 @@
 .campaignReportBox{border:1px solid var(--line);background:white;border-radius:18px;padding:14px;margin-top:12px}
 @media(max-width:900px){.campaignKpis{grid-template-columns:repeat(2,minmax(0,1fr))}.campaignSelect{width:100%}}
 
+
+/* v5.11 campaigns advanced */
+.campaignKpis{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+.campaignKpi{min-height:72px;overflow:hidden}
+.campaignKpi b{font-size:16px!important;line-height:1.12;word-break:break-word;overflow-wrap:anywhere}
+.campaignKpi span{line-height:1.2}
+.campaignVgvPanel{border:1px solid var(--line);background:white;border-radius:18px;padding:14px;margin-top:12px}
+.campaignVgvPanel svg{width:100%;height:auto;display:block}
+.campaignPeopleGrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+.rankBadge{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:999px;background:linear-gradient(135deg,var(--green),var(--blue));color:white;font-weight:900;font-size:12px;margin-right:6px}
+.scriptBox{border:1px solid var(--line);background:#fff;border-radius:16px;padding:12px;margin-top:10px}
+.scriptBox pre{white-space:pre-wrap;font-family:inherit;color:var(--muted);margin:0;line-height:1.45}
+.faqItem{border:1px solid var(--line);background:#F8FBFC;border-radius:14px;padding:10px;margin-top:8px}
+.leadLinkGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:8px;margin-top:10px}
+.leadLinkItem{border:1px solid var(--line);background:white;border-radius:14px;padding:10px;display:flex;gap:8px;align-items:flex-start}
+.materialManagerGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.materialManagerCard{border:1px solid var(--line);background:white;border-radius:16px;padding:12px}
+.vgvEnterprisePanel{border:1px solid #C8EFA2;background:linear-gradient(135deg,#F0FBE9,#FFFFFF);border-radius:20px;padding:16px;margin-bottom:16px}
+.vgvEnterprisePanel svg{width:100%;height:auto;display:block;margin-top:10px}
+@media(max-width:950px){.campaignPeopleGrid{grid-template-columns:1fr}.campaignKpis{grid-template-columns:1fr!important}}
+
 </style>
 </head>
 <body>
-  <div id="app"><div style="padding:30px;font-family:system-ui"><h2>Carregando Évora Launch OS v5.10.1.1...</h2></div></div>
+  <div id="app"><div style="padding:30px;font-family:system-ui"><h2>Carregando Évora Launch OS v5.11.1.1...</h2></div></div>
   <div id="modal-root"></div>
   <div id="toast" class="toast"></div>
 <script>
 (() => {
 'use strict';
-const APP_VERSION = '5.10';
+const APP_VERSION = '5.11';
 const RELEASE_DATE = '2026-06-05';
-const STORAGE_KEY = 'evora-launch-os-v5100';
+const STORAGE_KEY = 'evora-launch-os-v5110';
 
 const money = new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'});
 const dateFmt = new Intl.DateTimeFormat('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric'});
@@ -711,7 +732,7 @@ function reportHtml(type){
   const {a,origin,broker,stock}=reportData(type);
   const table=(title,rows)=>`<h2>${title}</h2><table><thead><tr>${Object.keys(rows[0]||{}).map(k=>`<th>${k}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr>${Object.values(r).map(v=>`<td>${esc(v)}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
   return `<!doctype html><html><head><meta charset="utf-8"><title>Relatório ${esc(type)}</title><style>body{font-family:Arial,sans-serif;color:#173C52;margin:36px}h1{font-size:26px}h2{margin-top:28px}table{border-collapse:collapse;width:100%;margin-top:8px}th,td{border:1px solid #d8e2e8;padding:8px;text-align:left;font-size:12px}th{background:#f1f6f8}.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.kpi{border:1px solid #d8e2e8;border-radius:12px;padding:12px}.kpi b{display:block;font-size:20px;margin-top:6px}.brand{display:flex;align-items:center;gap:12px}.brand img{height:42px}@media print{button{display:none}}
-/* v5.10 login/local RBAC layer */
+/* v5.11 login/local RBAC layer */
 .loginPage{min-height:100vh;display:grid;grid-template-columns:1fr 430px;background:#fff}
 .loginHero{background:linear-gradient(135deg,#0E2738,#245E82);color:white;padding:44px;display:flex;flex-direction:column;justify-content:space-between}
 .loginHero img{max-width:270px;display:block}
@@ -732,7 +753,7 @@ function reportHtml(type){
 @media(max-width:900px){.loginPage{grid-template-columns:1fr}.loginHero{min-height:360px}}
 
 
-/* v5.10 mobile and guided journey refinements */
+/* v5.11 mobile and guided journey refinements */
 .actionButtons{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;padding-top:8px;border-top:1px solid var(--line)}
 .actionButtons .btn{font-size:12px;padding:7px 9px;border-radius:10px}
 .selectFilterGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -749,14 +770,14 @@ function reportHtml(type){
 }
 
 
-/* v5.10 checklist refinement */
+/* v5.11 checklist refinement */
 .checkCard .actionButtons{margin-top:12px}
 .checkCard .primaryActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 .checkCard .primaryActions .btn{min-width:132px;justify-content:center}
 .actionNotePreview{margin-top:8px;padding:8px 10px;border-radius:12px;background:#F8FBFC;border:1px dashed var(--line);font-size:12px;color:var(--muted)}
 
 
-/* v5.10 proposal and material send center */
+/* v5.11 proposal and material send center */
 .materialSendGrid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .materialChecklist{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
 .materialItem{border:1px solid var(--line);background:white;border-radius:16px;padding:12px}
@@ -773,7 +794,7 @@ function reportHtml(type){
 @media(max-width:950px){.materialSendGrid,.proposalDetailGrid{grid-template-columns:1fr}}
 
 
-/* v5.10 finance and backend-ready communications */
+/* v5.11 finance and backend-ready communications */
 .backendBadge{display:inline-flex;border:1px solid #BFDBFE;background:#EFF6FF;color:#1D4ED8;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:900;margin:3px}
 .queueBox{border:1px dashed var(--line);background:#F8FBFC;border-radius:16px;padding:12px;margin-top:10px}
 .financeKpiGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
@@ -790,7 +811,7 @@ function reportHtml(type){
 @media(max-width:1000px){.financeGrid{grid-template-columns:1fr}.financeToolbar{flex-direction:column;align-items:stretch}.financeToolbar .btn,.financeToolbar input,.financeToolbar select{width:100%}}
 
 
-/* v5.10 finance period and VGV */
+/* v5.11 finance period and VGV */
 .periodPanel{border:1px solid var(--line);background:white;border-radius:18px;padding:14px;margin:0 0 14px}
 .periodQuick{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
 .cashFlowGrid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
@@ -803,7 +824,7 @@ function reportHtml(type){
 @media(max-width:1000px){.cashFlowGrid{grid-template-columns:1fr}.periodQuick .btn{width:100%;justify-content:center}}
 
 
-/* v5.10 campaigns */
+/* v5.11 campaigns */
 .campaignGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
 .campaignCard{border:1px solid var(--line);background:white;border-radius:20px;padding:16px;box-shadow:0 8px 24px rgba(23,60,82,.06)}
 .campaignCard h3{margin-bottom:6px}
@@ -817,6 +838,27 @@ function reportHtml(type){
 .campaignSelect{min-width:190px;border:1px solid var(--line);border-radius:10px;padding:6px 8px;background:white}
 .campaignReportBox{border:1px solid var(--line);background:white;border-radius:18px;padding:14px;margin-top:12px}
 @media(max-width:900px){.campaignKpis{grid-template-columns:repeat(2,minmax(0,1fr))}.campaignSelect{width:100%}}
+
+
+/* v5.11 campaigns advanced */
+.campaignKpis{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+.campaignKpi{min-height:72px;overflow:hidden}
+.campaignKpi b{font-size:16px!important;line-height:1.12;word-break:break-word;overflow-wrap:anywhere}
+.campaignKpi span{line-height:1.2}
+.campaignVgvPanel{border:1px solid var(--line);background:white;border-radius:18px;padding:14px;margin-top:12px}
+.campaignVgvPanel svg{width:100%;height:auto;display:block}
+.campaignPeopleGrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+.rankBadge{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:999px;background:linear-gradient(135deg,var(--green),var(--blue));color:white;font-weight:900;font-size:12px;margin-right:6px}
+.scriptBox{border:1px solid var(--line);background:#fff;border-radius:16px;padding:12px;margin-top:10px}
+.scriptBox pre{white-space:pre-wrap;font-family:inherit;color:var(--muted);margin:0;line-height:1.45}
+.faqItem{border:1px solid var(--line);background:#F8FBFC;border-radius:14px;padding:10px;margin-top:8px}
+.leadLinkGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:8px;margin-top:10px}
+.leadLinkItem{border:1px solid var(--line);background:white;border-radius:14px;padding:10px;display:flex;gap:8px;align-items:flex-start}
+.materialManagerGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.materialManagerCard{border:1px solid var(--line);background:white;border-radius:16px;padding:12px}
+.vgvEnterprisePanel{border:1px solid #C8EFA2;background:linear-gradient(135deg,#F0FBE9,#FFFFFF);border-radius:20px;padding:16px;margin-bottom:16px}
+.vgvEnterprisePanel svg{width:100%;height:auto;display:block;margin-top:10px}
+@media(max-width:950px){.campaignPeopleGrid{grid-template-columns:1fr}.campaignKpis{grid-template-columns:1fr!important}}
 
 </style></head><body><div class="brand"><img src="assets/logo_evora.png"><div><h1>Relatório ${esc(type)} · ${esc(project().name)}</h1><p>${fmtDateTime(now())}</p></div></div><div class="kpis"><div class="kpi">Leads<b>${a.leads.length}</b></div><div class="kpi">Clientes A<b>${a.a}</b></div><div class="kpi">Reservas<b>${a.res.length}</b></div><div class="kpi">Carteira<b>${fmtMoney(a.carteira)}</b></div></div>${table('Origem',origin)}${table('Corretores',broker)}${table('Estoque',stock)}<h2>Alertas</h2><p>Leads parados: ${a.stalled.length}<br>Clientes sem comunicação 30+: ${a.silent.length}</p><button onclick="window.print()">Salvar/Imprimir PDF</button><script>setTimeout(()=>window.print(),400)<\/script></body></html>`;
 }
@@ -900,7 +942,7 @@ function createProposalFromSimulator(){
 function proposalPdfHtml(p){
   const l=leadBy(p.leadId), lot=lotBy(p.lotId);
   return `<!doctype html><html><head><meta charset="utf-8"><title>Proposta ${esc(l.name)}</title><style>body{font-family:Arial,sans-serif;color:#173C52;margin:36px}h1{font-size:26px}.box{border:1px solid #d8e2e8;border-radius:14px;padding:14px;margin:12px 0}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.brand{display:flex;gap:12px;align-items:center}.brand img{height:44px}table{border-collapse:collapse;width:100%}td,th{border:1px solid #d8e2e8;padding:9px;text-align:left}button{padding:10px 14px;border:0;border-radius:10px;background:#245E82;color:white;font-weight:bold}@media print{button{display:none}}
-/* v5.10 login/local RBAC layer */
+/* v5.11 login/local RBAC layer */
 .loginPage{min-height:100vh;display:grid;grid-template-columns:1fr 430px;background:#fff}
 .loginHero{background:linear-gradient(135deg,#0E2738,#245E82);color:white;padding:44px;display:flex;flex-direction:column;justify-content:space-between}
 .loginHero img{max-width:270px;display:block}
@@ -921,7 +963,7 @@ function proposalPdfHtml(p){
 @media(max-width:900px){.loginPage{grid-template-columns:1fr}.loginHero{min-height:360px}}
 
 
-/* v5.10 mobile and guided journey refinements */
+/* v5.11 mobile and guided journey refinements */
 .actionButtons{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;padding-top:8px;border-top:1px solid var(--line)}
 .actionButtons .btn{font-size:12px;padding:7px 9px;border-radius:10px}
 .selectFilterGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -938,14 +980,14 @@ function proposalPdfHtml(p){
 }
 
 
-/* v5.10 checklist refinement */
+/* v5.11 checklist refinement */
 .checkCard .actionButtons{margin-top:12px}
 .checkCard .primaryActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 .checkCard .primaryActions .btn{min-width:132px;justify-content:center}
 .actionNotePreview{margin-top:8px;padding:8px 10px;border-radius:12px;background:#F8FBFC;border:1px dashed var(--line);font-size:12px;color:var(--muted)}
 
 
-/* v5.10 proposal and material send center */
+/* v5.11 proposal and material send center */
 .materialSendGrid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .materialChecklist{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
 .materialItem{border:1px solid var(--line);background:white;border-radius:16px;padding:12px}
@@ -962,7 +1004,7 @@ function proposalPdfHtml(p){
 @media(max-width:950px){.materialSendGrid,.proposalDetailGrid{grid-template-columns:1fr}}
 
 
-/* v5.10 finance and backend-ready communications */
+/* v5.11 finance and backend-ready communications */
 .backendBadge{display:inline-flex;border:1px solid #BFDBFE;background:#EFF6FF;color:#1D4ED8;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:900;margin:3px}
 .queueBox{border:1px dashed var(--line);background:#F8FBFC;border-radius:16px;padding:12px;margin-top:10px}
 .financeKpiGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
@@ -979,7 +1021,7 @@ function proposalPdfHtml(p){
 @media(max-width:1000px){.financeGrid{grid-template-columns:1fr}.financeToolbar{flex-direction:column;align-items:stretch}.financeToolbar .btn,.financeToolbar input,.financeToolbar select{width:100%}}
 
 
-/* v5.10 finance period and VGV */
+/* v5.11 finance period and VGV */
 .periodPanel{border:1px solid var(--line);background:white;border-radius:18px;padding:14px;margin:0 0 14px}
 .periodQuick{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
 .cashFlowGrid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
@@ -992,7 +1034,7 @@ function proposalPdfHtml(p){
 @media(max-width:1000px){.cashFlowGrid{grid-template-columns:1fr}.periodQuick .btn{width:100%;justify-content:center}}
 
 
-/* v5.10 campaigns */
+/* v5.11 campaigns */
 .campaignGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
 .campaignCard{border:1px solid var(--line);background:white;border-radius:20px;padding:16px;box-shadow:0 8px 24px rgba(23,60,82,.06)}
 .campaignCard h3{margin-bottom:6px}
@@ -1006,6 +1048,27 @@ function proposalPdfHtml(p){
 .campaignSelect{min-width:190px;border:1px solid var(--line);border-radius:10px;padding:6px 8px;background:white}
 .campaignReportBox{border:1px solid var(--line);background:white;border-radius:18px;padding:14px;margin-top:12px}
 @media(max-width:900px){.campaignKpis{grid-template-columns:repeat(2,minmax(0,1fr))}.campaignSelect{width:100%}}
+
+
+/* v5.11 campaigns advanced */
+.campaignKpis{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+.campaignKpi{min-height:72px;overflow:hidden}
+.campaignKpi b{font-size:16px!important;line-height:1.12;word-break:break-word;overflow-wrap:anywhere}
+.campaignKpi span{line-height:1.2}
+.campaignVgvPanel{border:1px solid var(--line);background:white;border-radius:18px;padding:14px;margin-top:12px}
+.campaignVgvPanel svg{width:100%;height:auto;display:block}
+.campaignPeopleGrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+.rankBadge{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:999px;background:linear-gradient(135deg,var(--green),var(--blue));color:white;font-weight:900;font-size:12px;margin-right:6px}
+.scriptBox{border:1px solid var(--line);background:#fff;border-radius:16px;padding:12px;margin-top:10px}
+.scriptBox pre{white-space:pre-wrap;font-family:inherit;color:var(--muted);margin:0;line-height:1.45}
+.faqItem{border:1px solid var(--line);background:#F8FBFC;border-radius:14px;padding:10px;margin-top:8px}
+.leadLinkGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:8px;margin-top:10px}
+.leadLinkItem{border:1px solid var(--line);background:white;border-radius:14px;padding:10px;display:flex;gap:8px;align-items:flex-start}
+.materialManagerGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.materialManagerCard{border:1px solid var(--line);background:white;border-radius:16px;padding:12px}
+.vgvEnterprisePanel{border:1px solid #C8EFA2;background:linear-gradient(135deg,#F0FBE9,#FFFFFF);border-radius:20px;padding:16px;margin-bottom:16px}
+.vgvEnterprisePanel svg{width:100%;height:auto;display:block;margin-top:10px}
+@media(max-width:950px){.campaignPeopleGrid{grid-template-columns:1fr}.campaignKpis{grid-template-columns:1fr!important}}
 
 </style></head><body><div class="brand"><img src="assets/logo_evora.png"><div><h1>Proposta comercial</h1><p>${esc(project().name)} · ${fmtDateTime(now())}</p></div></div><div class="box"><b>Cliente:</b> ${esc(l.name)}<br><b>Lote:</b> ${esc(lotLabel(lot.id))} · ${lot.area} m²<br><b>Status:</b> ${esc(p.status)} · <b>Validade:</b> ${fmtDate(p.expiresAt)}</div><table><tr><th>Preço</th><td>${fmtMoney(lot.price)}</td></tr><tr><th>Entrada</th><td>${p.entry}%</td></tr><tr><th>Mensais</th><td>${p.months}x ${fmtMoney(p.monthly)}</td></tr><tr><th>Anuais</th><td>${p.annuals}x ${fmtMoney(p.annual)}</td></tr><tr><th>Correção</th><td>${esc(p.index)} + ${p.interest}% a.m.</td></tr><tr><th>Total nominal</th><td>${fmtMoney(p.total)}</td></tr></table><div class="box"><h2>Confirmação</h2><p>Para seguir, o cliente deve confirmar interesse e enviar documentação para contrato. Esta página serve como modelo da futura página de confirmação online.</p><button onclick="alert('Confirmação demonstrativa registrada. Em produção, este botão gravará o aceite no sistema.')">Confirmar interesse</button></div><button onclick="window.print()">Salvar/Imprimir PDF</button></body></html>`;
 }
@@ -1065,7 +1128,7 @@ function proposalFlowHtml(p){
 function proposalPdfHtml(p){
   const l=leadBy(p.leadId), lot=lotBy(p.lotId);
   return `<!doctype html><html><head><meta charset="utf-8"><title>Proposta ${esc(l.name)}</title><style>body{font-family:Arial,sans-serif;color:#173C52;margin:36px}h1{font-size:26px}.box{border:1px solid #d8e2e8;border-radius:14px;padding:14px;margin:12px 0}.brand{display:flex;gap:12px;align-items:center}.brand img{height:44px}table{border-collapse:collapse;width:100%;margin-top:14px}td,th{border:1px solid #d8e2e8;padding:9px;text-align:left}th{background:#f3f7f9}button{padding:10px 14px;border:0;border-radius:10px;background:#245E82;color:white;font-weight:bold}.confirm{background:#F0FBE9;border:1px solid #C8EFA2;border-radius:14px;padding:14px;margin-top:16px}@media print{button{display:none}}
-/* v5.10 login/local RBAC layer */
+/* v5.11 login/local RBAC layer */
 .loginPage{min-height:100vh;display:grid;grid-template-columns:1fr 430px;background:#fff}
 .loginHero{background:linear-gradient(135deg,#0E2738,#245E82);color:white;padding:44px;display:flex;flex-direction:column;justify-content:space-between}
 .loginHero img{max-width:270px;display:block}
@@ -1086,7 +1149,7 @@ function proposalPdfHtml(p){
 @media(max-width:900px){.loginPage{grid-template-columns:1fr}.loginHero{min-height:360px}}
 
 
-/* v5.10 mobile and guided journey refinements */
+/* v5.11 mobile and guided journey refinements */
 .actionButtons{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;padding-top:8px;border-top:1px solid var(--line)}
 .actionButtons .btn{font-size:12px;padding:7px 9px;border-radius:10px}
 .selectFilterGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -1103,14 +1166,14 @@ function proposalPdfHtml(p){
 }
 
 
-/* v5.10 checklist refinement */
+/* v5.11 checklist refinement */
 .checkCard .actionButtons{margin-top:12px}
 .checkCard .primaryActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 .checkCard .primaryActions .btn{min-width:132px;justify-content:center}
 .actionNotePreview{margin-top:8px;padding:8px 10px;border-radius:12px;background:#F8FBFC;border:1px dashed var(--line);font-size:12px;color:var(--muted)}
 
 
-/* v5.10 proposal and material send center */
+/* v5.11 proposal and material send center */
 .materialSendGrid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .materialChecklist{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
 .materialItem{border:1px solid var(--line);background:white;border-radius:16px;padding:12px}
@@ -1127,7 +1190,7 @@ function proposalPdfHtml(p){
 @media(max-width:950px){.materialSendGrid,.proposalDetailGrid{grid-template-columns:1fr}}
 
 
-/* v5.10 finance and backend-ready communications */
+/* v5.11 finance and backend-ready communications */
 .backendBadge{display:inline-flex;border:1px solid #BFDBFE;background:#EFF6FF;color:#1D4ED8;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:900;margin:3px}
 .queueBox{border:1px dashed var(--line);background:#F8FBFC;border-radius:16px;padding:12px;margin-top:10px}
 .financeKpiGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
@@ -1144,7 +1207,7 @@ function proposalPdfHtml(p){
 @media(max-width:1000px){.financeGrid{grid-template-columns:1fr}.financeToolbar{flex-direction:column;align-items:stretch}.financeToolbar .btn,.financeToolbar input,.financeToolbar select{width:100%}}
 
 
-/* v5.10 finance period and VGV */
+/* v5.11 finance period and VGV */
 .periodPanel{border:1px solid var(--line);background:white;border-radius:18px;padding:14px;margin:0 0 14px}
 .periodQuick{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
 .cashFlowGrid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
@@ -1157,7 +1220,7 @@ function proposalPdfHtml(p){
 @media(max-width:1000px){.cashFlowGrid{grid-template-columns:1fr}.periodQuick .btn{width:100%;justify-content:center}}
 
 
-/* v5.10 campaigns */
+/* v5.11 campaigns */
 .campaignGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
 .campaignCard{border:1px solid var(--line);background:white;border-radius:20px;padding:16px;box-shadow:0 8px 24px rgba(23,60,82,.06)}
 .campaignCard h3{margin-bottom:6px}
@@ -1171,6 +1234,27 @@ function proposalPdfHtml(p){
 .campaignSelect{min-width:190px;border:1px solid var(--line);border-radius:10px;padding:6px 8px;background:white}
 .campaignReportBox{border:1px solid var(--line);background:white;border-radius:18px;padding:14px;margin-top:12px}
 @media(max-width:900px){.campaignKpis{grid-template-columns:repeat(2,minmax(0,1fr))}.campaignSelect{width:100%}}
+
+
+/* v5.11 campaigns advanced */
+.campaignKpis{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+.campaignKpi{min-height:72px;overflow:hidden}
+.campaignKpi b{font-size:16px!important;line-height:1.12;word-break:break-word;overflow-wrap:anywhere}
+.campaignKpi span{line-height:1.2}
+.campaignVgvPanel{border:1px solid var(--line);background:white;border-radius:18px;padding:14px;margin-top:12px}
+.campaignVgvPanel svg{width:100%;height:auto;display:block}
+.campaignPeopleGrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+.rankBadge{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:999px;background:linear-gradient(135deg,var(--green),var(--blue));color:white;font-weight:900;font-size:12px;margin-right:6px}
+.scriptBox{border:1px solid var(--line);background:#fff;border-radius:16px;padding:12px;margin-top:10px}
+.scriptBox pre{white-space:pre-wrap;font-family:inherit;color:var(--muted);margin:0;line-height:1.45}
+.faqItem{border:1px solid var(--line);background:#F8FBFC;border-radius:14px;padding:10px;margin-top:8px}
+.leadLinkGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:8px;margin-top:10px}
+.leadLinkItem{border:1px solid var(--line);background:white;border-radius:14px;padding:10px;display:flex;gap:8px;align-items:flex-start}
+.materialManagerGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.materialManagerCard{border:1px solid var(--line);background:white;border-radius:16px;padding:12px}
+.vgvEnterprisePanel{border:1px solid #C8EFA2;background:linear-gradient(135deg,#F0FBE9,#FFFFFF);border-radius:20px;padding:16px;margin-bottom:16px}
+.vgvEnterprisePanel svg{width:100%;height:auto;display:block;margin-top:10px}
+@media(max-width:950px){.campaignPeopleGrid{grid-template-columns:1fr}.campaignKpis{grid-template-columns:1fr!important}}
 
 </style></head><body><div class="brand"><img src="assets/logo_evora.png"><div><h1>Proposta comercial</h1><p>${esc(project().name)} · ${fmtDateTime(now())}</p></div></div><div class="box"><b>Cliente:</b> ${esc(l.name)}<br><b>Lote:</b> ${esc(lotLabel(lot.id))} · ${lot.area} m²<br><b>Status:</b> ${esc(p.status)} · <b>Validade:</b> ${fmtDate(p.expiresAt)}</div><table><tr><th>Preço do lote</th><td>${fmtMoney(lot.price)}</td></tr><tr><th>Entrada</th><td>${p.entry}%</td></tr><tr><th>Mensais</th><td>${p.months}x ${fmtMoney(p.monthly)}</td></tr><tr><th>Anuais</th><td>${p.annuals}x ${fmtMoney(p.annual)}</td></tr><tr><th>Correção</th><td>${esc(p.index)} + ${p.interest}% a.m.</td></tr><tr><th>Total nominal</th><td>${fmtMoney(p.total)}</td></tr></table><div class="confirm"><h2>Confirmação</h2><p>Esta página representa o ambiente de confirmação. Na versão com backend, o botão gravará o aceite do cliente, data, IP e versão da proposta.</p><button onclick="alert('Confirmação demonstrativa registrada. Em produção, será salvo no sistema.')">Confirmar interesse</button></div><button onclick="window.print()">Salvar/Imprimir PDF</button></body></html>`;
 }
@@ -1256,7 +1340,7 @@ function reportHtml(type){
   const chart3=chartBars(d.brokers,'Corretor','Propostas','#173C52',260);
   const chart4=chartBars(d.origin,'Origem','Leads','#84C225',260);
   return `<!doctype html><html><head><meta charset="utf-8"><title>Relatório ${esc(type)}</title><style>body{font-family:Arial,sans-serif;color:#173C52;margin:34px}h1{font-size:26px;margin:0}h2{margin-top:28px}p{color:#5f7280}.brand{display:flex;align-items:center;gap:12px;margin-bottom:18px}.brand img{height:42px}.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:18px 0}.kpi{border:1px solid #d8e2e8;border-radius:12px;padding:12px}.kpi b{display:block;font-size:20px;margin-top:6px}.chart{border:1px solid #d8e2e8;border-radius:14px;padding:12px;margin:14px 0;page-break-inside:avoid}table{border-collapse:collapse;width:100%;margin-top:8px}th,td{border:1px solid #d8e2e8;padding:8px;text-align:left;font-size:12px}th{background:#f1f6f8}@media print{button{display:none}body{margin:20px}}
-/* v5.10 login/local RBAC layer */
+/* v5.11 login/local RBAC layer */
 .loginPage{min-height:100vh;display:grid;grid-template-columns:1fr 430px;background:#fff}
 .loginHero{background:linear-gradient(135deg,#0E2738,#245E82);color:white;padding:44px;display:flex;flex-direction:column;justify-content:space-between}
 .loginHero img{max-width:270px;display:block}
@@ -1277,7 +1361,7 @@ function reportHtml(type){
 @media(max-width:900px){.loginPage{grid-template-columns:1fr}.loginHero{min-height:360px}}
 
 
-/* v5.10 mobile and guided journey refinements */
+/* v5.11 mobile and guided journey refinements */
 .actionButtons{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;padding-top:8px;border-top:1px solid var(--line)}
 .actionButtons .btn{font-size:12px;padding:7px 9px;border-radius:10px}
 .selectFilterGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -1294,14 +1378,14 @@ function reportHtml(type){
 }
 
 
-/* v5.10 checklist refinement */
+/* v5.11 checklist refinement */
 .checkCard .actionButtons{margin-top:12px}
 .checkCard .primaryActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 .checkCard .primaryActions .btn{min-width:132px;justify-content:center}
 .actionNotePreview{margin-top:8px;padding:8px 10px;border-radius:12px;background:#F8FBFC;border:1px dashed var(--line);font-size:12px;color:var(--muted)}
 
 
-/* v5.10 proposal and material send center */
+/* v5.11 proposal and material send center */
 .materialSendGrid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .materialChecklist{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
 .materialItem{border:1px solid var(--line);background:white;border-radius:16px;padding:12px}
@@ -1318,7 +1402,7 @@ function reportHtml(type){
 @media(max-width:950px){.materialSendGrid,.proposalDetailGrid{grid-template-columns:1fr}}
 
 
-/* v5.10 finance and backend-ready communications */
+/* v5.11 finance and backend-ready communications */
 .backendBadge{display:inline-flex;border:1px solid #BFDBFE;background:#EFF6FF;color:#1D4ED8;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:900;margin:3px}
 .queueBox{border:1px dashed var(--line);background:#F8FBFC;border-radius:16px;padding:12px;margin-top:10px}
 .financeKpiGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
@@ -1335,7 +1419,7 @@ function reportHtml(type){
 @media(max-width:1000px){.financeGrid{grid-template-columns:1fr}.financeToolbar{flex-direction:column;align-items:stretch}.financeToolbar .btn,.financeToolbar input,.financeToolbar select{width:100%}}
 
 
-/* v5.10 finance period and VGV */
+/* v5.11 finance period and VGV */
 .periodPanel{border:1px solid var(--line);background:white;border-radius:18px;padding:14px;margin:0 0 14px}
 .periodQuick{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
 .cashFlowGrid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
@@ -1348,7 +1432,7 @@ function reportHtml(type){
 @media(max-width:1000px){.cashFlowGrid{grid-template-columns:1fr}.periodQuick .btn{width:100%;justify-content:center}}
 
 
-/* v5.10 campaigns */
+/* v5.11 campaigns */
 .campaignGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
 .campaignCard{border:1px solid var(--line);background:white;border-radius:20px;padding:16px;box-shadow:0 8px 24px rgba(23,60,82,.06)}
 .campaignCard h3{margin-bottom:6px}
@@ -1363,12 +1447,33 @@ function reportHtml(type){
 .campaignReportBox{border:1px solid var(--line);background:white;border-radius:18px;padding:14px;margin-top:12px}
 @media(max-width:900px){.campaignKpis{grid-template-columns:repeat(2,minmax(0,1fr))}.campaignSelect{width:100%}}
 
+
+/* v5.11 campaigns advanced */
+.campaignKpis{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+.campaignKpi{min-height:72px;overflow:hidden}
+.campaignKpi b{font-size:16px!important;line-height:1.12;word-break:break-word;overflow-wrap:anywhere}
+.campaignKpi span{line-height:1.2}
+.campaignVgvPanel{border:1px solid var(--line);background:white;border-radius:18px;padding:14px;margin-top:12px}
+.campaignVgvPanel svg{width:100%;height:auto;display:block}
+.campaignPeopleGrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+.rankBadge{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:999px;background:linear-gradient(135deg,var(--green),var(--blue));color:white;font-weight:900;font-size:12px;margin-right:6px}
+.scriptBox{border:1px solid var(--line);background:#fff;border-radius:16px;padding:12px;margin-top:10px}
+.scriptBox pre{white-space:pre-wrap;font-family:inherit;color:var(--muted);margin:0;line-height:1.45}
+.faqItem{border:1px solid var(--line);background:#F8FBFC;border-radius:14px;padding:10px;margin-top:8px}
+.leadLinkGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:8px;margin-top:10px}
+.leadLinkItem{border:1px solid var(--line);background:white;border-radius:14px;padding:10px;display:flex;gap:8px;align-items:flex-start}
+.materialManagerGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.materialManagerCard{border:1px solid var(--line);background:white;border-radius:16px;padding:12px}
+.vgvEnterprisePanel{border:1px solid #C8EFA2;background:linear-gradient(135deg,#F0FBE9,#FFFFFF);border-radius:20px;padding:16px;margin-bottom:16px}
+.vgvEnterprisePanel svg{width:100%;height:auto;display:block;margin-top:10px}
+@media(max-width:950px){.campaignPeopleGrid{grid-template-columns:1fr}.campaignKpis{grid-template-columns:1fr!important}}
+
 </style></head><body><div class="brand"><img src="assets/logo_evora.png"><div><h1>Relatório ${esc(type)} · ${esc(project().name)}</h1><p>${fmtDateTime(now())}</p></div></div><div class="kpis"><div class="kpi">Leads<b>${d.a.leads.length}</b></div><div class="kpi">Clientes A<b>${d.a.a}</b></div><div class="kpi">Reservas<b>${d.a.res.length}</b></div><div class="kpi">Carteira<b>${fmtMoney(d.a.carteira)}</b></div></div><div class="chart"><h2>Funil de vendas</h2>${chart1}</div><div class="chart"><h2>Projeção de caixa 12 meses</h2>${chart2}</div><div class="chart"><h2>Performance de corretores</h2>${chart3}</div><div class="chart"><h2>Origem dos leads</h2>${chart4}</div>${tableHtml('Financeiro',d.financial)}${tableHtml('SDR',d.sdrs)}${tableHtml('Corretores',d.brokers)}${tableHtml('Campanhas',d.campaigns)}${tableHtml('Estoque',d.stock)}<h2>Alertas</h2><p>Leads parados: ${d.a.stalled.length}<br>Clientes sem comunicação 30+: ${d.a.silent.length}</p><button onclick="window.print()">Salvar/Imprimir PDF</button><script>setTimeout(()=>window.print(),500)<\/script></body></html>`;
 }
 window.printProposal=printProposal; window.openProposalConfirmation=openProposalConfirmation; window.sendProposalEmail=sendProposalEmail; window.sendProposalWhatsApp=sendProposalWhatsApp; window.markProposalSent=markProposalSent;
 /* ==== v4.2 patch end ==== */
 
-/* ==== v5.10 sector-specific reports patch start ==== */
+/* ==== v5.11 sector-specific reports patch start ==== */
 function reportDefinitions(){
   return [
     {id:'executivo', title:'Executivo diário', desc:'Resumo para diretoria: pressão de compra, gargalos, alertas e próximos comandos.', tags:['Diretoria','Diário','Decisão']},
@@ -1501,7 +1606,7 @@ function reportHtml(type){
   const d=reportData(type);
   const blocks=reportBlocks(type,d);
   return `<!doctype html><html><head><meta charset="utf-8"><title>${esc(reportTitle(type))}</title><style>body{font-family:Arial,sans-serif;color:#173C52;margin:34px}h1{font-size:26px;margin:0}h2{margin-top:28px}p{color:#5f7280}.brand{display:flex;align-items:center;gap:12px;margin-bottom:18px}.brand img{height:42px}.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:18px 0}.kpi{border:1px solid #d8e2e8;border-radius:12px;padding:12px}.kpi b{display:block;font-size:20px;margin-top:6px}.chart{border:1px solid #d8e2e8;border-radius:14px;padding:12px;margin:14px 0;page-break-inside:avoid}table{border-collapse:collapse;width:100%;margin-top:8px;page-break-inside:auto}th,td{border:1px solid #d8e2e8;padding:8px;text-align:left;font-size:12px}th{background:#f1f6f8}.summary{border:1px solid #C8EFA2;background:#F0FBE9;border-radius:14px;padding:14px;margin:16px 0}@media print{button{display:none}body{margin:20px}.chart{break-inside:avoid}}
-/* v5.10 login/local RBAC layer */
+/* v5.11 login/local RBAC layer */
 .loginPage{min-height:100vh;display:grid;grid-template-columns:1fr 430px;background:#fff}
 .loginHero{background:linear-gradient(135deg,#0E2738,#245E82);color:white;padding:44px;display:flex;flex-direction:column;justify-content:space-between}
 .loginHero img{max-width:270px;display:block}
@@ -1522,7 +1627,7 @@ function reportHtml(type){
 @media(max-width:900px){.loginPage{grid-template-columns:1fr}.loginHero{min-height:360px}}
 
 
-/* v5.10 mobile and guided journey refinements */
+/* v5.11 mobile and guided journey refinements */
 .actionButtons{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;padding-top:8px;border-top:1px solid var(--line)}
 .actionButtons .btn{font-size:12px;padding:7px 9px;border-radius:10px}
 .selectFilterGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -1539,14 +1644,14 @@ function reportHtml(type){
 }
 
 
-/* v5.10 checklist refinement */
+/* v5.11 checklist refinement */
 .checkCard .actionButtons{margin-top:12px}
 .checkCard .primaryActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 .checkCard .primaryActions .btn{min-width:132px;justify-content:center}
 .actionNotePreview{margin-top:8px;padding:8px 10px;border-radius:12px;background:#F8FBFC;border:1px dashed var(--line);font-size:12px;color:var(--muted)}
 
 
-/* v5.10 proposal and material send center */
+/* v5.11 proposal and material send center */
 .materialSendGrid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .materialChecklist{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
 .materialItem{border:1px solid var(--line);background:white;border-radius:16px;padding:12px}
@@ -1563,7 +1668,7 @@ function reportHtml(type){
 @media(max-width:950px){.materialSendGrid,.proposalDetailGrid{grid-template-columns:1fr}}
 
 
-/* v5.10 finance and backend-ready communications */
+/* v5.11 finance and backend-ready communications */
 .backendBadge{display:inline-flex;border:1px solid #BFDBFE;background:#EFF6FF;color:#1D4ED8;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:900;margin:3px}
 .queueBox{border:1px dashed var(--line);background:#F8FBFC;border-radius:16px;padding:12px;margin-top:10px}
 .financeKpiGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
@@ -1580,7 +1685,7 @@ function reportHtml(type){
 @media(max-width:1000px){.financeGrid{grid-template-columns:1fr}.financeToolbar{flex-direction:column;align-items:stretch}.financeToolbar .btn,.financeToolbar input,.financeToolbar select{width:100%}}
 
 
-/* v5.10 finance period and VGV */
+/* v5.11 finance period and VGV */
 .periodPanel{border:1px solid var(--line);background:white;border-radius:18px;padding:14px;margin:0 0 14px}
 .periodQuick{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
 .cashFlowGrid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
@@ -1593,7 +1698,7 @@ function reportHtml(type){
 @media(max-width:1000px){.cashFlowGrid{grid-template-columns:1fr}.periodQuick .btn{width:100%;justify-content:center}}
 
 
-/* v5.10 campaigns */
+/* v5.11 campaigns */
 .campaignGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
 .campaignCard{border:1px solid var(--line);background:white;border-radius:20px;padding:16px;box-shadow:0 8px 24px rgba(23,60,82,.06)}
 .campaignCard h3{margin-bottom:6px}
@@ -1607,6 +1712,27 @@ function reportHtml(type){
 .campaignSelect{min-width:190px;border:1px solid var(--line);border-radius:10px;padding:6px 8px;background:white}
 .campaignReportBox{border:1px solid var(--line);background:white;border-radius:18px;padding:14px;margin-top:12px}
 @media(max-width:900px){.campaignKpis{grid-template-columns:repeat(2,minmax(0,1fr))}.campaignSelect{width:100%}}
+
+
+/* v5.11 campaigns advanced */
+.campaignKpis{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+.campaignKpi{min-height:72px;overflow:hidden}
+.campaignKpi b{font-size:16px!important;line-height:1.12;word-break:break-word;overflow-wrap:anywhere}
+.campaignKpi span{line-height:1.2}
+.campaignVgvPanel{border:1px solid var(--line);background:white;border-radius:18px;padding:14px;margin-top:12px}
+.campaignVgvPanel svg{width:100%;height:auto;display:block}
+.campaignPeopleGrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+.rankBadge{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:999px;background:linear-gradient(135deg,var(--green),var(--blue));color:white;font-weight:900;font-size:12px;margin-right:6px}
+.scriptBox{border:1px solid var(--line);background:#fff;border-radius:16px;padding:12px;margin-top:10px}
+.scriptBox pre{white-space:pre-wrap;font-family:inherit;color:var(--muted);margin:0;line-height:1.45}
+.faqItem{border:1px solid var(--line);background:#F8FBFC;border-radius:14px;padding:10px;margin-top:8px}
+.leadLinkGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:8px;margin-top:10px}
+.leadLinkItem{border:1px solid var(--line);background:white;border-radius:14px;padding:10px;display:flex;gap:8px;align-items:flex-start}
+.materialManagerGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.materialManagerCard{border:1px solid var(--line);background:white;border-radius:16px;padding:12px}
+.vgvEnterprisePanel{border:1px solid #C8EFA2;background:linear-gradient(135deg,#F0FBE9,#FFFFFF);border-radius:20px;padding:16px;margin-bottom:16px}
+.vgvEnterprisePanel svg{width:100%;height:auto;display:block;margin-top:10px}
+@media(max-width:950px){.campaignPeopleGrid{grid-template-columns:1fr}.campaignKpis{grid-template-columns:1fr!important}}
 
 </style></head><body><div class="brand"><img src="assets/logo_evora.png"><div><h1>${esc(reportTitle(type))} · ${esc(project().name)}</h1><p>${fmtDateTime(now())}</p></div></div><div class="kpis"><div class="kpi">Leads<b>${d.a.leads.length}</b></div><div class="kpi">Clientes A<b>${d.a.a}</b></div><div class="kpi">Reservas<b>${d.a.res.length}</b></div><div class="kpi">Carteira<b>${fmtMoney(d.a.carteira)}</b></div></div><div class="summary"><b>Leitura automática:</b> ${reportInsight(type,d)}</div>${blocks}<button onclick="window.print()">Salvar/Imprimir PDF</button><script>setTimeout(()=>window.print(),500)<\/script></body></html>`;
 }
@@ -1627,8 +1753,8 @@ function reportInsight(type,d){
 window.markProposalSent=markProposalSent;
 /* ==== v4.2 patch end ==== */
 
-/* ==== v5.10 local login + RBAC layer start ==== */
-const AUTH_SESSION_KEY = 'evora-launch-os-v510-session';
+/* ==== v5.11 local login + RBAC layer start ==== */
+const AUTH_SESSION_KEY = 'evora-launch-os-v511-session';
 function localHash(value){ let h=5381; const s=String(value||''); for(let i=0;i<s.length;i++) h=((h<<5)+h)+s.charCodeAt(i); return 'h'+Math.abs(h); }
 function defaultPermissions(){
   return [
@@ -1692,7 +1818,7 @@ function authLog(action,entity,entityId,details=''){ ensureAuthState(); state.au
 function renderLogin(){
   ensureAuthState();
   const root=document.getElementById('app');
-  root.innerHTML=`<div class="loginPage"><section class="loginHero"><div><img src="assets/logo_evora_white.png" alt="Évora"><h1>Launch OS v5.10</h1><p>Évora Launch OS — inteligência comercial para vender com velocidade, método e controle.</p></div><small>Primeiro acesso: admin@evora.local · Evora@2026!</small></section><section class="loginCard"><h2>Entrar no sistema</h2><p>Controle local de usuários e permissões. Os dados permanecem no navegador.</p><form id="loginForm"><div class="field"><label>E-mail</label><input id="loginEmail" value="admin@evora.local"></div><div class="field"><label>Senha</label><input id="loginPassword" type="password" value="Evora@2026!"></div><button class="btn primary" style="width:100%;justify-content:center" type="submit">Entrar</button></form><div class="authNotice"><b>Modo sem banco:</b> usuários e leads ficam no localStorage deste navegador.</div></section></div>`;
+  root.innerHTML=`<div class="loginPage"><section class="loginHero"><div><img src="assets/logo_evora_white.png" alt="Évora"><h1>Launch OS v5.11</h1><p>Évora Launch OS — inteligência comercial para vender com velocidade, método e controle.</p></div><small>Primeiro acesso: admin@evora.local · Evora@2026!</small></section><section class="loginCard"><h2>Entrar no sistema</h2><p>Controle local de usuários e permissões. Os dados permanecem no navegador.</p><form id="loginForm"><div class="field"><label>E-mail</label><input id="loginEmail" value="admin@evora.local"></div><div class="field"><label>Senha</label><input id="loginPassword" type="password" value="Evora@2026!"></div><button class="btn primary" style="width:100%;justify-content:center" type="submit">Entrar</button></form><div class="authNotice"><b>Modo sem banco:</b> usuários e leads ficam no localStorage deste navegador.</div></section></div>`;
   document.getElementById('loginForm').addEventListener('submit',e=>{ e.preventDefault(); const email=document.getElementById('loginEmail').value.trim().toLowerCase(); const pw=document.getElementById('loginPassword').value; const u=state.auth.users.find(x=>String(x.email).toLowerCase()===email && x.active); if(!u || u.passwordHash!==localHash(pw)){ toast('E-mail ou senha inválidos.'); return; } sessionStorage.setItem(AUTH_SESSION_KEY,u.id); authLog('login','user',u.id,u.email); render(); toast('Login realizado.'); });
 }
 const _v56Render = render;
@@ -1722,7 +1848,7 @@ renderSidebar = function(){
   <div class="authUserPanel"><b>${esc(u.name)}</b><br>${esc(u.email)}<br>${esc(r?.name||'Sem papel')}<div style="margin-top:8px"><button class="btn small" onclick="localLogout()">Sair</button></div></div>
   <div class="projectBox"><label>Empreendimento</label><select onchange="selectProject(this.value)">${state.projects.map(p=>`<option value="${p.id}" ${p.id===state.selectedProjectId?'selected':''}>${esc(p.name)} · ${esc(p.city)}/${esc(p.uf)}</option>`).join('')}</select></div>
   <div class="nav">${allowed.map(([id,label])=>`<button class="${view===id?'active':''}" onclick="setView('${id}')"><span class="ico">${icon(id)}</span>${label}</button>`).join('')}</div>
-  <div class="principle"><b>Regra v5.10</b>Login e permissões foram adicionados sem remover a jornada comercial da v4.3.</div>`;
+  <div class="principle"><b>Regra v5.11</b>Login e permissões foram adicionados sem remover a jornada comercial da v4.3.</div>`;
 };
 const _oldRenderTopbar = renderTopbar;
 renderTopbar = function(){
@@ -1880,9 +2006,9 @@ function deleteLeadLocal(id){
 }
 function localLogout(){ const u=authUser(); if(u) authLog('logout','user',u.id,u.email); sessionStorage.removeItem(AUTH_SESSION_KEY); render(); }
 window.openAuthUserForm=openAuthUserForm; window.saveAuthUser=saveAuthUser; window.deleteAuthUser=deleteAuthUser; window.openResetPasswordLocal=openResetPasswordLocal; window.resetPasswordLocal=resetPasswordLocal; window.saveAuthRole=saveAuthRole; window.changeMyPasswordLocal=changeMyPasswordLocal; window.adminResetPasswordLocal=adminResetPasswordLocal; window.exportAuthLogs=exportAuthLogs; window.deleteLeadLocal=deleteLeadLocal; window.localLogout=localLogout;
-/* ==== v5.10 local login + RBAC layer end ==== */
+/* ==== v5.11 local login + RBAC layer end ==== */
 
-/* ==== v5.10 guided journey + mobile scroll patch start ==== */
+/* ==== v5.11 guided journey + mobile scroll patch start ==== */
 function scrollToMainContent(){
   setTimeout(()=>{
     const main=document.querySelector('.main');
@@ -1967,14 +2093,14 @@ function proposalPdfHtml(p){
   const entryTotal=(lot?.price||0)*((p.entry||10)/100);
   const entryPart=p.entryInstallmentValue||entryTotal/inst;
   return `<!doctype html><html><head><meta charset="utf-8"><title>Proposta ${esc(l.name)}</title><style>body{font-family:Arial,sans-serif;color:#173C52;margin:36px}h1{font-size:26px}.box{border:1px solid #d8e2e8;border-radius:14px;padding:14px;margin:12px 0}.brand{display:flex;gap:12px;align-items:center}.brand img{height:44px}table{border-collapse:collapse;width:100%;margin-top:14px}td,th{border:1px solid #d8e2e8;padding:9px;text-align:left}th{background:#f3f7f9}button{padding:10px 14px;border:0;border-radius:10px;background:#245E82;color:white;font-weight:bold}.confirm{background:#F0FBE9;border:1px solid #C8EFA2;border-radius:14px;padding:14px;margin-top:16px}@media print{button{display:none}}
-/* v5.10 checklist refinement */
+/* v5.11 checklist refinement */
 .checkCard .actionButtons{margin-top:12px}
 .checkCard .primaryActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 .checkCard .primaryActions .btn{min-width:132px;justify-content:center}
 .actionNotePreview{margin-top:8px;padding:8px 10px;border-radius:12px;background:#F8FBFC;border:1px dashed var(--line);font-size:12px;color:var(--muted)}
 
 
-/* v5.10 proposal and material send center */
+/* v5.11 proposal and material send center */
 .materialSendGrid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .materialChecklist{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
 .materialItem{border:1px solid var(--line);background:white;border-radius:16px;padding:12px}
@@ -1991,7 +2117,7 @@ function proposalPdfHtml(p){
 @media(max-width:950px){.materialSendGrid,.proposalDetailGrid{grid-template-columns:1fr}}
 
 
-/* v5.10 finance and backend-ready communications */
+/* v5.11 finance and backend-ready communications */
 .backendBadge{display:inline-flex;border:1px solid #BFDBFE;background:#EFF6FF;color:#1D4ED8;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:900;margin:3px}
 .queueBox{border:1px dashed var(--line);background:#F8FBFC;border-radius:16px;padding:12px;margin-top:10px}
 .financeKpiGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
@@ -2008,7 +2134,7 @@ function proposalPdfHtml(p){
 @media(max-width:1000px){.financeGrid{grid-template-columns:1fr}.financeToolbar{flex-direction:column;align-items:stretch}.financeToolbar .btn,.financeToolbar input,.financeToolbar select{width:100%}}
 
 
-/* v5.10 finance period and VGV */
+/* v5.11 finance period and VGV */
 .periodPanel{border:1px solid var(--line);background:white;border-radius:18px;padding:14px;margin:0 0 14px}
 .periodQuick{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
 .cashFlowGrid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
@@ -2021,7 +2147,7 @@ function proposalPdfHtml(p){
 @media(max-width:1000px){.cashFlowGrid{grid-template-columns:1fr}.periodQuick .btn{width:100%;justify-content:center}}
 
 
-/* v5.10 campaigns */
+/* v5.11 campaigns */
 .campaignGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
 .campaignCard{border:1px solid var(--line);background:white;border-radius:20px;padding:16px;box-shadow:0 8px 24px rgba(23,60,82,.06)}
 .campaignCard h3{margin-bottom:6px}
@@ -2035,6 +2161,27 @@ function proposalPdfHtml(p){
 .campaignSelect{min-width:190px;border:1px solid var(--line);border-radius:10px;padding:6px 8px;background:white}
 .campaignReportBox{border:1px solid var(--line);background:white;border-radius:18px;padding:14px;margin-top:12px}
 @media(max-width:900px){.campaignKpis{grid-template-columns:repeat(2,minmax(0,1fr))}.campaignSelect{width:100%}}
+
+
+/* v5.11 campaigns advanced */
+.campaignKpis{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+.campaignKpi{min-height:72px;overflow:hidden}
+.campaignKpi b{font-size:16px!important;line-height:1.12;word-break:break-word;overflow-wrap:anywhere}
+.campaignKpi span{line-height:1.2}
+.campaignVgvPanel{border:1px solid var(--line);background:white;border-radius:18px;padding:14px;margin-top:12px}
+.campaignVgvPanel svg{width:100%;height:auto;display:block}
+.campaignPeopleGrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+.rankBadge{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:999px;background:linear-gradient(135deg,var(--green),var(--blue));color:white;font-weight:900;font-size:12px;margin-right:6px}
+.scriptBox{border:1px solid var(--line);background:#fff;border-radius:16px;padding:12px;margin-top:10px}
+.scriptBox pre{white-space:pre-wrap;font-family:inherit;color:var(--muted);margin:0;line-height:1.45}
+.faqItem{border:1px solid var(--line);background:#F8FBFC;border-radius:14px;padding:10px;margin-top:8px}
+.leadLinkGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:8px;margin-top:10px}
+.leadLinkItem{border:1px solid var(--line);background:white;border-radius:14px;padding:10px;display:flex;gap:8px;align-items:flex-start}
+.materialManagerGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.materialManagerCard{border:1px solid var(--line);background:white;border-radius:16px;padding:12px}
+.vgvEnterprisePanel{border:1px solid #C8EFA2;background:linear-gradient(135deg,#F0FBE9,#FFFFFF);border-radius:20px;padding:16px;margin-bottom:16px}
+.vgvEnterprisePanel svg{width:100%;height:auto;display:block;margin-top:10px}
+@media(max-width:950px){.campaignPeopleGrid{grid-template-columns:1fr}.campaignKpis{grid-template-columns:1fr!important}}
 
 </style></head><body><div class="brand"><img src="assets/logo_evora.png"><div><h1>Proposta comercial</h1><p>${esc(project().name)} · ${fmtDateTime(now())}</p></div></div><div class="box"><b>Cliente:</b> ${esc(l.name)}<br><b>Lote:</b> ${esc(lotLabel(lot.id))} · ${lot.area} m²<br><b>Status:</b> ${esc(p.status)} · <b>Validade:</b> ${fmtDate(p.expiresAt)}</div><table><tr><th>Preço do lote</th><td>${fmtMoney(lot.price)}</td></tr><tr><th>Entrada</th><td>${p.entry}% · ${inst===1?'à vista':`${inst}x de ${fmtMoney(entryPart)}`} · total ${fmtMoney(entryTotal)}</td></tr><tr><th>Mensais</th><td>${p.months}x ${fmtMoney(p.monthly)}</td></tr><tr><th>Anuais</th><td>${p.annuals}x ${fmtMoney(p.annual)}</td></tr><tr><th>Correção</th><td>${esc(p.index)} + ${p.interest}% a.m.</td></tr><tr><th>Total nominal</th><td>${fmtMoney(p.total)}</td></tr></table><div class="confirm"><h2>Confirmação</h2><p>Esta página representa o ambiente de confirmação. Na versão com backend, o botão gravará o aceite do cliente, data, IP e versão da proposta.</p><button onclick="alert('Confirmação demonstrativa registrada. Em produção, será salvo no sistema.')">Confirmar interesse</button></div><button onclick="window.print()">Salvar/Imprimir PDF</button></body></html>`;
 }
@@ -2108,9 +2255,9 @@ openReserveLot = function(lotId='',leadId=''){
 };
 window.filterSelectOptions=filterSelectOptions; window.openLeadSimulator=openLeadSimulator; window.goLotsForLead=goLotsForLead; window.openLotPickerForLead=openLotPickerForLead; window.renderLotPickerResults=renderLotPickerResults; window.assignLotToLead=assignLotToLead; window.registerClientCommunicationFromLead=registerClientCommunicationFromLead;
 window.updateSim=updateSim; window.createProposalFromSimulator=createProposalFromSimulator;
-/* ==== v5.10 guided journey + mobile scroll patch end ==== */
+/* ==== v5.11 guided journey + mobile scroll patch end ==== */
 
-/* ==== v5.10 checklist + slogan patch start ==== */
+/* ==== v5.11 checklist + slogan patch start ==== */
 dossierAction = function(l,miss){
   const tasks = TASKS[l.stage] || [];
   return `<div class="grid two" style="margin-top:14px">
@@ -2156,9 +2303,9 @@ function toggleStageNote(leadId,taskId){
   const area=document.getElementById('note-'+taskId);
   if(area && wrap.style.display==='block') setTimeout(()=>area.focus(),60);
 }
-/* ==== v5.10 checklist + slogan patch end ==== */
+/* ==== v5.11 checklist + slogan patch end ==== */
 
-/* ==== v5.10 rich proposal + material send center start ==== */
+/* ==== v5.11 rich proposal + material send center start ==== */
 function ensureMaterialSendState(){
   state.materialSends = state.materialSends || [];
   state.materials = state.materials || [];
@@ -2393,7 +2540,7 @@ proposalPdfHtml = function(p){
   const entryTotal=(lot?.price||0)*((p.entry||10)/100);
   const entryPart=p.entryInstallmentValue||entryTotal/inst;
   return `<!doctype html><html><head><meta charset="utf-8"><title>Proposta ${esc(l.name)}</title><style>body{font-family:Arial,sans-serif;color:#173C52;margin:36px}h1{font-size:26px}.box{border:1px solid #d8e2e8;border-radius:14px;padding:14px;margin:12px 0}.brand{display:flex;gap:12px;align-items:center}.brand img{height:44px}table{border-collapse:collapse;width:100%;margin-top:14px}td,th{border:1px solid #d8e2e8;padding:9px;text-align:left}th{background:#f3f7f9}button{padding:10px 14px;border:0;border-radius:10px;background:#245E82;color:white;font-weight:bold}.confirm{background:#F0FBE9;border:1px solid #C8EFA2;border-radius:14px;padding:14px;margin-top:16px}@media print{button{display:none}}
-/* v5.10 finance and backend-ready communications */
+/* v5.11 finance and backend-ready communications */
 .backendBadge{display:inline-flex;border:1px solid #BFDBFE;background:#EFF6FF;color:#1D4ED8;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:900;margin:3px}
 .queueBox{border:1px dashed var(--line);background:#F8FBFC;border-radius:16px;padding:12px;margin-top:10px}
 .financeKpiGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
@@ -2410,7 +2557,7 @@ proposalPdfHtml = function(p){
 @media(max-width:1000px){.financeGrid{grid-template-columns:1fr}.financeToolbar{flex-direction:column;align-items:stretch}.financeToolbar .btn,.financeToolbar input,.financeToolbar select{width:100%}}
 
 
-/* v5.10 finance period and VGV */
+/* v5.11 finance period and VGV */
 .periodPanel{border:1px solid var(--line);background:white;border-radius:18px;padding:14px;margin:0 0 14px}
 .periodQuick{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
 .cashFlowGrid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
@@ -2423,7 +2570,7 @@ proposalPdfHtml = function(p){
 @media(max-width:1000px){.cashFlowGrid{grid-template-columns:1fr}.periodQuick .btn{width:100%;justify-content:center}}
 
 
-/* v5.10 campaigns */
+/* v5.11 campaigns */
 .campaignGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
 .campaignCard{border:1px solid var(--line);background:white;border-radius:20px;padding:16px;box-shadow:0 8px 24px rgba(23,60,82,.06)}
 .campaignCard h3{margin-bottom:6px}
@@ -2438,12 +2585,33 @@ proposalPdfHtml = function(p){
 .campaignReportBox{border:1px solid var(--line);background:white;border-radius:18px;padding:14px;margin-top:12px}
 @media(max-width:900px){.campaignKpis{grid-template-columns:repeat(2,minmax(0,1fr))}.campaignSelect{width:100%}}
 
+
+/* v5.11 campaigns advanced */
+.campaignKpis{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+.campaignKpi{min-height:72px;overflow:hidden}
+.campaignKpi b{font-size:16px!important;line-height:1.12;word-break:break-word;overflow-wrap:anywhere}
+.campaignKpi span{line-height:1.2}
+.campaignVgvPanel{border:1px solid var(--line);background:white;border-radius:18px;padding:14px;margin-top:12px}
+.campaignVgvPanel svg{width:100%;height:auto;display:block}
+.campaignPeopleGrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+.rankBadge{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:999px;background:linear-gradient(135deg,var(--green),var(--blue));color:white;font-weight:900;font-size:12px;margin-right:6px}
+.scriptBox{border:1px solid var(--line);background:#fff;border-radius:16px;padding:12px;margin-top:10px}
+.scriptBox pre{white-space:pre-wrap;font-family:inherit;color:var(--muted);margin:0;line-height:1.45}
+.faqItem{border:1px solid var(--line);background:#F8FBFC;border-radius:14px;padding:10px;margin-top:8px}
+.leadLinkGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:8px;margin-top:10px}
+.leadLinkItem{border:1px solid var(--line);background:white;border-radius:14px;padding:10px;display:flex;gap:8px;align-items:flex-start}
+.materialManagerGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.materialManagerCard{border:1px solid var(--line);background:white;border-radius:16px;padding:12px}
+.vgvEnterprisePanel{border:1px solid #C8EFA2;background:linear-gradient(135deg,#F0FBE9,#FFFFFF);border-radius:20px;padding:16px;margin-bottom:16px}
+.vgvEnterprisePanel svg{width:100%;height:auto;display:block;margin-top:10px}
+@media(max-width:950px){.campaignPeopleGrid{grid-template-columns:1fr}.campaignKpis{grid-template-columns:1fr!important}}
+
 </style></head><body><div class="brand"><img src="assets/logo_evora.png"><div><h1>Proposta comercial</h1><p>${esc(project().name)} · ${fmtDateTime(now())}</p></div></div><div class="box"><b>Cliente:</b> ${esc(l.name)}<br><b>Lote:</b> ${esc(lotLabel(lot.id))} · ${lot.area} m² · ${esc(lot.type)} · ${esc(lot.sector)}<br><b>Status proposta:</b> ${esc(p.status)} · <b>Status lote:</b> ${lotStatusLabel(lot.status)}<br><b>Validade:</b> ${fmtDate(p.expiresAt)}</div><table><tr><th>Preço do lote</th><td>${fmtMoney(lot.price)}</td></tr><tr><th>Entrada</th><td>${p.entry}% · ${inst===1?'à vista':`${inst}x de ${fmtMoney(entryPart)}`} · total ${fmtMoney(entryTotal)}</td></tr><tr><th>Mensais</th><td>${p.months}x ${fmtMoney(p.monthly)}</td></tr><tr><th>Anuais</th><td>${p.annuals}x ${fmtMoney(p.annual)}</td></tr><tr><th>Correção</th><td>${esc(p.index)} + ${p.interest}% a.m.</td></tr><tr><th>Total nominal</th><td>${fmtMoney(p.total)}</td></tr></table><div class="box"><b>Observações de negociação:</b><br>${esc(p.negotiationNotes||'—')}</div><div class="confirm"><h2>Confirmação</h2><p>Esta página representa o ambiente de confirmação. Na versão com backend, o botão gravará o aceite do cliente, data, IP e versão da proposta.</p><button onclick="alert('Confirmação demonstrativa registrada. Em produção, será salvo no sistema.')">Confirmar interesse</button></div><button onclick="window.print()">Salvar/Imprimir PDF</button></body></html>`;
 };
 window.openMaterialSendCenter=openMaterialSendCenter; window.renderMaterialLeadHistory=renderMaterialLeadHistory; window.sendMaterialsFromForm=sendMaterialsFromForm; window.previewMaterialMessage=previewMaterialMessage; window.saveProposalNotes=saveProposalNotes;
-/* ==== v5.10 rich proposal + material send center end ==== */
+/* ==== v5.11 rich proposal + material send center end ==== */
 
-/* ==== v5.10 backend-ready sends + financial controls start ==== */
+/* ==== v5.11 backend-ready sends + financial controls start ==== */
 function ensureBackendState(){
   state.backendQueue = state.backendQueue || [];
   state.financeSettings = state.financeSettings || {costM2:650, defaultBillingChannel:'WhatsApp'};
@@ -2780,7 +2948,7 @@ function financeReportHtml(type='financeiro'){
   const rows=projectReceivables().slice(0,200);
   const tableRows=rows.map(r=>`<tr><td>${esc(leadName(r.leadId))}</td><td>${esc(lotLabel(r.lotId))}</td><td>${esc(r.type)}</td><td>${fmtDate(r.dueDate)}</td><td>${fmtMoney(r.amount)}</td><td>${esc(receivableStatus(r))}</td></tr>`).join('');
   return `<!doctype html><html><head><meta charset="utf-8"><title>Relatório Financeiro</title><style>body{font-family:Arial,sans-serif;color:#173C52;margin:34px}h1{font-size:26px}.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.kpi{border:1px solid #d8e2e8;border-radius:12px;padding:12px}.kpi b{display:block;font-size:20px;margin-top:5px}table{border-collapse:collapse;width:100%;margin-top:18px}td,th{border:1px solid #d8e2e8;padding:8px;font-size:12px;text-align:left}th{background:#f1f6f8}.chart{border:1px solid #d8e2e8;border-radius:14px;padding:12px;margin-top:18px}@media print{button{display:none}}
-/* v5.10 finance period and VGV */
+/* v5.11 finance period and VGV */
 .periodPanel{border:1px solid var(--line);background:white;border-radius:18px;padding:14px;margin:0 0 14px}
 .periodQuick{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
 .cashFlowGrid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
@@ -2793,7 +2961,7 @@ function financeReportHtml(type='financeiro'){
 @media(max-width:1000px){.cashFlowGrid{grid-template-columns:1fr}.periodQuick .btn{width:100%;justify-content:center}}
 
 
-/* v5.10 campaigns */
+/* v5.11 campaigns */
 .campaignGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
 .campaignCard{border:1px solid var(--line);background:white;border-radius:20px;padding:16px;box-shadow:0 8px 24px rgba(23,60,82,.06)}
 .campaignCard h3{margin-bottom:6px}
@@ -2808,6 +2976,27 @@ function financeReportHtml(type='financeiro'){
 .campaignReportBox{border:1px solid var(--line);background:white;border-radius:18px;padding:14px;margin-top:12px}
 @media(max-width:900px){.campaignKpis{grid-template-columns:repeat(2,minmax(0,1fr))}.campaignSelect{width:100%}}
 
+
+/* v5.11 campaigns advanced */
+.campaignKpis{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+.campaignKpi{min-height:72px;overflow:hidden}
+.campaignKpi b{font-size:16px!important;line-height:1.12;word-break:break-word;overflow-wrap:anywhere}
+.campaignKpi span{line-height:1.2}
+.campaignVgvPanel{border:1px solid var(--line);background:white;border-radius:18px;padding:14px;margin-top:12px}
+.campaignVgvPanel svg{width:100%;height:auto;display:block}
+.campaignPeopleGrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+.rankBadge{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:999px;background:linear-gradient(135deg,var(--green),var(--blue));color:white;font-weight:900;font-size:12px;margin-right:6px}
+.scriptBox{border:1px solid var(--line);background:#fff;border-radius:16px;padding:12px;margin-top:10px}
+.scriptBox pre{white-space:pre-wrap;font-family:inherit;color:var(--muted);margin:0;line-height:1.45}
+.faqItem{border:1px solid var(--line);background:#F8FBFC;border-radius:14px;padding:10px;margin-top:8px}
+.leadLinkGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:8px;margin-top:10px}
+.leadLinkItem{border:1px solid var(--line);background:white;border-radius:14px;padding:10px;display:flex;gap:8px;align-items:flex-start}
+.materialManagerGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.materialManagerCard{border:1px solid var(--line);background:white;border-radius:16px;padding:12px}
+.vgvEnterprisePanel{border:1px solid #C8EFA2;background:linear-gradient(135deg,#F0FBE9,#FFFFFF);border-radius:20px;padding:16px;margin-bottom:16px}
+.vgvEnterprisePanel svg{width:100%;height:auto;display:block;margin-top:10px}
+@media(max-width:950px){.campaignPeopleGrid{grid-template-columns:1fr}.campaignKpis{grid-template-columns:1fr!important}}
+
 </style></head><body><h1>Relatório Financeiro · ${esc(project().name)}</h1><p>${fmtDateTime(now())}</p><div class="kpis"><div class="kpi">Recebido<b>${fmtMoney(a.received)}</b></div><div class="kpi">A receber<b>${fmtMoney(a.open)}</b></div><div class="kpi">Vencido<b>${fmtMoney(a.late)}</b></div><div class="kpi">Inadimplência<b>${a.delinquency.toFixed(1)}%</b></div><div class="kpi">Margem/m²<b>${fmtMoney(a.marginM2)}</b></div><div class="kpi">Preço médio/m²<b>${fmtMoney(a.avgM2)}</b></div><div class="kpi">Descontos mês<b>${fmtMoney(a.discountMonth)}</b></div><div class="kpi">Preço médio venda<b>${fmtMoney(a.avgSale)}</b></div></div><div class="chart"><h2>Projeção de recebíveis</h2>${financeChartSvg()}</div><h2>Recebíveis</h2><table><thead><tr><th>Cliente</th><th>Lote</th><th>Tipo</th><th>Vencimento</th><th>Valor</th><th>Status</th></tr></thead><tbody>${tableRows}</tbody></table><h2>Mensagens de cobrança preparadas</h2><table><thead><tr><th>Data</th><th>Cliente</th><th>Canal</th><th>Status</th></tr></thead><tbody>${(state.billingMessages||[]).map(m=>`<tr><td>${fmtDateTime(m.createdAt)}</td><td>${esc(leadName(m.leadId))}</td><td>${esc(m.channel)}</td><td>${esc(m.status)}</td></tr>`).join('')}</tbody></table><button onclick="window.print()">Salvar/Imprimir PDF</button><script>setTimeout(()=>window.print(),500)<\/script></body></html>`;
 }
 function printFinanceReport(type='financeiro'){
@@ -2819,9 +3008,9 @@ reportHtml = function(type){
   return _v59OldReportHtml(type);
 };
 window.prepareMaterialWhatsApp=prepareMaterialWhatsApp; window.prepareMaterialEmail=prepareMaterialEmail; window.copyMaterialMessage=copyMaterialMessage; window.enqueueMaterialBackend=enqueueMaterialBackend; window.syncReceivables=syncReceivables; window.renderFinanceiro=renderFinanceiro; window.saveFinanceSettings=saveFinanceSettings; window.generateBoleto=generateBoleto; window.prepareBillingWhatsApp=prepareBillingWhatsApp; window.prepareBillingEmail=prepareBillingEmail; window.markReceivablePaid=markReceivablePaid; window.openManualReceivable=openManualReceivable; window.saveManualReceivable=saveManualReceivable; window.printFinanceReport=printFinanceReport;
-/* ==== v5.10 backend-ready sends + financial controls end ==== */
+/* ==== v5.11 backend-ready sends + financial controls end ==== */
 
-/* ==== v5.10 finance period + VGV patch start ==== */
+/* ==== v5.11 finance period + VGV patch start ==== */
 function yyyyMMdd(date){
   const d=new Date(date);
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
@@ -3017,7 +3206,7 @@ function financeReportHtml(type='financeiro'){
   const rows=a.rec.slice(0,250);
   const tableRows=rows.map(r=>`<tr><td>${esc(leadName(r.leadId))}</td><td>${esc(lotLabel(r.lotId))}</td><td>${esc(r.type)}</td><td>${fmtDate(r.dueDate)}</td><td>${fmtMoney(r.amount)}</td><td>${esc(receivableStatus(r))}</td></tr>`).join('');
   return `<!doctype html><html><head><meta charset="utf-8"><title>Relatório Financeiro</title><style>body{font-family:Arial,sans-serif;color:#173C52;margin:34px}h1{font-size:26px}.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.kpi{border:1px solid #d8e2e8;border-radius:12px;padding:12px}.kpi b{display:block;font-size:20px;margin-top:5px}table{border-collapse:collapse;width:100%;margin-top:18px}td,th{border:1px solid #d8e2e8;padding:8px;font-size:12px;text-align:left}th{background:#f1f6f8}.chart{border:1px solid #d8e2e8;border-radius:14px;padding:12px;margin-top:18px}@media print{button{display:none}}
-/* v5.10 campaigns */
+/* v5.11 campaigns */
 .campaignGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
 .campaignCard{border:1px solid var(--line);background:white;border-radius:20px;padding:16px;box-shadow:0 8px 24px rgba(23,60,82,.06)}
 .campaignCard h3{margin-bottom:6px}
@@ -3032,12 +3221,33 @@ function financeReportHtml(type='financeiro'){
 .campaignReportBox{border:1px solid var(--line);background:white;border-radius:18px;padding:14px;margin-top:12px}
 @media(max-width:900px){.campaignKpis{grid-template-columns:repeat(2,minmax(0,1fr))}.campaignSelect{width:100%}}
 
+
+/* v5.11 campaigns advanced */
+.campaignKpis{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+.campaignKpi{min-height:72px;overflow:hidden}
+.campaignKpi b{font-size:16px!important;line-height:1.12;word-break:break-word;overflow-wrap:anywhere}
+.campaignKpi span{line-height:1.2}
+.campaignVgvPanel{border:1px solid var(--line);background:white;border-radius:18px;padding:14px;margin-top:12px}
+.campaignVgvPanel svg{width:100%;height:auto;display:block}
+.campaignPeopleGrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+.rankBadge{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:999px;background:linear-gradient(135deg,var(--green),var(--blue));color:white;font-weight:900;font-size:12px;margin-right:6px}
+.scriptBox{border:1px solid var(--line);background:#fff;border-radius:16px;padding:12px;margin-top:10px}
+.scriptBox pre{white-space:pre-wrap;font-family:inherit;color:var(--muted);margin:0;line-height:1.45}
+.faqItem{border:1px solid var(--line);background:#F8FBFC;border-radius:14px;padding:10px;margin-top:8px}
+.leadLinkGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:8px;margin-top:10px}
+.leadLinkItem{border:1px solid var(--line);background:white;border-radius:14px;padding:10px;display:flex;gap:8px;align-items:flex-start}
+.materialManagerGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.materialManagerCard{border:1px solid var(--line);background:white;border-radius:16px;padding:12px}
+.vgvEnterprisePanel{border:1px solid #C8EFA2;background:linear-gradient(135deg,#F0FBE9,#FFFFFF);border-radius:20px;padding:16px;margin-bottom:16px}
+.vgvEnterprisePanel svg{width:100%;height:auto;display:block;margin-top:10px}
+@media(max-width:950px){.campaignPeopleGrid{grid-template-columns:1fr}.campaignKpis{grid-template-columns:1fr!important}}
+
 </style></head><body><h1>Relatório Financeiro · ${esc(project().name)}</h1><p>Período: ${esc(periodLabel(period))} · ${fmtDateTime(now())}</p><div class="kpis"><div class="kpi">VGV projetado<b>${fmtMoney(a.vgv.vgvProjected)}</b></div><div class="kpi">VGV realizado total<b>${fmtMoney(a.vgv.realizedAll)}</b></div><div class="kpi">VGV realizado período<b>${fmtMoney(a.vgv.realizedPeriod)}</b></div><div class="kpi">VGV em negociação<b>${fmtMoney(a.vgv.inPipeline)}</b></div><div class="kpi">Recebido<b>${fmtMoney(a.received)}</b></div><div class="kpi">A receber<b>${fmtMoney(a.open)}</b></div><div class="kpi">Vencido<b>${fmtMoney(a.late)}</b></div><div class="kpi">Inadimplência<b>${a.delinquency.toFixed(1)}%</b></div><div class="kpi">Margem/m²<b>${fmtMoney(a.marginM2)}</b></div><div class="kpi">Preço médio/m²<b>${fmtMoney(a.avgM2)}</b></div><div class="kpi">Descontos período<b>${fmtMoney(a.discountPeriod)}</b></div><div class="kpi">Preço médio venda<b>${fmtMoney(a.avgSale)}</b></div></div><div class="chart"><h2>Fluxo de caixa de recebíveis</h2>${cashFlowSvg(cf)}</div><h2>Fluxo por período</h2><table><thead><tr><th>Período</th><th>Previsto</th><th>Recebido</th><th>Aberto</th><th>Vencido</th></tr></thead><tbody>${cf.map(r=>`<tr><td>${esc(r.label)}</td><td>${fmtMoney(r.previsto)}</td><td>${fmtMoney(r.recebido)}</td><td>${fmtMoney(r.aberto)}</td><td>${fmtMoney(r.vencido)}</td></tr>`).join('')}</tbody></table><h2>Recebíveis do período</h2><table><thead><tr><th>Cliente</th><th>Lote</th><th>Tipo</th><th>Vencimento</th><th>Valor</th><th>Status</th></tr></thead><tbody>${tableRows}</tbody></table><h2>Mensagens de cobrança preparadas</h2><table><thead><tr><th>Data</th><th>Cliente</th><th>Canal</th><th>Status</th></tr></thead><tbody>${(state.billingMessages||[]).filter(m=>inFinancePeriod(m.createdAt,period)).map(m=>`<tr><td>${fmtDateTime(m.createdAt)}</td><td>${esc(leadName(m.leadId))}</td><td>${esc(m.channel)}</td><td>${esc(m.status)}</td></tr>`).join('')}</tbody></table><button onclick="window.print()">Salvar/Imprimir PDF</button><script>setTimeout(()=>window.print(),500)<\/script></body></html>`;
 }
 window.setFinanceQuick=setFinanceQuick; window.applyFinancePeriod=applyFinancePeriod;
-/* ==== v5.10 finance period + VGV patch end ==== */
+/* ==== v5.11 finance period + VGV patch end ==== */
 
-/* ==== v5.10 campaigns + VGV executed patch start ==== */
+/* ==== v5.11 campaigns + VGV executed patch start ==== */
 function slugLocal(value){
   return String(value||'campanha').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,48) || 'campanha';
 }
@@ -3234,7 +3444,28 @@ createProposalFromSimulator = function(){
 function campaignReportHtml(id=''){
   const campaigns=id?[campaignById(id)].filter(Boolean):projectCampaigns();
   const rows=campaigns.map(c=>{ const m=campaignMetrics(c); return `<tr><td>${esc(c.name)}</td><td>${esc(c.objective||'')}</td><td>${m.leads.length}</td><td>${m.hot}</td><td>${m.props.length}</td><td>${m.reservations.length}</td><td>${m.clients.length}</td><td>${fmtMoney(m.vgvRealized)}</td><td>${fmtMoney(m.vgvExecuted)}</td><td>${m.conversion.toFixed(1)}%</td><td>${fmtMoney(m.cpl)}</td></tr>`; }).join('');
-  return `<!doctype html><html><head><meta charset="utf-8"><title>Relatório Campanhas</title><style>body{font-family:Arial,sans-serif;color:#173C52;margin:34px}h1{font-size:26px}table{border-collapse:collapse;width:100%;margin-top:18px}td,th{border:1px solid #d8e2e8;padding:8px;font-size:12px;text-align:left}th{background:#f1f6f8}.box{border:1px solid #d8e2e8;border-radius:14px;padding:14px;margin:12px 0}@media print{button{display:none}}</style></head><body><h1>Relatório de Campanhas · ${esc(project().name)}</h1><p>${fmtDateTime(now())}</p><table><thead><tr><th>Campanha</th><th>Objetivo</th><th>Leads</th><th>A</th><th>Propostas</th><th>Reservas</th><th>Clientes</th><th>VGV Realizado</th><th>VGV Executado</th><th>Conversão</th><th>CPL</th></tr></thead><tbody>${rows}</tbody></table><button onclick="window.print()">Salvar/Imprimir PDF</button><script>setTimeout(()=>window.print(),500)<\/script></body></html>`;
+  return `<!doctype html><html><head><meta charset="utf-8"><title>Relatório Campanhas</title><style>body{font-family:Arial,sans-serif;color:#173C52;margin:34px}h1{font-size:26px}table{border-collapse:collapse;width:100%;margin-top:18px}td,th{border:1px solid #d8e2e8;padding:8px;font-size:12px;text-align:left}th{background:#f1f6f8}.box{border:1px solid #d8e2e8;border-radius:14px;padding:14px;margin:12px 0}@media print{button{display:none}}
+/* v5.11 campaigns advanced */
+.campaignKpis{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+.campaignKpi{min-height:72px;overflow:hidden}
+.campaignKpi b{font-size:16px!important;line-height:1.12;word-break:break-word;overflow-wrap:anywhere}
+.campaignKpi span{line-height:1.2}
+.campaignVgvPanel{border:1px solid var(--line);background:white;border-radius:18px;padding:14px;margin-top:12px}
+.campaignVgvPanel svg{width:100%;height:auto;display:block}
+.campaignPeopleGrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+.rankBadge{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:999px;background:linear-gradient(135deg,var(--green),var(--blue));color:white;font-weight:900;font-size:12px;margin-right:6px}
+.scriptBox{border:1px solid var(--line);background:#fff;border-radius:16px;padding:12px;margin-top:10px}
+.scriptBox pre{white-space:pre-wrap;font-family:inherit;color:var(--muted);margin:0;line-height:1.45}
+.faqItem{border:1px solid var(--line);background:#F8FBFC;border-radius:14px;padding:10px;margin-top:8px}
+.leadLinkGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:8px;margin-top:10px}
+.leadLinkItem{border:1px solid var(--line);background:white;border-radius:14px;padding:10px;display:flex;gap:8px;align-items:flex-start}
+.materialManagerGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.materialManagerCard{border:1px solid var(--line);background:white;border-radius:16px;padding:12px}
+.vgvEnterprisePanel{border:1px solid #C8EFA2;background:linear-gradient(135deg,#F0FBE9,#FFFFFF);border-radius:20px;padding:16px;margin-bottom:16px}
+.vgvEnterprisePanel svg{width:100%;height:auto;display:block;margin-top:10px}
+@media(max-width:950px){.campaignPeopleGrid{grid-template-columns:1fr}.campaignKpis{grid-template-columns:1fr!important}}
+
+</style></head><body><h1>Relatório de Campanhas · ${esc(project().name)}</h1><p>${fmtDateTime(now())}</p><table><thead><tr><th>Campanha</th><th>Objetivo</th><th>Leads</th><th>A</th><th>Propostas</th><th>Reservas</th><th>Clientes</th><th>VGV Realizado</th><th>VGV Executado</th><th>Conversão</th><th>CPL</th></tr></thead><tbody>${rows}</tbody></table><button onclick="window.print()">Salvar/Imprimir PDF</button><script>setTimeout(()=>window.print(),500)<\/script></body></html>`;
 }
 function printCampaignReport(id){ const w=window.open('','_blank'); w.document.write(campaignReportHtml(id)); w.document.close(); }
 function printCampaignsReport(){ printCampaignReport(''); }
@@ -3262,7 +3493,168 @@ renderFinanceiro = function(){
   return html.replace('<div class="financeKpi"><span>VGV realizado total</span><b>'+fmtMoney(a.vgv.realizedAll)+'</b><span class="financeSub">Aceites e contratos</span></div>', '<div class="financeKpi"><span>VGV executado do empreendimento</span><b>'+fmtMoney(a.vgv.executed||a.vgv.contracted||0)+'</b><span class="financeSub">Contratos assinados</span></div><div class="financeKpi"><span>VGV realizado total</span><b>'+fmtMoney(a.vgv.realizedAll)+'</b><span class="financeSub">Aceites e contratos</span></div>');
 };
 window.openCampaignForm=openCampaignForm; window.saveCampaign=saveCampaign; window.deleteCampaign=deleteCampaign; window.openCampaign=openCampaign; window.saveLeadCampaign=saveLeadCampaign; window.printCampaignReport=printCampaignReport; window.printCampaignsReport=printCampaignsReport;
-/* ==== v5.10 campaigns + VGV executed patch end ==== */
+/* ==== v5.11 campaigns + VGV executed patch end ==== */
+
+/* ==== v5.11 advanced campaigns patch start ==== */
+function campaignVgvComparisonSvg(c){
+  const m = campaignMetrics(c);
+  const projected = Number(c.targetVgv)||0;
+  const realized = Number(m.vgvRealized)||0;
+  const executed = Number(m.vgvExecuted)||0;
+  const pipeline = Number(m.vgvPipeline)||0;
+  const rows = [
+    {label:'Meta / projetado', value:projected, color:'#245E82'},
+    {label:'Em negociação', value:pipeline, color:'#F59E0B'},
+    {label:'Realizado', value:realized, color:'#84C225'},
+    {label:'Executado', value:executed, color:'#15803D'}
+  ];
+  const max = Math.max(1,...rows.map(r=>r.value));
+  return `<svg viewBox="0 0 720 210" xmlns="http://www.w3.org/2000/svg">${rows.map((r,i)=>{const y=28+i*42; const w=Math.max(4,(r.value/max)*420); return `<text x="8" y="${y+18}" font-size="13" fill="#173C52">${esc(r.label)}</text><rect x="150" y="${y}" width="${w}" height="26" rx="8" fill="${r.color}"/><text x="${160+w}" y="${y+18}" font-size="13" fill="#173C52">${fmtMoney(r.value)}</text>`;}).join('')}</svg>`;
+}
+function campaignPeoplePerformance(c,type='sdr'){
+  const m=campaignMetrics(c);
+  const members=type==='sdr'?team('SDR'):team('Corretor');
+  return members.map(member=>{
+    const leads=m.leads.filter(l=>type==='sdr'?l.sdrId===member.id:l.brokerId===member.id);
+    const ids=new Set(leads.map(l=>l.id));
+    const props=m.props.filter(p=>ids.has(p.leadId));
+    const reservations=m.reservations.filter(r=>ids.has(r.leadId));
+    const contracts=m.contracts.filter(ct=>ids.has(ct.leadId));
+    const vgvRealized=props.filter(p=>['aceita','convertida'].includes(p.status)).reduce((s,p)=>s+salePriceForProposal(p),0);
+    const score=leads.length*1 + props.length*3 + reservations.length*4 + contracts.length*8 + vgvRealized/100000;
+    return {member,leads,props,reservations,contracts,vgvRealized,score};
+  }).filter(x=>x.leads.length||x.props.length||x.reservations.length||x.contracts.length).sort((a,b)=>b.score-a.score);
+}
+function campaignPeopleTable(c,type='sdr'){
+  const rows=campaignPeoplePerformance(c,type);
+  if(!rows.length) return `<div class="empty">Nenhum ${type==='sdr'?'SDR':'corretor'} participante identificado.</div>`;
+  return `<div class="tableWrap"><table><thead><tr><th>Ranking</th><th>${type==='sdr'?'SDR':'Corretor'}</th><th>Leads</th><th>Propostas</th><th>Reservas</th><th>Contratos</th><th>VGV</th></tr></thead><tbody>${rows.map((r,i)=>`<tr><td><span class="rankBadge">${i+1}</span></td><td><b>${esc(r.member.name)}</b><div class="tiny">${esc(r.member.phone||'')}</div></td><td>${r.leads.length}</td><td>${r.props.length}</td><td>${r.reservations.length}</td><td>${r.contracts.length}</td><td>${fmtMoney(r.vgvRealized)}</td></tr>`).join('')}</tbody></table></div>`;
+}
+function campaignGuides(c){
+  c.guides = c.guides || {attendance:'',whatsapp:'',call:'',faqs:[]};
+  return c.guides;
+}
+function campaignGuidesHtml(c){
+  const g=campaignGuides(c);
+  const faqs=(g.faqs||[]).map(f=>`<div class="faqItem"><b>${esc(f.q)}</b><p>${esc(f.a)}</p></div>`).join('');
+  return `<div class="campaignReportBox"><h3>Roteiros, scripts e FAQs</h3>
+    <div class="scriptBox"><b>Roteiro de atendimento</b><pre>${esc(g.attendance||'Nenhum roteiro cadastrado.')}</pre></div>
+    <div class="scriptBox"><b>Script WhatsApp</b><pre>${esc(g.whatsapp||'Nenhum script cadastrado.')}</pre></div>
+    <div class="scriptBox"><b>Script de ligação</b><pre>${esc(g.call||'Nenhum script cadastrado.')}</pre></div>
+    <h3 style="margin-top:12px">FAQs</h3>${faqs||'<p class="muted">Nenhuma FAQ cadastrada.</p>'}
+    <div class="actions" style="justify-content:flex-start;margin-top:12px"><button class="btn primary" onclick="openCampaignGuides('${c.id}')">Editar roteiros e FAQs</button></div>
+  </div>`;
+}
+function openCampaignGuides(id){
+  const c=campaignById(id); if(!c) return;
+  const g=campaignGuides(c);
+  const faqText=(g.faqs||[]).map(f=>`${f.q} | ${f.a}`).join('\n');
+  openModal('Roteiros e FAQs · '+c.name,'Oriente SDRs e corretores para abordagem, objeções e respostas padrão.',`<div class="formGrid"><div class="field span3"><label>Roteiro de atendimento</label><textarea id="guideAttendance" placeholder="Passo a passo do atendimento...">${esc(g.attendance||'')}</textarea></div><div class="field span3"><label>Script WhatsApp</label><textarea id="guideWhatsapp" placeholder="Mensagem inicial, retomada, envio de material...">${esc(g.whatsapp||'')}</textarea></div><div class="field span3"><label>Script de ligação</label><textarea id="guideCall" placeholder="Abertura, perguntas, qualificação, fechamento de próximo passo...">${esc(g.call||'')}</textarea></div><div class="field span3"><label>FAQs — uma por linha: pergunta | resposta</label><textarea id="guideFaqs" placeholder="Qual o prazo de pagamento? | A condição padrão é...">${esc(faqText)}</textarea></div><div class="span3 actions"><button class="btn primary" onclick="saveCampaignGuides('${id}')">Salvar roteiros</button></div></div>`,'wide');
+}
+function saveCampaignGuides(id){
+  const c=campaignById(id); if(!c) return;
+  c.guides={
+    attendance:v('guideAttendance'),
+    whatsapp:v('guideWhatsapp'),
+    call:v('guideCall'),
+    faqs:v('guideFaqs').split('\n').map(line=>line.trim()).filter(Boolean).map(line=>{const parts=line.split('|'); return {q:(parts[0]||'').trim(),a:(parts.slice(1).join('|')||'').trim()};}).filter(f=>f.q)
+  };
+  c.updatedAt=now();
+  save(); closeModal(); openCampaign(id); toast('Roteiros e FAQs salvos.');
+}
+function openCampaignLeadForm(campaignId){
+  const c=campaignById(campaignId); if(!c) return;
+  openModal('Novo lead · '+c.name,'Lead já será vinculado à campanha.',`<div class="formGrid"><div class="field"><label>Nome</label><input id="campLeadName"></div><div class="field"><label>WhatsApp</label><input id="campLeadPhone"></div><div class="field"><label>E-mail</label><input id="campLeadEmail"></div><div class="field"><label>Cidade</label><input id="campLeadCity" value="${esc(project().city)}"></div><div class="field"><label>Origem</label><input id="campLeadSource" value="${esc(c.channel||'Campanha')}"></div><div class="field"><label>Finalidade</label><input id="campLeadPurpose" value="Moradia"></div><div class="field"><label>Perfil</label><input id="campLeadProfile" value="Família"></div><div class="field"><label>Score inicial</label><input id="campLeadScore" type="number" value="35"></div><div class="field span3"><button class="btn primary" onclick="saveCampaignLead('${campaignId}')">Cadastrar lead vinculado</button></div></div>`,'wide');
+}
+function saveCampaignLead(campaignId){
+  const c=campaignById(campaignId); if(!c) return;
+  const l=lead(normalizeName(v('campLeadName')),v('campLeadCity'),v('campLeadSource'),c.name,v('campLeadPurpose'),v('campLeadProfile'),'captado',Number(v('campLeadScore'))||35,team('SDR')[0]?.id||'', '', null);
+  l.phone=v('campLeadPhone'); l.email=v('campLeadEmail'); l.campaignId=campaignId; l.history.push({ts:now(),text:`Lead cadastrado diretamente na campanha ${c.name}.`});
+  state.leads.push(l); save(); closeModal(); openCampaign(campaignId); toast('Lead cadastrado e vinculado à campanha.');
+}
+function openCampaignLinkLeads(campaignId){
+  const c=campaignById(campaignId); if(!c) return;
+  openModal('Vincular leads · '+c.name,'Selecione leads existentes para vincular ou remover desta campanha.',`<div class="field"><label>Filtrar lead</label><input id="campLinkFilter" class="filterInput" placeholder="Nome, cidade, origem..." oninput="renderCampaignLeadLinkList('${campaignId}')"></div><div id="campLinkList"></div><div class="actions" style="justify-content:flex-start;margin-top:14px"><button class="btn primary" onclick="saveCampaignLeadLinks('${campaignId}')">Salvar vínculos</button></div>`,'wide');
+  setTimeout(()=>renderCampaignLeadLinkList(campaignId),20);
+}
+function renderCampaignLeadLinkList(campaignId){
+  const q=String(v('campLinkFilter')||'').toLowerCase();
+  const box=document.getElementById('campLinkList'); if(!box) return;
+  const leads=projectLeads().filter(l=>!q||[l.name,l.city,l.source,l.campaign,l.phone,l.email].join(' ').toLowerCase().includes(q)).slice(0,200);
+  box.innerHTML=`<div class="leadLinkGrid">${leads.map(l=>`<label class="leadLinkItem"><input type="checkbox" class="campLeadCheck" value="${l.id}" ${l.campaignId===campaignId?'checked':''}><span><b>${esc(l.name)}</b><br><small>${esc(l.city||'')} · ${esc(l.source||'')} · campanha atual: ${esc(l.campaign||campaignName(l.campaignId)||'—')}</small></span></label>`).join('')}</div>`;
+}
+function saveCampaignLeadLinks(campaignId){
+  const c=campaignById(campaignId); if(!c) return;
+  const selected=new Set([...document.querySelectorAll('.campLeadCheck:checked')].map(x=>x.value));
+  projectLeads().forEach(l=>{
+    if(selected.has(l.id)){ l.campaignId=campaignId; l.campaign=c.name; }
+    else if(l.campaignId===campaignId){ l.campaignId=''; l.campaign=''; }
+  });
+  save(); closeModal(); openCampaign(campaignId); toast('Vínculos de leads atualizados.');
+}
+function openCampaign(id){
+  const c=campaignById(id); if(!c) return;
+  const m=campaignMetrics(c), cond=campaignCondition(c);
+  const leadRows=m.leads.slice(0,120).map(l=>`<tr><td><b>${esc(l.name)}</b><div class="tiny">${esc(l.city||'')} · ${esc(l.source||'')}</div></td><td>${esc(stage(l.stage).label)}</td><td>${l.score}</td><td>${l.lotId?esc(lotLabel(l.lotId)):'—'}</td><td><button class="btn small" onclick="openDossier('${l.id}')">Dossiê</button></td></tr>`).join('');
+  openModal('Campanha · '+c.name,`${c.objective||''} · ${c.channel||''}`,`
+    <div class="grid four"><div class="miniStat"><span>Leads</span><b>${m.leads.length}</b></div><div class="miniStat"><span>Propostas</span><b>${m.props.length}</b></div><div class="miniStat"><span>VGV realizado</span><b>${fmtMoney(m.vgvRealized)}</b></div><div class="miniStat"><span>Conversão</span><b>${m.conversion.toFixed(1)}%</b></div></div>
+    <div class="campaignVgvPanel"><h3>Comparativo de VGV da campanha</h3>${campaignVgvComparisonSvg(c)}</div>
+    <div class="proposalDetailGrid" style="margin-top:14px"><div class="proposalRichBox"><h3>Metas e desempenho</h3><p><b>Meta leads:</b> ${c.targetLeads||0}<br><b>Meta vendas:</b> ${c.targetSales||0}<br><b>Meta VGV:</b> ${fmtMoney(c.targetVgv||0)}<br><b>Budget:</b> ${fmtMoney(c.budget||0)}<br><b>CPL:</b> ${fmtMoney(m.cpl)} · <b>Custo por venda:</b> ${fmtMoney(m.cps)}</p></div><div class="proposalRichBox"><h3>Condição específica</h3><p>Entrada ${cond.entryPct||10}% em ${cond.entryInstallments||1}x<br>${cond.months||180} mensais · ${cond.annuals||15} anuais<br>${cond.interest||0.7}% a.m. · fator anual ${cond.annualRatio||28.35}<br>Desconto máximo: ${cond.maxDiscountPct||0}%<br>${esc(cond.notes||'')}</p></div></div>
+    <div class="campaignPeopleGrid"><div class="campaignReportBox"><h3>SDRs participantes e ranking</h3>${campaignPeopleTable(c,'sdr')}</div><div class="campaignReportBox"><h3>Corretores participantes e ranking</h3>${campaignPeopleTable(c,'broker')}</div></div>
+    <div class="campaignReportBox"><h3>Materiais vinculados</h3>${campaignMaterials(c).map(m=>`<span class="materialBadge">${esc(m.name)}</span>`).join('')||'<p class="muted">Sem materiais vinculados.</p>'}</div>
+    ${campaignGuidesHtml(c)}
+    <div class="campaignReportBox"><h3>Leads da campanha</h3><div class="actions" style="justify-content:flex-start;margin-bottom:10px"><button class="btn primary" onclick="openCampaignLeadForm('${c.id}')">+ Lead nesta campanha</button><button class="btn" onclick="openCampaignLinkLeads('${c.id}')">Vincular leads existentes</button></div><div class="tableWrap"><table><thead><tr><th>Lead</th><th>Etapa</th><th>Score</th><th>Lote</th><th>Ação</th></tr></thead><tbody>${leadRows||'<tr><td colspan="5" class="muted">Sem leads vinculados.</td></tr>'}</tbody></table></div></div>
+    <div class="actions" style="justify-content:flex-start;margin-top:14px"><button class="btn primary" onclick="openCampaignForm('${c.id}')">Editar campanha</button><button class="btn" onclick="printCampaignReport('${c.id}')">Gerar PDF</button></div>`,'wide');
+}
+function campaignReportHtml(id=''){
+  const campaigns=id?[campaignById(id)].filter(Boolean):projectCampaigns();
+  const rows=campaigns.map(c=>{ const m=campaignMetrics(c); return `<tr><td>${esc(c.name)}</td><td>${esc(c.objective||'')}</td><td>${m.leads.length}</td><td>${m.hot}</td><td>${m.props.length}</td><td>${m.reservations.length}</td><td>${m.clients.length}</td><td>${fmtMoney(c.targetVgv||0)}</td><td>${fmtMoney(m.vgvPipeline)}</td><td>${fmtMoney(m.vgvRealized)}</td><td>${fmtMoney(m.vgvExecuted)}</td><td>${m.conversion.toFixed(1)}%</td><td>${fmtMoney(m.cpl)}</td></tr>`; }).join('');
+  return `<!doctype html><html><head><meta charset="utf-8"><title>Relatório Campanhas</title><style>body{font-family:Arial,sans-serif;color:#173C52;margin:34px}h1{font-size:26px}table{border-collapse:collapse;width:100%;margin-top:18px}td,th{border:1px solid #d8e2e8;padding:8px;font-size:12px;text-align:left}th{background:#f1f6f8}.box{border:1px solid #d8e2e8;border-radius:14px;padding:14px;margin:12px 0}@media print{button{display:none}}</style></head><body><h1>Relatório de Campanhas · ${esc(project().name)}</h1><p>${fmtDateTime(now())}</p><table><thead><tr><th>Campanha</th><th>Objetivo</th><th>Leads</th><th>A</th><th>Propostas</th><th>Reservas</th><th>Clientes</th><th>VGV Projetado</th><th>VGV Negociação</th><th>VGV Realizado</th><th>VGV Executado</th><th>Conversão</th><th>CPL</th></tr></thead><tbody>${rows}</tbody></table><button onclick="window.print()">Salvar/Imprimir PDF</button><script>setTimeout(()=>window.print(),500)<\/script></body></html>`;
+}
+function renderCampaigns(){
+  ensureCampaignState();
+  const cards=projectCampaigns().map(c=>{
+    const m=campaignMetrics(c), cond=campaignCondition(c);
+    const progress=(Number(c.targetVgv)||0)?m.vgvRealized/Number(c.targetVgv)*100:0;
+    return `<div class="campaignCard">
+      <div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start"><div><h3>${esc(c.name)}</h3><p class="tiny">${esc(c.objective||'—')} · ${esc(c.channel||'—')} · ${esc(c.status||'ativa')}</p></div><span class="pill ${c.status==='ativa'?'green':'amber'}">${esc(c.status||'ativa')}</span></div>
+      <div class="campaignMeta"><span class="pill">Meta leads: ${Number(c.targetLeads)||0}</span><span class="pill">Meta vendas: ${Number(c.targetSales)||0}</span><span class="pill">Meta VGV: ${fmtMoney(c.targetVgv||0)}</span></div>
+      <div class="campaignKpis"><div class="campaignKpi"><span>Leads</span><b>${m.leads.length}</b></div><div class="campaignKpi"><span>Clientes A</span><b>${m.hot}</b></div><div class="campaignKpi"><span>VGV projetado</span><b>${fmtMoney(c.targetVgv||0)}</b></div><div class="campaignKpi"><span>VGV realizado</span><b>${fmtMoney(m.vgvRealized)}</b></div><div class="campaignKpi"><span>VGV executado</span><b>${fmtMoney(m.vgvExecuted)}</b></div><div class="campaignKpi"><span>Conversão</span><b>${m.conversion.toFixed(1)}%</b></div></div>
+      <div class="campaignProgress"><span style="width:${Math.min(100,progress)}%"></span></div><span class="tiny">${progress.toFixed(1)}% da meta de VGV realizado</span>
+      <div class="campaignVgvPanel">${campaignVgvComparisonSvg(c)}</div>
+      <div class="conditionBox"><b>Condição vinculada</b><br>Entrada ${cond.entryPct||10}% em ${cond.entryInstallments||1}x · ${cond.months||180} mensais · ${cond.annuals||15} anuais · ${cond.interest||0.7}% a.m. · desconto limite ${cond.maxDiscountPct||0}%</div>
+      <div class="materialChips">${campaignMaterials(c).map(m=>`<span class="materialBadge">${esc(m.name)}</span>`).join('') || '<span class="tiny">Sem materiais vinculados.</span>'}</div>
+      <div class="actions" style="justify-content:flex-start;margin-top:12px"><button class="btn small primary" onclick="openCampaign('${c.id}')">Abrir</button><button class="btn small" onclick="openCampaignLeadForm('${c.id}')">+ Lead</button><button class="btn small" onclick="openCampaignLinkLeads('${c.id}')">Vincular leads</button><button class="btn small" onclick="openCampaignForm('${c.id}')">Editar</button><button class="btn small" onclick="printCampaignReport('${c.id}')">PDF</button></div>
+    </div>`;
+  }).join('');
+  return `<div class="grid four"><div class="card"><h3>Campanhas</h3><p>${projectCampaigns().length}</p></div><div class="card"><h3>Leads vinculados</h3><p>${projectLeads().filter(l=>l.campaignId).length}</p></div><div class="card"><h3>VGV realizado</h3><p>${fmtMoney(projectCampaigns().reduce((s,c)=>s+campaignMetrics(c).vgvRealized,0))}</p></div><div class="card"><h3>VGV executado</h3><p>${fmtMoney(projectCampaigns().reduce((s,c)=>s+campaignMetrics(c).vgvExecuted,0))}</p></div></div><div class="campaignGrid" style="margin-top:16px">${cards||'<div class="empty">Nenhuma campanha criada.</div>'}</div>`;
+}
+const _v511OldRenderSettings = renderSettings;
+renderSettings = function(){
+  const teamBlock = `<div class="card"><h2>Equipe</h2><div class="warList">${state.team.map(u=>`<div class="task ${u.role==='Corretor'&&(!u.creci||!u.creciDoc)?'danger':''}"><div><b>${esc(u.name)}</b><span class="tiny">${esc(u.role)} ${u.creci?'· '+esc(u.creci):''}${u.role==='Corretor'&&!u.creciDoc?' · CRECI PDF pendente':''}</span></div><button class="btn small" onclick="openTeamForm('${u.id}')">Editar</button></div>`).join('')}</div><div class="actions" style="justify-content:flex-start;margin-top:12px"><button class="btn primary" onclick="openTeamForm()">+ Pessoa</button></div></div>`;
+  const materialBlock = `<div class="card"><h2>Materiais</h2><p>Cadastre materiais para campanhas, envio a leads e pós-venda.</p><div class="actions" style="justify-content:flex-start;margin:12px 0"><button class="btn primary" onclick="openMaterialForm()">+ Material</button></div><div class="materialManagerGrid">${(state.materials||[]).map(m=>`<div class="materialManagerCard"><b>${esc(m.name)}</b><p class="tiny">${esc(m.type||'Material')} · ${esc(m.stage||'')} · ${esc(m.persona||'')}</p><p class="tiny">${esc(m.url||m.description||'')}</p><div class="actions" style="justify-content:flex-start"><button class="btn small" onclick="openMaterialForm('${m.id}')">Editar</button><button class="btn small danger" onclick="deleteMaterial('${m.id}')">Excluir</button></div></div>`).join('')||'<div class="empty">Nenhum material cadastrado.</div>'}</div></div>`;
+  return `<div class="grid two">${teamBlock}${materialBlock}</div>`;
+};
+function openMaterialForm(id=''){
+  const m=(state.materials||[]).find(x=>x.id===id);
+  openModal(id?'Editar material':'Novo material','Materiais podem ser vinculados a campanhas e enviados para leads/clientes.',`<div class="formGrid"><div class="field"><label>Nome</label><input id="matNameCfg" value="${esc(m?.name||'')}"></div><div class="field"><label>Tipo</label><input id="matTypeCfg" value="${esc(m?.type||'PDF')}"></div><div class="field"><label>Etapa</label><input id="matStageCfg" value="${esc(m?.stage||'Aquecimento')}"></div><div class="field"><label>Persona</label><input id="matPersonaCfg" value="${esc(m?.persona||'Todos')}"></div><div class="field span2"><label>URL / link do material</label><input id="matUrlCfg" value="${esc(m?.url||'')}"></div><div class="field span3"><label>Descrição / observação</label><textarea id="matDescCfg">${esc(m?.description||'')}</textarea></div><div class="span3 actions"><button class="btn primary" onclick="saveMaterial('${id}')">Salvar material</button></div></div>`,'wide');
+}
+function saveMaterial(id=''){
+  state.materials=state.materials||[];
+  const existing=id?state.materials.find(m=>m.id===id):null;
+  const item={id:id||uid('mat'),name:v('matNameCfg'),type:v('matTypeCfg'),stage:v('matStageCfg'),persona:v('matPersonaCfg'),url:v('matUrlCfg'),description:v('matDescCfg'),updatedAt:now(),createdAt:existing?.createdAt||now()};
+  if(!item.name) return toast('Nome do material é obrigatório.');
+  if(existing) Object.assign(existing,item); else state.materials.push(item);
+  save(); closeModal(); render(); toast('Material salvo.');
+}
+function deleteMaterial(id){
+  if(!confirm('Excluir material? Ele será removido das campanhas vinculadas.')) return;
+  state.materials=(state.materials||[]).filter(m=>m.id!==id);
+  (state.campaigns||[]).forEach(c=>{ c.materialIds=(c.materialIds||[]).filter(mid=>mid!==id); });
+  save(); render(); toast('Material excluído.');
+}
+window.openCampaignGuides=openCampaignGuides; window.saveCampaignGuides=saveCampaignGuides; window.openCampaignLeadForm=openCampaignLeadForm; window.saveCampaignLead=saveCampaignLead; window.openCampaignLinkLeads=openCampaignLinkLeads; window.renderCampaignLeadLinkList=renderCampaignLeadLinkList; window.saveCampaignLeadLinks=saveCampaignLeadLinks; window.openMaterialForm=openMaterialForm; window.saveMaterial=saveMaterial; window.deleteMaterial=deleteMaterial;
+/* ==== v5.11 advanced campaigns patch end ==== */
 
 render();
 })();
