@@ -3,9 +3,10 @@
   "buildCommand": "npm run build",
   "outputDirectory": "public",
   "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/index.html"
-    }
+    { "source": "/enterprise-meta", "destination": "/enterprise-meta.html" },
+    { "source": "/enterprise-meta/", "destination": "/enterprise-meta.html" },
+    { "source": "/app", "destination": "/index.html" },
+    { "source": "/", "destination": "/enterprise-shell.html" },
+    { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
