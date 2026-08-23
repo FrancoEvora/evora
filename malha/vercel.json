@@ -1,6 +1,14 @@
 {
   "cleanUrls": true,
+  "rewrites": [
+    { "source": "/", "destination": "/api/page" }
+  ],
   "headers": [
-    { "source": "/(.*)", "headers": [ { "key": "X-Content-Type-Options", "value": "nosniff" } ] }
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        { "key": "X-Content-Type-Options", "value": "nosniff" }
+      ]
+    }
   ]
 }
