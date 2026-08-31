@@ -1,0 +1,5 @@
+import { desc } from "drizzle-orm";
+import { getDb } from "@/db";
+import { predictionRuns } from "@/db/schema";
+export async function GET(){try{return Response.json({runs:await getDb().select().from(predictionRuns).orderBy(desc(predictionRuns.id)).limit(20)})}catch(error){return Response.json({error:error instanceof Error?error.message:"Erro inesperado"},{status:500})}}
+export async function POST(request:Request){try{const body=await request.json() as {modelName?:string;parameters?:unknown;result?:unknown;executedBy?:string};if(!body.modelName)return Response.json({error:"modelName é obrigatório"},{status:400});const [run]=await getDb().insert(predictionRuns).values({modelName:body.modelName,modelVersion:"1.0",parameters:JSON.stringify(body.parameters??{}),result:JSON.stringify(body.result??{}),dataQuality:"demonstrativa",baseDate:"31/08/2026",executedBy:body.executedBy??"CEO / Diretoria"}).returning();return Response.json({run},{status:201})}catch(error){return Response.json({error:error instanceof Error?error.message:"Erro inesperado"},{status:500})}}

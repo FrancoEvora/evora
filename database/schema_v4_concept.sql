@@ -1,1 +1,0 @@
--- Schema conceitual v4.0: leads, actions, notes, documents, lots, reservations, proposals, contracts, clients, communications, reports.
