@@ -1,19 +1,31 @@
-# Évora Launch OS v5.14
+# MALHA by Évora
 
-Correções na tela de performance de campanhas.
+Plataforma de inteligência territorial e conexão de capital para o desenvolvimento imobiliário.
 
-## Ajustes
+![MALHA by Évora](public/malha-logo.svg)
 
-- Corrigidos textos sobrepostos nos cards de campanha-performance.
-- Reduzido e reorganizado o gráfico comparativo de VGV.
-- Padronizados gráficos similares da plataforma.
-- Lead que merece atenção sai automaticamente da lista quando:
-  - avança de etapa na jornada;
-  - registra uma ação no checklist.
-- Se surgir um novo problema diferente, o lead volta a aparecer na lista de atenção.
+## Produto
 
-## Deploy
+- Mapa territorial real com camadas de satélite e ruas, polígonos e oportunidades interativas.
+- Análise de terrenos com desenho no mapa e importação de KML/KMZ.
+- Match entre áreas, incorporadoras e investidores.
+- Deal Room com documentos e andamento das diligências.
+- Pipeline visual de originação, análise, match, negociação e fechamento.
 
-Build Command: npm run build  
-Output Directory: public  
-Install Command: npm install
+## Desenvolvimento
+
+```bash
+npm install
+npm run dev
+```
+
+Abra [http://localhost:3000](http://localhost:3000).
+
+## Produção
+
+```bash
+npm run build
+npm start
+```
+
+Tecnologias principais: Next.js, React, MapLibre GL e Recharts.

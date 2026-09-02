@@ -1,0 +1,19 @@
+<svg width="560" height="152" viewBox="0 0 560 152" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <title>MALHA by Évora</title>
+  <g transform="translate(4 10)">
+    <path d="M12 112V24L54 62L96 24V112" stroke="#C9884B" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M12 24L54 14L96 24L108 72L96 112L54 126L12 112L0 72L12 24Z" stroke="#C9884B" stroke-opacity=".42" stroke-width="2"/>
+    <path d="M12 112L54 62L96 112M12 24L54 62L96 24" stroke="#C9884B" stroke-opacity=".3" stroke-width="2"/>
+    <circle cx="12" cy="24" r="5" fill="#F0B978"/>
+    <circle cx="54" cy="14" r="5" fill="#F0B978"/>
+    <circle cx="96" cy="24" r="5" fill="#F0B978"/>
+    <circle cx="54" cy="62" r="6" fill="#C9884B"/>
+    <circle cx="12" cy="112" r="5" fill="#F0B978"/>
+    <circle cx="96" cy="112" r="5" fill="#F0B978"/>
+  </g>
+  <g transform="translate(146 24)">
+    <text x="0" y="59" fill="#F3E9DA" font-family="Georgia, 'Times New Roman', serif" font-size="65" letter-spacing="8">MALHA</text>
+    <path d="M2 76H394" stroke="#C9884B" stroke-opacity=".45"/>
+    <text x="3" y="110" fill="#C6B9A9" font-family="Arial, Helvetica, sans-serif" font-size="18" letter-spacing="5">BY ÉVORA</text>
+  </g>
+</svg>
