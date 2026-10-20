@@ -18,6 +18,8 @@ A Aurora reúne inteligência territorial, estruturação imobiliária, desenvol
 - API de fontes publicada: municípios oficiais, atualização manual com população de referência, execução programada e identificação de importação humana verificadas.
 - Rotina publicada de monitoramento: HTTP 200 e alertas efetivos de licença e condicionante.
 - 26 conexões de demonstração com aquisição real concluída: 24 consultas IBGE e 2 séries BCB. O limite documentado pelo serviço BCB de 20 observações por consulta foi detectado e incorporado.
+- ANM: consulta real de contagem por envoltória concluída; resultado tratado somente como triagem espacial.
+- Encerramento do QA: ativos e etapas temporários removidos; contas de teste bloqueadas, participações inativas e publicação de teste arquivada. Registros residuais de auditoria preservados, sem acesso ativo.
 - Advisor de segurança: objetos Aurora sem alertas WARN/ERROR; três tabelas privadas com RLS e sem políticas são deliberadamente inacessíveis a usuários, atendidas somente por funções controladas.
 
 ## Fontes públicas
