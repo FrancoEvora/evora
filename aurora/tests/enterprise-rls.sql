@@ -8,7 +8,7 @@ insert into public.aurora_members(workspace_id,user_id,display_name,email,role) 
 ('e2202026-0000-4000-8000-000000000010','e2202026-0000-4000-8000-000000000001','Owner','owner@example.invalid','owner'),
 ('e2202026-0000-4000-8000-000000000010','e2202026-0000-4000-8000-000000000002','Analyst','analyst@example.invalid','analyst'),
 ('e2202026-0000-4000-8000-000000000010','e2202026-0000-4000-8000-000000000003','Client','client@example.invalid','client');
-insert into public.aurora_assets(id,workspace_id,name,division,created_by) values('e2202026-0000-4000-8000-000000000020','e2202026-0000-4000-8000-000000000010','Own test asset','urban','e2202026-0000-4000-8000-000000000001'),('e2202026-0000-4000-8000-000000000021','e2202026-0000-4000-8000-000000000011','Other tenant asset','urban','e2202026-0000-4000-8000-000000000001');
+insert into public.aurora_assets(id,workspace_id,name,division,created_by,city,state,municipality_code,geometry) values('e2202026-0000-4000-8000-000000000020','e2202026-0000-4000-8000-000000000010','Own test asset','urban','e2202026-0000-4000-8000-000000000001','Monte Carmelo','MG','3143104','{"type":"Polygon","coordinates":[[[-47.49,-18.73],[-47.48,-18.73],[-47.48,-18.72],[-47.49,-18.73]]]}'),('e2202026-0000-4000-8000-000000000021','e2202026-0000-4000-8000-000000000011','Other tenant asset','urban','e2202026-0000-4000-8000-000000000001','Monte Carmelo','MG','3143104','{"type":"Polygon","coordinates":[[[-47.49,-18.73],[-47.48,-18.73],[-47.48,-18.72],[-47.49,-18.73]]]}');
 insert into public.aurora_work_items(id,workspace_id,asset_id,module,kind,title,status,evidence,client_visible,created_by) values('e2202026-0000-4000-8000-000000000030','e2202026-0000-4000-8000-000000000010','e2202026-0000-4000-8000-000000000020','structuring','urban','Urban study','review','Test evidence',true,'e2202026-0000-4000-8000-000000000002');
 set local role authenticated;
 select set_config('request.jwt.claim.sub','e2202026-0000-4000-8000-000000000002',true);
@@ -27,8 +27,7 @@ do $$ declare r uuid;begin
  perform public.aurora_share_report(r,'e2202026-0000-4000-8000-000000000003',now()+interval '1 day',false,false);
  begin perform public.aurora_create_report('e2202026-0000-4000-8000-000000000010','Cross tenant attack',array['e2202026-0000-4000-8000-000000000021'::uuid],true);raise exception 'FAILED cross tenant snapshot';exception when raise_exception then if sqlerrm like 'FAILED%' then raise;end if;end;
 end $$;
-insert into public.aurora_sources(workspace_id,asset_id,source_key,title,config) values('e2202026-0000-4000-8000-000000000010','e2202026-0000-4000-8000-000000000020','ibge_census','Census QA','{"municipality":"3143104"}');
-do $$ begin assert (select count(*)=1 from public.aurora_sources),'Owner cannot read sources';begin update public.aurora_sources set snapshot='{}';raise exception 'FAILED forged source';exception when insufficient_privilege then null;end;end $$;
+do $$ begin assert (select count(*)=7 from public.aurora_sources),'Owner cannot read seven default sources';begin update public.aurora_sources set snapshot='{}';raise exception 'FAILED forged source';exception when insufficient_privilege then null;end;end $$;
 select set_config('request.jwt.claim.sub','e2202026-0000-4000-8000-000000000002',true);
 do $$ begin assert (select count(*)=0 from public.aurora_work_items),'Module deny ignored';end $$;
 select set_config('request.jwt.claim.sub','e2202026-0000-4000-8000-000000000003',true);

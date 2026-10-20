@@ -16,9 +16,9 @@ insert into public.aurora_members(workspace_id,user_id,display_name,email,role) 
  ('f982a02b-563a-4352-913c-cbc865b2ba01','f982a02b-563a-4352-913c-cbc865b2b003','QA Analyst','aurora-analyst@example.invalid','analyst'),
  ('f982a02b-563a-4352-913c-cbc865b2ba01','f982a02b-563a-4352-913c-cbc865b2b004','QA Viewer','aurora-viewer@example.invalid','viewer'),
  ('f982a02b-563a-4352-913c-cbc865b2ba01','f982a02b-563a-4352-913c-cbc865b2b005','QA Client','aurora-client@example.invalid','client');
-insert into public.aurora_assets(id,workspace_id,name,division,created_by) values
- ('f982a02b-563a-4352-913c-cbc865b2bc01','f982a02b-563a-4352-913c-cbc865b2ba01','Test asset A','urban','f982a02b-563a-4352-913c-cbc865b2b001'),
- ('f982a02b-563a-4352-913c-cbc865b2bc02','f982a02b-563a-4352-913c-cbc865b2ba02','Test asset B','rural','f982a02b-563a-4352-913c-cbc865b2b002');
+insert into public.aurora_assets(id,workspace_id,name,division,created_by,city,state,municipality_code,geometry) values
+ ('f982a02b-563a-4352-913c-cbc865b2bc01','f982a02b-563a-4352-913c-cbc865b2ba01','Test asset A','urban','f982a02b-563a-4352-913c-cbc865b2b001','Monte Carmelo','MG','3143104','{"type":"Polygon","coordinates":[[[-47.49,-18.73],[-47.48,-18.73],[-47.48,-18.72],[-47.49,-18.73]]]}'),
+ ('f982a02b-563a-4352-913c-cbc865b2bc02','f982a02b-563a-4352-913c-cbc865b2ba02','Test asset B','rural','f982a02b-563a-4352-913c-cbc865b2b002','Monte Carmelo','MG','3143104','{"type":"Polygon","coordinates":[[[-47.49,-18.73],[-47.48,-18.73],[-47.48,-18.72],[-47.49,-18.73]]]}');
 insert into storage.objects(bucket_id,name,owner_id) values
  ('aurora-vault','f982a02b-563a-4352-913c-cbc865b2ba01/f982a02b-563a-4352-913c-cbc865b2bc01/test.txt','f982a02b-563a-4352-913c-cbc865b2b001'),
  ('aurora-vault','f982a02b-563a-4352-913c-cbc865b2ba02/f982a02b-563a-4352-913c-cbc865b2bc02/test.txt','f982a02b-563a-4352-913c-cbc865b2b002');
@@ -35,7 +35,7 @@ select set_config('request.jwt.claim.sub','f982a02b-563a-4352-913c-cbc865b2b003'
 do $$ begin
  update public.aurora_assets set notes='QA update' where id='f982a02b-563a-4352-913c-cbc865b2bc01';
  assert (select notes='QA update' from public.aurora_assets where id='f982a02b-563a-4352-913c-cbc865b2bc01'),'Analyst cannot edit';
- begin insert into public.aurora_assets(workspace_id,name,division) values('f982a02b-563a-4352-913c-cbc865b2ba02','Cross tenant attack','urban');raise exception 'FAILED cross-tenant insert';exception when insufficient_privilege then null;end;
+ begin insert into public.aurora_assets(workspace_id,name,division,city,state,municipality_code,geometry) values('f982a02b-563a-4352-913c-cbc865b2ba02','Cross tenant attack','urban','Monte Carmelo','MG','3143104','{"type":"Polygon","coordinates":[[[-47.49,-18.73],[-47.48,-18.73],[-47.48,-18.72],[-47.49,-18.73]]]}');raise exception 'FAILED cross-tenant insert';exception when insufficient_privilege then null;end;
  begin update public.aurora_members set role='owner' where user_id=auth.uid();raise exception 'FAILED privilege escalation';exception when insufficient_privilege then null;end;
  begin insert into public.aurora_runs(workspace_id,asset_id,prompt,result,model) values('f982a02b-563a-4352-913c-cbc865b2ba01','f982a02b-563a-4352-913c-cbc865b2bc01','test','fake','fake');raise exception 'FAILED fabricated AI run';exception when insufficient_privilege then null;end;
 end $$;

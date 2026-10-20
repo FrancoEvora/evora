@@ -2,7 +2,7 @@ import type {PublicSource,SourceRun} from './Sources';
 import type {WorkItem,License,Financial,Study,MarketPoint,Report,ReportAccess,ModuleGrant} from './enterprise';
 export type Role='owner'|'admin'|'manager'|'analyst'|'viewer'|'client';
 export type Stage='intelligence'|'structuring'|'development'|'management';
-export type Asset={id:string;workspace_id:string;name:string;division:'urban'|'rural';stage:Stage;city:string;state:string;address:string;area_ha:number|null;estimated_value:number|null;latitude:number|null;longitude:number|null;geometry:unknown;notes:string;status:string;created_at:string;created_by:string};
+export type Asset={id:string;workspace_id:string;name:string;division:'urban'|'rural';stage:Stage;city:string;state:string;address:string;area_ha:number|null;estimated_value:number|null;latitude:number|null;longitude:number|null;geometry:unknown;municipality_code?:string;polygon_area_ha?:number;notes:string;status:string;created_at:string;created_by:string};
 export type Member={workspace_id:string;user_id:string;display_name:string;email:string;role:Role;active:boolean};
 export type Workspace={id:string;name:string;created_by:string;is_demo?:boolean};
 export type Action={id:string;workspace_id:string;asset_id:string;title:string;description:string;priority:'low'|'medium'|'high'|'critical';status:'todo'|'doing'|'done';due_on:string|null;assignee_id:string|null;evidence:string;category:string;created_at:string};

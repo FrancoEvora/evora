@@ -61,3 +61,16 @@ O modo público de demonstração usa uma fotografia curada: nunca retorna diret
 O primeiro acesso selecionava a organização vazia, apesar de a mesma conta possuir o ambiente de exemplos. A seleção agora prioriza uma operação com ativos, ou a demonstração preenchida quando a operação está vazia. Escolhas explícitas são lembradas por conta; links com `workspace` são validados contra as organizações autorizadas. Há atalhos permanentes para exemplos e para a operação. O catálogo de 18 fontes aparece por padrão quando não existem conexões.
 
 Consulta autenticada ao banco confirmou 6 ativos e 26 conexões visíveis para o proprietário no ambiente de demonstração. Os dados permanecem identificados por ambiente. Quatro testes de regressão cobrem abertura, preferência, prioridade da operação e rejeição de organizações não autorizadas; a suíte totaliza 15 testes.
+
+
+## Poligonais e fontes automáticas — 20/10/2026
+
+- Ativos exigem Polygon/MultiPolygon em WGS84. Desenho no mapa com desfazer/concluir ou importação KML, KMZ e GeoJSON. PostGIS valida topologia, coordenadas e limite de 10.000 vértices; pontos, linhas, contornos abertos e autointerseções são rejeitados.
+- Área geodésica calculada (`polygon_area_ha`) separada da área declarada; ponto de referência interno obtido por `ST_PointOnSurface`. A geometria não certifica domínio nem limites fundiários.
+- Município selecionado no catálogo oficial IBGE. Código e UF são conferidos no banco; os dados municipais/estaduais mantêm sua abrangência e não são atribuídos ao perímetro.
+- A criação do ativo e de sete conexões ocorre na mesma transação por trigger privado: Censo, estimativa populacional, PIB, SINAPI, Selic, IPCA e ANM. BCB diário; IBGE e ANM semanais. A tela inicia a primeira consulta após salvar; o cron retoma pendências sem depender do navegador. Permissões e limites existentes continuam aplicados.
+- Índice único impede duplicações das sete fontes padrão. Alterações de recorte invalidam a leitura corrente das conexões automáticas e cancelam leases antigos; histórico preservado. Pausas e frequência escolhidas pelo usuário são mantidas.
+- ANM continua sendo uma triagem de processos na envoltória de ±5 km do ponto de referência, explicitamente identificada no indicador; não é laudo de interseção com o perímetro. IBGE customizado e bases de importação assistida exigem configuração específica.
+- Seis exemplos possuem perímetros sintéticos identificados nas notas. Todas as 42 conexões têm leitura pública real disponível. A fotografia pública de demonstração foi atualizada apenas com os ativos já aprovados para publicação, sem identidades, leases ou credenciais.
+- Migração criada pelo CLI em `supabase/migrations/20261020214130_asset_polygons_default_sources.sql`, aplicada após as migrações 001–009 de `database/`. Não executar as migrações antigas novamente.
+- Verificação: 18 testes Node e build; `tests/polygon-defaults-rls.sql` executado com rollback confirma perímetro obrigatório, topologia, área, sete conexões atômicas, idempotência, mudança do município, preservação da pausa e isolamento entre organizações. Advisor: nenhum WARN/ERROR em objetos Aurora; INFO das três tabelas privadas sem políticas é intencional. Configurações globais de Auth e objetos de outros produtos não alterados.
