@@ -48,7 +48,7 @@ Para usar variáveis da Vercel, vincule primeiro ao projeto e execute `vercel en
 - `VITE_SUPABASE_URL` / `VITE_SUPABASE_PUBLISHABLE_KEY`: configuração pública do cliente. A chave publishable não concede acesso sem RLS.
 - `SUPABASE_URL` / `SUPABASE_PUBLISHABLE_KEY`: acesso servidor sob a identidade do usuário. **Nenhuma service-role key é usada.**
 - `CRON_SECRET`: segredo de 48 bytes, exclusivo desta implantação; SHA256 correspondente em `aurora_private.worker_config`. O segredo autoriza apenas funções restritas do worker Aurora. Jamais o exponha no cliente ou em logs.
-- `AI_GATEWAY_MODEL`: ID validado no catálogo do Gateway; configurado na Vercel. `VERCEL_OIDC_TOKEN` é disponibilizado pela plataforma.
+- `AI_GATEWAY_MODEL`: ID validado no catálogo do Gateway; configurado na Vercel. O token OIDC é lido a cada chamada por `@vercel/oidc`, do contexto da função em produção e de `VERCEL_OIDC_TOKEN` no desenvolvimento. Nunca é armazenado ou devolvido ao navegador.
 - Cadência do cron: `0 9 * * *` UTC, a partir de 06h de Brasília. Até 3 análises por chamada, lease de 10 minutos. A janela pode variar conforme o plano Vercel.
 - Limite manual: 30 análises por usuário/dia e 200 por organização/dia. Reserva é contada mesmo quando o provedor falha, prevenindo abusos de tentativas.
 
