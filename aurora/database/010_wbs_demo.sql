@@ -14,7 +14,7 @@ declare r record;p record;before_ids uuid[];new_ids uuid[];start_date date;compl
   completed_group:=case when r.module='development' then 3 when r.name='Jardins do Vale' then 11 when r.name='Vértice Logística' then 3 when r.name='Fazenda Boa Aurora' then 2 else 1 end;
   for p in select * from public.aurora_work_items where id=any(new_ids) order by wbs_code loop
    group_no:=split_part(p.wbs_code,'.',2)::int;package_no:=split_part(p.wbs_code,'.',3)::int;
-   start_date:=greatest('2026-07-06'::date+group_no*3,(select max(due_on)+1 from public.aurora_work_items where id=any(p.predecessor_ids)));
+   start_date:=greatest((case when group_no<=completed_group then '2026-07-06'::date else '2026-10-20'::date end)+group_no*3,(select max(due_on)+1 from public.aurora_work_items where id=any(p.predecessor_ids)));
    update public.aurora_work_items set start_on=start_date,due_on=start_date+duration_days-1,planned_cost=case when r.module='development' and group_no=10 then 420000+package_no*125000 else 8000+group_no*2500+package_no*1200 end,
     details=details||jsonb_build_object('Demonstração','Escopo, custos, datas, andamento e evidências são exemplos sintéticos para navegação. Não representam diligência, obra, licença ou aceite real.') where id=p.id;
    closed:=group_no<=completed_group;

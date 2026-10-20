@@ -40,7 +40,9 @@ O dicionário completo pode ser exportado em CSV. Células iniciadas por operado
 
 ## Demonstração
 
-250 pacotes e 500 entregáveis, em quatro EAPs de estruturação e uma de desenvolvimento, com cinco linhas de base. Jardins do Vale inclui uma mudança ilustrativa na estratégia de contratação para demonstrar a comparação. Custos, cronogramas, evidências e aceites são **sintéticos e explicitamente identificados**; não são documentos, aprovações de órgãos nem comprovação de execução real.
+250 pacotes e 500 entregáveis, em quatro EAPs de estruturação e uma de desenvolvimento, com nove linhas de base preservadas após a revisão do planejamento demonstrativo. Jardins do Vale inclui uma mudança ilustrativa na estratégia de contratação para demonstrar a comparação. Custos, cronogramas, evidências e aceites são **sintéticos e explicitamente identificados**; não são documentos, aprovações de órgãos nem comprovação de execução real.
+
+`database/011_wbs_demo_planning.sql` documenta o ajuste das datas e registra novas versões, sem substituir as linhas de base iniciais.
 
 `database/010_wbs_demo.sql` inicializa apenas novos pacotes dos ativos demonstrativos autorizados. `database/refresh_wbs_curated_demo.sql` atualiza a cópia pública curada, com lista explícita de campos e sem identidades reais. Nenhuma consulta operacional é liberada a visitantes.
 
