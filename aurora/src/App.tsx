@@ -57,7 +57,7 @@ export default function App(){
  {view==='overview'&&<CommandCenter data={data} onSelect={selectAsset} onNavigate={navigate} demo={demo||currentWorkspace?.is_demo}/>}
  {view==='assets'&&<><div className="page-heading"><div><span className="eyebrow">AURORA URBANA & RURAL</span><h1>Seu portfólio. Uma visão.</h1><p>Todo o ciclo de cada ativo, em um único contexto.</p></div>{write&&<Button onClick={newAsset}><Plus size={17}/>Novo ativo</Button>}</div><section className="panel"><AssetList assets={data.assets} onSelect={selectAsset} onNew={newAsset} write={write}/></section></>}
  {view==='intelligence'&&<GeoIntelligence {...enterpriseProps}/>}
- {view in stageNames&&view!=='intelligence'&&<WorkflowPage {...enterpriseProps} module={view as Stage}/>}
+ {view in stageNames&&view!=='intelligence'&&<WorkflowPage key={view} {...enterpriseProps} module={view as Stage}/>}
  {view==='sources'&&<SourcesView key={workspace} {...enterpriseProps} onNewAsset={write?newAsset:undefined} onOpenExamples={openExamples}/>}
  {view==='finance'&&<FinancePanel {...enterpriseProps}/>}
  {view==='reports'&&<ReportsView {...enterpriseProps}/>}
