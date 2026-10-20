@@ -1,0 +1,2 @@
+import {authenticate,respondError} from './_lib/core.js';
+export default async function handler(req,res){res.setHeader('Cache-Control','no-store');if(req.method!=='GET')return res.status(405).json({error:'Método não permitido'});try{await authenticate(req);return res.status(200).json({version:'1.0.0',database:true,aiConfigured:Boolean(process.env.AI_GATEWAY_MODEL&&(process.env.VERCEL_OIDC_TOKEN||process.env.AI_GATEWAY_API_KEY)),monitorConfigured:Boolean(process.env.CRON_SECRET),externalMessaging:false})}catch(error){return respondError(res,error)}}
