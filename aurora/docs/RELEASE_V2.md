@@ -55,3 +55,9 @@ O modo público de demonstração usa uma fotografia curada: nunca retorna diret
 - Botões de exportação podem ser controlados; conteúdo já visualizado pode ser copiado pelo destinatário. Revogação vale para novas consultas.
 - E-mail/WhatsApp operacionais, assinatura digital, ERP/BIM e bases comerciais não estão conectados. O envio de convites é manual.
 - Os testes realizados não substituem teste de carga, pentest independente, política de retenção, plano de recuperação e homologação do cliente antes de uso crítico em larga escala.
+
+## Correção de acesso aos exemplos
+
+O primeiro acesso selecionava a organização vazia, apesar de a mesma conta possuir o ambiente de exemplos. A seleção agora prioriza uma operação com ativos, ou a demonstração preenchida quando a operação está vazia. Escolhas explícitas são lembradas por conta; links com `workspace` são validados contra as organizações autorizadas. Há atalhos permanentes para exemplos e para a operação. O catálogo de 18 fontes aparece por padrão quando não existem conexões.
+
+Consulta autenticada ao banco confirmou 6 ativos e 26 conexões visíveis para o proprietário no ambiente de demonstração. Os dados permanecem identificados por ambiente. Quatro testes de regressão cobrem abertura, preferência, prioridade da operação e rejeição de organizações não autorizadas; a suíte totaliza 15 testes.
