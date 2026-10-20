@@ -1,3 +1,15 @@
+# Aurora 2 — plataforma imobiliária
+
+Produção: https://aurora-territorial.vercel.app/
+
+Demonstração sem login: https://aurora-territorial.vercel.app/?demo=1
+
+Veja [escopo, três ciclos de entrega, referências, dados e limitações](docs/RELEASE_V2.md).
+
+Acesso por e-mail individual; não existe senha padrão compartilhada. Clientes consultam somente relatórios publicados com autorização explícita. Dados internos são isolados por organização, perfil e ciclo.
+
+## Documentação inicial e operação
+
 # AURORA
 
 Plataforma de inteligência, estruturação, desenvolvimento e gestão de ativos imobiliários urbanos e rurais.
@@ -15,7 +27,7 @@ Plataforma de inteligência, estruturação, desenvolvimento e gestão de ativos
 - Organizações independentes; criação de espaço por usuário com e-mail confirmado.
 - Perfis: proprietário, administrador, gestor, analista, consulta e cliente.
 - Convites vinculados a e-mail, expiração em 7 dias e revogação. Geração de link para compartilhamento manual; nenhum e-mail é enviado pelo recurso de convite.
-- Clientes veem apenas ativos explicitamente compartilhados. Todas as operações são protegidas no banco por RLS; o menu não é uma barreira de segurança.
+- Clientes veem apenas relatórios publicados e explicitamente autorizados. Todas as operações são protegidas no banco por RLS; o menu não é uma barreira de segurança.
 - Ativos urbanos/rurais com etapa, localização, área, estimativa de valor e poligonal KML/KMZ/GeoJSON.
 - Mapa OpenStreetMap e camada de imagem Esri, com atribuição.
 - Cofre documental privado com arquivos até 20 MB, validade, extração de texto de PDF/DOCX/TXT e acesso por ativo.
@@ -61,12 +73,12 @@ Revise as URLs de redirecionamento do Supabase Auth ao adicionar domínio: URL d
 ## Limites explícitos
 
 - Quatro módulos operacionais compartilham o mesmo dossiê; não são motores completos de avaliação financeira, orçamento de obra, CRM ou ERP. Valores são informados pelo usuário, não estimados automaticamente.
-- A IA não pesquisa fontes externas nem atesta regularidade jurídica, ambiental ou viabilidade. Usa até 8 documentos recentes (10 mil caracteres por documento), 60 ações e 10 registros por solicitação. Textos escaneados sem camada textual precisam de OCR externo.
+- A IA não pesquisa fontes externas nem atesta regularidade jurídica, ambiental ou viabilidade. Usa até 8 documentos recentes (10 mil caracteres por documento), 60 ações, 10 registros, 100 etapas, 30 licenças, 120 linhas financeiras, 10 estudos e 12 conexões públicas por solicitação. Textos escaneados sem camada textual precisam de OCR externo.
 - E-mail, WhatsApp e Google Drive ainda não estão conectados. Não há envios externos automáticos.
 - IA depende de acesso, créditos e limites do Vercel AI Gateway. A aplicação exibe erros reais, sem respostas simuladas.
 - Dados anteriores permanecem no navegador original em `/legacy/`. Não há migração automática do cofre local criptografado para o banco. A versão anterior é preservada como ferramenta de acesso/exportação; seus antigos endpoints de IA foram substituídos.
 - O painel carrega até 1.000 registros por tipo e 100 eventos de auditoria; pagine o produto antes de carteiras maiores. Cadastros sem informação aparecem como não informados.
-- O Supabase Auth mantém a configuração global existente. MFA corporativo, SMTP dedicado e política de retenção devem ser planejados conforme a operação.
+- O Supabase Auth mantém a configuração global existente. MFA TOTP está disponível nas configurações da conta. SSO corporativo, SMTP dedicado e política de retenção devem ser planejados conforme a operação.
 
 ## Estrutura
 

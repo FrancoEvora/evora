@@ -1,0 +1,5 @@
+import test from 'node:test';import assert from 'node:assert/strict';
+import {normalizeIbge,normalizeBcb,getPublicJson} from '../api/_lib/public-sources.js';
+test('IBGE preserva unidade, escala, referência e valores indisponíveis',()=>{const rows=normalizeIbge([{variavel:'População',unidade:'Pessoas',resultados:[{classificacoes:[],series:[{localidade:{nome:'Município teste'},serie:{2022:'100',2023:'..'}}]}]}]);assert.equal(rows[0].value,100);assert.equal(rows[0].geography,'Município teste');assert.equal(rows[1].value,null);assert.equal(rows[1].raw,'..');assert.throws(()=>normalizeIbge([]))});
+test('BCB mantém periodicidade e rejeita observações futuras ou ausentes',()=>{const rows=normalizeBcb([{data:'01/09/2026',valor:'-0.32'},{data:'01/11/2026',valor:'1'},{data:'01/10/2026',valor:''}],'bcb_ipca','2026-10-20');assert.equal(rows.length,1);assert.equal(rows[0].unit,'% a.m.');assert.equal(rows[0].value,-.32)});
+test('conectores públicos não permitem URLs arbitrárias ou metadados internos',async()=>{await assert.rejects(getPublicJson('http://169.254.169.254/latest/meta-data'));await assert.rejects(getPublicJson('https://attacker.example/'));});

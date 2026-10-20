@@ -1,0 +1,160 @@
+[
+  {
+    "key": "ibge_census",
+    "name": "IBGE · Censo demográfico",
+    "category": "Demografia",
+    "mode": "api",
+    "description": "População residente, área municipal e densidade. Escala municipal; não estima a população dentro do raio do ativo.",
+    "url": "https://sidra.ibge.gov.br/tabela/4714",
+    "table": "4714",
+    "variables": "93|6318|614",
+    "level": "N6"
+  },
+  {
+    "key": "ibge_population",
+    "name": "IBGE · Estimativas populacionais",
+    "category": "Demografia",
+    "mode": "api",
+    "description": "Última estimativa populacional municipal publicada pelo IBGE.",
+    "url": "https://sidra.ibge.gov.br/tabela/6579",
+    "table": "6579",
+    "variables": "9324",
+    "level": "N6"
+  },
+  {
+    "key": "ibge_gdp",
+    "name": "IBGE · Economia municipal",
+    "category": "Economia",
+    "mode": "api",
+    "description": "PIB e valor adicionado por setor. Valores em mil reais, conforme a fonte; não são renda domiciliar.",
+    "url": "https://sidra.ibge.gov.br/tabela/5938",
+    "table": "5938",
+    "variables": "37|513|517|6575|525",
+    "level": "N6"
+  },
+  {
+    "key": "ibge_sinapi",
+    "name": "IBGE · SINAPI",
+    "category": "Construção",
+    "mode": "api",
+    "description": "Custos médios por m² e variações mensais, anuais e em 12 meses. Referência estadual; não substitui orçamento do projeto.",
+    "url": "https://sidra.ibge.gov.br/tabela/2296",
+    "table": "2296",
+    "variables": "48|2119|2120|1196|1197|1198",
+    "level": "N3"
+  },
+  {
+    "key": "ibge_custom",
+    "name": "IBGE · SIDRA personalizado",
+    "category": "Inteligência",
+    "mode": "api",
+    "description": "Amplie a cobertura com outra tabela, variáveis e classificação do SIDRA. Confirme a disponibilidade para município ou UF nos metadados oficiais.",
+    "url": "https://servicodados.ibge.gov.br/api/docs/agregados?versao=3"
+  },
+  {
+    "key": "bcb_selic",
+    "name": "Banco Central · Meta Selic",
+    "category": "Economia",
+    "mode": "api",
+    "description": "Histórico recente da meta Selic em percentual ao ano. Série SGS 432.",
+    "url": "https://dadosabertos.bcb.gov.br/dataset/432-taxa-de-juros---meta-selic-definida-pelo-copom",
+    "series": "432"
+  },
+  {
+    "key": "bcb_ipca",
+    "name": "Banco Central · IPCA",
+    "category": "Economia",
+    "mode": "api",
+    "description": "Variação mensal do IPCA, em percentual ao mês. Série SGS 433; não representa taxa anual.",
+    "url": "https://dadosabertos.bcb.gov.br/",
+    "series": "433"
+  },
+  {
+    "key": "anm_mining",
+    "name": "ANM · Processos minerários",
+    "category": "Território",
+    "mode": "api",
+    "description": "Contagem de processos no retângulo de entorno de 5 km. Triagem espacial, sem certificação de sobreposição ou regularidade.",
+    "url": "https://geo.anm.gov.br/arcgis/rest/services/SIGMINE/dados_anm/MapServer/0"
+  },
+  {
+    "key": "ibama",
+    "name": "IBAMA · Embargos ambientais",
+    "category": "Ambiental",
+    "mode": "manual",
+    "description": "Consulte o registro oficial e importe os resultados relevantes. A consulta deve considerar abrangência, situação e data da base.",
+    "url": "https://dadosabertos.ibama.gov.br/dataset/termos-de-embargo"
+  },
+  {
+    "key": "icmbio",
+    "name": "ICMBio · Unidades de conservação e cavernas",
+    "category": "Ambiental",
+    "mode": "manual",
+    "description": "Limites de unidades federais, cavernas e outras camadas oficiais; análise técnica de interferências e zona de amortecimento.",
+    "url": "https://www.gov.br/icmbio/pt-br/dados-icmbio/dados_geoespaciais"
+  },
+  {
+    "key": "incra",
+    "name": "INCRA · SIGEF e acervo fundiário",
+    "category": "Fundiário",
+    "mode": "manual",
+    "description": "Parcelas certificadas, assentamentos e territórios quilombolas. Certificação não equivale a prova de propriedade.",
+    "url": "https://acervofundiario.incra.gov.br/geodownload/geodados.php"
+  },
+  {
+    "key": "sinisa",
+    "name": "Ministério das Cidades · SINISA",
+    "category": "Infraestrutura",
+    "mode": "manual",
+    "description": "Abastecimento de água, esgoto, resíduos e drenagem. Indicadores municipais com o ano de referência da publicação.",
+    "url": "https://www.gov.br/cidades/pt-br/acesso-a-informacao/acoes-e-programas/saneamento/sinisa/resultados-sinisa"
+  },
+  {
+    "key": "inde",
+    "name": "INDE · Catálogo geoespacial",
+    "category": "Território",
+    "mode": "manual",
+    "description": "Descoberta de camadas e metadados oficiais das instituições participantes, incluindo geosserviços.",
+    "url": "https://inde.gov.br/"
+  },
+  {
+    "key": "municipality",
+    "name": "Municípios · Urbanismo e licenciamento",
+    "category": "Urbanismo",
+    "mode": "manual",
+    "description": "Plano diretor, zoneamento, parâmetros, diretrizes e legislação local. Registre o endereço oficial, a vigência e a evidência de cada consulta.",
+    "url": "https://www.gov.br/"
+  },
+  {
+    "key": "caged",
+    "name": "MTE · RAIS e Novo Caged",
+    "category": "Economia",
+    "mode": "manual",
+    "description": "Emprego formal, admissões e desligamentos. Importe indicadores agregados com a competência e a metodologia aplicáveis.",
+    "url": "https://www.gov.br/trabalho-e-emprego/pt-br/assuntos/estatisticas-trabalho/microdados-rais-e-caged"
+  },
+  {
+    "key": "inep",
+    "name": "INEP · Censo Escolar",
+    "category": "Serviços",
+    "mode": "manual",
+    "description": "Oferta educacional, estabelecimentos e indicadores agregados do Censo Escolar. Preserve o ano e o recorte territorial.",
+    "url": "https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/censo-escolar"
+  },
+  {
+    "key": "cnes",
+    "name": "DATASUS · Estabelecimentos CNES",
+    "category": "Serviços",
+    "mode": "manual",
+    "description": "Rede de estabelecimentos e capacidade assistencial agregada. Use indicadores de infraestrutura, sem dados pessoais de pacientes.",
+    "url": "https://datasus.saude.gov.br/cnes-estabelecimentos"
+  },
+  {
+    "key": "mapbiomas",
+    "name": "MapBiomas · Uso e cobertura do solo",
+    "category": "Ambiental",
+    "mode": "manual",
+    "description": "Estatísticas e mapas de uso da terra, água e urbanização. Registre coleção, resolução e referência; mapas não substituem vistoria ou parecer.",
+    "url": "https://brasil.mapbiomas.org/downloads/"
+  }
+]

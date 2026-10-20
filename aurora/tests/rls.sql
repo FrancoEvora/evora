@@ -55,8 +55,8 @@ reset role;
 insert into public.aurora_asset_access(workspace_id,asset_id,user_id) values('f982a02b-563a-4352-913c-cbc865b2ba01','f982a02b-563a-4352-913c-cbc865b2bc01','f982a02b-563a-4352-913c-cbc865b2b005');
 set local role authenticated;
 do $$ begin
- assert (select count(*)=1 from public.aurora_assets),'Client cannot read shared asset';
- assert (select count(*)=1 from storage.objects where bucket_id='aurora-vault'),'Client cannot read shared file';
+ assert (select count(*)=0 from public.aurora_assets),'Legacy share exposed raw asset';
+ assert (select count(*)=0 from storage.objects where bucket_id='aurora-vault'),'Legacy share exposed raw file';
 end $$;
 reset role;
 update public.aurora_members set active=false where user_id='f982a02b-563a-4352-913c-cbc865b2b005';

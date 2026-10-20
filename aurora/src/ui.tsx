@@ -1,6 +1,7 @@
 import {useEffect,useRef,type ReactNode,type ButtonHTMLAttributes} from 'react';
 import {X,ArrowUpRight,LoaderCircle,Compass} from 'lucide-react';
-export function Logo(){return <div className="brand"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M5 32 20 6 35 32M12 23h16"/></svg><span>AURORA<small>REAL ESTATE INTELLIGENCE</small></span></div>}
+export function Logo(){return <div className="brand original-brand"><span className="brand-image"><img src="/aurora-logo.png" alt="Aurora" width="1448" height="1086"/></span></div>}
+
 export function Button({children,variant='primary',busy=false,...p}:ButtonHTMLAttributes<HTMLButtonElement>&{variant?:string;busy?:boolean}){return <button {...p} disabled={p.disabled||busy} className={`btn ${variant} ${p.className||''}`}>{busy?<LoaderCircle className="spin" size={16}/>:null}{children}</button>}
 export function Empty({title,body,action,icon=<Compass size={25}/>}:{title:string;body:string;action?:ReactNode;icon?:ReactNode}){return <div className="empty"><div className="empty-icon">{icon}</div><h3>{title}</h3><p>{body}</p>{action}</div>}
 export function Tag({children,tone='neutral'}:{children:ReactNode;tone?:string}){return <span className={'tag '+tone}>{children}</span>}

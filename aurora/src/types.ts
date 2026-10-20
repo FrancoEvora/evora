@@ -1,3 +1,4 @@
+import type {PublicSource,SourceRun} from './Sources';
 import type {WorkItem,License,Financial,Study,MarketPoint,Report,ReportAccess,ModuleGrant} from './enterprise';
 export type Role='owner'|'admin'|'manager'|'analyst'|'viewer'|'client';
 export type Stage='intelligence'|'structuring'|'development'|'management';
@@ -12,8 +13,8 @@ export type Alert={id:string;asset_id:string;title:string;severity:string;create
 export type Schedule={id:string;asset_id:string;name:string;prompt:string;cadence:string;enabled:boolean;next_run_at:string;last_run_at:string|null;last_status:string|null};
 export type Audit={id:number;actor_id:string|null;action:string;entity:string;entity_id:string;created_at:string};
 export type Invite={id:string;email:string;role:Role;expires_at:string;accepted_at:string|null;revoked_at:string|null};
-export type Data={assets:Asset[];actions:Action[];docs:Doc[];notes:Note[];runs:Run[];alerts:Alert[];schedules:Schedule[];members:Member[];audit:Audit[];invites:Invite[];workItems:WorkItem[];licenses:License[];financial:Financial[];studies:Study[];points:MarketPoint[];reports:Report[];reportAccess:ReportAccess[];moduleGrants:ModuleGrant[]};
-export const emptyData:Data={assets:[],actions:[],docs:[],notes:[],runs:[],alerts:[],schedules:[],members:[],audit:[],invites:[],workItems:[],licenses:[],financial:[],studies:[],points:[],reports:[],reportAccess:[],moduleGrants:[]};
+export type Data={sources:PublicSource[];sourceRuns:SourceRun[];assets:Asset[];actions:Action[];docs:Doc[];notes:Note[];runs:Run[];alerts:Alert[];schedules:Schedule[];members:Member[];audit:Audit[];invites:Invite[];workItems:WorkItem[];licenses:License[];financial:Financial[];studies:Study[];points:MarketPoint[];reports:Report[];reportAccess:ReportAccess[];moduleGrants:ModuleGrant[]};
+export const emptyData:Data={sources:[],sourceRuns:[],assets:[],actions:[],docs:[],notes:[],runs:[],alerts:[],schedules:[],members:[],audit:[],invites:[],workItems:[],licenses:[],financial:[],studies:[],points:[],reports:[],reportAccess:[],moduleGrants:[]};
 export const stageNames:Record<Stage,string>={intelligence:'Inteligência',structuring:'Estruturação',development:'Desenvolvimento',management:'Gestão de ativos'};
 export const roleNames:Record<Role,string>={owner:'Proprietário',admin:'Administrador',manager:'Gestor',analyst:'Analista',viewer:'Consulta',client:'Cliente'};
 export const stageCopy:Record<Stage,{line:string;description:string;focus:string[]}>={
