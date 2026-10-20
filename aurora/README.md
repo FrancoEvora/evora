@@ -19,7 +19,7 @@ Plataforma de inteligência, estruturação, desenvolvimento e gestão de ativos
 - **Produção:** https://aurora-territorial.vercel.app
 - **Código:** repositório `FrancoEvora/evora`, branch `aurora-platform`, diretório `aurora/`.
 - React + TypeScript + Vite; funções Node.js na Vercel; Supabase Auth, Postgres e Storage; Vercel AI Gateway.
-- Versão: 1.0.0, 20/10/2026.
+- Versão funcional: Aurora 2, 20/10/2026.
 
 ## Funcionalidades
 
@@ -84,4 +84,4 @@ Revise as URLs de redirecionamento do Supabase Auth ao adicionar domínio: URL d
 
 `src/`: experiência de usuário e acesso por sessão; `api/`: rotas servidor; `database/`: esquema aplicado; `tests/`: verificações; `public/legacy/`: cliente anterior preservado para acesso aos dados locais.
 
-Não há dados fictícios, usuários padrão ou credenciais de demonstração na aplicação.
+O ambiente de demonstração contém ativos e processos sintéticos identificados, além de leituras públicas reais datadas. Não há usuários padrão nem senha compartilhada de demonstração.

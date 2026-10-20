@@ -6,7 +6,7 @@ A Aurora reúne inteligência territorial, estruturação imobiliária, desenvol
 
 1. **947ebe9 — módulos e demonstração.** Publicação na Vercel `dpl_4risocvGT2E9q572Hw7dXFsRDNqA`. Revisão do painel, navegação e estruturação no navegador. 6 ativos sintéticos, 77 etapas, 6 estudos, 6 licenças, 72 linhas financeiras, 36 pontos e 2 relatórios de exemplo. Dados sem identidades públicas.
 2. **84a7806 — acesso e operação.** Publicação `dpl_o64mgELHUA7shDDYKZSLyLf8rAPi`. Revisão do portal e dashboard individual no navegador. Clientes passam a receber somente publicações explicitamente autorizadas. MFA TOTP opcional com exigência de AAL2 no banco depois de ativado; matriz por ciclo; monitoramento de etapas e licenças; evidências e dependências verificadas.
-3. **Fontes públicas, identidade visual e integração.** Logomarca original fornecida pelo cliente; azul profundo, turquesa e verde claro. Central de Fontes, referências públicas no território e contexto da IA. Correção de INSERT RETURNING no cadastro de ativos identificada em teste real. Ajustes em impressão, datas com ano e seleção de localização sem estudo.
+3. **Fontes públicas, identidade visual e integração.** Logomarca original fornecida pelo cliente; azul-marinho, ciano e turquesa, conforme o arquivo mais recente enviado. Central de Fontes, referências públicas no território e contexto da IA. Correção de INSERT RETURNING no cadastro de ativos identificada em teste real. Ajustes em impressão, datas com ano e seleção de localização sem estudo.
 
 ## Verificação executada
 
@@ -14,6 +14,8 @@ A Aurora reúne inteligência territorial, estruturação imobiliária, desenvol
 - Testes SQL em transações revertidas: isolamento entre organizações, Storage privado, bloqueio de escalada de privilégios, MFA, revisão de etapas, fontes não falsificáveis, snapshots, rascunhos e revogação.
 - Contas temporárias reais de QA: login, organização, ativo, evidência/revisão, licença, condicionante, orçamento, relatório e publicação; cliente sem acesso inicial, autorização específica e revogação.
 - Chamada real à IA publicada: contexto de etapas e licenças, resultado persistido, modelo retornado `openai/gpt-4.1-mini`.
+- MFA TOTP real: ativação e acesso AAL2, nova sessão AAL1 bloqueada e remoção do fator de teste concluídos.
+- API de fontes publicada: municípios oficiais, atualização manual com população de referência, execução programada e identificação de importação humana verificadas.
 - Rotina publicada de monitoramento: HTTP 200 e alertas efetivos de licença e condicionante.
 - 26 conexões de demonstração com aquisição real concluída: 24 consultas IBGE e 2 séries BCB. O limite documentado pelo serviço BCB de 20 observações por consulta foi detectado e incorporado.
 - Advisor de segurança: objetos Aurora sem alertas WARN/ERROR; três tabelas privadas com RLS e sem políticas são deliberadamente inacessíveis a usuários, atendidas somente por funções controladas.
