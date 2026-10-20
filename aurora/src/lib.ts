@@ -12,11 +12,12 @@ export function date(v:string|null|undefined,time=false){if(!v)return '—';retu
 export const today=()=>new Intl.DateTimeFormat('en-CA',{timeZone:'America/Sao_Paulo',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
 export function errorText(e:unknown){const m=e instanceof Error?e.message:typeof e==='object'&&e&&'message'in e?String(e.message):'Não foi possível concluir. Tente novamente.'; if(/Invalid login credentials/i.test(m))return 'E-mail ou senha incorretos.';if(/Email not confirmed/i.test(m))return 'Confirme seu e-mail antes de entrar.';if(/rate limit/i.test(m))return 'Muitas tentativas. Aguarde alguns minutos.';if(/row-level security|permission denied/i.test(m))return 'Seu perfil não tem permissão para esta operação.';return m;}
 export async function loadData(w:string,role:Role):Promise<Data>{
- const names={assets:'assets',actions:'actions',docs:'documents',notes:'notes',runs:'runs',alerts:'alerts',schedules:'schedules',members:'members',audit:'audit',invites:'invites'};
+ const names={assets:'assets',actions:'actions',docs:'documents',notes:'notes',runs:'runs',alerts:'alerts',schedules:'schedules',members:'members',audit:'audit',invites:'invites',workItems:'work_items',licenses:'licenses',financial:'financial_lines',studies:'market_studies',points:'market_points',reports:'reports',reportAccess:'report_access',moduleGrants:'module_grants'};
  const pairs=await Promise.all(Object.entries(names).map(async([key,table])=>{
+  if(role==='client'&&!['reports','reportAccess','members'].includes(key))return[key,[]];
   if((key==='audit'&&!canManage(role))||(key==='invites'&&!canAdmin(role)))return[key,[]];
   const q=db.from('aurora_'+table).select('*').eq('workspace_id',w);
-  const {data,error}=await (key==='members'?q:q.order('created_at',{ascending:false})).limit(key==='audit'?100:1000);
+  const {data,error}=await (['members','moduleGrants'].includes(key)?q:q.order('created_at',{ascending:false})).limit(key==='audit'?100:1000);
   if(error)throw error;return[key,data||[]];
  })); return Object.fromEntries(pairs) as Data;
 }

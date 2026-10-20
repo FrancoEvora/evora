@@ -6,3 +6,5 @@ dist/
 *.tsbuildinfo
 test-results/
 .worker-token
+
+node_modules
