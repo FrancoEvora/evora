@@ -81,16 +81,16 @@
     "key": "ibama",
     "name": "IBAMA · Embargos ambientais",
     "category": "Ambiental",
-    "mode": "manual",
-    "description": "Consulte o registro oficial e importe os resultados relevantes. A consulta deve considerar abrangência, situação e data da base.",
+    "mode": "api",
+    "description": "Termos de embargo georreferenciados do PAMGIA/IBAMA. Consulta por poligonal e entorno; conferir situação atual do termo no órgão.",
     "url": "https://dadosabertos.ibama.gov.br/dataset/termos-de-embargo"
   },
   {
     "key": "icmbio",
     "name": "ICMBio · Unidades de conservação e cavernas",
     "category": "Ambiental",
-    "mode": "manual",
-    "description": "Limites de unidades federais, cavernas e outras camadas oficiais; análise técnica de interferências e zona de amortecimento.",
+    "mode": "api",
+    "description": "UCs federais e cavidades CANIE pelos geosserviços oficiais. Limites publicados, inclusive aproximações cadastrais; sem afastamentos legais automáticos.",
     "url": "https://www.gov.br/icmbio/pt-br/dados-icmbio/dados_geoespaciais"
   },
   {
@@ -180,5 +180,29 @@
     "mode": "api",
     "description": "Dados públicos do CNPJ via instância comunitária Minha Receita. CNAE principal e situação cadastral por município; sem geocodificação ou contagem dentro do raio. Paginação e data-base identificadas. Disponibilidade do provedor não garantida.",
     "url": "https://minhareceita.org/"
+  },
+  {
+    "key": "ide_sisema",
+    "name": "IDE-Sisema · Ambiente e território de MG",
+    "category": "Ambiental",
+    "mode": "api",
+    "description": "UCs estaduais e municipais, amortecimento de planos de manejo, terras indígenas, quilombolas e rios de preservação. Aplicável a MG.",
+    "url": "https://idesisema.meioambiente.mg.gov.br/webgis"
+  },
+  {
+    "key": "iphan",
+    "name": "IPHAN · Patrimônio e arqueologia",
+    "category": "Patrimônio",
+    "mode": "api",
+    "description": "Sítios arqueológicos e polígonos de bens materiais do SICG. Um bem pode aparecer em mais de uma camada; cadastro não equivale a tombamento.",
+    "url": "https://geoserver.iphan.gov.br/geoserver/ows"
+  },
+  {
+    "key": "graprohab",
+    "name": "Graprohab · Empreendimentos de SP",
+    "category": "Urbanístico",
+    "mode": "api",
+    "description": "Mapa público divulgado pela SDUH/SP, hospedado no uMap: protocolos, dispensas e certificados. Aplicável a SP; não comprova licença vigente.",
+    "url": "https://umap.openstreetmap.fr/pt-br/map/portal-de-georreferenciamento-graprohab-v4_1444131"
   }
 ]

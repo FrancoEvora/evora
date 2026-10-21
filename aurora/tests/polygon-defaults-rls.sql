@@ -17,17 +17,17 @@ begin
  if not failed then raise exception 'FAIL: state/code mismatch accepted';end if;
  insert into public.aurora_assets(workspace_id,name,division,city,state,municipality_code,geometry) values(w,'QA transactional polygon','urban','Monte Carmelo','MG','3143104',g) returning id into i;
  select count(*) into n from public.aurora_sources where asset_id=i and enabled and cadence in ('daily','weekly','monthly');
- if n<>10 then raise exception 'FAIL: default source count %',n;end if;
+ if n<>15 then raise exception 'FAIL: default source count %',n;end if;
  if not exists(select 1 from public.aurora_assets where id=i and polygon_area_ha>0 and latitude is not null and longitude is not null and geometry->>'type'='MultiPolygon') then raise exception 'FAIL: calculated perimeter missing';end if;
  update public.aurora_sources set enabled=false,cadence='monthly' where asset_id=i and source_key='ibge_census';
  update public.aurora_assets set geometry=g where id=i;
  select count(*) into n from public.aurora_sources where asset_id=i;
- if n<>10 then raise exception 'FAIL: duplicate default sources';end if;
+ if n<>15 then raise exception 'FAIL: duplicate default sources';end if;
  update public.aurora_assets set municipality_code='3170206',city='Uberlândia' where id=i;
  if not exists(select 1 from public.aurora_sources where asset_id=i and source_key='cnpj_businesses' and config->>'municipality'='3170206') then raise exception 'FAIL: stale business municipality';end if;
  if (select count(*) from public.aurora_sources where asset_id=i and source_key like 'ibge_%' and config->>'municipality'='3170206')<>5 then raise exception 'FAIL: stale municipal scope';end if;
  if not exists(select 1 from public.aurora_sources where asset_id=i and source_key='ibge_census' and not enabled and cadence='monthly') then raise exception 'FAIL: user schedule overwritten';end if;
- raise notice 'PASS: mandatory polygon, topology, official UF prefix, area, nine atomic connections, idempotence, geographic update and pause preservation';
+ raise notice 'PASS: mandatory polygon, topology, official UF prefix, area, fifteen atomic connections, idempotence, geographic update and pause preservation';
 end $$;
 select set_config('request.jwt.claims',jsonb_build_object('sub',gen_random_uuid(),'role','authenticated','aal','aal2')::text,true);
 do $$begin
