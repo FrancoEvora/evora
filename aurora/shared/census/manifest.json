@@ -1,0 +1,42 @@
+{
+  "provider": "IBGE",
+  "reference": "2022",
+  "release": "2024-11-13",
+  "source_url": "https://ftp.ibge.gov.br/Censos/Censo_Demografico_2022/Agregados_por_Setores_Censitarios/malha_com_atributos/setores/csv/BR_setores_CD2022.csv",
+  "sha256": "798f616a667475c4abaab1960c5ff3f90fe106bbc6531fecefa2ddb4ab19f1d3",
+  "sectors": 468099,
+  "variables": {
+    "v0001": "Total de pessoas",
+    "v0002": "Total de domicílios, inclusive vagos e de uso ocasional"
+  },
+  "states": [
+    "11",
+    "12",
+    "13",
+    "14",
+    "15",
+    "16",
+    "17",
+    "21",
+    "22",
+    "23",
+    "24",
+    "25",
+    "26",
+    "27",
+    "28",
+    "29",
+    "31",
+    "32",
+    "33",
+    "35",
+    "41",
+    "42",
+    "43",
+    "50",
+    "51",
+    "52",
+    "53"
+  ],
+  "note": "Valores originais. Ausências preservadas como null. Associação à malha definitiva por CD_SETOR."
+}

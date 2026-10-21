@@ -18,7 +18,7 @@ export function AssetForm({workspace,asset,onClose,onSaved}:{workspace:string;as
   const{data,error}=asset?await db.from('aurora_assets').update(values).eq('id',asset.id).select('id').single():await db.from('aurora_assets').insert({...values,workspace_id:workspace}).select('id').single();if(error)throw error;
   let message='Ativo salvo. Fontes públicas conectadas com atualização programada.';
   if(!asset||asset.municipality_code!==municipality||JSON.stringify(polygonSummary(asset.geometry).geometry.coordinates)!==JSON.stringify(polygon.geometry.coordinates)){
-   setStatus('Ativo salvo. Consultando as sete fontes públicas...');
+   setStatus('Ativo salvo. Consultando as nove fontes públicas...');
    try{const{data:{session}}=await db.auth.getSession();const r=await fetch('/api/sources',{method:'POST',headers:{'Content-Type':'application/json',Authorization:`Bearer ${session?.access_token}`},body:JSON.stringify({assetId:data.id}),signal:AbortSignal.timeout(65000)});const d=await r.json();message=r.ok?`Ativo salvo. ${d.completed} fontes atualizadas; ${d.failed} pendentes. Confira Fontes públicas.`:'Ativo salvo e fontes conectadas. A primeira leitura será retomada pela rotina automática.'}catch{message='Ativo salvo e fontes conectadas. As leituras pendentes serão retomadas automaticamente.'}
   }
   onSaved(data.id,message);

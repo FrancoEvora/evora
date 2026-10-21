@@ -1,0 +1,11 @@
+export type SpatialSnapshot={type:'FeatureCollection';features:GeoJSON.Feature[];scope:{latitude:number;longitude:number;radius_km:number;bbox:number[]};reference:string;stats_release?:string;stats_url?:string;stats_sha256?:string;truncated:boolean;unmatched?:number;geometry_simplified?:boolean;methodology:string};
+export type HeatProperties={value:number|null;unit:string;count?:number|null;coverage:number|null;modeled:boolean;source_count:number;names?:string[];sector?:string;city?:string;population?:number|null;households?:number|null;area_km2?:number|null;[key:string]:unknown};
+export type HeatResult=GeoJSON.FeatureCollection<GeoJSON.Polygon|GeoJSON.MultiPolygon,HeatProperties>&{summary:{coverage:number|null;issues:number;source_features:number;cells:number};methodology:string};
+export const heatColors:string[];
+export function circleGeometry(latitude:number,longitude:number,radius?:number):GeoJSON.Polygon;
+export function geometryArea(geometry:GeoJSON.Polygon|GeoJSON.MultiPolygon):number;
+export function boundsOf(geometry:GeoJSON.Geometry):number[];
+export function clipGeometry(a:GeoJSON.Polygon|GeoJSON.MultiPolygon,b:GeoJSON.Polygon|GeoJSON.MultiPolygon):GeoJSON.MultiPolygon|null;
+export function buildHeatmap(spatial:SpatialSnapshot,options:{metric?:string;mode?:string;resolution?:number;latitude:number;longitude:number;radius?:number;category?:string}):HeatResult;
+export function legendBreaks(features:HeatResult['features'],metric:string,scale?:string):number[];
+export function heatColor(value:number|null,breaks:number[]):string;

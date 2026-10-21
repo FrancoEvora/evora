@@ -156,5 +156,21 @@
     "mode": "manual",
     "description": "Estatísticas e mapas de uso da terra, água e urbanização. Registre coleção, resolução e referência; mapas não substituem vistoria ou parecer.",
     "url": "https://brasil.mapbiomas.org/downloads/"
+  },
+  {
+    "key": "ibge_sectors",
+    "name": "IBGE · População e domicílios por setor",
+    "category": "Demografia espacial",
+    "mode": "api",
+    "description": "Malha definitiva do Censo 2022 via WFS, associada aos agregados originais por código do setor. Mapa temático e hexágonos com estimativa espacial identificada.",
+    "url": "https://geoservicos.ibge.gov.br/geoserver/ows"
+  },
+  {
+    "key": "osm_places",
+    "name": "OpenStreetMap · Pontos de interesse",
+    "category": "Atividade e serviços",
+    "mode": "api",
+    "description": "Comércio, alimentação, saúde, educação e transporte mapeados colaborativamente no entorno de ±3 km. Cobertura variável; não mede passantes nem empresas únicas. © OpenStreetMap contributors, ODbL.",
+    "url": "https://overpass.private.coffee/api/interpreter"
   }
 ]

@@ -1,4 +1,4 @@
-import {useEffect,useState,useCallback,useRef} from 'react';
+import {useEffect,useState,useCallback,useRef,lazy,Suspense} from 'react';
 import type {Session} from '@supabase/supabase-js';
 import {LayoutDashboard,Building2,Compass,Layers3,Landmark,Map,FolderOpen,CheckSquare,NotebookPen,Sparkles,Users,Settings,Search,Bell,ChevronDown,LogOut,Plus,RefreshCw,Menu,X,ArrowLeft,ArrowUpRight,FileText,CheckCircle2,MapPin,ShieldCheck,Download,Clock3,ChevronRight,Activity,TriangleAlert,LoaderCircle,Database} from 'lucide-react';
 import {db,loadData,canWrite,canManage,canAdmin,number,money,date,errorText,download} from './lib';
@@ -16,6 +16,7 @@ import {SourcesView} from './Sources';
 import {chooseWorkspace,readWorkspacePreference,saveWorkspacePreference} from './workspace-selection';
 import {MFAGate,SecurityPanel,ModulePermissions} from './Security';
 
+const Heatmaps=lazy(()=>import('./Heatmaps'));
 const nav=[{key:'overview',label:'Visão geral',icon:LayoutDashboard},{key:'assets',label:'Portfólio de ativos',icon:Building2},{key:'map',label:'Território',icon:Map},{key:'intelligence',label:'Inteligência',icon:Compass},{key:'structuring',label:'Estruturação',icon:Layers3},{key:'development',label:'Desenvolvimento',icon:Building2},{key:'management',label:'Gestão de ativos',icon:Landmark},{key:'documents',label:'Documentos',icon:FolderOpen},{key:'actions',label:'Ações e prazos',icon:CheckSquare},{key:'finance',label:'Orçamento e cenários',icon:Landmark},{key:'reports',label:'Relatórios e clientes',icon:FileText},{key:'sources',label:'Fontes públicas',icon:Database},{key:'agent',label:'Agente Aurora',icon:Sparkles}];
 export default function App(){
  const demo=new URLSearchParams(location.search).get('demo')==='1';
@@ -61,7 +62,7 @@ export default function App(){
  {view==='sources'&&<SourcesView key={workspace} {...enterpriseProps} onNewAsset={write?newAsset:undefined} onOpenExamples={openExamples}/>}
  {view==='finance'&&<FinancePanel {...enterpriseProps}/>}
  {view==='reports'&&<ReportsView {...enterpriseProps}/>}
- {view==='map'&&<><SectionTitle title="Território" sub="Mapa real, localização dos ativos e polígonos importados." action={write?<Button onClick={newAsset}><Plus size={16}/>Adicionar ativo</Button>:undefined}/><section className="panel"><MapView large assets={data.assets.filter(a=>a.status!=='archived')} onSelect={selectAsset}/></section><div className="map-assets">{data.assets.map(a=><button key={a.id} onClick={()=>selectAsset(a)}><MapPin size={16}/><strong>{a.name}</strong><small>{a.city||'Localização pendente'}</small><ArrowUpRight size={15}/></button>)}</div></>}
+ {view==='map'&&<><SectionTitle title="Território" sub="Camadas de demografia, atividade e serviços com origem rastreável." action={write?<Button onClick={newAsset}><Plus size={16}/>Adicionar ativo</Button>:undefined}/><Suspense fallback={<p role="status">Preparando mapas de calor...</p>}><Heatmaps {...enterpriseProps}/></Suspense><div className="map-assets">{data.assets.map(a=><button key={a.id} onClick={()=>selectAsset(a)}><MapPin size={16}/><strong>{a.name}</strong><small>{a.city||'Localização pendente'}</small><ArrowUpRight size={15}/></button>)}</div></>}
  {view==='actions'&&<ActionsView actions={data.actions} assets={data.assets} onNew={newAction} onEdit={openAction} write={write}/>}
  {view==='documents'&&<DocumentsView docs={data.docs} assets={data.assets} onNew={()=>setModal('document')} write={write} onError={setNotice}/>}
  {view==='agent'&&<AgentView data={data} workspace={workspace} role={role} refresh={refresh} onError={setNotice}/>}

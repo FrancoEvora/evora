@@ -27,7 +27,7 @@ do $$ declare r uuid;begin
  perform public.aurora_share_report(r,'e2202026-0000-4000-8000-000000000003',now()+interval '1 day',false,false);
  begin perform public.aurora_create_report('e2202026-0000-4000-8000-000000000010','Cross tenant attack',array['e2202026-0000-4000-8000-000000000021'::uuid],true);raise exception 'FAILED cross tenant snapshot';exception when raise_exception then if sqlerrm like 'FAILED%' then raise;end if;end;
 end $$;
-do $$ begin assert (select count(*)=7 from public.aurora_sources),'Owner cannot read seven default sources';begin update public.aurora_sources set snapshot='{}';raise exception 'FAILED forged source';exception when insufficient_privilege then null;end;end $$;
+do $$ begin assert (select count(*)=9 from public.aurora_sources),'Owner cannot read nine default sources';begin update public.aurora_sources set snapshot='{}';raise exception 'FAILED forged source';exception when insufficient_privilege then null;end;end $$;
 select set_config('request.jwt.claim.sub','e2202026-0000-4000-8000-000000000002',true);
 do $$ begin assert (select count(*)=0 from public.aurora_work_items),'Module deny ignored';end $$;
 select set_config('request.jwt.claim.sub','e2202026-0000-4000-8000-000000000003',true);

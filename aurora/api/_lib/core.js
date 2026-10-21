@@ -32,7 +32,7 @@ export async function collectContext(db,workspaceId,assetId){
   db.from('aurora_documents').select('id,title,category,extracted_text,expires_on,created_at').eq('workspace_id',workspaceId).eq('asset_id',assetId).order('created_at',{ascending:false}).limit(8),
   db.from('aurora_notes').select('id,body,created_at').eq('workspace_id',workspaceId).eq('asset_id',assetId).order('created_at',{ascending:false}).limit(10),
   ...[['work_items','id,title,module,kind,status,due_on,evidence,details,progress,wbs_code,wbs_group,deliverables,acceptance_criteria,owner_label,accountable_label,predecessor_ids,scope_status,scope_note',200],['licenses','id,title,license_type,authority,status,expires_on,renewal_due_on,legal_basis,evidence',30],['financial_lines','title,direction,period,planned,committed,actual',120],['market_studies','title,source,reference_date,population,households,income,demand_score,access_score,competition_score,risk_score,methodology',10]].map(([table,fields,limit])=>db.from('aurora_'+table).select(fields).eq('workspace_id',workspaceId).eq('asset_id',assetId).limit(limit)),
-  db.from('aurora_sources').select('title,source_key,snapshot,last_success_at,last_status').eq('workspace_id',workspaceId).eq('asset_id',assetId).limit(12),
+  db.from('aurora_sources_summary').select('title,source_key,snapshot,last_success_at,last_status').eq('workspace_id',workspaceId).eq('asset_id',assetId).limit(12),
   db.from('aurora_workspaces').select('is_demo').eq('id',workspaceId).single()
  ]);
  const [asset,actions,documents,notes,workItems,licenses,financial,studies,publicSources,workspace]=results.map(check);if(!asset)throw new AppError('Ativo não encontrado ou sem permissão de acesso.',404);

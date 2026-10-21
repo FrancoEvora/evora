@@ -6,6 +6,8 @@ Demonstração sem login: https://aurora-territorial.vercel.app/?demo=1
 
 Novas EAPs: **47 pacotes de estruturação e 62 de desenvolvimento**, com entregáveis, dicionário, critérios de aceite, dependências e linhas de base. Consulte [funcionamento, controles e limites](docs/EAP_ENTREGAS.md).
 
+Mapas de calor em **Território** e **Inteligência**: população/domicílios por setor, grade H3, cobertura, origem e exportações. Nove conexões automáticas por ativo. Consulte [metodologia e fontes](docs/MAPAS_CALOR.md).
+
 Veja [escopo, três ciclos de entrega, referências, dados e limitações](docs/RELEASE_V2.md).
 
 Acesso por e-mail individual; não existe senha padrão compartilhada. Clientes consultam somente relatórios publicados com autorização explícita. Dados internos são isolados por organização, perfil e ciclo.
