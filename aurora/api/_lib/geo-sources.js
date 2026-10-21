@@ -3,7 +3,7 @@ import {AppError} from './core.js';
 import manifest from '../../shared/census/manifest.json' with {type:'json'};
 
 const cache = new Map();
-const hosts = new Set(['geoservicos.ibge.gov.br', 'overpass.private.coffee']);
+const hosts = new Set(['geoservicos.ibge.gov.br', 'maps.mail.ru']);
 export function studyBounds(config) {
  const lat=Number(config.latitude),lon=Number(config.longitude);
  if(config.latitude==null||config.longitude==null||!Number.isFinite(lat)||!Number.isFinite(lon)||lat< -34||lat>6||lon< -74||lon> -28)throw new AppError('Informe coordenadas válidas no Brasil.');
@@ -71,9 +71,9 @@ export function normalizeOsm(raw,config) {
   methodology:'Elementos colaborativos do OpenStreetMap: comércio, alimentação, educação, saúde e transporte. Cobertura incompleta e variável; elementos não equivalem a empresas únicas, pedestres ou veículos. Nós e áreas podem representar o mesmo local. © OpenStreetMap contributors, ODbL.'};
 }
 export async function fetchGeoSource(job) {
- const config=job.config||{},census=job.source_key==='ibge_sectors',url=census?censusUrl(config):'https://overpass.private.coffee/api/interpreter';
- const raw=await readJson(url,census?{}:{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({data:osmQuery(config)})});
+ const config=job.config||{},census=job.source_key==='ibge_sectors',url=census?censusUrl(config):'https://maps.mail.ru/osm/tools/overpass/api/interpreter?'+new URLSearchParams({data:osmQuery(config)});
+ const raw=await readJson(url);
  const spatial=census?await normalizeCensus(raw,config):normalizeOsm(raw,config);
- return {provider:census?'IBGE · Censo 2022 por setor':'OpenStreetMap · Overpass',source_url:url,fetched_at:new Date().toISOString(),method:spatial.methodology,real_public_data:true,spatial,
+ return {provider:census?'IBGE · Censo 2022 por setor':'OpenStreetMap · Overpass (VK Maps)',source_url:url,fetched_at:new Date().toISOString(),method:spatial.methodology,real_public_data:true,spatial,
   rows:[{indicator:census?'Setores censitários retornados':'Elementos de interesse mapeados',unit:census?'setores':'elementos OSM',period:spatial.reference,value:spatial.features.length,raw:String(spatial.features.length),geography:'Envoltória de ±3 km do ponto do ativo',classification:spatial.truncated?'Recorte parcial: limite de consulta atingido':census?'Total de setores intersectados; não é população no raio':'Amostra colaborativa; não é censo comercial'}]};
 }
