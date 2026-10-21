@@ -172,5 +172,13 @@
     "mode": "api",
     "description": "Comércio, alimentação, saúde, educação e transporte mapeados colaborativamente no entorno de ±7 km. Cobertura variável; não mede passantes nem empresas únicas. © OpenStreetMap contributors, ODbL.",
     "url": "https://maps.mail.ru/osm/tools/overpass/api/interpreter"
+  },
+  {
+    "key": "cnpj_businesses",
+    "name": "CNPJ · Empresas por atividade",
+    "category": "Economia e empresas",
+    "mode": "api",
+    "description": "Dados públicos do CNPJ via instância comunitária Minha Receita. CNAE principal e situação cadastral por município; sem geocodificação ou contagem dentro do raio. Paginação e data-base identificadas. Disponibilidade do provedor não garantida.",
+    "url": "https://minhareceita.org/"
   }
 ]

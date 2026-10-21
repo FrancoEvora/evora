@@ -14,16 +14,16 @@ As consultas públicas coletam uma envoltória que contém o círculo de 7 km; c
 
 ## Fontes e consultas
 
-1. Estatísticas nacionais originais do IBGE, arquivo publicado em 13/11/2024, referência 2022. Cache contém 468.099 registros (incluindo áreas estaduais operacionais), em 27 arquivos por UF. Código completo de 15 posições, sem associação aproximada por nome. Valores suprimidos/ausentes permanecem `null`.
+1. Estatísticas nacionais originais do IBGE, básico publicado em 20/05/2026, referência 2022. Cache contém 468.099 registros (incluindo áreas estaduais operacionais), em 27 arquivos por UF, com ocupados, vagos, uso ocasional e rendimento do responsável. Código completo de 15 posições, sem associação aproximada por nome. Valores suprimidos/ausentes permanecem `null`.
 2. Malha definitiva `CGMAT:qg_2022_600_setcensitario__v02`, obtida do WFS oficial do IBGE, em WGS84, por envoltória de aproximadamente ±7 km. A geometria é simplificada apenas para exibição; os valores e a área do setor são os originais.
 3. Pontos públicos: Overpass API na instância pública VK Maps, documentada pela comunidade OpenStreetMap como utilizável por aplicações de qualquer projeto. Sem credencial. Erros e timeouts preservam a última leitura válida. Não há garantia de disponibilidade da instância pública; para escala, provisionar serviço dedicado.
 
-Cada novo ativo recebe **nove conexões**: as sete anteriores, mais IBGE setorial (mensal) e OpenStreetMap (semanal). Proprietários/administradores/gestores com acesso à Inteligência podem alterar a frequência e pausar nas Fontes públicas. Analistas autorizados podem atualizar. Perfis de consulta leem; clientes recebem apenas relatórios autorizados e não acessam a base interna.
+Cada novo ativo recebe **dez conexões**: as sete anteriores, mais IBGE setorial (mensal), OpenStreetMap (semanal) e CNPJ municipal (mensal). Proprietários/administradores/gestores com acesso à Inteligência podem alterar a frequência e pausar nas Fontes públicas. Analistas autorizados podem atualizar. Perfis de consulta leem; clientes recebem apenas relatórios autorizados e não acessam a base interna.
 
 O agendamento diário da Vercel processa as conexões vencidas com o mecanismo existente de autorização, segredo de worker, limite diário e leases. Referência 2022 não muda quando a geometria é consultada novamente. Revisões dos atributos exigem reconstruir o cache a partir do CSV oficial e publicar a nova versão:
 
 ```sh
-python scripts/prepare-census.py /path/to/BR_setores_CD2022.csv
+python scripts/prepare-socioeconomics.py /path/to/basico.zip /path/to/renda.zip
 npm test
 npm run build
 ```
@@ -54,3 +54,5 @@ Não há estimativas apresentadas como observações por quarteirão, renda infe
 `tests/heatmaps.test.mjs`: conservação da repartição espacial, recorte, valores originais, ausência vs. zero, raio/categoria de pontos, limites, associação por código e consultas incompletas.
 
 `tests/heatmap-rls.sql`: isolamento por organização e módulo, clientes sem acesso à base, leitura completa autorizada, resumos leves, consulta sem permissão de atualização e proteção contra falsa importação oficial. Transação integralmente revertida.
+
+Rendimento, ocupados, paginação e comparação: ver [DADOS_MERCADO.md](DADOS_MERCADO.md).

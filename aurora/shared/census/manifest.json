@@ -1,14 +1,14 @@
 {
   "provider": "IBGE",
   "reference": "2022",
-  "release": "2024-11-13",
-  "source_url": "https://ftp.ibge.gov.br/Censos/Censo_Demografico_2022/Agregados_por_Setores_Censitarios/malha_com_atributos/setores/csv/BR_setores_CD2022.csv",
-  "sha256": "798f616a667475c4abaab1960c5ff3f90fe106bbc6531fecefa2ddb4ab19f1d3",
+  "release": "2026-05-20",
+  "income_release": "2026-05-08",
+  "source_url": "https://ftp.ibge.gov.br/Censos/Censo_Demografico_2022/Agregados_por_Setores_Censitarios/Agregados_por_Setor_csv/Agregados_por_setores_basico_BR_20260520.zip",
+  "income_url": "https://ftp.ibge.gov.br/Censos/Censo_Demografico_2022/Agregados_por_Setores_Censitarios_Rendimento_do_Responsavel/Agregados_por_setores_renda_responsavel_BR_20260508_csv.zip",
+  "sha256": "ec04624286233d699ebe69c7b9625744a1cfdfc8352126f30245bdef5e9bdc63",
+  "income_sha256": "141c83e7635674e7e2c941e55f98811e538fcbf2e1e1125b0aa7892c260f4a23",
   "sectors": 468099,
-  "variables": {
-    "v0001": "Total de pessoas",
-    "v0002": "Total de domicílios, inclusive vagos e de uso ocasional"
-  },
+  "income_matched": 458772,
   "states": [
     "11",
     "12",
@@ -38,5 +38,23 @@
     "52",
     "53"
   ],
-  "note": "Valores originais. Ausências preservadas como null. Associação à malha definitiva por CD_SETOR."
+  "fields": [
+    "population",
+    "households",
+    "occupied",
+    "vacant",
+    "occasional",
+    "income",
+    "responsible"
+  ],
+  "variables": {
+    "v0001": "Pessoas",
+    "v0002": "Domicílios totais",
+    "v0007": "Domicílios particulares ocupados",
+    "v0009": "Domicílios particulares permanentes vagos",
+    "v0008": "Domicílios particulares de uso ocasional",
+    "V06004": "Rendimento nominal médio mensal das pessoas responsáveis com rendimentos por domicílios particulares permanentes ocupados",
+    "V06001": "Pessoas responsáveis em domicílios particulares permanentes ocupados"
+  },
+  "note": "Associação exata por CD_SETOR. Valores suprimidos preservados como null. Renda nominal de 2022; não é renda familiar nem capacidade de compra."
 }

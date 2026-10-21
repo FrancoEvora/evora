@@ -30,6 +30,7 @@ function grid(circle,resolution){
 export function buildHeatmap(spatial,{metric='population',mode='sectors',resolution=9,latitude,longitude,radius=3,category='all'}={}){
  if(!spatial||!Array.isArray(spatial.features)||!heatRadii.includes(radius)||![8,9].includes(resolution)||!Number.isFinite(latitude)||!Number.isFinite(longitude))throw new Error('Selecione um ativo localizado e um recorte válido.');
  if(spatial.scope?.radius_km<radius)throw new Error(`Esta leitura cobre até ${spatial.scope.radius_km} km. Atualize a fonte para consultar o raio de ${radius} km.`);
+ if(metric==='income'&&mode!=='sectors')throw new Error('Rendimento disponível nos setores originais. Médias setoriais não são redistribuídas para hexágonos.');
  const circle=circleGeometry(latitude,longitude,radius),circleBounds=boundsOf(circle),isPoints=metric==='points',features=[];let issues=0,covered=0;
  if(isPoints){
   const points=spatial.features.filter(f=>f.geometry?.type==='Point'&&(category==='all'||f.properties.category===category)&&distanceKm(f.geometry.coordinates,[longitude,latitude])<=radius);
@@ -42,22 +43,22 @@ export function buildHeatmap(spatial,{metric='population',mode='sectors',resolut
   if(!['Polygon','MultiPolygon'].includes(f.geometry?.type)||!overlaps(boundsOf(f.geometry),circleBounds))continue;
   try{
    const geometry=clipGeometry(f.geometry,circle);if(!geometry)continue;
-   const p=f.properties||{},raw=p[metric],value=typeof raw==='number'&&Number.isFinite(raw)&&raw>=0&&p.area_km2>0?raw/p.area_km2:null,area=geometryArea(geometry);
+   const p=f.properties||{},raw=p[metric],value=typeof raw==='number'&&Number.isFinite(raw)&&raw>=0&&p.area_km2>0?(metric==='income'?raw:raw/p.area_km2):null,area=geometryArea(geometry);
    if(value!==null)covered+=area;
    polygons.push({geometry,bounds:boundsOf(geometry),value,properties:p});
-   if(mode==='sectors')features.push({type:'Feature',id:f.id,geometry,properties:{...p,value,unit:metric==='population'?'pessoas/km²':'domicílios/km²',modeled:false,coverage:value===null?0:1,source_count:1}});
+   if(mode==='sectors')features.push({type:'Feature',id:f.id,geometry,properties:{...p,value,unit:metric==='income'?'R$ de 2022/mês · responsável com rendimento':metric==='population'?'pessoas/km²':metric==='occupied'?'domicílios ocupados/km²':'domicílios/km²',modeled:false,coverage:value===null?0:1,source_count:1}});
   }catch{issues++}
  }
  if(mode==='hexagons')for(const c of grid(circle,resolution)){
   let count=0,validArea=0,n=0;
   for(const s of polygons){if(s.value===null||!overlaps(s.bounds,c.bounds))continue;try{const geometry=clipGeometry(s.geometry,c.geometry);if(!geometry)continue;const area=geometryArea(geometry);validArea+=area;count+=s.value*area;n++;}catch{issues++}}
   const coverage=Math.min(1,validArea/c.area),complete=coverage>=.95;
-  features.push({type:'Feature',id:c.id,geometry:c.geometry,properties:{value:complete?count/c.area:null,count:complete?count:null,coverage,modeled:true,source_count:n,unit:metric==='population'?'pessoas/km²':'domicílios/km²'}});
+  features.push({type:'Feature',id:c.id,geometry:c.geometry,properties:{value:complete?count/c.area:null,count:complete?count:null,coverage,modeled:true,source_count:n,unit:metric==='population'?'pessoas/km²':metric==='occupied'?'domicílios ocupados/km²':'domicílios/km²'}});
  }
- return {type:'FeatureCollection',features,summary:{coverage:Math.min(1,covered/geometryArea(circle)),issues,source_features:polygons.length,cells:features.length},methodology:mode==='sectors'?'Densidade calculada como total original dividido pela área oficial do setor. O desenho é recortado à área de estudo; os totais consultáveis continuam sendo do setor inteiro.':'Estimativa por repartição proporcional à área: densidade original de cada setor × área de interseção com o hexágono. Pressupõe distribuição uniforme dentro do setor; não é medição por quarteirão. Células com menos de 95% de cobertura válida ficam sem valor.'};
+ return {type:'FeatureCollection',features,summary:{coverage:Math.min(1,covered/geometryArea(circle)),issues,source_features:polygons.length,cells:features.length},methodology:metric==='income'?'V06004: rendimento nominal médio mensal das pessoas responsáveis com rendimentos por domicílios particulares permanentes ocupados. Valor original do setor, em reais de 2022. Não é renda familiar, renda atual, renda de cada imóvel ou capacidade de compra.':mode==='sectors'?'Densidade calculada como total original dividido pela área oficial do setor. O desenho é recortado à área de estudo; os totais consultáveis continuam sendo do setor inteiro.':'Estimativa por repartição proporcional à área: densidade original de cada setor × área de interseção com o hexágono. Pressupõe distribuição uniforme dentro do setor; não é medição por quarteirão. Células com menos de 95% de cobertura válida ficam sem valor.'};
 }
 export function legendBreaks(features,metric,scale='fixed'){
- if(scale==='fixed')return metric==='population'?[100,1000,3000,7000]:metric==='households'?[50,400,1200,2800]:[1,3,8,20];
+ if(scale==='fixed')return metric==='income'?[1000,2000,3500,6000]:metric==='population'?[100,1000,3000,7000]:['households','occupied'].includes(metric)?[50,400,1200,2800]:[1,3,8,20];
  const values=features.map(f=>f.properties.value).filter(v=>v!=null&&Number.isFinite(v)).sort((a,b)=>a-b);
  return [1,2,3,4].map(i=>values.length?values[Math.min(values.length-1,Math.floor(values.length*i/5))]:0);
 }

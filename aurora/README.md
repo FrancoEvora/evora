@@ -89,3 +89,5 @@ Revise as URLs de redirecionamento do Supabase Auth ao adicionar domínio: URL d
 `src/`: experiência de usuário e acesso por sessão; `api/`: rotas servidor; `database/`: esquema aplicado; `tests/`: verificações; `public/legacy/`: cliente anterior preservado para acesso aos dados locais.
 
 O ambiente de demonstração contém ativos e processos sintéticos identificados, além de leituras públicas reais datadas. Não há usuários padrão nem senha compartilhada de demonstração.
+
+Dados de mercado e metodologia: [docs/DADOS_MERCADO.md](docs/DADOS_MERCADO.md).

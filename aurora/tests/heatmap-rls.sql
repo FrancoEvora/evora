@@ -18,20 +18,27 @@ insert into public.aurora_assets(id,workspace_id,name,division,created_by,city,s
 ('e3302026-0000-4000-8000-000000000021','e3302026-0000-4000-8000-000000000011','Geo QA other synthetic','urban','e3302026-0000-4000-8000-000000000002','Monte Carmelo','MG','3143104','{"type":"Polygon","coordinates":[[[-47.49,-18.73],[-47.48,-18.73],[-47.48,-18.72],[-47.49,-18.73]]]}');
 update public.aurora_sources set snapshot='{"rows":[],"spatial":{"type":"FeatureCollection","features":[]}}',last_status='success'
 where asset_id in ('e3302026-0000-4000-8000-000000000020','e3302026-0000-4000-8000-000000000021') and source_key='ibge_sectors';
+update public.aurora_sources set snapshot='{"rows":[],"business":{"records":[]}}',last_status='success'
+where asset_id in ('e3302026-0000-4000-8000-000000000020','e3302026-0000-4000-8000-000000000021') and source_key='cnpj_businesses';
 set local role authenticated;
 select set_config('request.jwt.claims','{"sub":"e3302026-0000-4000-8000-000000000001","role":"authenticated","aal":"aal2"}',true);
 do $$ declare s uuid;begin
- assert (select count(*)=9 from public.aurora_sources_summary),'Summary view bypassed tenant RLS';
+ assert (select count(*)=10 from public.aurora_sources_summary),'Summary view bypassed tenant RLS';
  assert (select count(*)=2 from public.aurora_sources_summary where source_key in ('ibge_sectors','osm_places')),'Missing default geographic connections';
  assert (select snapshot ? 'spatial' from public.aurora_sources where source_key='ibge_sectors'),'Authorized full geometry unavailable';
  assert (select not(snapshot ? 'spatial') from public.aurora_sources_summary where source_key='ibge_sectors'),'Heavy geometry leaked into boot summary';
+ assert (select snapshot ? 'business' from public.aurora_sources where source_key='cnpj_businesses'),'Authorized business snapshot missing';
+ assert (select not(snapshot ? 'business') from public.aurora_sources_summary where source_key='cnpj_businesses'),'Business records leaked into boot';
+ assert not has_function_privilege('authenticated','aurora_private.connect_business_default()','execute'),'Business trigger executable';
+ select id into s from public.aurora_sources where source_key='cnpj_businesses';
+ begin perform public.aurora_import_source(s,'{"rows":[],"source_url":"https://example.invalid"}');raise exception 'FAILED forged business source';exception when raise_exception then if sqlerrm like 'FAILED%' then raise;end if;end;
  select id into s from public.aurora_sources where source_key='ibge_sectors';
  begin perform public.aurora_import_source(s,'{"rows":[],"source_url":"https://example.invalid"}');raise exception 'FAILED forged official geography';exception when raise_exception then if sqlerrm like 'FAILED%' then raise;end if;end;
  assert not has_function_privilege('authenticated','aurora_private.connect_geo_defaults()','execute'),'Private trigger executable';
 end $$;
 select set_config('request.jwt.claims','{"sub":"e3302026-0000-4000-8000-000000000003","role":"authenticated","aal":"aal2"}',true);
 do $$ declare s uuid;begin
- assert (select count(*)=9 from public.aurora_sources_summary),'Read-only authorized geography unavailable';
+ assert (select count(*)=10 from public.aurora_sources_summary),'Read-only authorized geography unavailable';
  select id into s from public.aurora_sources where source_key='osm_places';
  begin perform public.aurora_claim_source(s);raise exception 'FAILED viewer triggered provider';exception when raise_exception then if sqlerrm like 'FAILED%' then raise;end if;end;
 end $$;
@@ -42,5 +49,5 @@ do $$ begin assert (select count(*)=0 from public.aurora_sources_summary),'Modul
 select set_config('request.jwt.claims','{"sub":"e3302026-0000-4000-8000-000000000004","role":"authenticated","aal":"aal2"}',true);
 do $$ begin assert (select count(*)=0 from public.aurora_sources_summary),'Client saw internal geography';end $$;
 reset role;
-select 'PASS: nine sources, tenant/module/client isolation, full geometry authorization, light summaries, read-only refresh denial, official provenance protection' as verification;
+select 'PASS: ten sources, tenant/module/client isolation, full geometry authorization, light summaries, read-only refresh denial, official provenance protection' as verification;
 rollback;
