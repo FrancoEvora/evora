@@ -8,7 +8,7 @@ import {db,errorText,number,money,date,download} from './lib';
 import {PublicIndicators} from './Sources';
 import {Metric,WorkflowPage} from './Enterprise';
 import {Button,Tag,Modal,Empty,SectionTitle} from './ui';
-type Props={data:Data;workspace:string;role:Role;userId:string;demo?:boolean;refresh:()=>Promise<void>;onError:(s:string)=>void};
+type Props={data:Data;workspace:string;role:Role;userId:string;demo?:boolean;example?:boolean;refresh:()=>Promise<void>;onError:(s:string)=>void};
 const Heatmaps=lazy(()=>import('./Heatmaps'));
 const criteria=[['demand_score','Demanda'],['access_score','Acessibilidade'],['competition_score','Espaço competitivo'],['risk_score','Segurança territorial']] as const;
 export function GeoIntelligence(p:Props){
