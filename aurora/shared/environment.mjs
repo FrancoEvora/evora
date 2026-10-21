@@ -11,3 +11,6 @@ export function intersects(a,b){
  throw new Error('Geometria não suportada nesta triagem');
 }
 export function environmentalSelection(snapshot,latitude,longitude,radius){const circle=circleGeometry(latitude,longitude,radius),features=[];let issues=0;for(const f of snapshot?.spatial?.features||[]){try{if(intersects(f.geometry,circle))features.push(f);}catch{issues++;}}return{features,issues};}
+// ArcGIS dates use milliseconds; WFS may encode a date as YYYY-MM-DDZ.
+// Preserve unknown formats rather than guessing locale or inventing a date.
+export function environmentalDate(value){const s=String(value??'');if(/^\d{13}$/.test(s)){const d=new Date(Number(s));return Number.isFinite(d.valueOf())?d.toISOString():s;}if(/^\d{4}-\d{2}-\d{2}Z$/.test(s))return s.slice(0,10);return s;}

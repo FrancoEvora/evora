@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {intersects,environmentalSelection} from '../shared/environment.mjs';
+import {intersects,environmentalSelection,environmentalDate} from '../shared/environment.mjs';
 import {normalizeEnvironmentalFeature,fetchEnvironmentalSource} from '../api/_lib/environmental-sources.js';
 const polygon={type:'Polygon',coordinates:[[[-48,-20],[-47,-20],[-47,-19],[-48,-19],[-48,-20]],[[-47.8,-19.8],[-47.2,-19.8],[-47.2,-19.2],[-47.8,-19.2],[-47.8,-19.8]]]};
 test('interseção ambiental respeita buracos, pontos e polígonos, sem confundir proximidade com sobreposição',()=>{
@@ -21,3 +21,5 @@ test('raios de 5 e 7 km selecionam somente as ocorrências do recorte',()=>{
 test('abrangência estadual não gera falsa contagem zero e não consulta rede fora da jurisdição',async()=>{
  const old=globalThis.fetch;globalThis.fetch=()=>{throw Error('Não deveria consultar')};try{for(const [source_key,state] of [['graprohab','MG'],['ide_sisema','SP']]){const s=await fetchEnvironmentalSource({source_key,asset_state:state,config:{latitude:-18.72,longitude:-47.49}});assert.equal(s.environment.applicable,false);assert.equal(s.rows[0].value,null);}}finally{globalThis.fetch=old;}
 });
+
+test('datas ambientais normalizam milissegundos ArcGIS e datas WFS sem inventar uma data-base',()=>{assert.equal(environmentalDate('1737571989000'),'2025-01-22T18:53:09.000Z');assert.equal(environmentalDate('2019-05-10Z'),'2019-05-10');assert.equal(environmentalDate(''), '');assert.equal(environmentalDate('edição não informada'),'edição não informada');});
