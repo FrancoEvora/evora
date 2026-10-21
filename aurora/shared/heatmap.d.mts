@@ -2,6 +2,7 @@ export type SpatialSnapshot={type:'FeatureCollection';features:GeoJSON.Feature[]
 export type HeatProperties={value:number|null;unit:string;count?:number|null;coverage:number|null;modeled:boolean;source_count:number;names?:string[];sector?:string;city?:string;population?:number|null;households?:number|null;area_km2?:number|null;[key:string]:unknown};
 export type HeatResult=GeoJSON.FeatureCollection<GeoJSON.Polygon|GeoJSON.MultiPolygon,HeatProperties>&{summary:{coverage:number|null;issues:number;source_features:number;cells:number};methodology:string};
 export const heatColors:string[];
+export const heatRadii:number[];
 export function circleGeometry(latitude:number,longitude:number,radius?:number):GeoJSON.Polygon;
 export function geometryArea(geometry:GeoJSON.Polygon|GeoJSON.MultiPolygon):number;
 export function boundsOf(geometry:GeoJSON.Geometry):number[];

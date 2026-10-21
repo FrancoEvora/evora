@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {buildHeatmap,circleGeometry,geometryArea,heatColor,legendBreaks} from '../shared/heatmap.mjs';
+import {buildHeatmap,boundsOf,circleGeometry,geometryArea,heatColor,heatRadii,legendBreaks} from '../shared/heatmap.mjs';
 import {normalizeCensus,normalizeOsm,studyBounds,osmQuery,censusUrl} from '../api/_lib/geo-sources.js';
 
 const latitude=-18.72,longitude=-47.49;
@@ -51,5 +51,28 @@ test('OSM rejeita consulta incompleta e evita IDs duplicados',()=>{
 test('consultas geográficas têm limites fixos, coordenadas brasileiras e nenhuma URL fornecida pelo cliente',()=>{
  assert.throws(()=>studyBounds({latitude:'1);DROP',longitude}));assert.throws(()=>studyBounds({latitude:latitude,longitude:180}));
  assert.match(censusUrl({latitude,longitude}),/^https:\/\/geoservicos\.ibge\.gov\.br\//);
- assert.match(osmQuery({latitude,longitude}),/out center 1601/);assert.equal(studyBounds({latitude,longitude,radius_km:1000}).radius_km,3);
+ assert.match(osmQuery({latitude,longitude}),/out center 1601/);assert.equal(studyBounds({latitude,longitude,radius_km:1000}).radius_km,7);
+});
+test('raios de 5 e 7 km conservam área e funcionam na resolução urbana',()=>{
+ assert.deepEqual(heatRadii,[1,2,3,5,7]);
+ for(const radius of [5,7]){
+  const result=buildHeatmap(spatial,{latitude,longitude,radius,mode:'hexagons',resolution:9});
+  assert.equal(result.summary.issues,0);assert.ok(result.summary.coverage>.999);
+  const expected=geometryArea(circleGeometry(latitude,longitude,radius))*100;
+  assert.ok(Math.abs(result.features.reduce((sum,f)=>sum+f.properties.count,0)-expected)/expected<.001);
+ }
+});
+test('novos raios incluem pontos externos a 3 km e respeitam a cobertura da leitura',()=>{
+ const data={scope:{radius_km:7},features:[4,6,8].map(km=>({geometry:{type:'Point',coordinates:circleGeometry(latitude,longitude,km).coordinates[0][18]},properties:{name:`Ponto a ${km} km`}}))};
+ assert.equal(buildHeatmap(data,{latitude,longitude,radius:5,metric:'points'}).summary.source_features,1);
+ assert.equal(buildHeatmap(data,{latitude,longitude,radius:7,metric:'points'}).summary.source_features,2);
+ data.scope.radius_km=3;
+ assert.throws(()=>buildHeatmap(data,{latitude,longitude,radius:5,metric:'points'}),/leitura cobre até 3 km/);
+ assert.throws(()=>buildHeatmap(data,{latitude,longitude,radius:7,metric:'points'}),/Atualize a fonte/);
+});
+test('a envoltória pública contém o círculo completo de 7 km no Brasil',()=>{
+ for(const lat of [-33,-19,0,5]){
+  const b=studyBounds({latitude:lat,longitude}).bbox,c=boundsOf(circleGeometry(lat,longitude,7));
+  assert.ok(b[0]<=c[0]&&b[1]<=c[1]&&b[2]>=c[2]&&b[3]>=c[3]);
+ }
 });

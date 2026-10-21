@@ -8,12 +8,14 @@ Disponíveis em **Território** e em **Inteligência → Mapas de calor**.
 - **Domicílios:** `v0002 / AREA_KM2`. Inclui domicílios vagos e de uso ocasional; não significa famílias residentes ou demanda de compra.
 - **Atividade e serviços:** contagem de elementos geolocalizados do OpenStreetMap por hexágono, ou pontos cadastrados pela equipe. A base colaborativa pode ter lacunas e duplicidades entre nós e áreas; não é um censo de empresas nem mede passantes.
 
-O perímetro do imóvel é independente do círculo de estudo, de 1, 2 ou 3 km. Camadas sem fonte não recebem dados inventados. Trânsito e fluxo de passantes continuam identificados como não conectados.
+O perímetro do imóvel é independente do círculo de estudo, de 1, 2, 3, 5 ou 7 km. Camadas sem fonte não recebem dados inventados. Trânsito e fluxo de passantes continuam identificados como não conectados.
+
+As consultas públicas coletam uma envoltória que contém o círculo de 7 km; cada raio é recortado localmente. Leituras antigas de 3 km precisam ser atualizadas para os novos raios. Elas não são reutilizadas como cobertura completa de 5 ou 7 km. Limites de registros ou de tamanho continuam identificados como recorte parcial.
 
 ## Fontes e consultas
 
 1. Estatísticas nacionais originais do IBGE, arquivo publicado em 13/11/2024, referência 2022. Cache contém 468.099 registros (incluindo áreas estaduais operacionais), em 27 arquivos por UF. Código completo de 15 posições, sem associação aproximada por nome. Valores suprimidos/ausentes permanecem `null`.
-2. Malha definitiva `CGMAT:qg_2022_600_setcensitario__v02`, obtida do WFS oficial do IBGE, em WGS84, por envoltória de aproximadamente ±3 km. A geometria é simplificada apenas para exibição; os valores e a área do setor são os originais.
+2. Malha definitiva `CGMAT:qg_2022_600_setcensitario__v02`, obtida do WFS oficial do IBGE, em WGS84, por envoltória de aproximadamente ±7 km. A geometria é simplificada apenas para exibição; os valores e a área do setor são os originais.
 3. Pontos públicos: Overpass API na instância pública VK Maps, documentada pela comunidade OpenStreetMap como utilizável por aplicações de qualquer projeto. Sem credencial. Erros e timeouts preservam a última leitura válida. Não há garantia de disponibilidade da instância pública; para escala, provisionar serviço dedicado.
 
 Cada novo ativo recebe **nove conexões**: as sete anteriores, mais IBGE setorial (mensal) e OpenStreetMap (semanal). Proprietários/administradores/gestores com acesso à Inteligência podem alterar a frequência e pausar nas Fontes públicas. Analistas autorizados podem atualizar. Perfis de consulta leem; clientes recebem apenas relatórios autorizados e não acessam a base interna.

@@ -2,6 +2,7 @@ import {latLngToCell,cellToBoundary,polygonToCells,gridDisk} from 'h3-js';
 import clipping from 'polygon-clipping';
 
 export const heatColors=['#215b8f','#269ac0','#5bc4ad','#efcb6b','#ef785c'];
+export const heatRadii=[1,2,3,5,7];
 const rad=Math.PI/180,R=6371.0088;
 export function circleGeometry(latitude,longitude,radius=3){
  const lat=latitude*rad,lon=longitude*rad,d=radius/R,ring=[];
@@ -21,13 +22,14 @@ function grid(circle,resolution){
  const cells=new Set(polygonToCells(circle.coordinates,resolution,true));
  if(!cells.size){const b=boundsOf(circle);cells.add(latLngToCell((b[1]+b[3])/2,(b[0]+b[2])/2,resolution))}
  for(const id of [...cells])for(const n of gridDisk(id,1))cells.add(n);
- if(cells.size>1800)throw new Error('Este recorte excede 1.800 hexágonos. Reduza o raio ou use a resolução regional.');
+ if(cells.size>2600)throw new Error('Este recorte excede 2.600 hexágonos. Reduza o raio ou use a resolução regional.');
  const result=[];
  for(const id of [...cells].sort()){const ring=cellToBoundary(id,true);ring.push(ring[0]);const geometry=clipGeometry({type:'Polygon',coordinates:[ring]},circle);if(geometry&&geometryArea(geometry)>1e-9)result.push({id,geometry,bounds:boundsOf(geometry),area:geometryArea(geometry)})}
  return result;
 }
 export function buildHeatmap(spatial,{metric='population',mode='sectors',resolution=9,latitude,longitude,radius=3,category='all'}={}){
- if(!spatial||!Array.isArray(spatial.features)||![1,2,3].includes(radius)||![8,9].includes(resolution)||!Number.isFinite(latitude)||!Number.isFinite(longitude))throw new Error('Selecione um ativo localizado e um recorte válido.');
+ if(!spatial||!Array.isArray(spatial.features)||!heatRadii.includes(radius)||![8,9].includes(resolution)||!Number.isFinite(latitude)||!Number.isFinite(longitude))throw new Error('Selecione um ativo localizado e um recorte válido.');
+ if(spatial.scope?.radius_km<radius)throw new Error(`Esta leitura cobre até ${spatial.scope.radius_km} km. Atualize a fonte para consultar o raio de ${radius} km.`);
  const circle=circleGeometry(latitude,longitude,radius),circleBounds=boundsOf(circle),isPoints=metric==='points',features=[];let issues=0,covered=0;
  if(isPoints){
   const points=spatial.features.filter(f=>f.geometry?.type==='Point'&&(category==='all'||f.properties.category===category)&&distanceKm(f.geometry.coordinates,[longitude,latitude])<=radius);

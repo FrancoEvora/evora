@@ -7,7 +7,8 @@ const hosts = new Set(['geoservicos.ibge.gov.br', 'maps.mail.ru']);
 export function studyBounds(config) {
  const lat=Number(config.latitude),lon=Number(config.longitude);
  if(config.latitude==null||config.longitude==null||!Number.isFinite(lat)||!Number.isFinite(lon)||lat< -34||lat>6||lon< -74||lon> -28)throw new AppError('Informe coordenadas válidas no Brasil.');
- const radius=3,dy=radius/111.32,dx=dy/Math.cos(lat*Math.PI/180);
+ // Conservative envelope enclosing every supported study circle (up to 7 km).
+ const radius=7,dy=radius/110.5,dx=dy/Math.cos(lat*Math.PI/180);
  return {latitude:lat,longitude:lon,radius_km:radius,bbox:[lon-dx,lat-dy,lon+dx,lat+dy].map(x=>Number(x.toFixed(7)))};
 }
 async function readJson(url,options={}) {
@@ -52,7 +53,7 @@ export async function normalizeCensus(raw,config) {
  // Existing immutable source history accepts a maximum of 1 MB per reading.
  while(Buffer.byteLength(JSON.stringify(features))>860000&&features.length){features.pop();truncated=true;}
  return {type:'FeatureCollection',features,scope:studyBounds(config),reference:'2022',stats_release:manifest.release,stats_url:manifest.source_url,stats_sha256:manifest.sha256,truncated,unmatched,geometry_simplified:true,
-  methodology:'Estatísticas originais do Censo 2022 associadas à malha definitiva por CD_SETOR. Recorte por envoltória de ±3 km. Totais são do setor inteiro; não são população no raio. Geometrias simplificadas apenas para exibição. Domicílios incluem vagos e de uso ocasional.'};
+  methodology:'Estatísticas originais do Censo 2022 associadas à malha definitiva por CD_SETOR. Recorte por envoltória de ±7 km. Totais são do setor inteiro; não são população no raio. Geometrias simplificadas apenas para exibição. Domicílios incluem vagos e de uso ocasional.'};
 }
 export function osmQuery(config) {
  const {bbox:[w,s,e,n]}=studyBounds(config),box=`(${s},${w},${n},${e})`;
@@ -75,5 +76,5 @@ export async function fetchGeoSource(job) {
  const raw=await readJson(url);
  const spatial=census?await normalizeCensus(raw,config):normalizeOsm(raw,config);
  return {provider:census?'IBGE · Censo 2022 por setor':'OpenStreetMap · Overpass (VK Maps)',source_url:url,fetched_at:new Date().toISOString(),method:spatial.methodology,real_public_data:true,spatial,
-  rows:[{indicator:census?'Setores censitários retornados':'Elementos de interesse mapeados',unit:census?'setores':'elementos OSM',period:spatial.reference,value:spatial.features.length,raw:String(spatial.features.length),geography:'Envoltória de ±3 km do ponto do ativo',classification:spatial.truncated?'Recorte parcial: limite de consulta atingido':census?'Total de setores intersectados; não é população no raio':'Amostra colaborativa; não é censo comercial'}]};
+  rows:[{indicator:census?'Setores censitários retornados':'Elementos de interesse mapeados',unit:census?'setores':'elementos OSM',period:spatial.reference,value:spatial.features.length,raw:String(spatial.features.length),geography:'Envoltória de ±7 km do ponto do ativo',classification:spatial.truncated?'Recorte parcial: limite de consulta atingido':census?'Total de setores intersectados; não é população no raio':'Amostra colaborativa; não é censo comercial'}]};
 }
