@@ -1,0 +1,137 @@
+/* Évora Viabilidade · Financial engine v1.0 · All initial values are synthetic assumptions. */
+(function(root){
+'use strict';
+const defaults={name:'Residencial Horizonte',city:'Estudo demonstrativo • Brasil',start:'2026-11',area:120000,use:55,lot:360,price:1200,discount:0,appreciation:0,salesStart:0,launch:12,speed:4,cashSales:10,entry:10,entryMonths:3,term:180,interest:0.65,system:'PRICE',index:'TR',correction:2,indexFrequency:'monthly',balloon:15,balloons:4,loss:2,late:8,delay:3,work:24000000,contingency:10,workStart:1,duration:24,workInflation:5,curve:'s',workWeights:[],landMode:'share',landShare:18,landPrice:8000000,landEntry:20,landMonths:24,predev:900000,commission:5,marketing:1,tax:6,servicing:0.5,admin:25000,adminMonths:48,equity:5000000,credit:12000000,debtRate:1,debtFee:1,drawEnd:30,maturity:60,sweepStart:25,tma:15,target:50};
+const bounds={area:[1,1e9],use:[0.01,100],lot:[1,1e6],price:[0,1e6],discount:[0,100],appreciation:[-50,50],salesStart:[0,120],launch:[0,100],speed:[0.1,10000],cashSales:[0,100],entry:[0,100],entryMonths:[1,36],term:[1,360],interest:[0,5],correction:[-20,30],balloon:[0,100],balloons:[0,30],loss:[0,100],late:[0,100],delay:[0,36],work:[0,1e11],contingency:[0,100],workStart:[0,120],duration:[1,120],workInflation:[-20,50],landShare:[0,100],landPrice:[0,1e11],landEntry:[0,100],landMonths:[1,120],predev:[0,1e10],commission:[0,100],marketing:[0,100],tax:[0,100],servicing:[0,100],admin:[0,1e8],adminMonths:[0,480],equity:[0,1e11],credit:[0,1e11],debtRate:[0,10],debtFee:[0,20],drawEnd:[0,480],maturity:[1,600],sweepStart:[0,600],tma:[0,100],target:[1,100]};
+const integers=['salesStart','entryMonths','term','balloons','delay','workStart','duration','landMonths','adminMonths','drawEnd','maturity','sweepStart'];
+const enums={system:['PRICE','SAC'],index:['TR','IPCA','NONE'],indexFrequency:['monthly','annual'],curve:['s','linear','early','custom'],landMode:['share','cash']};
+function prepare(input){
+ const p={...defaults};
+ for(const k of Object.keys(defaults)){if(Object.prototype.hasOwnProperty.call(input||{},k))p[k]=input[k];}
+ for(const [k,[min,max]] of Object.entries(bounds)){
+  if(typeof p[k]!=='number'||!Number.isFinite(p[k])||p[k]<min||p[k]>max)throw new Error('Premissa inválida: '+k+' (limite '+min+' a '+max+').');
+ }
+ for(const k of integers)if(!Number.isInteger(p[k]))throw new Error('Informe um número inteiro em '+k+'.');
+ for(const [k,values] of Object.entries(enums))if(!values.includes(p[k]))throw new Error('Opção inválida: '+k+'.');
+ p.name=String(p.name||'Novo estudo').slice(0,90);p.city=String(p.city||'').slice(0,120);
+ if(!/^20\d{2}-(0[1-9]|1[0-2])$/.test(p.start))throw new Error('Informe uma data de início válida (AAAA-MM).');
+ if(p.entry+p.balloon>100+1e-9)throw new Error('Entrada + percentual total de balões não pode superar 100%.');
+ if(p.balloon>0&&(p.balloons<1||p.balloons*12>p.term))throw new Error('Os balões anuais devem caber no prazo: quantidade × 12 ≤ prazo.');
+ if(p.maturity<=p.drawEnd&&p.credit>0)throw new Error('O vencimento do crédito deve ser posterior ao último mês de saque.');
+ if(Math.floor(p.area*p.use/100/p.lot)<1)throw new Error('A área vendável não comporta um lote com a área média informada.');
+ if(p.curve==='custom'){
+  if(!Array.isArray(p.workWeights)||p.workWeights.length!==p.duration||p.workWeights.some(x=>typeof x!=='number'||!Number.isFinite(x)||x<0)||p.workWeights.reduce((a,b)=>a+b,0)<=0)throw new Error('A curva manual precisa de um peso não negativo por mês e soma maior que zero.');
+ }
+ return p;
+}
+function monthly(annual){return Math.pow(1+annual/100,1/12)-1;}
+function pmt(principal,rate,n){return rate===0?principal/n:principal*rate/(1-Math.pow(1+rate,-n));}
+function correctionFactor(p,age){if(p.index==='NONE')return 1;const n=p.indexFrequency==='annual'?Math.floor(age/12)*12:age;return Math.pow(1+p.correction/100,n/12);}
+function contract(p,value){
+ const principal=value*(1-p.entry/100),rate=p.interest/100,n=p.term;
+ const count=p.balloon>0?p.balloons:0,bullet=count?value*p.balloon/100/count:0;
+ let pvBullets=0;for(let k=1;k<=count;k++)pvBullets+=bullet/Math.pow(1+rate,12*k);
+ const fixed=pmt(principal-pvBullets,rate,n),regularPrincipal=(principal-count*bullet)/n;
+ let balance=principal,negative=false;const schedule=[];
+ for(let age=1;age<=n;age++){
+  const b=age%12===0&&age/12<=count?bullet:0;
+  const interest=balance*rate;
+  let regular=p.system==='PRICE'?fixed:regularPrincipal+interest;
+  if(age===n)regular=balance+interest-b;
+  const amort=regular+b-interest;if(amort< -0.00001)negative=true;
+  balance=Math.max(0,balance-amort);const factor=correctionFactor(p,age);
+  schedule.push({age,regular:regular*factor,balloon:b*factor,interest:interest*factor,amortization:amort*factor,balance:balance*factor});
+ }
+ return {principal,schedule,negative,entry:value*p.entry/100,first:schedule[0]?.regular||0};
+}
+function weights(p){
+ let a=Array.from({length:p.duration},(_,i)=>p.curve==='custom'?p.workWeights[i]:p.curve==='linear'?1:p.curve==='early'?p.duration-i:Math.sin(Math.PI*(i+0.5)/p.duration));
+ const sum=a.reduce((x,y)=>x+y,0);return a.map(x=>x/sum);
+}
+function npv(flows,annual){const r=monthly(annual);return flows.reduce((v,f,t)=>v+f/Math.pow(1+r,t),0);}
+function irr(flows){
+ const signs=flows.filter(x=>Math.abs(x)>0.01).map(Math.sign);let changes=0;for(let j=1;j<signs.length;j++)if(signs[j]!==signs[j-1])changes++;
+ if(changes!==1)return {annual:null,changes,reason:changes===0?'Fluxo sem mudança de sinal.':'Múltiplas mudanças de sinal: TIR não apresentada.'};
+ function evaluate(x){const scale=Math.max(0,-x*(flows.length-1));let v=0;for(let i=0;i<flows.length;i++)v+=flows[i]*Math.exp(-x*i-scale);return v;}
+ let a=-2,b=2,fa=evaluate(a),fb=evaluate(b);if(fa*fb>0)return {annual:null,changes,reason:'Raiz fora da faixa numérica.'};
+ for(let i=0;i<120;i++){const m=(a+b)/2,fm=evaluate(m);if(Math.sign(fm)===Math.sign(fa)){a=m;fa=fm;}else{b=m;fb=fm;}}
+ const annual=Math.expm1(12*(a+b)/2)*100;return {annual:Number.isFinite(annual)?annual:null,changes,reason:''};
+}
+function simulate(input,light=false){
+ const p=prepare(input),qty=Math.floor(p.area*p.use/100/p.lot),unit=p.lot*p.price*(1-p.discount/100),cohorts=[];
+ let sold=0;const launch=Math.floor(qty*p.launch/100);
+ if(launch>0){cohorts.push({t:p.salesStart,units:launch});sold=launch;}
+ let accumulated=0,m=p.salesStart+1;
+ while(sold<qty){accumulated+=p.speed;const n=Math.min(qty-sold,Math.floor(accumulated+1e-9));if(n>0){cohorts.push({t:m,units:n});sold+=n;accumulated-=n;}m++;if(m>600)throw new Error('A velocidade de vendas exige mais de 600 meses. Revise o ritmo de absorção.');}
+ const lastSale=cohorts.at(-1).t,workEnd=p.workStart+p.duration-1;
+ const horizon=Math.max(lastSale+p.entryMonths+p.term-1+p.delay,workEnd,p.landMode==='cash'?p.landMonths:0,p.adminMonths-1,p.credit>0?p.maturity:0);
+ if(horizon>960)throw new Error('Horizonte superior ao limite de 960 meses.');
+ const rows=Array.from({length:horizon+1},(_,t)=>({t,units:0,signed:0,cash:0,entry:0,regular:0,balloon:0,scheduled:0,lost:0,received:0,work:0,land:0,predev:0,commission:0,marketing:0,tax:0,servicing:0,admin:0,portfolioBalance:0,available:0,net:0,cumulative:0,cumWork:0,cumAvailable:0,cumReceived:0,cumUnits:0,coverage:0,draw:0,interest:0,fee:0,repay:0,debt:0,extraEquity:0,distribution:0,bank:0,equityCF:0}));
+ function receive(t,amount,type){
+  if(Math.abs(amount)<1e-9)return;
+  rows[t].scheduled+=amount;rows[t].lost+=amount*p.loss/100;
+  const collectible=amount*(1-p.loss/100),late=collectible*p.late/100;
+  rows[t][type]+=collectible-late;rows[t+p.delay][type]+=late;
+ }
+ let negative=false;
+ for(const c of cohorts){
+  const value=c.units*unit*Math.pow(1+p.appreciation/100,c.t/12),r=rows[c.t];r.units=c.units;r.signed=value;
+  r.commission=value*p.commission/100;r.marketing=value*p.marketing/100;
+  receive(c.t,value*p.cashSales/100,'cash');
+  const financed=value*(1-p.cashSales/100),con=contract(p,financed);negative=negative||con.negative;
+  for(let k=0;k<p.entryMonths;k++)receive(c.t+k,con.entry/p.entryMonths,'entry');
+  for(let age=0;age<p.entryMonths;age++)rows[c.t+age].portfolioBalance+=con.principal;
+  for(const s of con.schedule){const t=c.t+p.entryMonths-1+s.age;receive(t,s.regular,'regular');receive(t,s.balloon,'balloon');rows[t].portfolioBalance+=s.balance;}
+ }
+ const ws=weights(p),base=p.work*(1+p.contingency/100);
+ for(let k=0;k<p.duration;k++){const t=p.workStart+k;rows[t].work=base*ws[k]*Math.pow(1+p.workInflation/100,t/12);}
+ rows[0].predev=p.predev;
+ if(p.landMode==='cash'){rows[0].land=p.landPrice*p.landEntry/100;for(let t=1;t<=p.landMonths;t++)rows[t].land+=p.landPrice*(1-p.landEntry/100)/p.landMonths;}
+ let cum=0,cw=0,ca=0,cr=0,cu=0,peak=0,peakMonth=0;
+ for(const r of rows){
+  r.received=r.cash+r.entry+r.regular+r.balloon;r.tax=r.received*p.tax/100;r.servicing=r.received*p.servicing/100;
+  if(p.landMode==='share')r.land=r.received*p.landShare/100;
+  r.admin=r.t<p.adminMonths?p.admin:0;
+  r.available=r.received-r.land-r.predev-r.commission-r.marketing-r.tax-r.servicing-r.admin;r.net=r.available-r.work;
+  cum+=r.net;cw+=r.work;ca+=r.available;cr+=r.received;cu+=r.units;
+  Object.assign(r,{cumulative:cum,cumWork:cw,cumAvailable:ca,cumReceived:cr,cumUnits:cu,coverage:cw>0?Math.max(0,ca)/cw*100:0});
+  if(-cum>peak){peak=-cum;peakMonth=r.t;}
+ }
+ // Funding is separate from project economics. Credit is non-revolving; interest is paid on opening principal.
+ let bank=p.equity,debt=0,totalDraw=0,extra=0,totalInterest=0,totalFee=0,totalRepay=0,totalDist=0;
+ for(const r of rows){
+  r.interest=debt*p.debtRate/100;bank+=r.net-r.interest;
+  if(bank<0&&r.t<=p.drawEnd&&r.t<p.maturity){r.draw=Math.min(Math.max(0,p.credit-totalDraw),-bank/(1-p.debtFee/100));r.fee=r.draw*p.debtFee/100;debt+=r.draw;totalDraw+=r.draw;bank+=r.draw-r.fee;}
+  if(r.t>=p.sweepStart&&bank>0&&debt>0){r.repay=Math.min(debt,bank);debt-=r.repay;bank-=r.repay;}
+  if(r.t===p.maturity&&debt>0){r.repay+=debt;bank-=debt;debt=0;}
+  if(bank<0){r.extraEquity=-bank;extra+=-bank;bank=0;}
+  if(r.t>=workEnd+1&&debt<0.001&&bank>0){r.distribution=bank;bank=0;}
+  if(r.t===horizon&&bank>0){r.distribution+=bank;bank=0;}
+  r.debt=debt;r.bank=bank;r.equityCF=r.distribution-r.extraEquity-(r.t===0?p.equity:0);
+  totalInterest+=r.interest;totalFee+=r.fee;totalRepay+=r.repay;totalDist+=r.distribution;
+ }
+ const sum=k=>rows.reduce((a,r)=>a+r[k],0),flows=rows.map(r=>r.net),equityFlows=rows.map(r=>r.equityCF),projectIRR=light?{annual:null}:irr(flows),equityIRR=light?{annual:null}:irr(equityFlows);
+ let lastNegative=-1;for(const r of rows)if(r.cumulative< -0.01)lastNegative=r.t;
+ const payback=lastNegative===rows.length-1?null:lastNegative<0?0:lastNegative+1;
+ const completion=rows[workEnd],totalWork=sum('work'),receipts=sum('received'),vpl=npv(flows,p.tma),coverage=totalWork>0?Math.max(0,completion.cumAvailable)/totalWork*100:null;
+ const targetRow=rows.find(r=>r.t<=workEnd&&r.cumAvailable>=totalWork*p.target/100);
+ const pvFuture=rows.slice(workEnd+1).reduce((a,r)=>a+r.received/Math.pow(1+monthly(p.tma),r.t-workEnd),0);
+ const totals={qty,netArea:p.area*p.use/100,usedArea:qty*p.lot,residualArea:p.area*p.use/100-qty*p.lot,unit,vgv:qty*unit,signed:sum('signed'),receipts,lost:sum('lost'),scheduled:sum('scheduled'),work:totalWork,land:sum('land'),predev:p.predev,commission:sum('commission'),marketing:sum('marketing'),tax:sum('tax'),servicing:sum('servicing'),admin:sum('admin'),profit:sum('net'),margin:receipts>0?sum('net')/receipts*100:null,vpl,projectIRR,equityIRR,peak,peakMonth,payback,workEnd,lastSale,horizon,coverage,availableAtCompletion:completion.cumAvailable,receivedAtCompletion:completion.cumReceived,soldAtCompletion:completion.cumUnits,portfolioAtCompletion:completion.portfolioBalance,futureReceipts:rows.slice(workEnd+1).reduce((a,r)=>a+r.received,0),pvFuture,targetMonth:targetRow?.t??null,draw:totalDraw,extra,interest:totalInterest,fee:totalFee,repay:totalRepay,distribution:totalDist,equityTotal:p.equity+extra};
+ const warnings=[];
+ if(extra>1)warnings.push({level:'danger',title:'Funding insuficiente',text:'O plano de capital e crédito exige aportes adicionais. O modelo os calcula, mas não presume que estejam contratados.'});
+ if(vpl<0)warnings.push({level:'danger',title:'VPL negativo',text:'O retorno projetado não remunera a taxa mínima de atratividade informada.'});
+ if(coverage!==null&&coverage<p.target)warnings.push({level:'warning',title:'Meta de cobertura não atingida',text:'A disponibilidade líquida da carteira até a entrega está abaixo da meta definida pelo usuário.'});
+ if(negative)warnings.push({level:'warning',title:'Amortização negativa',text:'O arranjo de balões gera prestação regular inferior aos juros em algum período. Revise o contrato e o desenho comercial.'});
+ if(p.sweepStart>p.maturity&&p.credit>0)warnings.push({level:'warning',title:'Crédito com quitação concentrada',text:'A amortização programada começa depois do vencimento. O saldo será quitado integralmente no vencimento.'});
+ warnings.push({level:'info',title:'Cenário prospectivo, não orçamento aprovado',text:'Taxas, perdas, tributos e custos são premissas editáveis. TR e IPCA futuros não são previsões nem taxas consultadas automaticamente.'});
+ return {p,rows,totals,cohorts,workWeights:ws,contract:contract(p,unit),warnings};
+}
+function scenarios(p){return [
+ {id:'base',name:'Base',description:'Suas premissas atuais.',p:{...p}},
+ {id:'optimistic',name:'Expansão',description:'Preço +5%; vendas +25%; obra −5%.',p:{...p,price:p.price*1.05,speed:p.speed*1.25,work:p.work*0.95}},
+ {id:'conservative',name:'Conservador',description:'Preço −5%; vendas −25%; obra +10%; início da obra +3 meses; perdas +2 p.p.',p:{...p,price:p.price*0.95,speed:p.speed*0.75,work:p.work*1.1,workStart:p.workStart+3,loss:Math.min(100,p.loss+2)}},
+ {id:'stress',name:'Estresse',description:'Preço −10%; vendas −40%; obra +20%; início da obra +6 meses; perdas +5 p.p.',p:{...p,price:p.price*0.9,speed:p.speed*0.6,work:p.work*1.2,workStart:p.workStart+6,loss:Math.min(100,p.loss+5)}}
+ ].map(s=>{try{return {...s,result:simulate(s.p)};}catch(e){return {...s,error:e.message};}});}
+const api={version:'1.0.0',defaults,bounds,prepare,monthly,pmt,contract,weights,npv,irr,simulate,scenarios};
+if(typeof module!=='undefined'&&module.exports)module.exports=api;root.EvoraEngine=api;
+})(typeof globalThis!=='undefined'?globalThis:this);
