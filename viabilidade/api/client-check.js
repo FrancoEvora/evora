@@ -4,57 +4,26 @@ import { getVercelOidcToken } from '@vercel/oidc';
 
 export const config = { runtime: 'nodejs', maxDuration: 30 };
 
-function outputText(payload) {
-  if (typeof payload?.output_text === 'string') return payload.output_text;
-  return (payload?.output || []).flatMap(item => item?.content || []).map(item => item?.text || '').join('\n').trim();
-}
-
 export default {
   async fetch() {
-    const candidates = [
-      join(process.cwd(), 'intelligence.js'),
-      join(process.cwd(), 'viabilidade', 'intelligence.js'),
-      '/var/task/viabilidade/intelligence.js',
-    ];
+    const candidates = [join(process.cwd(), 'intelligence.js'), join(process.cwd(), 'viabilidade', 'intelligence.js'), '/var/task/viabilidade/intelligence.js'];
     let source = null;
     let selected = null;
-    const failures = [];
     for (const path of candidates) {
-      try {
-        source = await readFile(path, 'utf8');
-        selected = path;
-        break;
-      } catch (error) {
-        failures.push({ path, error: error.code || error.message });
-      }
+      try { source = await readFile(path, 'utf8'); selected = path; break; } catch {}
     }
-    if (source === null) {
-      return Response.json({ ok: false, error: 'source_not_found', failures }, { status: 500 });
-    }
-    try {
-      new Function(source);
-    } catch (error) {
-      return Response.json({ ok: false, stage: 'client_syntax', error: error.message, stack: error.stack }, { status: 500 });
-    }
+    if (source === null) return Response.json({ ok: false, stage: 'source_not_found' }, { status: 500 });
+    try { new Function(source); } catch (error) { return Response.json({ ok: false, stage: 'client_syntax', error: error.message }, { status: 500 }); }
 
     const token = process.env.AI_GATEWAY_API_KEY || process.env.VERCEL_OIDC_TOKEN || await getVercelOidcToken();
     if (!token) return Response.json({ ok: false, stage: 'gateway_auth', error: 'token_missing' }, { status: 500 });
-    const model = process.env.AI_GATEWAY_MODEL || 'openai/gpt-5.6-terra';
-    const response = await fetch('https://ai-gateway.vercel.sh/v1/responses', {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ model, input: 'Responda apenas com a palavra OK.', max_output_tokens: 32, store: false }),
-    });
-    const text = await response.text();
-    let payload;
-    try { payload = JSON.parse(text); } catch { payload = { raw: text.slice(0, 500) }; }
-    if (!response.ok) {
-      return Response.json({ ok: false, stage: 'gateway_model', status: response.status, payload }, { status: 500 });
-    }
-    return Response.json({
-      ok: true,
-      client: { bytes: source.length, path: selected },
-      gateway: { model: payload.model || model, responseId: payload.id || null, output: outputText(payload), usage: payload.usage || null },
-    }, { headers: { 'Cache-Control': 'no-store' } });
+    const response = await fetch('https://ai-gateway.vercel.sh/v1/models?include_availability', { headers: { Authorization: `Bearer ${token}` } });
+    const payload = await response.json();
+    if (!response.ok) return Response.json({ ok: false, stage: 'catalog', status: response.status, payload }, { status: 500 });
+    const eligible = (payload.data || [])
+      .filter(model => model.type === 'language' && model.model_eligibility?.status === 'eligible')
+      .map(model => ({ id: model.id, name: model.name, tags: model.tags || [], pricing: model.pricing || null, context_window: model.context_window, max_tokens: model.max_tokens }))
+      .sort((a, b) => Number(Boolean(b.tags.includes('reasoning'))) - Number(Boolean(a.tags.includes('reasoning'))) || Number(a.pricing?.output || 999) - Number(b.pricing?.output || 999));
+    return Response.json({ ok: true, client: { bytes: source.length, path: selected }, request_context_availability: payload.request_context_availability, availability_status: payload.availability_status, eligibleCount: eligible.length, eligible: eligible.slice(0, 80) }, { headers: { 'Cache-Control': 'no-store' } });
   },
 };
