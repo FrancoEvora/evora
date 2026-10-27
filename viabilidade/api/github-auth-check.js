@@ -9,7 +9,7 @@ export default {
     const publishableKey = String(process.env.SUPABASE_PUBLISHABLE_KEY || '');
     let client = { ok: false };
     try {
-      const path = join(process.cwd(), 'supabase-auth-github.js');
+      const path = join(process.cwd(), 'viabilidade', 'supabase-auth-github.js');
       const source = await readFile(path, 'utf8');
       new Function(source);
       client = { ok: true, bytes: source.length, path };
