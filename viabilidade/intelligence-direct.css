@@ -1,0 +1,20 @@
+/* Direct Intelligence: responsive controls and accessible chat. */
+.intel-context-group p{font-size:11px;line-height:1.65;color:var(--muted)}
+.intel-markdown{overflow-wrap:anywhere}
+.intel-composer textarea{min-height:90px}
+.intel-error{overflow-wrap:anywhere}
+.intel-quick-prompt:disabled,.intel-send:disabled{opacity:.6;cursor:progress}
+@media(max-width:720px){
+ .topbar{height:auto;min-height:64px;flex-wrap:wrap;align-items:center;gap:10px;padding:12px 16px}
+ .topbar .breadcrumb{flex:1 1 100%;min-width:0}
+ .topbar .top-actions{flex:1 1 100%;width:100%;min-width:0;flex-wrap:wrap;justify-content:flex-start;gap:7px}
+ .topbar .project-select{flex:1 1 120px;width:auto;min-width:90px;max-width:100%}
+ .topbar .cloud-sync-button{flex:0 1 auto;font-size:10px;max-width:100%;white-space:normal;min-height:34px}
+ .topbar .avatar{margin-left:auto}
+ .intel-heading,.intel-agent-hero,.intel-chat-head{min-width:0}
+ .intel-heading-actions,.intel-chat-tools{flex-wrap:wrap}
+ .intel-chat-panel,.intel-context-panel,.intel-layout,.intel-composer{min-width:0;max-width:100%}
+ .intel-composer form{display:flex;flex-direction:column;gap:9px}
+ .intel-composer textarea{width:100%;font-size:16px}
+ .intel-composer .intel-send{align-self:flex-end}
+}
