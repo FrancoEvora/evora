@@ -2,5 +2,8 @@
   "name": "evora-viabilidade",
   "version": "1.0.0",
   "private": true,
-  "type": "commonjs"
+  "type": "commonjs",
+  "dependencies": {
+    "@vercel/oidc": "^3.0.6"
+  }
 }
