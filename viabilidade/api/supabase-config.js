@@ -7,14 +7,17 @@ module.exports = function handler(req, res) {
 
   if (req.method !== 'GET') {
     res.setHeader('Allow', 'GET');
-    return res.status(405).json({ configured: false, error: 'method_not_allowed' });
+    res.statusCode = 405;
+    res.end(JSON.stringify({ configured: false, error: 'method_not_allowed' }));
+    return;
   }
 
   const url = String(process.env.SUPABASE_URL || FALLBACK_URL).replace(/\/$/, '');
   const publishableKey = String(process.env.SUPABASE_PUBLISHABLE_KEY || '');
   const configured = Boolean(url && publishableKey);
 
-  return res.status(configured ? 200 : 503).json({
+  res.statusCode = configured ? 200 : 503;
+  res.end(JSON.stringify({
     configured,
     url,
     publishableKey: configured ? publishableKey : null,
@@ -22,6 +25,6 @@ module.exports = function handler(req, res) {
     status: configured ? 'ready' : 'awaiting_supabase_activation',
     message: configured
       ? 'Supabase ready.'
-      : 'The Supabase project must be restored and SUPABASE_PUBLISHABLE_KEY configured in Vercel.',
-  });
+      : 'The Supabase project must be restored and SUPABASE_PUBLISHABLE_KEY configured in Vercel.'
+  }));
 };
