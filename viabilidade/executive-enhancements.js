@@ -44,16 +44,27 @@ function enhanceCapitalStructure(){
  const totals=data.result.totals;
  const work=Math.max(0,Number(totals.work)||0);
  const rawCash=Number(totals.cashForWorkAtCompletion)||0;
- const contribution=Math.max(0,rawCash);
- const contributionPct=work>0?contribution/work*100:0;
+ const contributionCapacity=Math.max(0,rawCash);
+ const contribution=Math.min(work,contributionCapacity);
+ const contributionPct=work>0?Math.min(100,contribution/work*100):0;
  const portfolioNet=Math.max(0,Number(totals.portfolioNetAtCompletion)||0);
  const uncovered=Math.max(0,work-contribution);
+ const surplus=Math.max(0,contributionCapacity-work);
  const workEnd=Number(totals.workEnd)||0;
- const status=rawCash<0?'O caixa acumulado disponível ainda é negativo na entrega; por isso a contribuição líquida considerada é zero.':contributionPct>=100?'A geração própria projetada supera o custo total da obra.':'Parcela da obra ainda não coberta por essa contribuição: '+money(uncovered)+'.';
+ let status='';
+ if(rawCash<0){
+  status='O caixa acumulado disponível ainda é negativo na entrega; por isso a contribuição líquida considerada é zero.';
+ }else if(surplus>0){
+  status='A carteira cobre 100% da obra. O excedente de '+money(surplus)+' permanece como caixa do empreendimento e não é contado como contribuição à obra.';
+ }else if(uncovered>0){
+  status='Parcela da obra ainda não coberta pela contribuição da carteira: '+money(uncovered)+'.';
+ }else{
+  status='A contribuição da carteira coincide com o custo total projetado da obra.';
+ }
  const block=document.createElement('div');
  block.className='portfolio-contribution';
  block.dataset.portfolioContribution='1';
- block.innerHTML='<div class="portfolio-contribution-head"><div><span>CONTRIBUIÇÃO ESPERADA DA CARTEIRA À OBRA</span><strong>'+money(contribution)+'</strong><small>Caixa acumulado disponível para obra até a entrega em M'+workEnd+'.</small></div><div class="portfolio-contribution-rate"><strong>'+pct(contributionPct)+'</strong><small>do custo total projetado da obra</small></div></div><div class="portfolio-contribution-track"><i style="width:'+Math.min(100,Math.max(0,contributionPct))+'%"></i></div><div class="portfolio-contribution-detail"><span>Carteira líquida acumulada até a entrega</span><b>'+money(portfolioNet)+'</b></div><p>'+status+'</p>';
+ block.innerHTML='<div class="portfolio-contribution-head"><div><span>CONTRIBUIÇÃO ESPERADA DA CARTEIRA À OBRA</span><strong>'+money(contribution)+'</strong><small>Valor efetivamente absorvível pela obra, limitado ao custo total projetado de '+money(work)+'.</small></div><div class="portfolio-contribution-rate"><strong>'+pct(contributionPct)+'</strong><small>do custo total projetado da obra</small></div></div><div class="portfolio-contribution-track"><i style="width:'+contributionPct+'%"></i></div><div class="portfolio-contribution-detail"><span>Capacidade de caixa para obra até a entrega em M'+workEnd+'</span><b>'+money(contributionCapacity)+'</b></div><div class="portfolio-contribution-detail"><span>Carteira líquida acumulada até a entrega</span><b>'+money(portfolioNet)+'</b></div><div class="portfolio-contribution-detail"><span>'+(surplus>0?'Excedente após cobrir a obra':'Obra ainda não coberta')+'</span><b>'+money(surplus>0?surplus:uncovered)+'</b></div><p>'+status+'</p>';
  const head=panel.querySelector('.panel-head');
  if(head)head.insertAdjacentElement('afterend',block);else panel.prepend(block);
 }
@@ -62,7 +73,7 @@ function installStyles(){
  if(document.getElementById('executive-enhancements-style'))return;
  const style=document.createElement('style');
  style.id='executive-enhancements-style';
- style.textContent='.portfolio-contribution{margin:0 0 18px;padding:16px;border:1px solid #dce6d4;border-radius:8px;background:#f5f8f1}.portfolio-contribution-head{display:flex;justify-content:space-between;gap:18px;align-items:flex-start}.portfolio-contribution-head span{display:block;font-size:8px;letter-spacing:1px;color:#6a7772}.portfolio-contribution-head>div>strong{display:block;font-size:24px;letter-spacing:-.7px;margin:7px 0 4px}.portfolio-contribution-head small{display:block;font-size:8px;line-height:1.5;color:#6a7772}.portfolio-contribution-rate{text-align:right;min-width:110px}.portfolio-contribution-rate strong{font-size:22px!important;color:#315f43}.portfolio-contribution-track{height:8px;margin:14px 0 12px;border-radius:5px;background:#e2eadc;overflow:hidden}.portfolio-contribution-track i{display:block;height:100%;background:#497d58}.portfolio-contribution-detail{display:flex;justify-content:space-between;gap:12px;font-size:9px;padding-top:2px}.portfolio-contribution-detail span{color:#6a7772}.portfolio-contribution-detail b{font-size:10px}.portfolio-contribution p{font-size:8px;line-height:1.55;color:#6a7772;margin-top:8px}.panel .segmented[data-short-horizons="1"]{flex-wrap:wrap}.panel .segmented[data-short-horizons="1"] button{min-width:34px}@media(max-width:720px){.portfolio-contribution-head{display:block}.portfolio-contribution-rate{text-align:left;margin-top:12px}.portfolio-contribution-detail{display:block}.portfolio-contribution-detail b{display:block;margin-top:4px}}';
+ style.textContent='.portfolio-contribution{margin:0 0 18px;padding:16px;border:1px solid #dce6d4;border-radius:8px;background:#f5f8f1}.portfolio-contribution-head{display:flex;justify-content:space-between;gap:18px;align-items:flex-start}.portfolio-contribution-head span{display:block;font-size:8px;letter-spacing:1px;color:#6a7772}.portfolio-contribution-head>div>strong{display:block;font-size:24px;letter-spacing:-.7px;margin:7px 0 4px}.portfolio-contribution-head small{display:block;font-size:8px;line-height:1.5;color:#6a7772}.portfolio-contribution-rate{text-align:right;min-width:110px}.portfolio-contribution-rate strong{font-size:22px!important;color:#315f43}.portfolio-contribution-track{height:8px;margin:14px 0 12px;border-radius:5px;background:#e2eadc;overflow:hidden}.portfolio-contribution-track i{display:block;height:100%;background:#497d58}.portfolio-contribution-detail{display:flex;justify-content:space-between;gap:12px;font-size:9px;padding:6px 0;border-top:1px solid #e4eadf}.portfolio-contribution-detail span{color:#6a7772}.portfolio-contribution-detail b{font-size:10px}.portfolio-contribution p{font-size:8px;line-height:1.55;color:#6a7772;margin-top:8px}.panel .segmented[data-short-horizons="1"]{flex-wrap:wrap}.panel .segmented[data-short-horizons="1"] button{min-width:34px}@media(max-width:720px){.portfolio-contribution-head{display:block}.portfolio-contribution-rate{text-align:left;margin-top:12px}.portfolio-contribution-detail{display:block}.portfolio-contribution-detail b{display:block;margin-top:4px}}';
  document.head.appendChild(style);
 }
 
