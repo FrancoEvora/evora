@@ -16,3 +16,21 @@
 
 /* v1.2 · executive exposure visualization */
 .legend-exposure i{width:14px!important;height:8px!important;border-radius:2px!important;background:#c9826e!important;opacity:.22}.exposure-guide{stroke:#a9624d;stroke-width:1.2;stroke-dasharray:3 3}.exposure-dot{fill:#a9624d}.exposure-label rect{fill:#fff8f4;stroke:#e7c4b8;stroke-width:1}.exposure-label text{fill:#9f624f;font-size:7px;font-weight:650;letter-spacing:.55px}.exposure-label text.value{fill:#6f3e31;font-size:9px;letter-spacing:0;font-weight:700}.chart-note b{color:var(--ink);font-weight:600}
+
+.baseline-card{display:flex;justify-content:space-between;gap:22px;align-items:flex-start;background:#f2f6ed;border:1px solid #dfe8d7;border-radius:9px;padding:18px 20px;margin-bottom:20px}
+.baseline-card h3{font-size:17px;margin-top:5px}
+.baseline-card p{font-size:10px;color:var(--muted);margin-top:7px;line-height:1.7;max-width:760px}
+.pace-plan{fill:none;stroke:var(--leaf);stroke-width:2.4;stroke-linejoin:round;stroke-linecap:round}
+.pace-actual{fill:none;stroke:var(--gold);stroke-width:2.4;stroke-dasharray:7 5;stroke-linejoin:round;stroke-linecap:round}
+.pace-dot{fill:#fff;stroke:var(--gold);stroke-width:2}
+.legend .actual-line{height:0!important;border-top:2px dashed var(--gold);background:none!important}
+.comparison-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:6px;overflow:hidden;margin-top:14px}
+.comparison-summary span{background:#fafbf8;padding:11px 12px;color:var(--muted);font-size:9px}
+.comparison-summary b{display:block;color:var(--ink);font-size:11px;margin-top:5px}
+.actuals-table input.actual-input{width:110px;min-height:32px;border:1px solid #dfe5da;background:#fff;border-radius:4px;padding:6px 8px;text-align:right;font-size:11px;font-variant-numeric:tabular-nums;color:var(--ink)}
+.actuals-table input.actual-input:focus{border-color:#6f9770}
+.actuals-table td:nth-child(3),.actuals-table td:nth-child(5){background:#fcf8ef}
+.actuals-table th:nth-child(3),.actuals-table th:nth-child(5){background:#f4eee3}
+.actuals-table{max-height:620px}
+.portfolio-note b{color:var(--ink)}
+@media(max-width:720px){.baseline-card{display:block}.baseline-card .button{margin-top:14px}.comparison-summary{grid-template-columns:1fr}.actuals-table input.actual-input{width:94px;font-size:16px}.pace-chart text{font-size:14px}}
