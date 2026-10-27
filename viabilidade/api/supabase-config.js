@@ -1,7 +1,7 @@
 const PROJECT_REF = 'qsdffayasuzsmngteika';
 const FALLBACK_URL = `https://${PROJECT_REF}.supabase.co`;
 
-export default function handler(req, res) {
+module.exports = function handler(req, res) {
   res.setHeader('Cache-Control', 'no-store, max-age=0');
   res.setHeader('Content-Type', 'application/json; charset=utf-8');
 
@@ -24,4 +24,4 @@ export default function handler(req, res) {
       ? 'Supabase ready.'
       : 'The Supabase project must be restored and SUPABASE_PUBLISHABLE_KEY configured in Vercel.',
   });
-}
+};
