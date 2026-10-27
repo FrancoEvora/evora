@@ -42,3 +42,10 @@
 .curve-financial-hidden{display:flex;gap:8px;align-items:center;padding:14px 16px;border-top:1px solid var(--line);color:var(--muted);font-size:10px;background:#fafbf8}
 .curve-financial-hidden .icon{width:15px;height:15px}
 @media(max-width:720px){.modeler-financial-head{display:block}.modeler-financial-head .segmented{margin-top:10px;width:max-content}}
+
+.modeler-work-end{stroke:#9aa798;stroke-width:1;stroke-dasharray:4 4}
+.modeler-work-end-label{font-family:inherit;fill:#7f8c82;font-size:9px}
+.curve-editor .curve-receivables{stroke:var(--gold);stroke-width:2.4;stroke-dasharray:7 5;fill:none}
+.curve-editor .curve-work{stroke:var(--leaf);stroke-width:2.5;fill:none}
+.curve-editor .curve-area{fill:#769a6c;fill-opacity:.08}
+.curve-editor .curve-scroll{scrollbar-width:thin}
