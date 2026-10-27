@@ -1,4 +1,4 @@
-/* Évora Viabilidade · Supabase cloud sync v1.0
+/* Évora Viabilidade · Supabase cloud sync v1.1
  * Uses only a public/publishable key in the browser. Authorization is enforced by RLS.
  */
 (function(){
@@ -6,7 +6,8 @@
 
 const STORE='evora.viabilidade.v1';
 const SESSION_KEY='evora.supabase.session.v1';
-const CONFIG_ENDPOINT='/api/supabase-config';
+const MIGRATION_KEY='evora.supabase.localMigration.v1';
+const CONFIG_ENDPOINT='/supabase-config.json';
 const PROJECTS_TABLE='viability_projects';
 const SETTINGS_TABLE='viability_user_settings';
 const SYNC_DELAY=850;
@@ -209,13 +210,15 @@ async function pullAndMerge(){
   setState('syncing','Sincronizando empreendimentos…');
   const [remoteRows,settings]=await Promise.all([fetchRemoteProjects(),fetchRemoteSettings()]);
   const local=readLibrary()||{active:null,projects:[]};
+  const localCount=Array.isArray(local.projects)?local.projects.filter(project=>!isUntouchedDemo(project)).length:0;
   const merged=mergeLibraries(local,remoteRows,settings);
   const changed=comparable(local)!==comparable(merged);
   if(changed){
     suspendLocalEvents=true;originalSetItem.call(localStorage,STORE,JSON.stringify(merged));suspendLocalEvents=false;lastLibrary=merged;
   }
   await upsertProjects(merged);await upsertSettings(merged);
-  setState('synced','Dados salvos no Supabase.');
+  originalSetItem.call(localStorage,MIGRATION_KEY,JSON.stringify({userId:currentUser.id,migratedAt:nowISO(),localProjectsMigrated:localCount,totalProjects:merged.projects.length}));
+  setState('synced',localCount?'Base local migrada e dados salvos no Supabase.':'Dados salvos no Supabase.');
   if(changed){await delay(120);location.reload();}
 }
 async function pushLibrary(library,removed=[]){
@@ -257,7 +260,7 @@ function installStyles(){
   const style=document.createElement('style');style.id='supabase-sync-style';
   style.textContent=`
   .cloud-sync-button{position:relative}.cloud-sync-button:before{content:'';width:7px;height:7px;border-radius:50%;background:#9aa69f;display:block}.cloud-sync-button[data-state="synced"]:before{background:#5f8c65}.cloud-sync-button[data-state="syncing"]:before{background:#bb914a;animation:cloudPulse 1s infinite}.cloud-sync-button[data-state="offline"],.cloud-sync-button[data-state="error"]{color:#a15845}.cloud-sync-button[data-state="offline"]:before,.cloud-sync-button[data-state="error"]:before{background:#b55742}.cloud-sync-button[data-state="unavailable"]:before{background:#bb914a}@keyframes cloudPulse{50%{opacity:.35}}
-  .supabase-dialog{border:1px solid var(--line);border-radius:12px;padding:0;max-width:500px;width:calc(100% - 34px);color:var(--ink);box-shadow:0 24px 100px #0003}.supabase-dialog::backdrop{background:#112e2580;backdrop-filter:blur(4px)}.cloud-dialog-inner{padding:25px}.cloud-dialog-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-start}.cloud-dialog-head h2{font-size:20px}.cloud-dialog-head p{font-size:10px;color:var(--muted);margin-top:6px}.cloud-dialog-close{border:0;background:none;padding:5px}.cloud-auth-tabs{display:flex;border:1px solid var(--line);padding:3px;border-radius:6px;margin:20px 0 15px}.cloud-auth-tabs button{flex:1;border:0;background:none;padding:8px;font-size:10px;border-radius:4px}.cloud-auth-tabs button.active{background:#eaf1e3;color:var(--green);font-weight:650}.cloud-auth-form{display:grid;gap:13px}.cloud-auth-form label{display:grid;gap:6px;font-size:10px}.cloud-auth-form input{border:1px solid #dfe5da;border-radius:5px;min-height:41px;padding:9px 10px;font-size:13px}.cloud-auth-form .button{width:100%;margin-top:3px}.cloud-auth-message{font-size:9px;line-height:1.6;color:var(--muted);min-height:15px}.cloud-auth-message.error{color:#a24f3b}.cloud-account{margin-top:19px;padding:15px;background:#f3f7ef;border-radius:7px}.cloud-account span{font-size:8px;color:var(--muted);letter-spacing:.8px}.cloud-account strong{display:block;font-size:13px;margin-top:5px}.cloud-account p{font-size:9px;color:var(--muted);margin-top:7px}.cloud-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}.cloud-blocker{margin-top:18px;padding:14px;background:#fff8ef;border:1px solid #ebd8b5;border-radius:7px}.cloud-blocker strong{font-size:11px}.cloud-blocker p{font-size:9px;color:#7b6948;margin-top:6px;line-height:1.65}.cloud-local-note{font-size:9px;color:var(--muted);line-height:1.6;margin-top:14px}@media(max-width:720px){.cloud-sync-button span{display:none}.supabase-dialog input{font-size:16px}}
+  .supabase-dialog{border:1px solid var(--line);border-radius:12px;padding:0;max-width:500px;width:calc(100% - 34px);color:var(--ink);box-shadow:0 24px 100px #0003}.supabase-dialog::backdrop{background:#112e2580;backdrop-filter:blur(4px)}.cloud-dialog-inner{padding:25px}.cloud-dialog-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-start}.cloud-dialog-head h2{font-size:20px}.cloud-dialog-head p{font-size:10px;color:var(--muted);margin-top:6px}.cloud-dialog-close{border:0;background:none;padding:5px}.cloud-auth-tabs{display:flex;border:1px solid var(--line);padding:3px;border-radius:6px;margin:20px 0 15px}.cloud-auth-tabs button{flex:1;border:0;background:none;padding:8px;font-size:10px;border-radius:4px}.cloud-auth-tabs button.active{background:#eaf1e3;color:var(--green);font-weight:650}.cloud-auth-form{display:grid;gap:13px}.cloud-auth-form label{display:grid;gap:6px;font-size:10px}.cloud-auth-form input{border:1px solid #dfe5da;border-radius:5px;min-height:41px;padding:9px 10px;font-size:13px}.cloud-auth-form .button{width:100%;margin-top:3px}.cloud-auth-message{font-size:9px;line-height:1.6;color:var(--muted);min-height:15px}.cloud-auth-message.error{color:#a24f3b}.cloud-account{margin-top:19px;padding:15px;background:#f3f7ef;border-radius:7px}.cloud-account span{font-size:8px;color:var(--muted);letter-spacing:.8px}.cloud-account strong{display:block;font-size:13px;margin-top:5px}.cloud-account p{font-size:9px;color:var(--muted);margin-top:7px}.cloud-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}.cloud-blocker{margin-top:18px;padding:14px;background:#fff8ef;border:1px solid #ebd8b5;border-radius:7px}.cloud-blocker strong{font-size:11px}.cloud-blocker p{font-size:9px;color:#7b6948;margin-top:6px;line-height:1.65}.cloud-local-note{font-size:9px;color:var(--muted);line-height:1.6;margin-top:14px}.cloud-migration{margin-top:12px;padding:11px 13px;border:1px solid #dfe8d8;background:#f7faf4;border-radius:6px;font-size:9px;color:#53675a;line-height:1.55}@media(max-width:720px){.cloud-sync-button span{display:none}.supabase-dialog input{font-size:16px}}
   `;document.head.appendChild(style);
 }
 function ensureDialog(){
@@ -267,24 +270,29 @@ function ensureDialog(){
   dialog.addEventListener('click',event=>{if(event.target===dialog)dialog.close();});return dialog;
 }
 let authMode='login';
+function migrationSummary(){
+  const info=safeJSON(localStorage.getItem(MIGRATION_KEY),null);
+  if(!info||!currentUser||info.userId!==currentUser.id)return '';
+  return '<div class="cloud-migration"><strong>Base local migrada</strong><br>'+Number(info.localProjectsMigrated||0)+' empreendimento(s) local(is) incorporado(s) à nuvem em '+new Date(info.migratedAt).toLocaleString('pt-BR')+'.</div>';
+}
 function renderAuthDialog(message='',isError=false){
   const dialog=ensureDialog();
   if(cloudState==='unavailable'||!config||!config.configured){
-    dialog.innerHTML='<div class="cloud-dialog-inner"><div class="cloud-dialog-head"><div><h2>Banco de dados Supabase</h2><p>Persistência em nuvem preparada, aguardando ativação.</p></div><button class="cloud-dialog-close" data-cloud-close aria-label="Fechar">✕</button></div><div class="cloud-blocker"><strong>Projeto evora-gestao indisponível</strong><p>O projeto Supabase está inativo por pendências de cobrança da organização. O schema, a autenticação e a sincronização já estão implementados; falta restaurar o projeto, aplicar o schema e configurar a chave publicável na Vercel.</p></div><p class="cloud-local-note">Enquanto isso, a plataforma continua salvando os estudos neste navegador. Exporte o backup JSON antes de limpar dados ou trocar de computador.</p></div>';
+    dialog.innerHTML='<div class="cloud-dialog-inner"><div class="cloud-dialog-head"><div><h2>Banco de dados Supabase</h2><p>Persistência em nuvem ainda indisponível.</p></div><button class="cloud-dialog-close" data-cloud-close aria-label="Fechar">✕</button></div><div class="cloud-blocker"><strong>Configuração pendente</strong><p>'+esc(config&&config.message||'A conexão com o Supabase ainda não foi ativada.')+'</p></div><p class="cloud-local-note">A plataforma continua preservando os dados no navegador até a sincronização ser concluída.</p></div>';
     bindDialog(dialog);return;
   }
   if(session&&currentUser){
-    dialog.innerHTML='<div class="cloud-dialog-inner"><div class="cloud-dialog-head"><div><h2>Supabase conectado</h2><p>'+esc(cloudMessage||'Dados sincronizados.')+'</p></div><button class="cloud-dialog-close" data-cloud-close aria-label="Fechar">✕</button></div><div class="cloud-account"><span>USUÁRIO</span><strong>'+esc(currentUser.email||currentUser.id)+'</strong><p>Os empreendimentos deste usuário são protegidos por Row Level Security e sincronizados entre dispositivos.</p></div><div class="cloud-actions"><button class="button primary" data-cloud-sync-now>Sincronizar agora</button><button class="button" data-cloud-signout>Sair da nuvem</button></div></div>';
+    dialog.innerHTML='<div class="cloud-dialog-inner"><div class="cloud-dialog-head"><div><h2>Supabase conectado</h2><p>'+esc(cloudMessage||'Dados sincronizados.')+'</p></div><button class="cloud-dialog-close" data-cloud-close aria-label="Fechar">✕</button></div><div class="cloud-account"><span>USUÁRIO</span><strong>'+esc(currentUser.email||currentUser.id)+'</strong><p>Os empreendimentos deste usuário são protegidos por Row Level Security e sincronizados entre dispositivos.</p></div>'+migrationSummary()+'<div class="cloud-actions"><button class="button primary" data-cloud-sync-now>Migrar e sincronizar agora</button><button class="button" data-cloud-signout>Sair da nuvem</button></div></div>';
     bindDialog(dialog);return;
   }
-  dialog.innerHTML='<div class="cloud-dialog-inner"><div class="cloud-dialog-head"><div><h2>Évora na nuvem</h2><p>Entre para sincronizar todos os empreendimentos no Supabase.</p></div><button class="cloud-dialog-close" data-cloud-close aria-label="Fechar">✕</button></div><div class="cloud-auth-tabs"><button data-cloud-mode="login" class="'+(authMode==='login'?'active':'')+'">Entrar</button><button data-cloud-mode="signup" class="'+(authMode==='signup'?'active':'')+'">Criar conta</button></div><form class="cloud-auth-form" data-cloud-auth="'+authMode+'"><label>E-mail<input type="email" name="email" required autocomplete="email"></label><label>Senha<input type="password" name="password" required minlength="8" autocomplete="'+(authMode==='login'?'current-password':'new-password')+'"></label><div class="cloud-auth-message '+(isError?'error':'')+'">'+esc(message)+'</div><button class="button primary" type="submit">'+(authMode==='login'?'Entrar e sincronizar':'Criar conta')+'</button></form><p class="cloud-local-note">No primeiro acesso, os estudos já existentes neste navegador serão migrados automaticamente, sem apagar o backup local.</p></div>';
+  dialog.innerHTML='<div class="cloud-dialog-inner"><div class="cloud-dialog-head"><div><h2>Évora na nuvem</h2><p>Entre para migrar sua base local e sincronizar todos os empreendimentos no Supabase.</p></div><button class="cloud-dialog-close" data-cloud-close aria-label="Fechar">✕</button></div><div class="cloud-auth-tabs"><button data-cloud-mode="login" class="'+(authMode==='login'?'active':'')+'">Entrar</button><button data-cloud-mode="signup" class="'+(authMode==='signup'?'active':'')+'">Criar conta</button></div><form class="cloud-auth-form" data-cloud-auth="'+authMode+'"><label>E-mail<input type="email" name="email" required autocomplete="email"></label><label>Senha<input type="password" name="password" required minlength="8" autocomplete="'+(authMode==='login'?'current-password':'new-password')+'"></label><div class="cloud-auth-message '+(isError?'error':'')+'">'+esc(message)+'</div><button class="button primary" type="submit">'+(authMode==='login'?'Entrar, migrar e sincronizar':'Criar conta')+'</button></form><p class="cloud-local-note">No primeiro acesso, todos os estudos já existentes neste navegador serão enviados para o Supabase. A cópia local continuará preservada como contingência.</p></div>';
   bindDialog(dialog);
 }
 function bindDialog(dialog){
   dialog.querySelector('[data-cloud-close]')?.addEventListener('click',()=>dialog.close());
   dialog.querySelectorAll('[data-cloud-mode]').forEach(button=>button.addEventListener('click',()=>{authMode=button.dataset.cloudMode;renderAuthDialog();}));
   dialog.querySelector('[data-cloud-signout]')?.addEventListener('click',()=>signOut());
-  dialog.querySelector('[data-cloud-sync-now]')?.addEventListener('click',()=>pullAndMerge().catch(error=>renderAuthDialog(error.message,true)));
+  dialog.querySelector('[data-cloud-sync-now]')?.addEventListener('click',()=>pullAndMerge().then(()=>renderAuthDialog()).catch(error=>renderAuthDialog(error.message,true)));
   const form=dialog.querySelector('[data-cloud-auth]');
   if(form)form.addEventListener('submit',async event=>{
     event.preventDefault();const submit=form.querySelector('button[type="submit"]'),data=new FormData(form),email=String(data.get('email')||'').trim(),password=String(data.get('password')||'');submit.disabled=true;submit.textContent='Processando…';
@@ -336,7 +344,7 @@ async function init(){
   const available=await loadConfig();
   if(!available)return;
   const active=await ensureSession();
-  if(!active){setState('signed_out','Entre para sincronizar os empreendimentos.');return;}
+  if(!active){setState('signed_out','Entre para migrar a base local e sincronizar os empreendimentos.');return;}
   try{await pullAndMerge();}catch(error){setState('error','Falha ao sincronizar: '+error.message);}
 }
 
