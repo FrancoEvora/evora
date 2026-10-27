@@ -67,3 +67,9 @@
 .sales-fit-side>small{font-size:8px;line-height:1.5}
 @media(max-width:980px){.sales-fit-card{grid-template-columns:auto 1fr}.sales-fit-side{grid-column:2;border-left:0;border-top:1px solid #cfddc7;padding:12px 0 0}}
 @media(max-width:720px){.sales-curve-head{display:block}.sales-curve-head .pill{margin-top:10px}.sales-fit-card{grid-template-columns:1fr}.sales-fit-icon{display:none}.sales-fit-side{grid-column:auto}.sales-fit-main .sales-fit-value{font-size:25px}}
+
+.executive-land{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:8px;overflow:hidden;margin:-4px 0 20px}
+.executive-land>div{background:#fff;padding:15px 18px}
+.executive-land strong{display:block;font-size:20px;letter-spacing:-.5px;margin:6px 0 4px}
+.executive-land small{display:block;font-size:9px;color:var(--muted);line-height:1.5}
+@media(max-width:720px){.executive-land{grid-template-columns:1fr}.executive-land strong{font-size:18px}}
