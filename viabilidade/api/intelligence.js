@@ -1,5 +1,7 @@
 /* Évora Viabilidade · Agente de inteligência imobiliária */
 
+import { getVercelOidcToken } from '@vercel/oidc';
+
 export const config = {
   runtime: 'nodejs',
   maxDuration: 60,
@@ -83,6 +85,16 @@ async function readError(response) {
   }
 }
 
+async function resolveGatewayToken() {
+  if (process.env.AI_GATEWAY_API_KEY) return process.env.AI_GATEWAY_API_KEY;
+  if (process.env.VERCEL_OIDC_TOKEN) return process.env.VERCEL_OIDC_TOKEN;
+  try {
+    return await getVercelOidcToken();
+  } catch {
+    return null;
+  }
+}
+
 async function validateUser(authorization, supabaseUrl, publishableKey) {
   const response = await fetch(`${supabaseUrl}/auth/v1/user`, {
     headers: {
@@ -124,7 +136,8 @@ function friendlyGatewayError(status, detail) {
 export default {
   async fetch(request) {
     const model = String(process.env.AI_GATEWAY_MODEL || DEFAULT_MODEL);
-    const gatewayReady = Boolean(process.env.AI_GATEWAY_API_KEY || process.env.VERCEL_OIDC_TOKEN);
+    const gatewayToken = await resolveGatewayToken();
+    const gatewayReady = Boolean(gatewayToken);
     const supabaseUrl = String(process.env.SUPABASE_URL || '').replace(/\/$/, '');
     const publishableKey = String(process.env.SUPABASE_PUBLISHABLE_KEY || '');
 
@@ -216,7 +229,7 @@ export default {
         method: 'POST',
         signal: controller.signal,
         headers: {
-          Authorization: `Bearer ${process.env.AI_GATEWAY_API_KEY || process.env.VERCEL_OIDC_TOKEN}`,
+          Authorization: `Bearer ${gatewayToken}`,
           'Content-Type': 'application/json',
           Accept: 'application/json',
         },
