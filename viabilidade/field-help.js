@@ -13,7 +13,7 @@ window.EvoraFieldHelp = {
   launch:"Percentual do estoque total vendido no lançamento. É convertido em lotes inteiros e contratado de uma só vez no mês de lançamento.",
   speed:"Velocidade média de absorção depois do lançamento. Ela define aproximadamente quantos meses serão necessários para vender o estoque remanescente; a curva escolhida distribui essa mesma absorção de forma diferente ao longo do tempo.",
   salesCurve:"Formato temporal da absorção do estoque depois do lançamento. Linear mantém ritmo uniforme; S clássica começa mais lenta, acelera e desacelera; lançamento forte concentra mais vendas no início; pico no meio concentra a absorção na fase central; back-loaded desloca mais vendas para a maturação; cauda longa combina início mais forte com desaceleração prolongada; Manual permite informar pesos relativos por fase.",
-  salesWeights:"Pesos relativos usados apenas na curva Manual. A plataforma normaliza os valores e reamostra os pontos para a duração calculada do ciclo comercial, preservando o estoque total."
+  salesWeights:"Pesos relativos usados apenas na curva Manual. A plataforma normaliza os valores e reamostra os pontos para a duração calculada do ciclo comercial, preservando o estoque total.",
   cashSales:"Percentual do valor vendido que é tratado como venda à vista. O restante segue o plano de entrada, parcelas, juros, balões e indexação.",
   appreciation:"Valorização anual aplicada apenas ao preço das unidades ainda não vendidas. Não é correção do saldo dos compradores já contratados.",
   target:"Meta interna de quanto do orçamento total da obra você deseja que a carteira líquida seja capaz de cobrir até a entrega. É uma meta gerencial, não um benchmark automático do mercado.",
