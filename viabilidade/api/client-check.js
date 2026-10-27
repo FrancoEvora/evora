@@ -26,12 +26,14 @@ export default {
     const response = await fetch('https://ai-gateway.vercel.sh/v1/responses', {
       method: 'POST',
       headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ model, input: 'Responda apenas com a palavra OK.', max_output_tokens: 64, store: false }),
+      body: JSON.stringify({ model, input: 'Responda apenas com a palavra OK.', reasoning: { effort: 'low' }, max_output_tokens: 256, store: false }),
     });
     const text = await response.text();
     let payload;
     try { payload = JSON.parse(text); } catch { payload = { raw: text.slice(0, 500) }; }
     if (!response.ok) return Response.json({ ok: false, stage: 'gateway_model', status: response.status, payload }, { status: 500 });
-    return Response.json({ ok: true, client: { bytes: source.length, path: selected }, gateway: { model: payload.model || model, responseId: payload.id || null, output: outputText(payload), usage: payload.usage || null } }, { headers: { 'Cache-Control': 'no-store' } });
+    const output = outputText(payload);
+    if (!output) return Response.json({ ok: false, stage: 'empty_output', model: payload.model || model, usage: payload.usage || null }, { status: 500 });
+    return Response.json({ ok: true, client: { bytes: source.length, path: selected }, gateway: { model: payload.model || model, responseId: payload.id || null, output, usage: payload.usage || null } }, { headers: { 'Cache-Control': 'no-store' } });
   },
 };
