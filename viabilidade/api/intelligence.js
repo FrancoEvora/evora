@@ -7,7 +7,7 @@ export const config = {
   maxDuration: 60,
 };
 
-const DEFAULT_MODEL = 'openai/gpt-5.6-terra';
+const DEFAULT_MODEL = 'openai/gpt-5-mini';
 const GATEWAY_URL = 'https://ai-gateway.vercel.sh/v1/responses';
 const MAX_PROMPT = 5000;
 const MAX_CONTEXT = 140000;
@@ -237,6 +237,7 @@ export default {
           model,
           instructions: SYSTEM_PROMPT,
           input,
+          reasoning: { effort: 'low' },
           max_output_tokens: 2400,
           store: false,
         }),
