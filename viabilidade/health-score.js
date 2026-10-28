@@ -125,6 +125,9 @@ function installStyles(){
  document.head.appendChild(style);
 }
 
+// Shared deterministic score used by the executive dashboard and investor report.
+E.healthScore=health;
+
 let scheduled=false;
 function enhance(){
  if(scheduled)return;
