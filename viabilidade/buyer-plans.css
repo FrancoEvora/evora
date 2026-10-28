@@ -1,0 +1,27 @@
+/* Optional buyer payment plans, aligned with the existing Évora interface. */
+.buyer-manager{padding:20px 24px;border-top:1px solid var(--line)}
+.buyer-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:18px}
+.buyer-heading h3{font-size:17px;margin:5px 0}.buyer-heading p{font-size:11px;line-height:1.6;color:var(--muted)}
+.buyer-switch{display:flex;flex-shrink:0;gap:3px;padding:3px;border:1px solid var(--line);border-radius:7px;background:#f5f7f3}
+.buyer-switch button{border:0;background:transparent;padding:9px 12px;border-radius:4px;cursor:pointer;font:600 11px system-ui;color:var(--muted)}
+.buyer-switch button.active{background:var(--green,#133d33);color:white}
+.buyer-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:20px 0 10px}.buyer-toolbar>strong{font-size:12px;color:var(--green)}
+.buyer-toolbar>div,.buyer-save>div:last-child,.buyer-card-top>div{display:flex;gap:7px;flex-wrap:wrap}
+.buyer-note{font-size:10px;line-height:1.65;color:var(--muted);margin:12px 0}
+.buyer-cards{display:grid;gap:16px;margin-top:18px}.buyer-card{padding:18px;border:1px solid var(--line);border-radius:9px;background:#fff}
+.buyer-card-top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px}.buyer-card-top>span{font-size:9px;letter-spacing:1.4px;font-weight:700;color:var(--muted)}
+.buyer-fields{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:15px;margin-top:14px}.buyer-field{display:flex;flex-direction:column;gap:6px;min-width:0}
+.buyer-field>span{font-size:10px;font-weight:650;color:var(--ink)}.buyer-field>small{font-size:9px;line-height:1.5;color:var(--muted)}
+.buyer-field input,.buyer-field select,.buyer-amort-head select{width:100%;border:1px solid #dce3d8;border-radius:5px;background:#fff;min-height:39px;padding:8px 10px;font:12px system-ui;color:var(--ink)}
+.buyer-field input:focus,.buyer-field select:focus{outline:2px solid #9fba9b;outline-offset:2px}
+.buyer-advanced{margin-top:16px;border-top:1px solid var(--line);padding-top:12px}.buyer-advanced summary{cursor:pointer;font-size:11px;font-weight:650}
+.buyer-preview{margin-top:15px;padding:12px 14px;background:#f2f6ee;border:1px solid #e3eadb;border-radius:6px;font-size:11px;line-height:1.7;color:#365545}
+.buyer-save{display:flex;justify-content:space-between;gap:20px;align-items:center;padding:17px 0 0;margin-top:10px}.buyer-save strong{font-size:11px}.buyer-save p{font-size:10px;line-height:1.5;color:#9f4533;margin:6px 0 0}.buyer-invalid{color:#b43c32!important}.buyer-derived{opacity:.55}
+.buyer-analysis{margin-top:22px}.buyer-analysis>.table-wrap,.buyer-analysis>.buyer-note,.buyer-amort{margin:18px 24px}.buyer-amort{padding-top:20px;border-top:1px solid var(--line)}
+.buyer-amort-head{display:flex;gap:20px;justify-content:space-between;align-items:center}.buyer-amort-head h3{font-size:15px}.buyer-amort-head p{font-size:10px;color:var(--muted);margin-top:7px}.buyer-amort-head label{font-size:10px;display:grid;gap:6px;min-width:180px}.buyer-amort>.table-wrap{margin:18px 0}.buyer-amort>.button{margin-bottom:12px}
+.buyer-table small{display:block;font-size:9px;font-weight:400;color:var(--muted);line-height:1.5;margin-top:4px}.buyer-table td,.buyer-table th{font-size:10px}.buyer-table tfoot{background:#f3f6ef}.buyer-table tfoot td{font-size:10px}
+.form-section>.fields[hidden],.form-section>.form-note[hidden],.grid-two[hidden],.panel[hidden]{display:none!important}
+@media(max-width:1100px){.buyer-fields{grid-template-columns:repeat(3,minmax(0,1fr))}.buyer-toolbar{align-items:flex-start;flex-direction:column}}
+@media(max-width:720px){.buyer-manager,.buyer-card{padding:16px}.buyer-heading,.buyer-save,.buyer-amort-head{flex-direction:column;align-items:stretch}.buyer-switch{align-self:flex-start}.buyer-fields{grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}.buyer-field input,.buyer-field select,.buyer-amort-head select{font-size:16px}.buyer-card-top{align-items:flex-start}.buyer-card-top>div{justify-content:flex-end}.buyer-analysis>.table-wrap,.buyer-analysis>.buyer-note,.buyer-amort{margin:14px 16px}}
+@media(max-width:420px){.buyer-fields{grid-template-columns:1fr}.buyer-save>div:last-child{display:grid;grid-template-columns:1fr}.buyer-toolbar>div{width:100%}}
+@media print{[data-buyer-report] .table-wrap{overflow:visible}[data-buyer-report] table{table-layout:fixed;width:100%}[data-buyer-report] td,[data-buyer-report] th{font-size:7px;white-space:normal;padding:5px;overflow-wrap:anywhere}[data-buyer-report] small{font-size:6px}[data-buyer-report] .buyer-note{font-size:8px}}
