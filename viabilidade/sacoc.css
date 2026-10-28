@@ -1,0 +1,5 @@
+/* Hidden conditional fields must override the original grid/flex field display. */
+.form-section .field[hidden],.sacoc-field[hidden]{display:none!important}
+.sacoc-note{overflow-wrap:anywhere}
+.buyer-preview{overflow-wrap:anywhere;line-height:1.65}
+@media(max-width:720px){.sacoc-field input,.sacoc-field select{font-size:16px}}
