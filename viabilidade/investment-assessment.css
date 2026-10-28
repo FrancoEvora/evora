@@ -1,0 +1,41 @@
+/* Investment committee triage: consistent with Évora executive palette. */
+.investment-assessment{margin:22px 0 28px;padding:20px 22px;background:#f9faf7;border:1px solid var(--line,#dee5dc);border-left:4px solid #758b80;border-radius:8px;break-inside:avoid;}
+.investment-assessment.do_not_invest{border-left-color:#ac6656}
+.investment-assessment.pending_restructuring{border-left-color:#ae8b48}
+.investment-assessment.conditionally_favorable{border-left-color:#3c7757}
+.investment-summary{display:grid;grid-template-columns:minmax(175px,.7fr) minmax(0,2fr);gap:25px;align-items:start}
+.investment-score{padding:2px 20px 2px 0;border-right:1px solid #d8e0d6}
+.investment-score>span,.investment-verdict>span{display:block;font-size:10px;letter-spacing:.9px;font-weight:700;color:#64746a}
+.investment-score-value{margin:6px 0;display:flex;gap:6px;align-items:baseline;color:#183a2e}
+.investment-score-value strong{font-size:48px;line-height:1;font-weight:750;letter-spacing:-2px}
+.investment-score-value span{font-size:14px;color:#6e8072}
+.investment-assessment progress{width:100%;height:9px;display:block;overflow:hidden;border:0;border-radius:9px;accent-color:#587d68;background:#e3e9e0}
+.investment-assessment progress::-webkit-progress-bar{background:#e3e9e0;border-radius:9px}
+.investment-assessment progress::-webkit-progress-value{background:#587d68;border-radius:9px}
+.investment-assessment progress::-moz-progress-bar{background:#587d68}
+.investment-assessment.do_not_invest progress{accent-color:#ad6d5d}
+.investment-assessment.do_not_invest progress::-webkit-progress-value{background:#ad6d5d}
+.investment-assessment.do_not_invest progress::-moz-progress-bar{background:#ad6d5d}
+.investment-score small{display:block;margin-top:8px;font-size:10px;color:#6c7c71;line-height:1.5}
+.investment-verdict h3{font-size:22px;line-height:1.25;color:#203c32;margin:8px 0 10px;letter-spacing:-.3px}
+.investment-verdict>p{font-size:12px;line-height:1.65;color:#45564c;margin:0 0 10px}
+.investment-verdict .investment-approval{font-size:11px;color:#4b5d52;border-top:1px solid #e0e7df;padding-top:10px}
+.investment-detail-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px;border-top:1px solid #e0e7df;margin-top:16px;padding-top:14px}
+.investment-assessment h4{font-size:12px;color:#264d3c;margin:0 0 8px}
+.investment-assessment ul,.investment-assessment ol{margin:0 0 0 20px;padding:0;display:grid;gap:7px}
+.investment-assessment li,.investment-assessment .invest-risk p{font-size:11px;line-height:1.5;color:#4d5b51}
+.investment-assessment li::marker{color:#8b998f}
+.investment-method{margin-top:18px;border-top:1px solid #e0e7df;padding-top:12px}
+.investment-method summary{font-weight:700;color:#2e5b43;font-size:12px;cursor:pointer}
+.investment-method>p{font-size:11px;line-height:1.6;color:#5d6c61;margin:10px 0}
+.investment-dimensions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:14px 0 18px}
+.invest-dimension{padding:10px;border:1px solid #e0e7df;background:white;border-radius:5px;min-width:0}
+.invest-dimension-title{display:flex;justify-content:space-between;gap:8px;margin-bottom:8px;align-items:start}
+.invest-dimension-title strong{font-size:11px;color:#2b4b3d}
+.invest-dimension-title b{font-size:10px;white-space:nowrap;color:#566b5b}
+.invest-dimension progress{height:6px}
+.invest-dimension small{display:block;margin-top:8px;font-size:10px;line-height:1.4;color:#647168;overflow-wrap:anywhere}
+.investment-note{font-size:10px;line-height:1.6;color:#617064;margin:16px 0 0;padding-top:11px;border-top:1px solid #e0e7df}
+@media(max-width:900px){.investment-summary{grid-template-columns:160px minmax(0,1fr)}.investment-dimensions{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:700px){.investment-assessment{padding:16px 14px;margin:17px 0}.investment-summary{grid-template-columns:1fr;gap:14px}.investment-score{border-right:0;border-bottom:1px solid #d8e0d6;padding:0 0 12px}.investment-score-value strong{font-size:40px}.investment-detail-grid{grid-template-columns:1fr;gap:15px}.investment-dimensions{grid-template-columns:1fr}.investment-verdict h3{font-size:18px}.investment-assessment li{font-size:11px}}
+@media print{.investment-assessment{background:white!important;border:1px solid #b8c6b8!important;padding:12px!important;break-inside:auto}.investment-summary,.investment-score,.investment-verdict{break-inside:avoid}.investment-dimensions{grid-template-columns:repeat(3,minmax(0,1fr))}.investment-method{display:block}.investment-method>summary{display:none}.investment-note{font-size:9px}.investment-verdict h3{font-size:17px}}
