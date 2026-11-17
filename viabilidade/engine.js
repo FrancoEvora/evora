@@ -6,6 +6,7 @@ const bounds={area:[1,1e9],use:[0.01,100],lot:[1,1e6],price:[0,1e6],discount:[0,
 const integers=['salesStart','entryMonths','term','balloons','delay','workStart','duration','landMonths','adminMonths','drawEnd','maturity','sweepStart'];
 const enums={system:['PRICE','SAC'],index:['TR','IPCA','NONE'],indexFrequency:['monthly','annual'],curve:['s','linear','early','custom'],salesCurve:['linear','s','front','middle','back','tail','custom'],landMode:['share','cash']};
 function prepare(input){
+ if(input?.blankDraft===true)throw Error("Cadastro em branco. Complete as premissas para iniciar a análise.");
  const p={...defaults};for(const k of Object.keys(defaults)){if(Object.prototype.hasOwnProperty.call(input||{},k))p[k]=input[k];}
  for(const [k,[min,max]] of Object.entries(bounds)){if(typeof p[k]!=='number'||!Number.isFinite(p[k])||p[k]<min||p[k]>max)throw new Error('Premissa inválida: '+k+' (limite '+min+' a '+max+').');}
  for(const k of integers)if(!Number.isInteger(p[k]))throw new Error('Informe um número inteiro em '+k+'.');
