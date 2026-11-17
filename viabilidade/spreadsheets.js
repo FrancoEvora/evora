@@ -3,6 +3,7 @@
 'use strict';
 const X = window.XLSX;
 const E = window.EvoraEngine;
+E.defaults.eapJson='[]';
 const text = value => String(value ?? '').trim();
 const fold = value => text(value).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase();
 const check = (condition, message) => { if (!condition) throw Error(message); };
@@ -51,6 +52,32 @@ function cronogramas(book) {
     groups.push({name:title||'Obra '+(groups.length+1),stages,total,warnings});
   }
   check(groups.length,'Nenhum bloco de centros de custos encontrado.');
+  const scopeKey=label=>fold(label).replace(/\s+/g,' ');
+  const stagesByName=new Map();
+  for(const group of groups) for(const stage of group.stages){
+    const key=scopeKey(stage.name);
+    if(stagesByName.has(key)) stagesByName.set(key,null);
+    else stagesByName.set(key,{group,stage});
+    group.eap ??= [];
+    group.eap.push([stage.id,group.name,'','','',null,null,null]);
+  }
+  const detail=book.SheetNames.find(n=>/^ORCAMENTO SINTETICO\b/.test(fold(n)));
+  if(detail){
+    const detailRows=table(book,detail);
+    const headerIndex=detailRows.findIndex(row=>row.map(fold).includes('BALIZAMENTO'));
+    check(headerIndex>=0,'Orçamento Sintético sem coluna BALIZAMENTO.');
+    const header=detailRows[headerIndex].map(fold);
+    const cols=['CODIGO','DESCRICAO','BALIZAMENTO','UNIDADE','QUANT','PRECO','PRECO TOTAL'].map((key,i)=>header.findIndex(h=>i<4?h===key:i===5?/^PRECO(?:\s*\(|$)/.test(h):h.startsWith(key)));
+    check(cols.every(i=>i>=0),'Confira as colunas do Orçamento Sintético.');
+    for(const row of detailRows.slice(headerIndex+1)){
+      const [code,label,center,unit,qty,price,total]=cols.map(i=>row[i]);
+      if(!text(center))continue;
+      const target=stagesByName.get(scopeKey(center));
+      check(target,'Centro de custo ausente ou ambíguo no cronograma: '+center);
+      check(text(code)&&text(label)&&Number.isFinite(total),'Serviço sem identificação ou total: '+text(code));
+      target.group.eap.push([target.stage.id,target.group.name,text(code),text(label),text(unit),qty??null,price??null,total]);
+    }
+  }
   return groups;
 }
 function append(book,name,rows,widths) {
@@ -62,7 +89,7 @@ function append(book,name,rows,widths) {
 function exportStudy(params,result,columns,labels) {
   const book=X.utils.book_new(), assumptions=[['Chave','Premissa','Unidade','Valor']];
   for (const key of Object.keys(E.defaults)) {
-    if(key==='workStagesJson') continue;
+    if(key==='workStagesJson'||key==='eapJson') continue;
     const value=params[key] ?? E.defaults[key];
     const cell=Array.isArray(value)?JSON.stringify(value):value;
     check(typeof cell!=='string'||cell.length<=32767,'O campo '+key+' excede o limite de uma célula Excel. Use o backup JSON.');
@@ -71,6 +98,8 @@ function exportStudy(params,result,columns,labels) {
   append(book,'Premissas',assumptions,[24,45,16,38]);
   const stages=JSON.parse(params.workStagesJson||'[]');
   append(book,'Etapas',[['ID','Centro de custo','Orçamento (R$)','Início (M)','Duração (meses)','Contingência (%)','Curva','Pesos mensais (JSON)'],...stages.map(s=>[s.id,s.name,s.budget,s.start,s.duration,s.contingency,s.curve,JSON.stringify(s.weights)])],[36,48,22,14,18,20,15,45]);
+  const eap=JSON.parse(params.eapJson||'[]'), stageNames=new Map(stages.map(s=>[s.id,s.name]));
+  if(eap.length)append(book,'EAP',[['ID da etapa','Obra','Código','Serviço','Unidade','Quantidade','Preço unitário','Total do serviço','Centro de custo'],...eap.filter(row=>stageNames.has(row[0])).map(row=>[...row,stageNames.get(row[0])])],[36,32,16,78,12,18,18,22,44]);
   const t=result.totals;
   append(book,'Resultados',[['Indicador','Valor','Unidade'],['VGV',t.vgv,'R$'],['Orçamento-base da obra',params.work,'R$'],['Desembolso nominal de obra',t.work,'R$'],['Exposição máxima',t.peak,'R$'],['Resultado operacional nominal',t.profit,'R$'],['Payback definitivo',t.payback??'Não atingido','Mês'],['Lotes',t.qty,'un.']],[32,24,14]);
   append(book,'Fluxo mensal',[columns.map(c=>c[1]),...result.rows.map(row=>columns.map(([key])=>row[key]))],columns.map(c=>Math.max(16,c[1].length+2)));
@@ -88,7 +117,7 @@ function readStudy(book) {
     if(typeof base==='number') check(Number.isFinite(value),'Informe um valor numérico para '+key);
     params[key]=Array.isArray(base)?JSON.parse(value):value??'';
   }
-  check(Object.keys(E.defaults).every(k=>k==='workStagesJson'||seen.has(k)),'Faltam premissas. Use a planilha completa exportada pela plataforma.');
+  check(Object.keys(E.defaults).every(k=>k==='workStagesJson'||k==='eapJson'||seen.has(k)),'Faltam premissas. Use a planilha completa exportada pela plataforma.');
   const stages=table(book,'Etapas').slice(1).filter(r=>r.some(v=>v!=null)).map(([id,name,budget,start,duration,contingency,curve,weights])=>{
     check(text(name)&&Number.isFinite(budget)&&budget>=0&&budget<=1e11&&Number.isInteger(start)&&start>=0&&start<=119&&Number.isInteger(duration)&&duration>=1&&duration<=120&&Number.isFinite(contingency)&&contingency>=0&&contingency<=100&&E.workStageHelpers.CURVES.includes(curve),'Etapa inválida: '+text(name));
     const parsed=JSON.parse(weights||'[]');
@@ -97,6 +126,13 @@ function readStudy(book) {
   });
   check(params.workMode!=='stages'||stages.length,'Inclua pelo menos uma etapa.');
   params.workStagesJson=JSON.stringify(stages);
+  const ids=new Set(stages.map(s=>s.id));
+  const eap=book.Sheets.EAP?table(book,'EAP').slice(1).filter(r=>r.some(v=>v!=null)).map(row=>{
+    const [id,obra,code,label,unit,qty,price,total]=row;
+    check(ids.has(id)&&text(obra)&&(!text(code)||text(label)&&Number.isFinite(total)),'Linha inválida na aba EAP: '+text(code));
+    return [id,text(obra),text(code),text(label),text(unit),qty??null,price??null,total??null];
+  }):[];
+  params.eapJson=JSON.stringify(eap);
   return params;
 }
 window.EvoraSheets={exportStudy,readStudy,cronogramas};
