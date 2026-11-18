@@ -59,7 +59,7 @@ function health(project,result){
 function landValues(project,result){
  const t=result.totals,nominal=Math.max(0,Number(t.land)||0),discounted=Math.max(0,Number(t.landVpl)||0),vgv=Math.max(1,Number(t.vgv)||0),tma=Number(project.params.tma)||0;
  const nominalPct=nominal/vgv*100,discountedPct=discounted/vgv*100,difference=Math.max(0,nominal-discounted);
- const model=project.params.landMode==='share'?'Permuta financeira · '+pct(project.params.landShare)+' dos recebimentos':'Compra do terreno · '+money(project.params.landPrice);
+ const model=project.params.landMode==='physical'?'Permuta física · '+pct(project.params.landShare)+' dos lotes':project.params.landMode==='share'?'Permuta financeira · '+pct(project.params.landShare)+' dos recebimentos':'Compra do terreno · '+money(project.params.landPrice);
  return {nominal,discounted,nominalPct,discountedPct,difference,tma,model};
 }
 
@@ -79,7 +79,7 @@ function enhanceDashboard(data){
  if(land.dataset.healthSignature===signature)return;
  land.dataset.healthSignature=signature;
  const values=landValues(data.project,data.result),score=health(data.project,data.result);
- land.innerHTML=
+ land.innerHTML=data.project.params.landMode==='physical'?'<div><span>LOTES DO TERRENISTA</span><strong>'+data.result.totals.landLots+'</strong><small>'+values.model+'</small></div><div><span>LOTES DA LOTEADORA</span><strong>'+data.result.totals.qty+'</strong><small>Estoque usado nas projeções de venda</small></div>':
   '<div class="land-dual-card"><span>VALOR NOMINAL DO TERRENO · SEM TMA</span><strong>'+money(values.nominal)+'</strong><b>'+pct(values.nominalPct)+' do VGV</b><small>Soma dos repasses sem desconto a valor presente.</small></div>'+ 
   '<div class="land-dual-card vpl"><span>VPL DO TERRENO · TMA '+pct(values.tma)+' A.A.</span><strong>'+money(values.discounted)+'</strong><b>'+pct(values.discountedPct)+' do VGV</b><small>Repasses descontados à taxa mínima de atratividade do empreendimento.</small></div>'+ 
   '<div class="executive-land-note"><span>'+values.model+'</span><b>Efeito do desconto temporal: '+money(values.difference)+'</b></div>';

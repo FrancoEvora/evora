@@ -101,7 +101,7 @@ function exportStudy(params,result,columns,labels) {
   const eap=JSON.parse(params.eapJson||'[]'), stageNames=new Map(stages.map(s=>[s.id,s.name]));
   if(eap.length)append(book,'EAP',[['ID da etapa','Obra','Código','Serviço','Unidade','Quantidade','Preço unitário','Total do serviço','Centro de custo'],...eap.filter(row=>stageNames.has(row[0])).map(row=>[...row,stageNames.get(row[0])])],[36,32,16,78,12,18,18,22,44]);
   const t=result.totals;
-  append(book,'Resultados',[['Indicador','Valor','Unidade'],['VGV',t.vgv,'R$'],['Orçamento-base da obra',params.work,'R$'],['Desembolso nominal de obra',t.work,'R$'],['Exposição máxima',t.peak,'R$'],['Resultado operacional nominal',t.profit,'R$'],['Payback definitivo',t.payback??'Não atingido','Mês'],['Lotes',t.qty,'un.']],[32,24,14]);
+  append(book,'Resultados',[['Indicador','Valor','Unidade'],['VGV',t.vgv,'R$'],['Orçamento-base da obra',params.work,'R$'],['Desembolso nominal de obra',t.work,'R$'],['Exposição máxima',t.peak,'R$'],['Resultado operacional nominal',t.profit,'R$'],['Payback definitivo',t.payback??'Não atingido','Mês'],['Lotes para venda pela loteadora',t.qty,'un.'],['Total de lotes do empreendimento',t.totalLots,'un.'],['Lotes da permuta física',t.landLots,'un.']],[32,24,14]);
   append(book,'Fluxo mensal',[columns.map(c=>c[1]),...result.rows.map(row=>columns.map(([key])=>row[key]))],columns.map(c=>Math.max(16,c[1].length+2)));
   return book;
 }
