@@ -7,12 +7,12 @@ const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;
 const number=(value,digits=2)=>Number.isFinite(value)?value.toLocaleString('pt-BR',{minimumFractionDigits:digits,maximumFractionDigits:digits}):'—';
 const money=value=>Number.isFinite(value)?value.toLocaleString('pt-BR',{style:'currency',currency:'BRL',maximumFractionDigits:0}):'—';
 const models=()=>C.models.filter(model=>model.id!=='custom');
-let contextKey='',target='all',selected='',manual=[],preview=null,message='',notice='',view='cumulative',revision=0,scheduled=false;
+let contextKey='',target='all',selected='',durationDraft=null,manual=[],preview=null,message='',notice='',view='cumulative',revision=0,scheduled=false;
 
 function state(){return window.EvoraApp?.getState?.()||null;}
 function signature(data){return JSON.stringify(data.params);}
 function key(data){return data.projectId+'|'+signature(data);}
-function reset(){target='all';selected='';manual=[];preview=null;message='';notice='';revision++;}
+function reset(){target='all';selected='';durationDraft=null;manual=[];preview=null;message='';notice='';revision++;}
 function hasOriginal(data){
  try{return C.hasOriginal(data.params,target);}catch(error){message=error.message||'A referência original não está disponível.';return false;}
 }
@@ -28,10 +28,22 @@ function manualScope(data){
  if(data.params.workMode==='stages'&&target==='all')return null;
  return getScope(data.result);
 }
+function durationLimit(data){
+ return data.params.workMode==='stages'?Math.min(120,121-getScope(data.result).start):120;
+}
+function readDuration(data){
+ const value=Number(durationDraft),limit=durationLimit(data);
+ if(durationDraft===null||String(durationDraft).trim()===''||!Number.isInteger(value)||value<1||value>limit)throw new Error('Informe um prazo inteiro de 1 a '+limit+' meses para este escopo.');
+ return value;
+}
+function durationEditor(data){
+ const current=getScope(data.result),label=data.params.workMode==='stages'&&target!=='all'?'Prazo pretendido da etapa':'Prazo pretendido da obra';
+ return '<div class="wc-duration-tools"><label class="wc-duration-field"><span>'+label+'</span><div class="wc-duration-input"><input type="number" min="1" max="'+durationLimit(data)+'" step="1" inputmode="numeric" value="'+esc(durationDraft)+'" data-wc-duration aria-label="'+label+'" aria-describedby="wc-duration-help"><span>meses</span></div><small id="wc-duration-help">Prazo atual: '+current.weights.length+' meses. O novo prazo só será salvo ao aplicar.</small></label><button type="button" class="button" data-wc-action="update-preview">Atualizar prévia</button></div>';
+}
 function scheduleContext(data){
  const scope=getScope(data.result,'all'),end=scope.start+scope.weights.length-1;
  const source=data.params.workMode==='stages'?'A conclusão vem do término da última etapa cadastrada.':'O período vem do início e da duração cadastrados para a obra.';
- return '<div class="wc-current-schedule" data-wc-current-schedule><div><span class="eyebrow">CRONOGRAMA VIGENTE</span><strong>Implantação total · M'+scope.start+' a M'+end+' · '+scope.weights.length+' meses</strong><p>'+source+' Os modelos redistribuem a execução dentro desses prazos. Para mudar a entrega, edite os prazos da obra ou das etapas.</p></div><button type="button" class="button small" data-wc-action="edit-period">Editar prazos e orçamento</button></div>';
+ return '<div class="wc-current-schedule" data-wc-current-schedule><div><span class="eyebrow">CRONOGRAMA VIGENTE</span><strong>Implantação total · M'+scope.start+' a M'+end+' · '+scope.weights.length+' meses</strong><p>'+source+' Teste outro prazo no campo “Prazo pretendido” abaixo, com a curva atual ou um novo modelo.</p></div><button type="button" class="button small" data-wc-action="edit-period">Editar prazos e orçamento</button></div>';
 }
 function miniature(id){
  let weights;
@@ -78,7 +90,7 @@ function chartData(items){
  return rows;
 }
 function chartHTML(items){
- const rows=chartData(items),W=880,H=285,L=58,R=24,T=22,B=40;
+ const rows=chartData(items),W=880,H=305,L=58,R=24,T=42,B=40;
  const first=rows[0].month,last=rows.at(-1).month,span=Math.max(1,last-first);
  const peak=Math.max(1,...rows.flatMap(row=>items.map(item=>row[item.id]))),top=view==='cumulative'?100:Math.ceil(peak/5)*5;
  const x=month=>L+(month-first)/span*(W-L-R),y=value=>T+(1-value/top)*(H-T-B);
@@ -93,8 +105,9 @@ function chartHTML(items){
   drawing+='<path d="'+path+'" fill="none" stroke="'+item.color+'" stroke-width="'+(item.id==='proposal'?3:2)+'" '+(item.dash?'stroke-dasharray="'+item.dash+'"':'')+' stroke-linejoin="round"/>';
   if(rows.length===1)drawing+='<circle cx="'+x(rows[0].month)+'" cy="'+y(rows[0][item.id])+'" r="4" fill="'+item.color+'"/>';
  });
- const currentScope=items[0].scope,currentEnd=currentScope.start+currentScope.weights.length-1;
- drawing+='<line class="wc-chart-end" data-wc-end="'+currentEnd+'" x1="'+x(currentEnd)+'" x2="'+x(currentEnd)+'" y1="'+T+'" y2="'+(H-B)+'"/><text class="wc-chart-end-label" x="'+Math.max(L+100,x(currentEnd)-5)+'" y="13" text-anchor="end">Fim atual · M'+currentEnd+'</text>';
+ const currentScope=items[0].scope,currentEnd=currentScope.start+currentScope.weights.length-1,proposal=items.find(item=>item.id==='proposal'),proposedEnd=proposal?proposal.scope.start+proposal.scope.weights.length-1:null;
+ drawing+='<line class="wc-chart-end" data-wc-end="'+currentEnd+'" x1="'+x(currentEnd)+'" x2="'+x(currentEnd)+'" y1="'+T+'" y2="'+(H-B)+'"/><text class="wc-chart-end-label" x="'+Math.max(L+155,x(currentEnd)-5)+'" y="14" text-anchor="end">'+(proposedEnd===currentEnd?'Fim atual e proposto':'Fim atual')+' · M'+currentEnd+'</text>';
+ if(proposedEnd!==null&&proposedEnd!==currentEnd)drawing+='<line class="wc-chart-proposed-end" data-wc-proposed-end="'+proposedEnd+'" x1="'+x(proposedEnd)+'" x2="'+x(proposedEnd)+'" y1="'+T+'" y2="'+(H-B)+'"/><text class="wc-chart-proposed-end-label" x="'+Math.max(L+120,x(proposedEnd)-5)+'" y="29" text-anchor="end">Fim proposto · M'+proposedEnd+'</text>';
  drawing+='<line class="wc-chart-cursor" data-wc-cursor x1="'+x(last)+'" x2="'+x(last)+'" y1="'+T+'" y2="'+(H-B)+'"/>';
  const title=view==='cumulative'?'Implantação acumulada':'Distribuição mensal da implantação';
  return '<div class="wc-chart-head"><div><h3>'+title+'</h3><p>Percentual do orçamento-base'+(target==='all'&&items[0].scope.label==='Todas as etapas'?' · etapas ponderadas pelo orçamento':'')+'.</p></div><div class="segmented" role="group" aria-label="Visualização da curva"><button type="button" data-wc-view="monthly" aria-pressed="'+(view==='monthly')+'" class="'+(view==='monthly'?'active':'')+'">Mensal</button><button type="button" data-wc-view="cumulative" aria-pressed="'+(view==='cumulative')+'" class="'+(view==='cumulative'?'active':'')+'">Acumulada</button></div></div><div class="wc-legend">'+items.map(item=>'<span><i style="border-color:'+item.color+';border-top-style:'+(item.dash?'dashed':'solid')+'"></i>'+esc(item.label)+'</span>').join('')+'</div><svg class="wc-chart" viewBox="0 0 '+W+' '+H+'" tabindex="0" role="img" aria-label="'+title+'. Use as setas para consultar os meses." data-wc-chart>'+drawing+'</svg><div class="wc-chart-readout" data-wc-readout role="status" aria-live="polite"></div><details class="wc-table-details"><summary>Consultar percentuais por mês</summary><div class="table-wrap"><table><caption class="wc-sr-only">'+title+' em percentuais</caption><thead><tr><th>Mês</th>'+items.map(item=>'<th>'+esc(item.label)+'</th>').join('')+'</tr></thead><tbody>'+rows.map(row=>'<tr><td>'+(row.month<0?'Antes de M0':'M'+row.month)+'</td>'+items.map(item=>'<td>'+number(row[item.id])+'%</td>').join('')+'</tr>').join('')+'</tbody></table></div></details>';
@@ -106,14 +119,27 @@ function metrics(data){
  return '<div class="wc-financial"><h3>Impacto no empreendimento inteiro</h3><div class="wc-metrics">'+entries.map(([label,field])=>'<div><span>'+label+'</span><strong>'+money(proposed[field])+'</strong><small>Atual: '+money(current[field])+'</small><small>Variação: '+(proposed[field]-current[field]>0?'+':'')+money(proposed[field]-current[field])+'</small></div>').join('')+'</div><p>O orçamento-base é preservado. A distribuição dos pagamentos pode alterar a inflação acumulada, a exposição de caixa e a necessidade de capital.</p></div>';
 }
 function previewStatus(data){
- if(!preview)return '<div class="wc-preview-empty"><strong>Escolha um modelo para comparar.</strong><p>A seleção prepara uma prévia. O estudo só muda quando você aplicar.</p></div>';
- const scope=getScope(preview.result),first=scope.start,last=first+scope.weights.length-1;
- return '<div class="wc-preview-status"><span class="pill green">PRÉVIA · AINDA NÃO APLICADA</span><p><strong>'+esc(preview.kind==='restore'?'Restauração da implantação original':C.models.find(model=>model.id===selected)?.label||'Curva manual')+'</strong> · '+esc(scope.label)+' · M'+first+' a M'+last+' · distribuição total de '+number(scope.weights.reduce((sum,value)=>sum+value,0)*100)+'%.</p>'+(preview.kind==='restore'?'<p>A aplicação recuperará o início, o prazo e a distribuição originais das etapas com referência salva. Orçamento e demais premissas permanecem como estão.</p>':'')+'</div>';
+ if(!preview)return '<div class="wc-preview-empty"><strong>Teste um prazo ou escolha um modelo para comparar.</strong><p>“Atualizar prévia” permite testar o prazo mantendo a curva atual. O estudo só muda quando você aplicar.</p></div>';
+ const scope=getScope(preview.result),first=scope.start,last=first+scope.weights.length-1,current=getScope(data.result),currentEnd=current.start+current.weights.length-1;
+ const label=preview.kind==='restore'?'Restauração da implantação original':selected?C.models.find(model=>model.id===selected)?.label||'Curva manual':'Prazo proposto · curvas atuais preservadas';
+ return '<div class="wc-preview-status"><span class="pill green">PRÉVIA · AINDA NÃO APLICADA</span><p><strong>'+esc(label)+'</strong> · '+esc(scope.label)+' · M'+first+' a M'+last+' · distribuição total de '+number(scope.weights.reduce((sum,value)=>sum+value,0)*100)+'%.</p><div class="wc-period-comparison" data-wc-period-comparison><span>Prazo<strong>'+current.weights.length+' → '+scope.weights.length+' meses</strong></span><span>Conclusão<strong>M'+currentEnd+' → M'+last+'</strong></span></div>'+(preview.kind==='restore'?'<p>A aplicação recuperará o início, o prazo e a distribuição originais das etapas com referência salva. Orçamento e demais premissas permanecem como estão.</p>':'')+'</div>'+stagePeriods(data);
+}
+function stagePeriods(data){
+ if(!preview||data.params.workMode!=='stages'||target!=='all')return '';
+ const current=data.result.stages||[],proposed=preview.result.stages||[];
+ if(!current.some(stage=>{const next=proposed.find(item=>item.id===stage.id);return next&&(next.start!==stage.start||next.duration!==stage.duration);} ))return '';
+ return '<div class="wc-stage-periods" data-wc-stage-periods><h3>Períodos das etapas</h3><p>'+(preview.kind==='restore'?'A prévia recupera os períodos originais das etapas com referência salva.':'Os inícios e os prazos das etapas foram ajustados proporcionalmente ao prazo total, com arredondamento para meses inteiros. O ajuste não considera dependências entre atividades; revise a sequência antes de aplicar.')+'</p><div class="table-wrap"><table><thead><tr><th>Etapa</th><th>Período atual</th><th>Período proposto</th></tr></thead><tbody>'+current.map(stage=>{const next=proposed.find(item=>item.id===stage.id)||stage;return '<tr><td>'+esc(stage.name)+'</td><td>M'+stage.start+'–M'+(stage.start+stage.duration-1)+' · '+stage.duration+' meses</td><td>M'+next.start+'–M'+(next.start+next.duration-1)+' · '+next.duration+' meses</td></tr>';}).join('')+'</tbody></table></div></div>';
+}
+function applyLabel(data){
+ if(preview?.kind==='restore')return 'Aplicar restauração';
+ if(!selected)return 'Aplicar prazo';
+ if(preview&&getScope(preview.result).weights.length!==getScope(data.result).weights.length)return 'Aplicar prazo e modelo';
+ return data.params.workMode==='stages'&&target==='all'?'Aplicar modelo a todas as etapas':'Aplicar modelo';
 }
 function renderPanel(panel,data){
  const choices=C.scopes(data.params),scope=getScope(data.result),originalAvailable=hasOriginal(data);
  const items=series(data);
- panel.innerHTML='<div class="panel-head"><div><p class="eyebrow">PLANEJAMENTO DA IMPLANTAÇÃO</p><h2>Modelar curva de implantação</h2><p class="panel-sub">Compare ritmos de execução, aplique a distribuição desejada e volte à referência original quando precisar.</p></div></div>'+scheduleContext(data)+'<div class="wc-scope-row"><label class="wc-scope"><span>Modelar</span><select data-wc-scope aria-label="Selecionar obra ou etapa para modelar">'+choices.map(choice=>'<option value="'+esc(choice.id)+'" '+(choice.id===target?'selected':'')+'>'+esc(choice.label)+'</option>').join('')+'</select></label><div class="wc-scope-detail"><strong>'+esc(scope.label)+'</strong><span>M'+scope.start+' a M'+(scope.start+scope.weights.length-1)+' · '+scope.weights.length+' meses</span></div></div><div class="wc-models" role="group" aria-label="Modelos de distribuição">'+models().map(model=>'<button type="button" class="wc-model '+(selected===model.id?'is-selected':'')+'" data-wc-model="'+esc(model.id)+'" aria-pressed="'+(selected===model.id)+'">'+miniature(model.id)+'<strong>'+esc(model.label)+'</strong><span>'+esc(model.description)+'</span></button>').join('')+'<button type="button" class="wc-model wc-model-manual '+(selected==='custom'?'is-selected':'')+'" data-wc-model="custom" aria-pressed="'+(selected==='custom')+'"><span class="wc-manual-icon" aria-hidden="true">↕</span><strong>Manual</strong><span>Defina o peso de cada mês e acompanhe a distribuição.</span></button></div>'+(data.params.workMode==='stages'&&target==='all'?'<p class="wc-all-note">O modelo é aplicado dentro do prazo de cada etapa, mantendo seus inícios e orçamentos. A curva consolidada resulta da soma das etapas.</p>':'')+manualEditor(data)+'<div class="wc-message '+(message?'':'wc-hidden')+'" data-wc-message role="alert">'+esc(message)+'</div><div class="wc-notice '+(notice?'':'wc-hidden')+'" role="status">'+esc(notice)+'</div><div class="wc-comparison">'+previewStatus(data)+chartHTML(items)+metrics(data)+'</div><div class="wc-actions"><button type="button" class="button primary" data-wc-action="apply" '+(!preview?'disabled':'')+'>'+(preview?.kind==='restore'?'Aplicar restauração':data.params.workMode==='stages'&&target==='all'?'Aplicar modelo a todas as etapas':'Aplicar modelo')+'</button><button type="button" class="button" data-wc-action="discard" '+(!preview&&!selected?'disabled':'')+'>Descartar prévia</button></div><div class="wc-original"><div><strong>Implantação original</strong><p>'+esc(originalNote(data))+'</p></div><button type="button" class="button small" data-wc-action="restore" '+(!originalAvailable?'disabled':'')+'>Restaurar curva original</button></div>';
+ panel.innerHTML='<div class="panel-head"><div><p class="eyebrow">PLANEJAMENTO DA IMPLANTAÇÃO</p><h2>Modelar curva de implantação</h2><p class="panel-sub">Compare ritmos de execução, aplique a distribuição desejada e volte à referência original quando precisar.</p></div></div>'+scheduleContext(data)+'<div class="wc-scope-row"><label class="wc-scope"><span>Modelar</span><select data-wc-scope aria-label="Selecionar obra ou etapa para modelar">'+choices.map(choice=>'<option value="'+esc(choice.id)+'" '+(choice.id===target?'selected':'')+'>'+esc(choice.label)+'</option>').join('')+'</select></label><div class="wc-scope-detail"><strong>'+esc(scope.label)+'</strong><span>M'+scope.start+' a M'+(scope.start+scope.weights.length-1)+' · '+scope.weights.length+' meses</span></div></div>'+durationEditor(data)+'<div class="wc-models" role="group" aria-label="Modelos de distribuição">'+models().map(model=>'<button type="button" class="wc-model '+(selected===model.id?'is-selected':'')+'" data-wc-model="'+esc(model.id)+'" aria-pressed="'+(selected===model.id)+'">'+miniature(model.id)+'<strong>'+esc(model.label)+'</strong><span>'+esc(model.description)+'</span></button>').join('')+'<button type="button" class="wc-model wc-model-manual '+(selected==='custom'?'is-selected':'')+'" data-wc-model="custom" aria-pressed="'+(selected==='custom')+'"><span class="wc-manual-icon" aria-hidden="true">↕</span><strong>Manual</strong><span>Defina o peso de cada mês e acompanhe a distribuição.</span></button></div>'+(data.params.workMode==='stages'&&target==='all'?'<p class="wc-all-note">Ao manter o prazo total, o modelo preserva o início e a duração de cada etapa. Ao alterar o prazo total, os inícios e as durações são ajustados proporcionalmente. Os orçamentos são mantidos.</p>':'')+manualEditor(data)+'<div class="wc-message '+(message?'':'wc-hidden')+'" data-wc-message role="alert">'+esc(message)+'</div><div class="wc-notice '+(notice?'':'wc-hidden')+'" role="status">'+esc(notice)+'</div><div class="wc-comparison">'+previewStatus(data)+chartHTML(items)+metrics(data)+'</div><div class="wc-actions"><button type="button" class="button primary" data-wc-action="apply" '+(!preview?'disabled':'')+'>'+applyLabel(data)+'</button><button type="button" class="button" data-wc-action="discard" '+(!preview&&!selected&&durationDraft===String(getScope(data.result).weights.length)?'disabled':'')+'>Descartar prévia</button></div><div class="wc-original"><div><strong>Implantação original</strong><p>'+esc(originalNote(data))+'</p></div><button type="button" class="button small" data-wc-action="restore" '+(!originalAvailable?'disabled':'')+'>Restaurar curva original</button></div>';
  bindChart(panel,items);
 }
 function bindChart(panel,items){
@@ -135,7 +161,8 @@ function sync(){
   ROOT.querySelector('[data-work-curves]')?.remove();return;
  }
  const nextKey=key(data);if(nextKey!==contextKey){contextKey=nextKey;reset();}
- const choices=C.scopes(data.params);if(!choices.some(choice=>choice.id===target)){target='all';selected='';manual=[];preview=null;revision++;}
+ const choices=C.scopes(data.params);if(!choices.some(choice=>choice.id===target)){target='all';selected='';durationDraft=null;manual=[];preview=null;revision++;}
+ if(durationDraft===null)durationDraft=String(getScope(data.result).weights.length);
  let panel=ROOT.querySelector('[data-work-curves]');
  if(!panel){
   const main=ROOT.querySelector('main.content');if(!main)return;
@@ -154,18 +181,36 @@ function makePreview(kind){
  if(kind==='restore'){selected='';manual=[];}
  try{
   let next;
-  if(kind==='restore')next=C.restore(data.params,target);
+  if(kind==='restore'){
+   next=C.restore(data.params,target);
+   durationDraft=String(C.scopes(next).find(scope=>scope.id===target).duration);
+  }
   else{
-   let weights;
+   const duration=readDuration(data);
+   let resized=C.resizeDuration(data.params,duration,target),weights;
    if(selected==='custom'){
     if(!manualScope(data))throw new Error('Selecione uma etapa para editar os pesos de seu prazo.');
-    if(manual.some(value=>value===''))throw new Error('Informe um peso para cada mês. Use zero nos meses sem execução.');
-    weights=manual.map(Number);
+    if(manual.length){
+     if(manual.some(value=>String(value).trim()===''))throw new Error('Informe um peso para cada mês. Use zero nos meses sem execução.');
+     weights=manual.map(Number);
+     if(weights.some(value=>!Number.isFinite(value)||value<0)||!Number.isFinite(weights.reduce((sum,value)=>sum+value,0))||weights.reduce((sum,value)=>sum+value,0)<=0)throw new Error('Use pesos não negativos, com soma maior que zero.');
+     if(manual.length!==duration){
+      const previousLength=manual.length;
+      const edited=C.applyModel(C.resizeDuration(data.params,previousLength,target),'custom',target,weights);
+      resized=C.resizeDuration(edited,duration,target);
+      weights=C.currentWeights(resized,target);
+      manual=weights.map(weight=>Number((weight*100).toFixed(8)).toString());
+      notice='Os pesos manuais foram redistribuídos de '+previousLength+' para '+duration+' meses. Revise os novos valores antes de aplicar.';
+     }
+    }else{
+     weights=C.currentWeights(resized,target);
+     manual=weights.map(weight=>Number((weight*100).toFixed(8)).toString());
+    }
    }
-   next=C.applyModel(data.params,selected,target,weights);
+   next=selected?C.applyModel(resized,selected,target,weights):resized;
   }
   const result=E.simulate(next,true);
-  preview={kind,params:next,result,projectId:data.projectId,signature:signature(data),target};
+  preview={kind:kind==='restore'?'restore':selected?'model':'duration',params:next,result,projectId:data.projectId,signature:signature(data),target};
  }catch(error){message=error.message||'Não foi possível preparar esta curva.';}
  revision++;sync();
 }
@@ -176,9 +221,9 @@ document.addEventListener('click',event=>{
  if(key(data)!==contextKey){sync();return;}
  if(viewButton){view=viewButton.dataset.wcView;revision++;sync();return;}
  if(model){
-  selected=model.dataset.wcModel;preview=null;message='';notice='';
+  const previousSelection=selected;selected=model.dataset.wcModel;preview=null;message='';notice='';
   if(selected==='custom'){
-   const scope=manualScope(data);manual=scope?scope.weights.map(weight=>Number((weight*100).toFixed(8)).toString()):[];
+   const scope=manualScope(data);if(previousSelection!=='custom')manual=[];
    if(!scope){revision++;sync();return;}
   }
   makePreview('model');return;
@@ -191,9 +236,9 @@ document.addEventListener('click',event=>{
   input?.focus({preventScroll:true});
   return;
  }
- if(name==='discard'){selected='';manual=[];preview=null;message='';notice='';revision++;sync();return;}
+ if(name==='discard'){selected='';durationDraft=String(getScope(data.result).weights.length);manual=[];preview=null;message='';notice='';revision++;sync();return;}
  if(name==='restore'){makePreview('restore');return;}
- if(name==='update-manual'){makePreview('model');return;}
+ if(name==='update-manual'||name==='update-preview'){makePreview('model');return;}
  if(name==='apply'&&preview){
   const proposal=preview;
   if(proposal.projectId!==data.projectId||proposal.signature!==signature(data)){
@@ -201,23 +246,27 @@ document.addEventListener('click',event=>{
   }
   const outcome=window.EvoraApp.commitWorkCurve(proposal.params,proposal.projectId,proposal.signature);
   if(!outcome?.ok){message=outcome?.error||'Não foi possível aplicar a curva.';revision++;sync();return;}
-  const latest=state();contextKey=key(latest);selected='';manual=[];preview=null;message='';
-  notice=outcome.saved===false?'Curva aplicada nesta sessão. O navegador não permitiu salvar; exporte o estudo em JSON.':proposal.kind==='restore'?'Implantação original restaurada e salva.':'Curva aplicada e salva. A implantação original continua disponível para restauração.';
+  const latest=state();contextKey=key(latest);selected='';durationDraft=null;manual=[];preview=null;message='';
+  notice=outcome.saved===false?'Implantação aplicada nesta sessão. O navegador não permitiu salvar; exporte o estudo em JSON.':proposal.kind==='restore'?'Implantação original restaurada e salva.':'Implantação aplicada e salva. A referência original continua disponível para restauração.';
   revision++;sync();
  }
 });
 document.addEventListener('change',event=>{
  const select=event.target.closest?.('[data-wc-scope]');if(!select)return;
- target=select.value;selected='';manual=[];preview=null;message='';notice='';revision++;sync();
+ target=select.value;selected='';durationDraft=null;manual=[];preview=null;message='';notice='';revision++;sync();
 });
 document.addEventListener('input',event=>{
- const input=event.target.closest?.('[data-wc-weight]');if(!input)return;
- manual[Number(input.dataset.wcWeight)]=input.value;preview=null;message='Pesos alterados. Clique em “Atualizar prévia” para recalcular a comparação.';notice='';revision++;
+ const input=event.target.closest?.('[data-wc-weight], [data-wc-duration]');if(!input)return;
+ const durationInput=input.hasAttribute('data-wc-duration');
+ if(durationInput)durationDraft=input.value;else manual[Number(input.dataset.wcWeight)]=input.value;
+ preview=null;message=(durationInput?'Prazo alterado.':'Pesos alterados.')+' Clique em “Atualizar prévia” para recalcular a comparação.';notice='';revision++;
  const panel=input.closest('[data-work-curves]');
- panel.querySelector('[data-wc-weight-total]').textContent=manualTotal();
- panel.querySelector('[data-wc-action="apply"]').disabled=true;
+ const total=panel.querySelector('[data-wc-weight-total]');if(total)total.textContent=manualTotal();
+ const data=state(),apply=panel.querySelector('[data-wc-action="apply"]');apply.disabled=true;apply.textContent=applyLabel(data);
+ panel.querySelector('[data-wc-action="discard"]').disabled=false;
+ panel.querySelector('.wc-notice')?.classList.add('wc-hidden');
  const note=panel.querySelector('[data-wc-message]');note.textContent=message;note.classList.remove('wc-hidden');
- const data=state(),items=series(data);
+ const items=series(data);
  panel.querySelector('.wc-comparison').innerHTML=previewStatus(data)+chartHTML(items);
  bindChart(panel,items);panel.dataset.renderKey=String(revision);
 });

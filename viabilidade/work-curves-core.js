@@ -74,6 +74,60 @@ function hasOriginal(input,target='all'){
  if(!original)return false;
  return params.workMode==='stages'?stages.some(stage=>owns(original.stages,stage.id)):!!original.single;
 }
+function validDuration(value){
+ if(typeof value!=='number'||!Number.isInteger(value)||value<1||value>120)throw new Error('Informe um prazo inteiro de 1 a 120 meses.');
+ return value;
+}
+function resampleByMass(source,duration){
+ validDuration(duration);
+ if(!Array.isArray(source)||!source.length)throw new Error('Informe pesos mensais válidos antes de alterar o prazo.');
+ const weights=validWeights(source,source.length),length=weights.length,total=weights.reduce((sum,value)=>sum+value,0);
+ // The original and target months partition the same execution period. Integer
+ // boundaries on their common grid avoid inventing weight inside an empty bin.
+ const output=Array.from({length:duration},(_,month)=>{
+  let mass=0;
+  for(let index=0;index<length;index++){
+   const overlap=Math.max(0,Math.min((index+1)*duration,(month+1)*length)-Math.max(index*duration,month*length));
+   if(overlap)mass+=(weights[index]/total)*overlap/duration;
+  }
+  return mass;
+ });
+ const sum=output.reduce((value,weight)=>value+weight,0);
+ return output.map(weight=>weight/sum);
+}
+function resizeDuration(input,newDuration,target='all'){
+ validDuration(newDuration);
+ const current=prepare(input),targets=selected(current,target),staged=current.workMode==='stages';
+ const currentDuration=staged&&target!=='all'?targets[0].duration:current.duration;
+ // A no-op does not create or rewrite the original reference.
+ if(newDuration===currentDuration)return current;
+ if(staged){
+  const start=target==='all'?current.workStart:targets[0].start;
+  const limit=Math.min(120,121-start);
+  if(newDuration>limit)throw new Error('O prazo selecionado ultrapassa M120. Com início em M'+start+', o máximo é '+limit+' meses.');
+ }
+ const params=capture(current);
+ if(!staged){
+  if(params.curve==='custom')params.workWeights=resampleByMass(params.workWeights,newDuration);
+  params.duration=newDuration;
+ }else{
+  const first=params.workStart,lastExclusive=first+newDuration,ids=new Set(targets.map(stage=>stage.id));
+  const stages=params.workStages.map(stage=>{
+   if(!ids.has(stage.id))return stage;
+   let start=stage.start,duration=newDuration;
+   if(target==='all'){
+    const scaledStart=first+Math.round((stage.start-first)*newDuration/currentDuration);
+    const scaledEnd=first+Math.round((stage.start-first+stage.duration)*newDuration/currentDuration);
+    start=Math.max(first,Math.min(scaledStart,lastExclusive-1,119));
+    const end=Math.min(lastExclusive,Math.max(start+1,scaledEnd));
+    duration=end-start;
+   }
+   return {...stage,start,duration,weights:stage.curve==='custom'&&duration!==stage.duration?resampleByMass(stage.weights,duration):stage.weights};
+  });
+  params.workStagesJson=JSON.stringify(H.serializeStages(stages));
+ }
+ return prepare(params);
+}
 function applyModel(input,model,target='all',manualWeights){
  if(!curveIds.has(model))throw new Error('Escolha um modelo válido de implantação.');
  const current=prepare(input),targets=selected(current,target);
@@ -126,5 +180,5 @@ function weightsFor(input,target='all'){
  return typeof input==='string'?modelWeights(input,target):currentWeights(input,target);
 }
 
-E.workCurves={models,scopes,readOriginal,capture,hasOriginal,applyModel,restore,weightsFor,modelWeights,currentWeights};
+E.workCurves={models,scopes,readOriginal,capture,hasOriginal,resizeDuration,resampleByMass,applyModel,restore,weightsFor,modelWeights,currentWeights};
 })();
