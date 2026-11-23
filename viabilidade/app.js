@@ -28,6 +28,45 @@ function calculate(save=true){
   return true;
  }
  try{R=E.simulate(p);p=R.p;current.params=clone(p);error='';sensitivityCache=null;salesFitCache=null;if(save){current.updated=new Date().toISOString();store();}}catch(e){error=e.message;}return !error;}
+// Work-curve previews read the in-memory study, including an unsaved demo. A
+// validated proposal commits in one operation, so extensions never see half
+// of a curve or overwrite a study selected after the preview was calculated.
+window.EvoraApp={
+ getState(){return {projectId:current.id,params:clone(p),result:R,error,tab};},
+ commitWorkCurve(nextParams,expectedProjectId,expectedSignature){
+  if(expectedProjectId!==current.id)return {ok:false,error:'O empreendimento mudou. Gere uma nova prévia.'};
+  if(expectedSignature!==undefined&&expectedSignature!==JSON.stringify(p))return {ok:false,error:'As premissas mudaram. Gere uma nova prévia antes de aplicar.'};
+  if(error||p.blankDraft)return {ok:false,error:'Complete e revise as premissas antes de modelar a implantação.'};
+  try{
+   const candidate={...p};
+   for(const key of ['curve','workWeights','workStart','duration','workCurveOriginalJson']){
+    if(Object.prototype.hasOwnProperty.call(nextParams,key))candidate[key]=clone(nextParams[key]);
+   }
+   if(p.workMode==='stages'){
+    const proposed=E.prepare({...p,workStagesJson:nextParams.workStagesJson}).workStages;
+    if(proposed.length!==p.workStages.length||proposed.some((stage,i)=>stage.id!==p.workStages[i].id))throw Error('As etapas mudaram. Gere uma nova prévia.');
+    candidate.workStagesJson=JSON.stringify(E.workStageHelpers.serializeStages(p.workStages.map((stage,i)=>({...stage,curve:proposed[i].curve,weights:proposed[i].weights,start:proposed[i].start,duration:proposed[i].duration}))));
+   }
+   const result=E.simulate(candidate);
+   R=result;p=result.p;current.params=clone(p);current.updated=new Date().toISOString();
+   error='';pending=null;sensitivityCache=null;salesFitCache=null;
+   store();const y=window.scrollY;render();window.scrollTo(0,y);
+   if(storageOK)toast('Curva de implantação aplicada e resultados atualizados.');
+   return {ok:true,saved:storageOK};
+  }catch(e){return {ok:false,error:e.message};}
+ }
+};
+function captureWorkCurveOriginal(nextStagesJson){
+ if(!E.workCurves||error||p.blankDraft)return;
+ try{
+  if(nextStagesJson!==undefined){
+   const next=E.prepare({...p,workStagesJson:nextStagesJson}).workStages;
+   const geometry=stage=>JSON.stringify([stage.start,stage.duration,stage.curve,stage.weights]);
+   if(!p.workStages.some(stage=>{const changed=next.find(item=>item.id===stage.id);return changed&&geometry(stage)!==geometry(changed);}))return;
+  }
+  p=E.workCurves.capture(p);
+ }catch{}
+}
 calculate(false);
 function date(t){const [y,m]=p.start.split('-').map(Number);return new Date(Date.UTC(y,m-1+t,1)).toLocaleDateString('pt-BR',{month:'short',year:'2-digit',timeZone:'UTC'}).replace('.','');}
 function toast(text){const t=document.getElementById('toast');t.textContent=text;t.classList.add('show');clearTimeout(toast.timer);toast.timer=setTimeout(()=>t.classList.remove('show'),4500);}
@@ -224,7 +263,7 @@ function inputs(){const t=R?.totals;return heading('As premissas fazem o negóci
  workFields()+
  formSection('06','Terreno e custos operacionais','Defina a estrutura do negócio e os desembolsos que precedem a obra.',field('landMode','Aquisição da área','','',landModes)+(p.landMode!=='cash'?field('landShare','Percentual do terrenista','%',p.landMode==='physical'?'Sobre o total de lotes, arredondado ao inteiro mais próximo.':'Sobre os recebimentos efetivos.')+(p.landMode==='physical'&&!error?'<p>'+physicalSplit(t)+'</p>':''):field('landPrice','Preço de aquisição','R$')+field('landEntry','Entrada da aquisição','%','Paga em M0.')+field('landMonths','Saldo da aquisição','meses','Parcelas fixas sem juros a partir de M1.'))+field('predev','Projetos, licenças e pré-operação','R$','Desembolso integral em M0.')+field('commission','Comissão de vendas','% do contrato','Paga no mês da venda.')+field('marketing','Marketing e comercialização','% do contrato','Paga no mês da venda.')+field('tax','Tributos sobre recebimentos','%','Alíquota de planejamento, não enquadramento fiscal.')+field('servicing','Gestão da carteira','% recebido')+field('admin','Administração fixa','R$/mês')+field('adminMonths','Duração da administração fixa','meses','Começa em M0. Após isso resta a taxa de gestão.'),'A permuta financeira, os tributos e a gestão de carteira incidem sobre recebimentos, inclusive juros e correção, nesta simplificação. Ajuste as premissas ao contrato e valide com a contabilidade.')+
  fundingFields();}
-function workFields(){return formSection('05','Orçamento e implantação','Valores de orçamento na moeda do mês-base; atualização até o desembolso.',field('work','Orçamento-base da obra','R$')+field('contingency','Reserva de contingência','%')+field('workStart','Início da obra','M')+field('duration','Duração da obra','meses')+field('workInflation','Inflação dos custos da obra','% a.a.','Hipótese independente da correção da carteira.')+field('curve','Distribuição física','','',[['s','Curva S · maior desembolso no meio'],['linear','Linear · pesos iguais'],['early','Concentrada no início'],['custom','Manual · editar em Implantação e obras']]),'O orçamento total projetado inclui contingência e atualização de custos. A curva manual é normalizada para distribuir 100% do orçamento-base.');}
+function workFields(){return formSection('05','Orçamento e implantação','Valores de orçamento na moeda do mês-base; atualização até o desembolso.',field('work','Orçamento-base da obra','R$')+field('contingency','Reserva de contingência','%')+field('workStart','Início da obra','M')+field('duration','Duração da obra','meses')+field('workInflation','Inflação dos custos da obra','% a.a.','Hipótese independente da correção da carteira.')+field('curve','Distribuição física','','',[['s','Curva S · maior desembolso no meio'],['linear','Linear · pesos iguais'],['early','Concentrada no início'],['late','Concentrada no fim'],['custom','Manual · editar em Implantação e obras']]),'O orçamento total projetado inclui contingência e atualização de custos. A curva manual é normalizada para distribuir 100% do orçamento-base.');}
 function fundingFields(){return formSection('07','Estrutura de capital','Aportes não são receita. O crédito não altera o VPL operacional.',field('equity','Capital próprio inicial','R$','Integralmente aportado em M0.')+field('credit','Limite de crédito disponível','R$','Linha não rotativa; os saques não se recompõem.')+field('debtRate','Custo do crédito','% a.m.','Juros sobre o saldo de abertura do mês.')+field('debtFee','Tarifa sobre cada saque','%','Pode consumir parte do limite sacado.')+field('drawEnd','Último mês permitido para saques','M')+field('maturity','Vencimento final do crédito','M','Saldo remanescente quitado integralmente.')+field('sweepStart','Início da amortização por caixa livre','M','Todo excedente disponível reduz a dívida.'),'Déficits não cobertos pelo crédito geram “aportes adicionais necessários”. Eles não são uma fonte confirmada. Distribuições ao investidor só ocorrem após a entrega e quando não há saldo de dívida.');}
 function portfolio(){const t=R.totals,c=R.contract,amort=allAmort?c.schedule:c.schedule.slice(0,24);let sumSigned=0;const data=R.rows.map(r=>({...r,cumSigned:sumSigned+=r.signed}));const rows=data.filter(r=>r.t<=Math.max(60,t.workEnd));
  return heading('Da venda ao dinheiro em caixa.','Contratos, recebimentos, carteira líquida e caixa disponível para obra vistos separadamente.',btn('navigate','Editar condições','sliders','','data-page="inputs"'))+'<div class="kpis">'+kpi('Recebimentos esperados no ciclo',money(t.receipts),'Inclui juros, correção hipotética, perdas e atrasos','wallet')+kpi('Carteira líquida no ciclo',money(t.portfolioNet),'Após tributos, servicing e permuta financeira','chart')+kpi('Caixa para obra no ciclo',money(t.cashForWork),'Depois dos demais custos pré-obra e comerciais','layers')+kpi('VP da carteira futura na entrega',money(t.pvFuture),'Recebimentos futuros descontados à TMA','wallet',true)+'</div>'+cashLayers(t)+section('Da venda à carteira','VGV contratado e recebimentos acumulados são grandezas diferentes.',chart(rows,[{key:'cumSigned',label:'VGV contratado acumulado',color:'gold'},{key:'cumReceived',label:'Recebimentos esperados acumulados',color:'green'}],{marker:t.workEnd}))+'<div style="height:20px"></div>'+section('Da carteira ao caixa disponível para obra','A carteira líquida não absorve despesas pré-operacionais e comerciais; essas despesas aparecem apenas na camada seguinte.',chart(rows,[{key:'cumReceived',label:'Recebimentos acumulados',color:'green'},{key:'cumPortfolioNet',label:'Carteira líquida acumulada',color:'blue'},{key:'cumCashForWork',label:'Caixa acumulado para obra',color:'red'}],{marker:t.workEnd,fill:false})+'<p class="chart-note">Na compra do terreno, o desembolso da aquisição é tratado como custo do empreendimento e reduz o caixa disponível para obra — não a carteira líquida. Na permuta financeira, a participação do proprietário é uma dedução direta dos recebimentos e, por isso, reduz a carteira líquida.</p>')+'<div style="height:20px"></div><div class="grid-two">'+section('Um lote. O plano por dentro.','Contrato do lote médio vendido no mês-base; sem perdas ou atraso.','<div class="report-kv"><span>Preço após desconto</span><b>'+money(t.unit,false)+'</b></div><div class="report-kv"><span>Entrada em '+p.entryMonths+' vezes</span><b>'+money(c.entry/p.entryMonths,false)+'</b></div><div class="report-kv"><span>Primeira parcela regular</span><b>'+money(c.first,false)+'</b></div><div class="report-kv"><span>Prazo após a entrada</span><b>'+p.term+' meses · '+p.system+'</b></div><div class="report-kv"><span>Juros efetivos anuais equivalentes</span><b>'+pct((Math.pow(1+p.interest/100,12)-1)*100,2)+'</b></div><div class="report-kv"><span>Correção hipotética</span><b>'+(p.index==='NONE'?'Sem correção':p.index+' · '+pct(p.correction)+' a.a.')+'</b></div><p class="chart-note">Os balões são adicionais à parcela regular nos respectivos vencimentos, mas já integram a amortização do saldo financiado.</p>')+section('Saldo de principal do lote médio','Saldo contratual corrigido após cada vencimento, sem juros futuros.',chart(c.schedule.map(s=>({t:s.age,balance:s.balance})),[{key:'balance',label:'Saldo devedor',color:'green'}],{height:230}))+'</div>'+section('Memória de amortização do lote médio','Vencimentos contados a partir do fim do parcelamento da entrada.','<div class="table-wrap"><table><thead><tr><th>Vencimento</th><th>Parcela regular</th><th>Balão</th><th>Juros</th><th>Amortização</th><th>Saldo corrigido</th></tr></thead><tbody>'+amort.map(s=>'<tr><td>'+s.age+'º</td><td>'+money(s.regular,false)+'</td><td>'+money(s.balloon,false)+'</td><td>'+money(s.interest,false)+'</td><td>'+money(s.amortization,false)+'</td><td>'+money(s.balance,false)+'</td></tr>').join('')+'</tbody></table></div><p class="table-caption">Fluxo contratual ilustrativo; o fluxo consolidado considera o mix à vista/parcelado, perdas e atrasos.</p>',btn('amort',allAmort?'Mostrar 24 vencimentos':'Mostrar todos os vencimentos','layers','small'));}
@@ -245,7 +284,7 @@ function workBreakdown(){
 }
 function clearWork(){
  if(!confirm('Limpar o orçamento, as etapas, a EAP, os entregáveis e as medições de obra de '+p.name+'? O histórico do cenário congelado será preservado.'))return;
- const params={...p,work:0,workMode:'single',workStart:0,duration:1,workWeights:[],curve:'linear',contingency:0,workStagesJson:'[]',eapJson:'[]',deliveryRegisterJson:E.defaults.deliveryRegisterJson};
+ const params={...p,work:0,workMode:'single',workStart:0,duration:1,workWeights:[],curve:'linear',contingency:0,workStagesJson:'[]',workCurveOriginalJson:'',eapJson:'[]',deliveryRegisterJson:E.defaults.deliveryRegisterJson};
  E.simulate(params);
  exportJSON();
  const previous=clone(current),previousParams=p;
@@ -312,7 +351,7 @@ let sheetProposal=null;
 function reviewSheet(){
  const pick=document.getElementById('sheet-scope');
  const selected=sheetProposal.groups?.filter((_,i)=>pick.value==='all'||String(i)===pick.value);
- const params=selected ? {...sheetProposal.base,name:selected.map(g=>g.name).join(' + '),workMode:'stages',workStagesJson:JSON.stringify(selected.flatMap(g=>g.stages)),deliveryRegisterJson:E.defaults.deliveryRegisterJson,eapJson:JSON.stringify(selected.flatMap(g=>g.eap))} : sheetProposal.params;
+ const params=selected ? {...sheetProposal.base,name:selected.map(g=>g.name).join(' + '),workMode:'stages',workStagesJson:JSON.stringify(selected.flatMap(g=>g.stages)),workCurveOriginalJson:'',deliveryRegisterJson:E.defaults.deliveryRegisterJson,eapJson:JSON.stringify(selected.flatMap(g=>g.eap))} : sheetProposal.params;
  if(sheetProposal.base?.blankDraft && selected){
   const stages=selected.flatMap(g=>g.stages);
   sheetProposal.reviewed={...params,name:sheetProposal.base.name,workStages:stages,work:stages.reduce((sum,s)=>sum+s.budget,0)};
@@ -342,7 +381,7 @@ document.getElementById('sheet-file').addEventListener('change',async event=>{
 });
 
 function exportCSV(){if(error)return toast('Corrija as premissas antes de exportar.');const header=['Data',...csvCols.map(c=>c[1])].join(';'),lines=R.rows.map(r=>[date(r.t),...csvCols.map(([k])=>Number(r[k]).toFixed(k==='t'||k==='units'?0:2).replace('.',','))].join(';'));download(fileName()+'-fluxo-mensal.csv','\ufeff'+header+'\r\n'+lines.join('\r\n'),'text/csv;charset=utf-8');toast('CSV do ciclo completo gerado.');}
-document.addEventListener('pointerdown',event=>{const point=event.target.closest&&event.target.closest('[data-curve-point]');if(!point||p.curve!=='custom')return;const svg=point.closest('[data-curve-editor]');if(!svg)return;dragState={index:Number(point.dataset.curvePoint),svg,pointerId:event.pointerId,point};point.setPointerCapture?.(event.pointerId);document.body.classList.add('curve-dragging');updateCurveDrag(event);event.preventDefault();});
+document.addEventListener('pointerdown',event=>{const point=event.target.closest&&event.target.closest('[data-curve-point]');if(!point||p.curve!=='custom')return;const svg=point.closest('[data-curve-editor]');if(!svg)return;captureWorkCurveOriginal();dragState={index:Number(point.dataset.curvePoint),svg,pointerId:event.pointerId,point};point.setPointerCapture?.(event.pointerId);document.body.classList.add('curve-dragging');updateCurveDrag(event);event.preventDefault();});
 window.addEventListener('pointermove',event=>{if(!dragState||event.pointerId!==dragState.pointerId)return;updateCurveDrag(event);event.preventDefault();},{passive:false});
 function endCurveDrag(event){if(!dragState||event.pointerId!==dragState.pointerId)return;dragState.point.releasePointerCapture?.(event.pointerId);dragState=null;document.body.classList.remove('curve-dragging');calculate();render();toast('Curva manual atualizada e redistribuída para 100%.');}
 window.addEventListener('pointerup',endCurveDrag);
@@ -371,7 +410,7 @@ document.addEventListener('click',event=>{const el=event.target.closest('[data-a
  else if(action==='import')document.getElementById('import-file').click();
  else if(action==='print'){if(error)return;tab='report';render();setTimeout(()=>window.print(),100);}
  else if(action==='amort'){allAmort=!allAmort;render();}
- else if(action==='normalize'){p.workWeights=R.workWeights.map(v=>Number((v*100).toFixed(6)));calculate();render();}
+ else if(action==='normalize'){captureWorkCurveOriginal();p.workWeights=R.workWeights.map(v=>Number((v*100).toFixed(6)));calculate();render();}
  else if(action==='adopt'){const s=E.scenarios(p).find(x=>x.id===el.dataset.scenario);if(s&&!s.error)addProject({...s.p,name:(p.name+' · '+s.name).slice(0,90)});}
  else if(action==='test'){if(el.dataset.test==='term')testScenario({...p,term:240},'Prazo de 240 parcelas');if(el.dataset.test==='entry')testScenario({...p,entry:15},'Entrada de 15%');if(el.dataset.test==='work')testScenario({...p,work:p.work*1.15},'Orçamento da obra +15%');}
  else if(action==='heat-test'){const price=Number(el.dataset.price),speed=Number(el.dataset.speed);testScenario({...p,price:p.price*(1+price/100),speed:p.speed*(1+speed/100)},'Preço '+(price>0?'+':'')+price+'% · vendas '+(speed>0?'+':'')+speed+'%');}
@@ -380,8 +419,8 @@ document.addEventListener('click',event=>{const el=event.target.closest('[data-a
 document.addEventListener('submit',event=>{if(event.target.id==='draft-form'&&p.blankDraft){event.preventDefault();startDraft(event.target);return;}if(event.target.id==='new-form'){event.preventDefault();const fd=new FormData(event.target),name=String(fd.get('name')||'').trim(),city=String(fd.get('city')||'').trim(),mode=fd.get('mode');if(name){const base=mode==='blank'?{blankDraft:true}:mode==='copy'?clone(p):clone(E.defaults),actuals=mode==='copy'?clone(current.actuals):null;addProject({...base,name,city:city||(mode==='copy'?p.city:'')},actuals,base.blankDraft?'inputs':'dashboard');}}});
 document.addEventListener('change',event=>{const el=event.target;
  if(el.dataset.draft && p.blankDraft){p[el.dataset.draft]=el.value;calculate();if(el.dataset.draft==='landMode')render();return;}
- if(el.dataset.param){const key=el.dataset.param;p[key]=E.bounds[key]?Number(el.value):el.value;if(el.value===''&&E.bounds[key])p[key]=NaN;if(key==='duration'&&p.curve==='custom'){p.curve='s';p.workWeights=[];toast('A nova duração recalculou a curva. Selecione Manual para ajustá-la.');}if(key==='curve'&&p.curve==='custom'){p.workWeights=E.weights({...p,curve:'s'}).map(v=>Number((v*100).toFixed(6)));}if(key==='salesCurve'&&p.salesCurve==='custom'&&(!Array.isArray(p.salesWeights)||!p.salesWeights.length)){p.salesWeights=E.salesWeights({...p,salesCurve:'s'},12).map(v=>Number((v*100).toFixed(6)));}const y=window.scrollY;calculate();render();window.scrollTo(0,y);}
- if(el.dataset.weight!==undefined){const v=Number(el.value);p.workWeights[Number(el.dataset.weight)]=el.value===''?NaN:v;const y=window.scrollY;calculate();render();window.scrollTo(0,y);}
+ if(el.dataset.param){const key=el.dataset.param;if(['curve','duration','workStart','workMode'].includes(key))captureWorkCurveOriginal();if(key==='workStagesJson')captureWorkCurveOriginal(el.value);p[key]=E.bounds[key]?Number(el.value):el.value;if(el.value===''&&E.bounds[key])p[key]=NaN;if(key==='duration'&&p.curve==='custom'){p.curve='s';p.workWeights=[];toast('A nova duração recalculou a curva. Selecione Manual para ajustá-la.');}if(key==='curve'&&p.curve==='custom'){p.workWeights=E.weights({...p,curve:'s'}).map(v=>Number((v*100).toFixed(6)));}if(key==='salesCurve'&&p.salesCurve==='custom'&&(!Array.isArray(p.salesWeights)||!p.salesWeights.length)){p.salesWeights=E.salesWeights({...p,salesCurve:'s'},12).map(v=>Number((v*100).toFixed(6)));}const y=window.scrollY;calculate();render();window.scrollTo(0,y);}
+ if(el.dataset.weight!==undefined){captureWorkCurveOriginal();const v=Number(el.value);p.workWeights[Number(el.dataset.weight)]=el.value===''?NaN:v;const y=window.scrollY;calculate();render();window.scrollTo(0,y);}
  if(el.dataset.salesWeight!==undefined){const i=Number(el.dataset.salesWeight),v=Number(el.value);if(!Array.isArray(p.salesWeights))p.salesWeights=[];p.salesWeights[i]=el.value===''?0:Math.max(0,v||0);const y=window.scrollY;calculate();render();window.scrollTo(0,y);}
  if(el.dataset.control==='cashMode'){cashMode=el.value;render();}
  if(el.dataset.control==='cashRange'){cashRange=el.value;render();}
