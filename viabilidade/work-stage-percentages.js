@@ -17,7 +17,8 @@ function active(){
   if(window.EvoraApp?.getState){
    const current=window.EvoraApp.getState();
    if(!current||current.error||current.params.blankDraft||!current.result)return null;
-   return {project:{id:current.projectId,params:current.params},params:current.params,result:current.result};
+   const params=E.prepare(current.params);
+   return {project:{id:current.projectId,params},params,result:current.result};
   }
   const library=JSON.parse(localStorage.getItem(STORE));
   if(!library||!Array.isArray(library.projects)||!library.projects.length)return null;

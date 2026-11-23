@@ -110,13 +110,15 @@ const periods=stages=>stages.map(stage=>({id:stage.id,start:stage.start,end:stag
    ];
    if(kind==='one')stages=[{id:'one',name:'Entrega única',budget:120000,start:7,duration:1,contingency:5,curve:'s',weights:[]}];
    if(kind==='long')stages=[{id:'long',name:'Implantação em 120 meses',budget:1200000,start:1,duration:120,contingency:5,curve:'linear',weights:[]}];
-   const params=E.prepare({...E.defaults,name:'QA histograma '+kind,workMode:'stages',workStagesJson:JSON.stringify(stages),workCurveOriginalJson:'',workInflation:12});
+   const params=E.prepare({...E.defaults,name:'QA histograma '+kind,work:2400000,workMode:kind==='single'?'single':'stages',workStagesJson:kind==='single'?'[]':JSON.stringify(stages),workCurveOriginalJson:'',workInflation:12});
    const other=E.prepare({...E.defaults,name:'QA outro histograma',workMode:'stages',workStagesJson:JSON.stringify([{id:'other',name:'Outro cronograma',budget:500000,start:0,duration:3,contingency:0,curve:'late',weights:[]}]),workCurveOriginalJson:'',workInflation:0});
    const project=(id,params)=>({id,params,actuals:{sales:{},work:{},plan:null},updated:'2026-11-23T00:00:00.000Z'});
    localStorage.setItem(key,JSON.stringify({active:'qa-histogram-'+kind,projects:[project('qa-histogram-'+kind,params),project('qa-histogram-other',other)]}));
    location.hash='works';
   },{key:STORE,kind});
-  await page.reload({waitUntil:'networkidle'});await settle();
+  await page.reload({waitUntil:'networkidle'});
+  if(kind==='single')await page.locator('[data-stage-action="mode-stages"]').waitFor({state:'visible'});
+  else await settle();
  };
  const apply=async()=>{
   const button=page.locator('[data-wc-action="apply"]');assert.equal(await button.isEnabled(),true);await button.click();await settle();
@@ -129,6 +131,36 @@ const periods=stages=>stages.map(stage=>({id:stage.id,start:stage.start,end:stag
  try{
   await page.goto(targetURL,{waitUntil:'networkidle'});
   await page.waitForFunction(()=>!!window.EvoraApp&&!!window.EvoraWorkHistogram&&!!window.EvoraEngine?.workCurves);
+
+  // Exercise the actual mode buttons: single-mode result.p need not contain a derived workStages array.
+  await seed('single');
+  const single=await state();assert.equal(single.params.workMode,'single');assert.equal(single.params.workStagesJson,'[]');
+  assert.equal(await histogram().count(),0);
+  await page.locator('[data-stage-action="mode-stages"]').click();await settle();
+  const enabled=await reconcile();
+  assert.equal(enabled.applied.params.workMode,'stages');assert.equal(enabled.applied.stages.length,1);
+  assert.equal(enabled.applied.stages[0].budget,single.params.work);
+  assert.equal(enabled.applied.stages[0].start,single.params.workStart);
+  assert.equal(enabled.applied.stages[0].duration,single.params.duration);
+  await page.locator('[data-stage-action="preset"]').click();await settle();
+  const preset=await reconcile();
+  assert.equal(preset.applied.stages.length,3);assert.equal(preset.applied.params.work,single.params.work);
+  near(preset.applied.stages.reduce((sum,stage)=>sum+stage.budget,0),single.params.work,'Three-stage base budget');
+  const savedStages=preset.applied.params.workStagesJson;
+  await page.locator('[data-stage-action="mode-single"]').click();
+  await page.waitForFunction(()=>EvoraApp.getState().params.workMode==='single');
+  await page.locator('[data-stage-action="mode-stages"]').waitFor({state:'visible'});
+  await histogram().waitFor({state:'detached'});
+  assert.equal((await state()).params.work,single.params.work);
+  assert.equal((await state()).params.workStagesJson,savedStages,'Disabling stage mode must retain its saved stages');
+  await page.locator('[data-stage-action="mode-stages"]').click();await settle();
+  const reenabled=await reconcile();
+  assert.equal(reenabled.applied.params.work,single.params.work);
+  assert.equal(reenabled.applied.params.workStagesJson,savedStages);
+  assert.deepEqual(reenabled.applied.stages,preset.applied.stages,'Re-enabling stages preserves their periods, budgets, curves and monthly schedule');
+  assert.deepEqual(errors,[]);
+  console.log('PASS real mode controls: single → staged → three-stage preset → single → staged, with preserved budget and stages.');
+
   await seed('normal');
   const initial=await reconcile(),original=initial.applied,initialStorage=await stored();
   assert.equal(original.params.duration,18);assert.equal(original.totals.workEnd,19);
