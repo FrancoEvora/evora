@@ -7,12 +7,18 @@ window.__workStagePercentagesV1=true;
 
 const COLORS=['#497d58','#bb914a','#648693','#8b6f58','#78966c','#9a775f','#8b7796','#6f8e8b'];
 const clone=value=>JSON.parse(JSON.stringify(value));
+const esc=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
 const clamp=(value,min,max)=>Math.min(max,Math.max(min,Number(value)||0));
 const fmt=(value,digits=1)=>Number.isFinite(Number(value))?Number(value).toLocaleString('pt-BR',{minimumFractionDigits:digits,maximumFractionDigits:digits}):'—';
 const money=value=>{const n=Number(value)||0,a=Math.abs(n),sign=n<0?'−':'';return sign+'R$ '+(a>=1e6?fmt(a/1e6,1)+' mi':a>=1e4?fmt(a/1e3,0)+' mil':fmt(a,0));};
 
 function active(){
  try{
+  if(window.EvoraApp?.getState){
+   const current=window.EvoraApp.getState();
+   if(!current||current.error||current.params.blankDraft||!current.result)return null;
+   return {project:{id:current.projectId,params:current.params},params:current.params,result:current.result};
+  }
   const library=JSON.parse(localStorage.getItem(STORE));
   if(!library||!Array.isArray(library.projects)||!library.projects.length)return null;
   const project=library.projects.find(item=>item.id===library.active)||library.projects[0];
@@ -106,8 +112,8 @@ function installStyles(){
 function allocationPanel(data,mode){
  const stages=data.params.workStages,total=totalBudget(stages),percentages=shares(stages),sum=percentages.reduce((a,b)=>a+b,0);
  const panel=document.createElement('div');panel.className='stage-allocation-panel';panel.dataset.stageAllocationPanel='1';
- const segments=percentages.map((value,index)=>'<i style="width:'+value+'%;background:'+COLORS[index%COLORS.length]+'" title="'+stages[index].name+' · '+fmt(value,1)+'%"></i>').join('');
- const legend=stages.map((stage,index)=>'<span><i style="background:'+COLORS[index%COLORS.length]+'"></i>'+stage.name+' · '+fmt(percentages[index],1)+'%</span>').join('');
+ const segments=percentages.map((value,index)=>'<i style="width:'+value+'%;background:'+COLORS[index%COLORS.length]+'" title="'+esc(stages[index].name)+' · '+fmt(value,1)+'%"></i>').join('');
+ const legend=stages.map((stage,index)=>'<span><i style="background:'+COLORS[index%COLORS.length]+'"></i>'+esc(stage.name)+' · '+fmt(percentages[index],1)+'%</span>').join('');
  panel.innerHTML=
   '<div class="stage-allocation-head"><div><span>FORMA DE DIVISÃO DO ORÇAMENTO</span><h4>Valores ou percentuais por etapa</h4></div><div class="stage-allocation-switch"><button type="button" data-stage-allocation-mode="value" class="'+(mode==='value'?'active':'')+'">Valores em R$</button><button type="button" data-stage-allocation-mode="percent" class="'+(mode==='percent'?'active':'')+'">Percentuais</button></div></div>'+ 
   '<div class="stage-allocation-data"><label class="stage-total-field"><span>Orçamento total-base da obra</span><input type="number" min="0" step="1000" data-stage-total-budget value="'+total.toFixed(2)+'" '+(mode==='percent'?'':'disabled')+'><small>'+(mode==='percent'?'Altere o total sem mudar a participação relativa das etapas.':'Derivado da soma dos valores informados em cada etapa.')+'</small></label><div><div class="stage-percentage-bar">'+segments+'</div><div class="stage-percentage-legend">'+legend+'</div></div></div>'+ 

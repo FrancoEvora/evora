@@ -3,3 +3,22 @@
 @media(max-width:1100px){.work-stage-summary{grid-template-columns:repeat(3,minmax(0,1fr))}.stage-fields{grid-template-columns:repeat(3,minmax(0,1fr))}.stage-timeline-row{grid-template-columns:145px minmax(180px,1fr) 85px}.stage-timeline-axis{padding-left:160px;padding-right:95px}}
 @media(max-width:720px){.stage-mode-head{display:block}.stage-mode-switch{margin-top:12px;width:max-content}.work-stage-summary{grid-template-columns:1fr 1fr}.work-stage-card-head{display:block}.stage-actions{justify-content:flex-start;margin-top:10px}.stage-fields{grid-template-columns:1fr 1fr}.stage-weight-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.stage-manager-actions{justify-content:flex-start;flex-wrap:wrap}.stage-timeline-axis{display:none}.stage-timeline-row{grid-template-columns:1fr}.stage-timeline-row>b{text-align:left}.stage-timeline-track{height:30px}.report-stage-grid{grid-template-columns:1fr}}
 @media print{.stage-mode-switch,.stage-actions,.stage-manager-actions,.stage-manual{display:none!important}.work-stage-manager{break-inside:avoid}.stage-table{max-height:none;overflow:visible}}
+
+/* Applied schedule: monthly physical intensity inside each stage period. */
+.stage-timeline-row{grid-template-columns:175px minmax(0,1fr) 95px;gap:5px 14px;min-width:0}
+.stage-timeline-row>strong{grid-column:1;grid-row:1/3;overflow-wrap:anywhere;line-height:1.55}
+.stage-timeline-row>b{grid-column:3;grid-row:1/3}
+.stage-period-label{display:block;font-size:9px;font-weight:400;color:var(--muted);margin-top:4px}
+.stage-timeline-track{grid-column:2;grid-row:1;height:30px;min-width:0;cursor:crosshair}
+.stage-timeline-track:focus-visible{outline:2px solid var(--green);outline-offset:3px}
+.stage-period{position:absolute;top:0;bottom:0;display:grid;gap:1px;border:1px solid;border-radius:4px;overflow:hidden;min-width:2px;background:#fff}
+.stage-timeline-track .stage-intensity-cell{position:static;display:block;left:auto;top:auto;height:100%;min-width:0;border-radius:0}
+.stage-intensity-cell.is-highlighted{box-shadow:inset 0 0 0 2px rgba(19,61,51,.7)}
+.stage-intensity-cell[data-weight="0"].is-highlighted{opacity:1!important;background:transparent!important}
+.stage-intensity-readout{grid-column:2;grid-row:2;margin:0;font-size:9px;line-height:1.6;color:var(--muted);font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.stage-intensity-legend{display:flex;align-items:center;gap:12px;border-top:1px solid var(--line);padding-top:14px;margin-top:3px}
+.stage-intensity-legend p{font-size:9px;line-height:1.7;color:var(--muted);margin:0;flex:1}
+.stage-intensity-scale{display:block;width:74px;height:15px;border:1px solid #dce5d6;border-radius:3px;flex-shrink:0;background:linear-gradient(90deg,#e0e8d9,#497d58)}
+@media(max-width:1100px){.stage-timeline-row{grid-template-columns:145px minmax(0,1fr) 85px}}
+@media(max-width:720px){.stage-timeline-axis{display:flex;padding:0;font-size:9px}.stage-timeline-row{grid-template-columns:minmax(0,1fr) auto;gap:7px 10px;padding-bottom:10px;border-bottom:1px solid var(--line)}.stage-timeline-row>strong{grid-column:1/-1;grid-row:1}.stage-timeline-track{grid-column:1/-1;grid-row:2;height:34px}.stage-intensity-readout{grid-column:1;grid-row:3;font-size:9px}.stage-timeline-row>b{grid-column:2;grid-row:3;text-align:right;font-size:9px}.stage-intensity-legend{align-items:flex-start}.stage-period-label{display:inline;margin-left:7px}.stage-timeline-row>strong{font-size:11px}}
+@media print{.stage-period,.stage-intensity-cell,.stage-intensity-scale{print-color-adjust:exact;-webkit-print-color-adjust:exact}.stage-intensity-readout{display:none}.stage-timeline-row{break-inside:avoid}}

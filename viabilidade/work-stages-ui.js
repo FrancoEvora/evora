@@ -12,6 +12,11 @@ const money=value=>{const n=Number(value)||0,a=Math.abs(n),sign=n<0?'−':'';ret
 
 function active(){
  try{
+  if(window.EvoraApp?.getState){
+   const current=window.EvoraApp.getState();
+   if(!current||current.error||current.params.blankDraft||!current.result)return null;
+   return {project:{id:current.projectId,params:current.params},params:current.params,result:current.result};
+  }
   const library=JSON.parse(localStorage.getItem(STORE));
   if(!library||!Array.isArray(library.projects)||!library.projects.length)return null;
   const project=library.projects.find(item=>item.id===library.active)||library.projects[0];
@@ -67,7 +72,7 @@ function manager(data){
  element.innerHTML='<div class="stage-mode-head"><div><span>ESTRUTURA DA IMPLANTAÇÃO</span><h3>Divisão da obra em etapas</h3></div><div class="stage-mode-switch"><button type="button" data-stage-action="mode-single" class="'+(mode==='single'?'active':'')+'">Obra única</button><button type="button" data-stage-action="mode-stages" class="'+(mode==='stages'?'active':'')+'">Por etapas</button></div></div>'+content;
  return element;
 }
-function signature(data){return data.project.id+'|'+String(data.project.updated||'')+'|'+data.params.workMode+'|'+data.params.workStagesJson;}
+function signature(data){return data.project.id+'|'+data.params.workMode+'|'+data.params.workStagesJson+'|'+data.params.workInflation;}
 function applyDerived(section,mode){
  ['work','contingency','workStart','duration','curve'].forEach(key=>{
   const input=section.querySelector('[data-param="'+key+'"]'),field=input&&input.closest('.field');
@@ -95,15 +100,45 @@ function enhanceForms(data){
   }
  });
 }
+const exactMoney=value=>Number(value).toLocaleString('pt-BR',{style:'currency',currency:'BRL',minimumFractionDigits:2,maximumFractionDigits:2});
+function intensityText(item){return 'M'+item.month+' · '+fmt(item.weight*100,2)+'% da etapa · '+exactMoney(item.amount);}
+function bindIntensity(element,stages){
+ element.querySelectorAll('.stage-timeline-row[data-stage-id]').forEach(row=>{
+  const stage=stages.find(item=>item.id===row.dataset.stageId),track=row.querySelector('[data-stage-track]'),readout=row.querySelector('[data-stage-readout]');
+  if(!stage||!track||!readout||!stage.monthly.length)return;
+  let current=0;
+  function show(index){
+   current=Math.max(0,Math.min(stage.monthly.length-1,index));
+   const item=stage.monthly[current];
+   if(readout.dataset.month===String(item.month))return;
+   readout.textContent=intensityText(item);
+   readout.dataset.month=String(item.month);readout.dataset.weight=String(item.weight);readout.dataset.amount=String(item.amount);
+   track.setAttribute('aria-label',stage.name+'. '+intensityText(item)+'. Use as setas para consultar os meses.');
+   row.querySelectorAll('.stage-intensity-cell').forEach(cell=>cell.classList.toggle('is-highlighted',Number(cell.dataset.month)===item.month));
+  }
+  function point(event){const cell=event.target.closest('.stage-intensity-cell');if(cell&&track.contains(cell))show(Number(cell.dataset.month)-stage.start);}
+  track.addEventListener('pointermove',point);track.addEventListener('click',point);
+  track.addEventListener('keydown',event=>{
+   if(!['ArrowLeft','ArrowRight','Home','End'].includes(event.key))return;
+   event.preventDefault();show(event.key==='Home'?0:event.key==='End'?stage.monthly.length-1:current+(event.key==='ArrowRight'?1:-1));
+  });
+  show(0);
+ });
+}
 function timeline(data){
- const stages=data.result.stages||[];
+ const stages=data.result.stages||[],histogram=window.EvoraWorkHistogram;
  const start=Math.min(...stages.map(stage=>stage.start)),end=Math.max(...stages.map(stage=>stage.end)),span=Math.max(1,end-start+1);
- const colors=['#497d58','#bb914a','#648693','#8b6f58','#78966c','#9a775f'];
- const rows=stages.map((stage,index)=>'<div class="stage-timeline-row"><strong>'+esc(stage.name)+'</strong><div class="stage-timeline-track"><i style="left:'+((stage.start-start)/span*100)+'%;width:'+(stage.duration/span*100)+'%;background:'+colors[index%colors.length]+'"><span>M'+stage.start+'–M'+stage.end+'</span></i></div><b>'+money(stage.nominalTotal)+'</b></div>').join('');
+ const colors=histogram?.COLORS||['#497d58','#bb914a','#648693','#8b6f58','#78966c','#9a775f','#8b7796','#6f8e8b'];
+ const rows=stages.map((stage,index)=>{
+  const color=colors[index%colors.length],peak=Math.max(0,...stage.monthly.map(item=>item.weight));
+  const cells=stage.monthly.map(item=>'<span class="stage-intensity-cell" data-month="'+item.month+'" data-weight="'+item.weight+'" data-amount="'+item.amount+'" title="'+esc(stage.name+' · '+intensityText(item))+'" aria-label="'+esc(intensityText(item))+'" style="background:'+color+';opacity:'+(item.weight>0&&peak>0?.18+.82*item.weight/peak:0)+'"></span>').join('');
+  return '<div class="stage-timeline-row" data-stage-id="'+esc(stage.id)+'"><strong>'+esc(stage.name)+'<small class="stage-period-label">M'+stage.start+'–M'+stage.end+' · '+esc(H.labels[stage.curve]||stage.curve)+'</small></strong><div class="stage-timeline-track" data-stage-track data-stage-id="'+esc(stage.id)+'" tabindex="0" role="group"><div class="stage-period" style="left:'+((stage.start-start)/span*100)+'%;width:'+(stage.duration/span*100)+'%;grid-template-columns:repeat('+stage.duration+',minmax(0,1fr));border-color:'+color+'">'+cells+'</div></div><b title="'+esc(exactMoney(stage.nominalTotal))+'">'+money(stage.nominalTotal)+'</b><p class="stage-intensity-readout" data-stage-readout role="status" aria-live="polite"></p></div>';
+ }).join('');
  const table='<div class="table-wrap stage-table"><table><thead><tr><th>Etapa</th><th>Início</th><th>Fim</th><th>Orçamento-base</th><th>Contingência</th><th>Com contingência</th><th>Nominal projetado</th></tr></thead><tbody>'+stages.map(stage=>'<tr><td>'+esc(stage.name)+'</td><td>M'+stage.start+'</td><td>M'+stage.end+'</td><td>'+money(stage.budget)+'</td><td>'+fmt(stage.contingency,1)+'%</td><td>'+money(stage.baseWithContingency)+'</td><td>'+money(stage.nominalTotal)+'</td></tr>').join('')+'</tbody></table></div>';
  const element=document.createElement('div');
  element.className='stage-timeline';
- element.innerHTML='<div class="stage-timeline-axis"><span>M'+start+'</span><span>M'+end+'</span></div>'+rows+'<p>As barras mostram o período de execução. Os valores à direita incluem contingência e inflação conforme o mês do desembolso.</p>'+table;
+ element.innerHTML='<div class="stage-timeline-axis"><span>M'+start+'</span><span>M'+end+'</span></div>'+rows+'<div class="stage-intensity-legend"><span class="stage-intensity-scale" aria-hidden="true"></span><p>Intensidade de execução em cada etapa: claro = menor peso mensal; escuro = maior peso. Meses sem execução ficam sem preenchimento. A escala é relativa ao pico de cada etapa; compare os valores em reais no histograma abaixo.</p></div><p>Passe o cursor, toque em um mês ou use as setas com a barra selecionada para consultar o percentual da etapa e seu desembolso. Os valores incluem contingência e inflação.</p>'+(histogram?histogram.render(data.result):'')+table;
+ bindIntensity(element,stages);histogram?.bind(element,data.result);
  return element;
 }
 function enhanceWorks(data){
@@ -114,7 +149,7 @@ function enhanceWorks(data){
  if(panel.dataset.stageTimelineSignature===sig)return;
  panel.dataset.stageTimelineSignature=sig;
  const head=panel.querySelector('.panel-head');
- if(head){head.querySelector('h2').textContent='Cronograma consolidado por etapas';const sub=head.querySelector('.panel-sub');if(sub)sub.textContent='Cada etapa possui orçamento, início, duração, contingência e curva próprios.';}
+ if(head){head.querySelector('h2').textContent='Cronograma consolidado por etapas';const sub=head.querySelector('.panel-sub');if(sub)sub.textContent='Períodos, intensidade de execução e desembolsos mensais do cronograma aplicado. As prévias só passam a valer depois de aplicar.';}
  Array.from(panel.children).forEach(child=>{if(child!==head)child.remove();});
  panel.appendChild(timeline(data));
  const detail=Array.from(document.querySelectorAll('.panel')).find(item=>item.querySelector('h2')?.textContent.trim()==='Cronograma detalhado');
