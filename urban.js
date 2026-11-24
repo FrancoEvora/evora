@@ -57,7 +57,7 @@ function urbanSlice(o,target,s,prep,kind){
 }
 function urbanDistance(pt,o){if(insideObj(pt,o))return 0;let d=Infinity;for(const ring of [o.pts,...(o.holes||[])])for(let i=0;i<ring.length;i++)d=Math.min(d,dist(pt,nearest(pt,ring[i],ring[(i+1)%ring.length])));return d}
 function urbanReserve(q,s){
- const A=polyArea(q.boundary),prep=prepared(),existing=urbanExistingAreas(q,prep,s.mode==='new'&&q.masterplan?.engine===2),areas={...existing},targets=Object.fromEntries(URBAN_CATEGORIES.map(c=>[c.kind,s.publicProgram?A*(s[c.key]||0)/100:0])),newZones=[];
+ const A=polyArea(q.boundary),prep=prepared(),existing=urbanExistingAreas(q,prep,s.mode==='new'&&q.masterplan?.engine>=2),areas={...existing},targets=Object.fromEntries(URBAN_CATEGORIES.map(c=>[c.kind,s.publicProgram?A*(s[c.key]||0)/100:0])),newZones=[];
  if(!s.publicProgram)return {areas,targets,existing,newZones,shortfall:0,ok:true,excess:0};
  const keepBoxes=q.lots.map(l=>bbox(l.pts)),pool=q.blocks.filter(o=>o.auto&&!keepBoxes.some(b=>urbanBboxOverlap(b,bbox(o.pts)))).map(o=>({...o})),site=blockStats(q.boundary).anchor.v,bb=bbox(q.boundary.pts),scale=Math.max(1,Math.hypot(bb[2]-bb[0],bb[3]-bb[1])),tol=Math.max(.05,A*.000001);
  const focal=()=>[...q.zones,...newZones].filter(z=>z.kind==='plaza'||z.kind==='green'||z.kind==='leisure');
