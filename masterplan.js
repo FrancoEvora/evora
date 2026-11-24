@@ -19,7 +19,7 @@ function mpRoundedRing(r,w,B,zones){
 function mpClipByConvex(subject,clip){let out=subject.slice(),sign=Math.sign(area(clip));for(let i=0;i<clip.length&&out.length;i++){const a=clip[i],b=clip[(i+1)%clip.length],u=sub(b,a),side=v=>cross(u,sub(v,a))*sign;let prev=out.at(-1),sp=side(prev),next=[];for(const v of out){const sv=side(v),pi=sp>=-1e-9,vi=sv>=-1e-9;if(pi!==vi)next.push(lerp(prev,v,sp/(sp-sv)));if(vi)next.push(v);prev=v;sp=sv}out=next}return out}
 function mpIntersectionArea(obj,convex){if(!urbanBboxOverlap(bbox(obj.pts),bbox(convex)))return 0;const origin=convex[0],clip=convex.map(v=>sub(v,origin)),ar=r=>{let x=mpClipByConvex(r.map(v=>sub(v,origin)),clip);return x.length>=3?Math.abs(area(x)):0};return Math.max(0,ar(obj.pts)-(obj.holes||[]).reduce((n,h)=>n+ar(h),0))}
 function mpConvexFits(l,b){const A=polyArea(l);return A>0&&mpIntersectionArea(b,l.pts)>=A-Math.max(.0002,A*1e-8)}
-function mpDisjoint(l,objects){const bb=bbox(l.pts);return !objects.some(o=>urbanBboxOverlap(bb,bbox(o.pts))&&mpIntersectionArea(o,l.pts)>Math.max(.0002,polyArea(l)*1e-8))}
+function mpDisjoint(l,objects){if(l.organicFront||objects.some(o=>o.organicFront))return orgDisjoint(l,objects);const bb=bbox(l.pts);return !objects.some(o=>urbanBboxOverlap(bb,bbox(o.pts))&&mpIntersectionArea(o,l.pts)>Math.max(.0002,polyArea(l)*1e-8))}
 function mpRect(x,y,w,d){return [[x,y],[x+w,y],[x+w,y+d],[x,y+d]]}
 function mpFrame(q,angle){const start=q.boundary.pts[0],rad=angle*Math.PI/180,u=[Math.cos(rad),-Math.sin(rad)],v=perp(u);return {uv:pt=>[dot(sub(pt,start),u),dot(sub(pt,start),v)],xy:pt=>add(start,add(mul(u,pt[0]),mul(v,pt[1])))}}
 function mpCore(q,s,spec,outer,frame,w){
@@ -88,7 +88,7 @@ function mpGraphic(q,z,namespace='sheet'){
  for(const o of q.zones)h+='<path d="'+polyPath(o)+'" fill="'+(zoneTypes[o.kind]||zoneTypes.other)[1]+'" stroke="#688262" stroke-width="'+.6*ln+'" fill-rule="evenodd"/>'+urbanZoneDecor(o,z,namespace);
  for(const r of q.roads)h+='<path d="'+path(roadPts(r))+'" fill="none" stroke="#aeb5aa" stroke-width="'+(r.width+.65*ln)+'" stroke-linecap="round" stroke-linejoin="round"/>';
  for(const r of q.roads)h+='<path d="'+path(roadPts(r))+'" fill="none" stroke="#eceade" stroke-width="'+r.width+'" stroke-linecap="round" stroke-linejoin="round"/>';
- for(const r of q.roads)h+='<path d="'+path(roadPts(r))+'" fill="none" stroke="#949b98" stroke-width="'+urbanRoadPavement(r)+'" stroke-linecap="round" stroke-linejoin="round"/>';
+ for(const r of q.roads)h+='<path d="'+path(roadPts(r))+'" fill="none" stroke="'+(q.masterplan?.style==='active'?'#949b98':r.cls==='Local'?'#9b9e9b':'#7c8885')+'" stroke-width="'+urbanRoadPavement(r)+'" stroke-linecap="round" stroke-linejoin="round"/>';
  for(const r of q.rounds)h+='<circle cx="'+r.c[0]+'" cy="'+r.c[1]+'" r="'+r.r+'" fill="#929b95"/><circle cx="'+r.c[0]+'" cy="'+r.c[1]+'" r="'+(r.r-r.w)+'" fill="#8aa77b"/>';
  h+=mpRoadTrees(q,z);
  const label=(pt,name,size,fill='#365144')=>'<text x="'+pt[0]+'" y="'+pt[1]+'" text-anchor="middle" dominant-baseline="middle" font-family="Arial,sans-serif" font-size="'+size*ln+'" font-weight="650" paint-order="stroke" stroke="#faf9f1" stroke-width="'+2*ln+'" fill="'+fill+'">'+esc(name)+'</text>';
@@ -98,7 +98,7 @@ function mpGraphic(q,z,namespace='sheet'){
 }
 function mpSheet(c){
  const q=c.q,B=q.boundary,bb=bbox(B.pts),dx=bb[2]-bb[0],dy=bb[3]-bb[1],W=1260,H=860,z=Math.min(870/Math.max(dx,1),638/Math.max(dy,1)),x=45+(890-dx*z)/2-bb[0]*z,y=132+(640-dy*z)/2-bb[1]*z;
- const scale=[10,20,50,100,200,500].filter(n=>n*z<=130).at(-1)||5,audit=c.audit||mpAudit(c),style=audit.style==='active'?'Bairro de bordas ativas':audit.style==='garden'?'Bairro-jardim':audit.style==='compact'?'Circuito compacto':'Malha ortogonal';
+ const scale=[10,20,50,100,200,500].filter(n=>n*z<=130).at(-1)||5,audit=c.audit||mpAudit(c),style=audit.style==='organic'?'Bairro-jardim orgânico':audit.style==='active'?'Bairro de bordas ativas':audit.style==='garden'?'Bairro-jardim':audit.style==='compact'?'Circuito compacto':'Malha ortogonal';
  let h='<svg xmlns="http://www.w3.org/2000/svg" width="'+W+'" height="'+H+'" viewBox="0 0 '+W+' '+H+'"><rect width="'+W+'" height="'+H+'" fill="#faf9f3"/><rect x="24" y="24" width="1212" height="812" fill="none" stroke="#cdd4c5"/><g font-family="Arial,sans-serif"><text x="45" y="58" font-size="12" letter-spacing="3" fill="#526b59" font-weight="700">ÉVORA URBANISMO  /  TRAÇADO STUDIO</text><text x="45" y="98" font-size="32" font-weight="700" fill="#253e34">'+esc(String(q.name||'Estudo preliminar').slice(0,56))+'</text><text x="45" y="118" font-size="12" fill="#69776a">'+esc(style)+'  ·  ESTUDO CONCEITUAL  ·  GEOMETRIA LOCAL EM METROS</text><path d="M45 130H1215" stroke="#cdd4c5"/><g transform="translate('+x+' '+y+') scale('+z+')">'+mpGraphic(q,z,'sheet')+'</g>';
  h+='<rect x="956" y="145" width="260" height="632" fill="#f1f3eb" stroke="#dce1d5"/><text x="974" y="174" font-size="11" letter-spacing="2" fill="#667d69" font-weight="700">QUADRO URBANÍSTICO</text>';
  const stats=[['Área da gleba',fmt(c.area,0)+' m²'],['Lotes',String(c.lotCount)],['Área comercializável',fmt(c.yield,1)+'%'],['Área viária estimada',fmt(c.roadPct,1)+'%'],['Lotes adaptativos',String(audit.adaptive)],['Pontas viárias livres',String(audit.ends)]];
@@ -113,7 +113,7 @@ function mpSheet(c){
 
 function mpZoneName(o){return o.masterCore?o.name:o.kind==='green'?'Área verde':o.kind==='institutional'?'Institucional':o.kind==='leisure'?'Lazer':o.kind==='plaza'?'Praça':o.kind==='app'?'APP':o.name}
 function mpCurrent(){
- if(!p.boundary)return null;const A=polyArea(p.boundary),valid=p.lots.filter(l=>!l.blockConflict),lotArea=valid.reduce((n,l)=>n+polyArea(l),0),prep=prepared(),roadArea=optRoadArea(p,prep),areas=urbanExistingAreas(p,prep),c={q:p,area:A,lotCount:valid.length,lotArea,yield:lotArea/A*100,roadArea,roadPct:roadArea/A*100,program:{areas}};c.audit=mpAudit(c);return c;
+ if(!p.boundary)return null;const A=polyArea(p.boundary),valid=p.lots.filter(l=>!l.blockConflict),lotArea=valid.reduce((n,l)=>n+polyArea(l),0),prep=prepared(),roadArea=optRoadArea(p,prep),areas=urbanExistingAreas(p,prep),c={q:p,area:A,lotCount:valid.length,lotArea,yield:lotArea/A*100,roadArea,roadPct:roadArea/A*100,program:{areas}};c.audit={...mpAudit(c),...orgStats(c)};return c;
 }
 function installMasterSheet(){
  $('masterSheetBtn').onclick=()=>{const c=mpCurrent();if(!c)return toast('Defina a gleba antes de gerar a prancha.');$('masterSheetView').innerHTML=mpSheet(c);$('masterSheetDialog').showModal()};
