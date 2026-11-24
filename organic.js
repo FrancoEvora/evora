@@ -197,6 +197,6 @@ function orgStats(c){
 function orgSpecs(q,s){
  if(s.morphology!=='organic'||s.mode==='keep')return mpSpecs(q,s);
  const base=mpSpecs(q,{...s,morphology:'garden'}),first=base.filter(x=>x.w===s.wmin),rest=base.filter(x=>x.w!==s.wmin);
- const list=[];for(const x of [...first,...rest])for(const bend of [.54,.80,1.12])list.push({...x,pattern:'organic',organic:true,bend,compact:x.ratio<1.2});
+ const bends=({soft:[.54],medium:[.80],strong:[1.12]})[s.bendMode]||[.54,.80,1.12];const list=[];for(const x of [...first,...rest])for(const bend of bendslist.push({...x,pattern:'organic',organic:true,bend,compact:x.ratio<1.2});
  return list.slice(0,24);
 }
