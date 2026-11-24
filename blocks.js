@@ -61,7 +61,7 @@ function vectorBlocks(q){
  }
  const outers=rings.filter(r=>r.A>0).sort((a,b)=>a.A-b.A),holes=rings.filter(r=>r.A<0);
  for(const o of outers)o.holes=[];
- for(const hole of holes){const test=hole.pts[0],o=outers.find(o=>inside(test,o.pts));if(o)o.holes.push(hole.pts)}
+ for(const hole of holes){const test=hole.pts[0],o=outers.find(o=>inside(test,o.pts));if(o){o.holes.push(hole.pts);if(q.masterplan?.edgeBand&&hole.road)o.road=true}}
  const out=[];
  for(const o of outers){if(!o.road||o.border&&(!hasBoundary||!q.params.edgeQuadras))continue;const block={pts:o.pts,holes:o.holes,auto:true,vector:BLOCK_ENGINE,edgeBlock:o.border};if(polyArea(block)+1e-6<q.params.minQuadra)continue;if(!simple(block.pts)||block.holes.some(h=>!simple(h)))throw Error('Face complexa ou autointersectante. As quadras anteriores foram preservadas.');out.push(block)}
  return out.sort((a,b)=>{const x=bbox(a.pts),y=bbox(b.pts);return x[1]-y[1]||x[0]-y[0]});
