@@ -18,7 +18,7 @@ function optRoundUp(x){return Math.ceil((x-1e-9)*100)/100}
 function optInputs(){
  const v={mode:$('optMode').value,rows:optNumber($('optRows').value),objective:$('optObjective').value,rotate:$('optRotate').checked,flex:$('optFlex').checked};
  for(const [k,r] of Object.entries(OPT_NUMERIC))v[k]=optNumber($(r.id).value);
- v.roadShare=optNumber($('optRoadShare').value);return v;
+ v.roadShare=optNumber($('optRoadShare').value);return urbanInputs(v);
 }
 function optDiagnostics(s){
  const issues=[],add=(keys,message,fix)=>issues.push({keys,message,fix}),ok=k=>Number.isFinite(s[k])&&s[k]>=OPT_NUMERIC[k].lo&&s[k]<=OPT_NUMERIC[k].hi;
@@ -28,7 +28,7 @@ function optDiagnostics(s){
  }
  if(s.roadShare!==undefined&&(!Number.isFinite(s.roadShare)||s.roadShare<5||s.roadShare>85))add(['roadShare'],'Ocupação viária máxima: informe um percentual de 5 a 85.');
  if(!['new','keep'].includes(s.mode))add(['mode'],'Selecione uma estratégia.');
- if(!['area','lots','balance'].includes(s.objective))add(['objective'],'Selecione uma prioridade.');
+ if(!['area','lots','balance','urban'].includes(s.objective))add(['objective'],'Selecione uma prioridade.');
  if(![1,2].includes(s.rows))add(['rows'],'Selecione uma ou duas fileiras.');
  if(ok('wmin')&&ok('wmax')&&s.wmax<s.wmin-1e-8)add(['wmax'],'Via máxima ('+fmt(s.wmax,2)+' m) não pode ser menor que a mínima ('+fmt(s.wmin,2)+' m).','width');
  if(ok('f')&&ok('d')&&ok('min')){
@@ -43,7 +43,7 @@ function optDiagnostics(s){
   const required=ok('d')&&ok('min')&&s.flex?Math.max(s.f,s.min/s.d):s.f;
   if(s.maxBlock<required-1e-7)add(['maxBlock'],'Comprimento máximo da quadra ('+fmt(s.maxBlock,2)+' m) precisa comportar ao menos uma testada de '+fmt(optRoundUp(required),2)+' m.','block');
  }
- return issues;
+ return issues.concat(urbanDiagnostics(s));
 }
 function optValid(s){return optDiagnostics(s).length===0}
 function optSuggested(s){
@@ -63,6 +63,7 @@ function optRefreshValidation(){
  for(const [k,r] of Object.entries(OPT_NUMERIC))$(r.id).setAttribute('aria-invalid',keys.has(k)?'true':'false');
  $('optRoadShare').setAttribute('aria-invalid',keys.has('roadShare')?'true':'false');
  $('optRoadWarning').textContent=s.wmax>24?'Atenção: vias acima de 24 m são uma escolha excepcional nesta malha. Confira a hierarquia viária e os custos.':s.wmax>s.d?'Confira a proporção entre faixa viária e profundidade do lote.':'';
+ urbanRefreshForm(s,keys);
  const info=$('optAreaInfo');
  if(Number.isFinite(s.f)&&Number.isFinite(s.d)&&s.f>0&&s.d>0){
   const nominal=s.f*s.d,extra=s.flex?nominal*1.2:nominal;
@@ -122,7 +123,9 @@ function optGenerateRoads(q,s,spec){
  const ys=internal?optInteriorPositions(b[1],b[3],w,s.rows*s.d,s.rows*minDepth,true):optPositions(b[1],b[3],w,s.rows*s.d,s.rows*minDepth,spec.phase,true);
  if(!xs.length||!ys.length)return [];
  let roads=[],seq=q.roads.length;
- function line(axis,value){
+ const collectorIndex=s.hierarchy?Math.floor(ys.length/2):-1;
+ function line(axis,value,collector=false){
+  const width=collector?Math.min(s.wmax,w+2):w,half=width/2;
   const r=axis===1?rings:rings.map(a=>a.map(v=>[v[1],v[0]])),bounds=bbox(r[0]);
   // Whole-width cross sections, not just the centerline, must fit in the domain.
   const y0=value-half,y1=value+half;if(y0<bounds[1]-1e-5||y1>bounds[3]+1e-5)return;
@@ -133,11 +136,11 @@ function optGenerateRoads(q,s,spec){
   for(const [lo,hi] of intervals){
    if(hi-lo<Math.max(w,s.f))continue;
    const a=xy(axis===1?[lo,value]:[value,lo]),b=xy(axis===1?[hi,value]:[value,hi]);
-   if(q.roads.some(r=>optDuplicate(a,b,r,w)))continue;
-   roads.push({id:uid(),name:'Via proposta '+String(++seq).padStart(2,'0'),pts:[a,b],width:w,cls:'Local',smooth:false,optimized:true});
+   if(q.roads.some(r=>optDuplicate(a,b,r,width)))continue;
+   roads.push({id:uid(),name:(collector?'Via coletora ':'Via local ')+String(++seq).padStart(2,'0'),pts:[a,b],width,cls:collector?'Coletora':'Local',smooth:false,optimized:true});
   }
  }
- for(const y of ys)line(1,y);for(const x of xs)line(0,x);
+ for(let i=0;i<ys.length;i++)line(1,ys[i],i===collectorIndex);for(const x of xs)line(0,x);
  if(roads.length>160)throw Error('Mais de 160 trechos; divida a gleba em setores.');
  return roads;
 }
@@ -152,13 +155,15 @@ function optNetwork(q){
 function optRoadArea(q,prep){const B=q.boundary,A=polyArea(B),b=bbox(B.pts),dx=b[2]-b[0],dy=b[3]-b[1],step=Math.max(.5,Math.sqrt(dx*dy/9000),dx/180,dy/180);let n=0,r=0;for(let y=b[1]+step/2;y<b[3];y+=step)for(let x=b[0]+step/2;x<b[2];x+=step){const v=[x,y];if(insideObj(v,B)){n++;if(onRoad(v,prep))r++}}return n?A*r/n:0}
 function optEvaluate(source,s,spec){
  const q=cp({...source,image:null});q.image=source.image;
- if(s.mode==='new'){q.roads=[];q.rounds=[];q.blocks=[];q.lots=[]}
+ if(s.mode==='new'){q.roads=[];q.rounds=[];q.blocks=[];q.lots=[];if(s.publicProgram)q.zones=q.zones.filter(z=>!z.urbanGenerated)}
  // In keep mode, keep previous automatic blocks for stable IDs during reconciliation.
  q.params={...q.params,autoQuadras:true,edgeQuadras:true,minQuadra:Math.max(1,Math.min(q.params.minQuadra||100,s.min*.5))};
  const generated=spec.baseline?[]:optGenerateRoads(q,s,spec);if(!spec.baseline&&!generated.length)return null;
  q.roads.push(...generated);
  const original=p;try{
   p=q;if(!syncBlocks(q)||!q.blocks.length)return null;
+  const program=urbanReserve(q,s);program.enabled=!!s.publicProgram;
+  if(program.newZones.length&&(!syncBlocks(q)||!q.blocks.length))return null;
   const opts={f:s.f,d:s.d,min:s.min,rows:s.rows,direction:'auto',angle:0,inset:0,road:true,tolerance:Math.max(1,Math.min(3,q.params.parcelRoadTolerance||3)),fit:!!s.flex,flexDepth:!!s.flex,replace:false,quick:true};
   const oldCount=q.lots.length,plan=computeParcel(q.blocks.map(b=>b.id),opts);if(plan.truncated)return null;
   // Reject numerical inconsistencies before proposing lots, not after applying.
@@ -168,31 +173,34 @@ function optEvaluate(source,s,spec){
   if(s.mode==='keep')for(const l of q.lots.slice(0,oldCount)){const b=q.blocks.find(b=>b.id===l.blockId&&qLotFits(l,b))||q.blocks.find(b=>qLotFits(l,b));if(b){l.blockId=b.id;delete l.blockConflict;delete l.previousBlockId}else{l.previousBlockId=l.blockId||l.previousBlockId;delete l.blockId;l.blockConflict=true}}
   Object.assign(q.params,{lotFront:s.f,lotDepth:s.d,lotRows:s.rows,parcelMinArea:s.min,parcelFlexDepth:!!s.flex,parcelFit:!!s.flex});
   const A=polyArea(q.boundary),validLots=q.lots.filter(l=>!l.blockConflict),lotArea=validLots.reduce((n,l)=>n+polyArea(l),0),roadLen=q.roads.reduce((n,r)=>n+length(roadPts(r)),0),roadArea=optRoadArea(q,prepared()),components=optNetwork(q),conflicts=q.lots.length-validLots.length;
-  return {spec,q,lotCount:validLots.length,newLots:accepted.length,blockCount:q.blocks.length,lotArea,roadLen,roadArea,yield:lotArea/A*100,roadPct:roadArea/A*100,components,conflicts,area:A,rows2:q.blocks.filter(b=>accepted.some(l=>l.blockId===b.id&&l.parcelRow===1)&&accepted.some(l=>l.blockId===b.id&&l.parcelRow===2)).length};
+  if(s.publicProgram)q.urbanProgram={publicProgram:true,hierarchy:!!s.hierarchy,...Object.fromEntries(URBAN_CATEGORIES.map(c=>[c.key,s[c.key]]))};else if(s.publicProgram===false)q.urbanProgram={publicProgram:false,hierarchy:!!s.hierarchy,...Object.fromEntries(URBAN_CATEGORIES.map(c=>[c.key,s[c.key]]))};
+  const access=urbanAccessibility(q,validLots);
+  return {spec,q,program,coverage:access.coverage,meanAccess:access.mean,lotCount:validLots.length,newLots:accepted.length,blockCount:q.blocks.length,lotArea,roadLen,roadArea,yield:lotArea/A*100,roadPct:roadArea/A*100,components,conflicts,area:A,rows2:q.blocks.filter(b=>accepted.some(l=>l.blockId===b.id&&l.parcelRow===1)&&accepted.some(l=>l.blockId===b.id&&l.parcelRow===2)).length};
  }finally{p=original}
 }
-function optRank(a,s){const score=o=>s.objective==='lots'?o.lotCount:s.objective==='balance'?o.lotArea-.85*o.roadArea:o.lotArea,rank=o=>[o.conflicts,o.components>1?1:0,-score(o),-o.lotArea,o.components,o.roadLen];return a.slice().sort((x,y)=>{let a=rank(x),b=rank(y);for(let i=0;i<a.length;i++)if(Math.abs(a[i]-b[i])>1e-7)return a[i]-b[i];return 0})}
-function optDistinct(a){const keys=new Set();return a.filter(o=>{let key=[Math.round(o.lotArea*100),o.lotCount,o.blockCount,Math.round(o.roadLen*10),Math.round(o.roadArea*10),o.components].join('|');if(keys.has(key))return false;keys.add(key);return true})}
+function optRank(a,s){const score=o=>s.objective==='lots'?o.lotCount:s.objective==='urban'?o.lotArea-.85*o.roadArea-.35*(o.program?.excess||0)+o.area*.14*(o.coverage||0)/100:s.objective==='balance'?o.lotArea-.85*o.roadArea:o.lotArea,rank=o=>[o.program?.ok===false?1:0,o.conflicts,o.components>1?1:0,-score(o),-o.lotArea,o.components,o.roadLen];return a.slice().sort((x,y)=>{let a=rank(x),b=rank(y);for(let i=0;i<a.length;i++)if(Math.abs(a[i]-b[i])>1e-7)return a[i]-b[i];return 0})}
+function optDistinct(a){const keys=new Set();return a.filter(o=>{let key=[Math.round(o.lotArea*100),o.lotCount,o.blockCount,Math.round(o.roadLen*10),Math.round(o.roadArea*10),Math.round(o.coverage||0),o.components].join('|');if(keys.has(key))return false;keys.add(key);return true})}
 function optRenderPreview(c){
  const svg=$('optPreview');if(!c){svg.setAttribute('viewBox','0 0 500 280');svg.innerHTML='<text x="250" y="140" text-anchor="middle" fill="#6f8580" font-size="14">Gere alternativas para visualizar a implantação.</text>';return}
  const q=c.q,b=bbox(q.boundary.pts),dx=b[2]-b[0],dy=b[3]-b[1],pad=Math.max(dx,dy)*.045+2,z=520/Math.max(dx+2*pad,dy+2*pad),line=1/z;
  svg.setAttribute('viewBox',[b[0]-pad,b[1]-pad,dx+2*pad,dy+2*pad].join(' '));
- let h='<defs><clipPath id="optBoundaryClip"><path d="'+polyPath(q.boundary)+'" fill-rule="evenodd" clip-rule="evenodd"/></clipPath></defs><path d="'+polyPath(q.boundary)+'" fill="#dae5cf" fill-rule="evenodd" stroke="#55785b" stroke-width="'+line+'"/><g clip-path="url(#optBoundaryClip)">';
- for(const o of q.blocks)h+='<path d="'+polyPath(o)+'" fill="#c2d6ac" fill-rule="evenodd" stroke="#829a69" stroke-width="'+.5*line+'"/>';
- for(const o of q.zones)h+='<path d="'+polyPath(o)+'" fill="'+(zoneTypes[o.kind]||zoneTypes.other)[1]+'" fill-rule="evenodd" stroke="#567964" stroke-width="'+line+'"/>';
- for(const l of q.lots)h+='<path d="'+polyPath(l)+'" fill="'+(l.blockConflict?'#df927e':l.parcelRow===2?'#d5c28b':'#ead5a2')+'" stroke="#92794b" stroke-width="'+.42*line+'"/>';
- for(const r of q.roads)h+='<path d="'+path(roadPts(r))+'" fill="none" stroke="#f7f9f3" stroke-width="'+(r.width+line)+'" stroke-linecap="round" stroke-linejoin="round"/>';
- for(const r of q.roads)h+='<path d="'+path(roadPts(r))+'" fill="none" stroke="#8f9ca0" stroke-width="'+r.width+'" stroke-linecap="round" stroke-linejoin="round"/>';
+ let h='<defs><clipPath id="optBoundaryClip"><path d="'+polyPath(q.boundary)+'" fill-rule="evenodd" clip-rule="evenodd"/></clipPath></defs><path d="'+polyPath(q.boundary)+'" fill="#e2e8d9" fill-rule="evenodd" stroke="#55785b" stroke-width="'+line+'"/><g clip-path="url(#optBoundaryClip)">';
+ for(const o of q.blocks)h+='<path d="'+polyPath(o)+'" fill="#d5dfc6" fill-rule="evenodd" stroke="#829a69" stroke-width="'+.5*line+'"/>';
+ for(const o of q.zones)h+='<path d="'+polyPath(o)+'" fill="'+(zoneTypes[o.kind]||zoneTypes.other)[1]+'" fill-rule="evenodd" stroke="#718a6e" stroke-width="'+.8*line+'"/>'+urbanZoneDecor(o,z,'preview');
+ for(const l of q.lots)h+='<path d="'+polyPath(l)+'" fill="'+(l.blockConflict?'#df927e':l.parcelRow===2?'#e0cda8':'#ead9ba')+'" stroke="#92794b" stroke-width="'+.42*line+'"/>';
+ for(const r of q.roads)h+='<path d="'+path(roadPts(r))+'" fill="none" stroke="#aab3a9" stroke-width="'+(r.width+.7*line)+'" stroke-linecap="round" stroke-linejoin="round"/>';
+ for(const r of q.roads)h+='<path d="'+path(roadPts(r))+'" fill="none" stroke="#dedfd3" stroke-width="'+r.width+'" stroke-linecap="round" stroke-linejoin="round"/>';
+ for(const r of q.roads)h+='<path d="'+path(roadPts(r))+'" fill="none" stroke="'+(r.cls==='Local'?'#999fa0':'#7e8b8e')+'" stroke-width="'+urbanRoadPavement(r)+'" stroke-linecap="'+(r.optimized?'butt':'round')+'" stroke-linejoin="round"/>';
  for(const r of q.rounds)h+='<circle cx="'+r.c[0]+'" cy="'+r.c[1]+'" r="'+r.r+'" fill="#8f9ca0"/><circle cx="'+r.c[0]+'" cy="'+r.c[1]+'" r="'+(r.r-r.w)+'" fill="#91ae79"/>';
  for(const o of q.blocks){const pt=blockStats(o).anchor;if(pt.clearance*z>14)h+='<text x="'+pt.v[0]+'" y="'+pt.v[1]+'" fill="#26473a" stroke="#f8faf5" paint-order="stroke" stroke-width="'+2*line+'" font-size="'+9*line+'" text-anchor="middle">'+esc(o.name)+'</text>'}
- svg.innerHTML=h+'</g>';
+ for(const o of q.zones){const pt=blockStats(o).anchor;if(pt.clearance*z>15)h+='<text x="'+pt.v[0]+'" y="'+pt.v[1]+'" fill="#254b36" stroke="#edf2e4" paint-order="stroke" stroke-width="'+1.8*line+'" font-size="'+8.5*line+'" text-anchor="middle">'+esc(o.name)+'</text>'}svg.innerHTML=h+'</g>';
 }
 function optMetric(label,value){return '<div class="opt-metric"><span>'+esc(label)+'</span><b>'+esc(value)+'</b></div>'}
 function optRender(){
  $('optCount').textContent=optCandidates.length?optCandidates.length+' alternativas exibidas':'';
  $('optAlternatives').innerHTML=optCandidates.map((c,i)=>'<button class="opt-choice '+(i===optSelected?'on':'')+'" data-opt-index="'+i+'"><span class="opt-tag">'+(i===0?'Melhor encontrada':'Alternativa '+(i+1))+'</span><strong>'+fmt(c.lotCount)+' lotes · '+fmt(c.yield,1)+'%</strong><span>'+(c.spec.baseline?'Traçado atual':fmt(c.spec.angle,0)+'° · via '+fmt(c.spec.w,1)+' m · '+(c.spec.pattern==='internal'?'malha interna':'perimetral'))+'<br>'+c.blockCount+' quadras · '+fmt(c.roadLen,0)+' m de vias · '+fmt(c.roadPct,1)+'% viário'+(c.components>1?' · '+c.components+' redes':'')+'</span></button>').join('');
- const c=optCandidates[optSelected];optRenderPreview(c);
- $('optMetrics').innerHTML=c?[optMetric('Área em lotes',fmt(c.lotArea,0)+' m²'),optMetric('Aproveitamento',fmt(c.yield,1)+'%'),optMetric('Quadras / lotes',c.blockCount+' / '+c.lotCount),optMetric('Área viária estimada',fmt(c.roadPct,1)+'%'),optMetric('Extensão viária',fmt(c.roadLen,0)+' m'),optMetric('Quadras com duas fileiras novas',String(c.rows2)),optMetric('Redes internas',String(c.components)),optMetric('Lotes preservados em conflito',String(c.conflicts)),optMetric('Novos lotes',String(c.newLots))].join(''):'';
+ const c=optCandidates[optSelected];optRenderPreview(c);urbanReport(c);
+ $('optMetrics').innerHTML=c?[optMetric('Área em lotes',fmt(c.lotArea,0)+' m²'),optMetric('Aproveitamento',fmt(c.yield,1)+'%'),optMetric('Quadras / lotes',c.blockCount+' / '+c.lotCount),optMetric('Área viária estimada',fmt(c.roadPct,1)+'%'),optMetric('Extensão viária',fmt(c.roadLen,0)+' m'),optMetric('Quadras com duas fileiras novas',String(c.rows2)),optMetric('Redes internas',String(c.components)),optMetric('Lotes preservados em conflito',String(c.conflicts)),optMetric('Novos lotes',String(c.newLots)),optMetric('Espaços públicos',fmt(Object.values(c.program?.areas||{}).reduce((a,b)=>a+b,0)/c.area*100,1)+'%')].join(''):'';
  $('optApply').disabled=!c||optRunning;$('optExport').disabled=!c||optRunning;
  $('optApplyNote').textContent=c&&c.components>1?'Atenção: faixas viárias desconectadas. Revise as conexões. Original será arquivado.':'Seu projeto original ficará arquivado em Projetos ao aplicar.';
 }
@@ -207,7 +215,7 @@ function openOptimizer(){
  $('optMin').value=Number.isFinite(optNumber(savedMin))&&optNumber(savedMin)>0?savedMin:nominal;
  $('optLinkArea').checked=Math.abs(optNumber($('optMin').value)-nominal)<1e-6;
  // Local-road study defaults must not inherit the editor's arbitrary selected width.
- $('optRoadMin').value='12';$('optRoadMax').value='16';$('optRoadShare').value='35';$('optBlockLen').value=Math.max(120,optRoundUp(optNumber($('optFront').value)||12));$('optRows').value=String(p.params.lotRows||2);$('optObjective').value='balance';$('optRotate').checked=true;$('optFlex').checked=true;
+ $('optRoadMin').value='12';$('optRoadMax').value='16';$('optRoadShare').value='35';$('optBlockLen').value=Math.max(120,optRoundUp(optNumber($('optFront').value)||12));$('optRows').value=String(p.params.lotRows||2);$('optObjective').value='urban';$('optRotate').checked=true;$('optFlex').checked=true;urbanInitForm();
  $('optModeNote').textContent='Preserva gleba e áreas especiais. O original permanece intacto durante a busca.';
  const initial=optSuggested(optInputs());
  if(initial.changes.length){for(const [k,r] of Object.entries(OPT_NUMERIC))if(Number.isFinite(initial.values[k]))$(r.id).value=String(initial.values[k]);$('optLinkArea').checked=false;}
@@ -218,12 +226,12 @@ function optRun(){
  if(optRunning)return;const s=optInputs(),issues=optRefreshValidation();if(issues.length){optStatus(issues[0].message,true);return}if(!p.boundary){optStatus('A gleba não está definida.',true);return}if(s.wmax>30&&!confirm('A malha inclui vias de mais de 30 m. Confirma esse parâmetro excepcional para o estudo?'))return;
  const source=cp(p);let specs=optSpecs(source,s);if(s.mode==='keep')specs=[{baseline:true,angle:0,w:s.wmin,maxBlock:s.maxBlock,phase:0},...specs];
  optReset();optSource=snapshot();const token=++optToken;optRunning=true;$('optRun').disabled=true;$('optCancel').disabled=false;optStatus('Analisando '+specs.length+' configurações…');
- let idx=0,found=[],errors=0,overShare=0;
+ let idx=0,found=[],errors=0,overShare=0,overProgram=0,bestDeficit=Infinity;
  function step(){
   if(token!==optToken)return;
-  if(idx>=specs.length){optRunning=false;$('optRun').disabled=false;$('optCancel').disabled=true;optCandidates=optDistinct(optRank(found,s)).slice(0,6);optSelected=optCandidates.length?0:-1;optRender();optStatus(optCandidates.length?'Busca concluída: '+specs.length+' configurações avaliadas, '+found.length+' com lotes válidos'+(errors?' · '+errors+' não processadas':'')+(overShare?' · '+overShare+' acima do limite viário':'')+'. A primeira é a melhor encontrada.':(overShare?'Nenhuma alternativa dentro do limite viário de '+fmt(s.roadShare,1)+'%. '+overShare+' configurações excederam esse limite. Reduza a largura das vias ou revise o limite.':'Nenhuma alternativa com lotes válidos. Ajuste dimensões e restrições'+(errors?' ('+errors+' configurações não processadas)':'')+'.'),!optCandidates.length);return}
-  try{const c=optEvaluate(source,s,specs[idx]);if(c&&c.lotCount){if(c.roadPct>s.roadShare+.001)overShare++;else found.push(c)}}catch(e){errors++}
-  idx++;optStatus('Analisando '+idx+' / '+specs.length+' · '+found.length+' válidas'+(overShare?' · '+overShare+' acima do limite viário':'')+'.');
+  if(idx>=specs.length){optRunning=false;$('optRun').disabled=false;$('optCancel').disabled=true;optCandidates=optDistinct(optRank(found,s)).slice(0,6);optSelected=optCandidates.length?0:-1;optRender();optStatus(optCandidates.length?'Busca concluída: '+specs.length+' configurações avaliadas, '+found.length+' com lotes válidos'+(errors?' · '+errors+' não processadas':'')+(overShare?' · '+overShare+' acima do limite viário':'')+(overProgram?' · '+overProgram+' abaixo das reservas públicas':'')+'. A primeira é a melhor encontrada.':(overProgram?'Nenhuma alternativa atendeu simultaneamente às reservas públicas e demais condições. Menor déficit entre as propostas incompletas: '+fmt(bestDeficit,0)+' m². Revise o programa, o traçado ou as dimensões dos lotes.':overShare?'Nenhuma alternativa dentro do limite viário de '+fmt(s.roadShare,1)+'%. '+overShare+' configurações excederam esse limite. Reduza a largura das vias ou revise o limite.':'Nenhuma alternativa com lotes válidos. Ajuste dimensões e restrições'+(errors?' ('+errors+' configurações não processadas)':'')+'.'),!optCandidates.length);return}
+  try{const c=optEvaluate(source,s,specs[idx]);if(c&&c.lotCount){if(c.program&&!c.program.ok){overProgram++;bestDeficit=Math.min(bestDeficit,c.program.shortfall)}else if(c.roadPct>s.roadShare+.001)overShare++;else found.push(c)}}catch(e){errors++}
+  idx++;optStatus('Analisando '+idx+' / '+specs.length+' · '+found.length+' válidas'+(overShare?' · '+overShare+' acima do limite viário':'')+(overProgram?' · '+overProgram+' abaixo das reservas':'')+'.');
   if(idx%3===0||idx===specs.length){optCandidates=optDistinct(optRank(found,s)).slice(0,6);optSelected=optCandidates.length?0:-1;optRender()}
   setTimeout(step,0);
  }
@@ -240,8 +248,8 @@ function installOptimizer(){
  $('optimizePlan').onclick=openOptimizer;$('optClose').onclick=closeOptimizer;$('optimizerDialog').addEventListener('cancel',e=>{e.preventDefault();closeOptimizer()});
  const refresh=()=>{optReset();const issues=optRefreshValidation();optStatus(issues.length?'Confira os campos destacados.':'Parâmetros válidos. Gere novas alternativas.',!!issues.length)};
  $('optPreset').onchange=()=>{let s=parcelPresets()[Number($('optPreset').value)];if(s&&$('optPreset').value!=='custom'){$('optFront').value=s.f;$('optDepth').value=s.d;$('optMin').value=s.min;$('optRows').value=String(s.rows);$('optLinkArea').checked=Math.abs(s.min-s.f*s.d)<1e-6}refresh()};
- for(const id of [...Object.values(OPT_NUMERIC).map(r=>r.id),'optRoadShare'])$(id).oninput=()=>{if(['optFront','optDepth','optMin'].includes(id)){$('optPreset').value='custom';if(id==='optMin')$('optLinkArea').checked=false;else optSyncLinkedArea()}refresh()};
- for(const id of ['optMode','optRows','optObjective','optRotate','optFlex'])$(id).onchange=()=>{if(id==='optRows')$('optPreset').value='custom';$('optModeNote').textContent=$('optMode').value==='keep'?'Mantém vias, rotatórias, lotes e quadras manuais. Novas vias evitam interferências.':'Preserva gleba e áreas especiais; o desenho atual ficará arquivado ao aplicar.';refresh()};
+ for(const id of [...Object.values(OPT_NUMERIC).map(r=>r.id),'optRoadShare',...URBAN_CATEGORIES.map(c=>c.id)])$(id).oninput=()=>{if(['optFront','optDepth','optMin'].includes(id)){$('optPreset').value='custom';if(id==='optMin')$('optLinkArea').checked=false;else optSyncLinkedArea()}refresh()};
+ for(const id of ['optMode','optRows','optObjective','optRotate','optFlex','optPublic','optHierarchy'])$(id).onchange=()=>{if(id==='optRows')$('optPreset').value='custom';$('optModeNote').textContent=$('optMode').value==='keep'?'Mantém vias, rotatórias, lotes e quadras manuais. Novas vias evitam interferências.':'Preserva gleba e áreas especiais; o desenho atual ficará arquivado ao aplicar.';refresh()};
  $('optLinkArea').onchange=()=>{if($('optLinkArea').checked){optSyncLinkedArea();$('optPreset').value='custom'}refresh()};
  $('optFix').onclick=optFixForm;$('optLocalProfile').onclick=()=>{$('optRoadMin').value='12';$('optRoadMax').value='16';$('optRoadShare').value='35';refresh()};
  $('optRun').onclick=optRun;$('optCancel').onclick=()=>{optToken++;optRunning=false;$('optRun').disabled=false;$('optCancel').disabled=true;optRender();optStatus('Busca interrompida. Compare as alternativas já avaliadas.')};

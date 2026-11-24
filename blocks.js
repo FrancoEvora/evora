@@ -104,7 +104,7 @@ function onBlockCommit(before){normalizeBlocks(p);let prior;try{prior=JSON.parse
  else if(changed&&!p.params.autoQuadras)p.derivedDirty=true;
 }
 function generateBlocksNow(){let before=snapshot();let ok=syncBlocks();if(before!==snapshot())commit(before);else renderAll();toast(ok?p.blocks.filter(b=>b.auto).length+' quadra(s) automáticas atualizadas.':p.blockError);}
-function blockLabels(o){if(!p.params.quadraLabels)return '';const s=blockStats(o),z=view.z,c=s.anchor.v,px=s.anchor.clearance*z;if(px<7)return '';const detailed=p.params.quadraDims&&px>=30;
+function blockLabels(o){if(!p.params.quadraLabels)return '';const s=blockStats(o),z=view.z,c=s.anchor.v,px=s.anchor.clearance*z;if(px<9)return '';const lots=visibility.lot?p.lots.filter(l=>l.blockId===o.id):[];if(lots.some(l=>urbanLotLabelVisible(l,z)))return '';const detailed=p.params.quadraDims&&px>=36&&!lots.length;
  const name=(o.name||'Quadra'),f=detailed?12:11;
  let h='<text class="quadra-name" x="'+c[0]+'" y="'+(c[1]-(detailed?14/z:0))+'" font-size="'+f/z+'" stroke-width="'+3/z+'">'+esc(name)+'</text>';
  if(detailed){h+='<text class="quadra-sub" x="'+c[0]+'" y="'+c[1]+'" font-size="'+10/z+'" stroke-width="'+2.5/z+'">'+fmt(s.area,1)+' m²</text><text class="quadra-sub" x="'+c[0]+'" y="'+(c[1]+13/z)+'" font-size="'+9.5/z+'" stroke-width="'+2.5/z+'">'+fmt(s.width,1)+' × '+fmt(s.depth,1)+' m</text>'}return h;}

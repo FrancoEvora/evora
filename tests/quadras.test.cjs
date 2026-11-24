@@ -13,6 +13,6 @@ const doc={getElementById:get,querySelectorAll:s=>s==="[data-base]"?bases:[],que
 return new Function("document","window","localStorage","ResizeObserver","setTimeout","clearTimeout","confirm","location",combined+"\n"+TEST_BODY)(doc,win,ls,class{observe(){}},()=>0,()=>{},()=>true,{protocol:"https:"});
 }
 
-const result=runQuadraTests(read('index.html'),['parcel.js','precision.js','blocks.js','optimizer.js','studio.js'].map(read).join('\n'));
+const result=runQuadraTests(read('index.html'),['parcel.js','precision.js','blocks.js','urban.js','optimizer.js','studio.js'].map(read).join('\n'));
 console.log(JSON.stringify(result,null,2));
 if(Object.values(result.t).some(v=>!v))process.exitCode=1;
