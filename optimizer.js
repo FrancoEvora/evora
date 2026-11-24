@@ -166,7 +166,7 @@ function optEvaluate(source,s,spec){
   const program=urbanReserve(q,s);program.enabled=!!s.publicProgram;
   if(program.newZones.length&&(!syncBlocks(q)||!q.blocks.length))return null;
   const opts={f:s.f,d:s.d,min:s.min,rows:s.rows,direction:'auto',angle:0,inset:0,road:true,tolerance:Math.max(1,Math.min(3,q.params.parcelRoadTolerance||3)),fit:!!s.flex,flexDepth:!!s.flex,replace:false,quick:true,adaptive:!!s.adaptive&&s.flex,edgeActive:spec.pattern==='active'};
-  const oldCount=q.lots.length,plan=computeParcel(q.blocks.filter(b=>spec.pattern!=='active'||!b.edgeBlock||!b.holes?.length).map(b=>b.id),opts);if(plan.truncated)return null;
+  const oldCount=q.lots.length,plan=computeParcel(q.blocks.filter(b=>spec.pattern!=='active'||!b.edgeBlock).map(b=>b.id),opts);if(plan.truncated)return null;
   // Reject numerical inconsistencies before proposing lots, not after applying.
   const accepted=plan.lots.filter(l=>{const b=q.blocks.find(b=>b.id===l.blockId);return b&&qLotFits(l,b)});
   q.lots.push(...accepted);if(!q.lots.length)return null;

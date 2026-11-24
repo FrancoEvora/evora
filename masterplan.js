@@ -125,7 +125,7 @@ function installMasterSheet(){
    Each peripheral lot occupies a verified convex sector between the curb and the cadastral edge. */
 function mpEdgeLots(q,s,prep){
  const info=q.masterplan?.edgeBand;if(!info)return [];
- const B=info.outer,C=info.curb,out=[],blocks=q.blocks.filter(b=>b.edgeBlock&&b.holes?.length);
+ const B=info.outer,C=info.curb,out=[],blocks=q.blocks.filter(b=>b.edgeBlock);
  for(let i=0;i<B.length;i++){
   const j=(i+1)%B.length,a=C[i],b=C[j],A=B[i],Z=B[j],len=dist(a,b),sector=[a,b,Z,A];
   if(len<s.f-1e-6||!simple(sector)||!urbanConvex(sector))continue;
