@@ -7,14 +7,13 @@ function huHash(x){let n=2166136261;for(const c of String(x)){n^=c.charCodeAt(0)
 const huN=x=>Number(x.toFixed(3));
 function huPt(v){return v.map(huN).join(' ')}
 function huClip(id,o){return '<clipPath id="'+id+'"><path d="'+polyPath(o)+'" fill-rule="evenodd" clip-rule="evenodd"/></clipPath>'}
-function huTree(pt,r,key,ns){
- const [x,y]=pt,a=huHash(key),b=huHash(key+'b'),c=huHash(key+'c'),palette=['#567c51','#6d935c','#83a46a','#4c7554','#91aa69'],color=palette[Math.floor(a*palette.length)%palette.length];
- const g='<g transform="translate('+huPt([x,y])+')" pointer-events="none">';
- let h='<ellipse cx="'+huN(r*.27)+'" cy="'+huN(r*.36)+'" rx="'+huN(r*1.08)+'" ry="'+huN(r*.89)+'" fill="#263e30" opacity=".20"/><circle r="'+huN(r*.93)+'" fill="'+color+'" stroke="#476b45" stroke-width=".20"/>';
- for(let k=0;k<5;k++){let ang=(k/5+b*.15)*Math.PI*2,rr=r*(.54+.11*huHash(key+'c'+k)),cx=Math.cos(ang)*r*.39,cy=Math.sin(ang)*r*.38;h+='<circle cx="'+huN(cx)+'" cy="'+huN(cy)+'" r="'+huN(rr)+'" fill="'+color+'" opacity=".86" stroke="#436849" stroke-opacity=".22" stroke-width=".12"/>'}
- h+='<ellipse cx="'+huN(-r*.20)+'" cy="'+huN(-r*.25)+'" rx="'+huN(r*.65)+'" ry="'+huN(r*.51)+'" fill="#c4d5a2" opacity="'+(.21+c*.15).toFixed(2)+'"/><circle cx="'+huN(-r*.10)+'" cy="'+huN(-r*.08)+'" r="'+huN(r*.14)+'" fill="#416941" opacity=".30"/>';
- return g+h+'</g>';
+
+function huTreeDefs(ns){
+ const colors=['#567c51','#6d935c','#83a46a','#4c7554','#91aa69'];let h='';
+ for(let i=0;i<colors.length;i++){const c=colors[i];h+='<g id="ht-'+ns+'-'+i+'"><ellipse cx=".27" cy=".36" rx="1.08" ry=".89" fill="#263e30" opacity=".20"/><circle r=".93" fill="'+c+'" stroke="#476b45" stroke-width=".06"/>';for(let k=0;k<5;k++){const a=(k/5+i*.043)*Math.PI*2,rr=.54+.11*huHash(i+'c'+k);h+='<circle cx="'+huN(Math.cos(a)*.39)+'" cy="'+huN(Math.sin(a)*.38)+'" r="'+huN(rr)+'" fill="'+c+'" opacity=".86" stroke="#436849" stroke-opacity=".22" stroke-width=".035"/>'}h+='<ellipse cx="-.20" cy="-.25" rx=".65" ry=".51" fill="#c4d5a2" opacity=".29"/><circle cx="-.10" cy="-.08" r=".14" fill="#416941" opacity=".30"/></g>'}
+ return h;
 }
+function huTree(pt,r,key,ns){const type=Math.min(4,Math.floor(huHash(key)*5)),angle=huHash(key+'rot')*360;return '<use href="#ht-'+ns+'-'+type+'" transform="translate('+huPt(pt)+') rotate('+huN(angle)+') scale('+huN(r)+')" pointer-events="none"/>'}
 function huClear(pt,o){let d=Infinity;for(const r of [o.pts,...(o.holes||[])])for(let i=0;i<r.length;i++)d=Math.min(d,dist(pt,nearest(pt,r[i],r[(i+1)%r.length])));return d}
 function huZoneArt(o,scale,ns){
  if(!['green','plaza','leisure','institutional','app'].includes(o.kind))return '';
@@ -72,7 +71,7 @@ function huRoadArt(q,z,ns){
 }
 function huGraphic(q,z,ns='human',labels=true){
  if(!q.boundary)return '';const B=q.boundary,l=1/z,id='human-'+ns;
- let h='<defs>'+huClip(id,B)+'<pattern id="grass-'+ns+'" width="9" height="9" patternUnits="userSpaceOnUse"><path d="M1 7l1 -1 M5 3l1 -1 M8 8l.7 -1" stroke="#6f8b63" stroke-opacity=".15" stroke-width=".25"/></pattern><pattern id="lot-'+ns+'" width="11" height="11" patternUnits="userSpaceOnUse"><circle cx="3" cy="4" r=".23" fill="#ae9b79" opacity=".22"/></pattern></defs>';
+ let h='<defs>'+huClip(id,B)+huTreeDefs(ns)+'<pattern id="grass-'+ns+'" width="9" height="9" patternUnits="userSpaceOnUse"><path d="M1 7l1 -1 M5 3l1 -1 M8 8l.7 -1" stroke="#6f8b63" stroke-opacity=".15" stroke-width=".25"/></pattern><pattern id="lot-'+ns+'" width="11" height="11" patternUnits="userSpaceOnUse"><circle cx="3" cy="4" r=".23" fill="#ae9b79" opacity=".22"/></pattern></defs>';
  h+='<path d="'+polyPath(B)+'" transform="translate('+huN(2*l)+' '+huN(3*l)+')" fill="#41563d" opacity=".12" fill-rule="evenodd"/><path d="'+polyPath(B)+'" fill="'+HU.land+'" fill-rule="evenodd" stroke="#70816c" stroke-width="'+.85*l+'"/><g clip-path="url(#'+id+')">';
  for(const b of q.blocks)h+='<path d="'+polyPath(b)+'" fill="#e1e5d2" stroke="#c2c9b7" stroke-width="'+.35*l+'" fill-rule="evenodd"/>';
  for(const o of q.lots){const a=huHash(o.id),fill=o.blockConflict?'#e3ab99':a>.65?'#e5d9bd':a>.32?'#eaddc5':'#ede2ca';h+='<path d="'+polyPath(o)+'" fill="'+fill+'" stroke="'+(o.blockConflict?'#b95340':HU.lotLine)+'" stroke-width="'+.58*l+'" fill-rule="evenodd"/><path d="'+polyPath(o)+'" fill="url(#lot-'+ns+')" fill-rule="evenodd" opacity=".40"/>'}
