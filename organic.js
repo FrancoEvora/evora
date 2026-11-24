@@ -124,6 +124,72 @@ function orgParcel(o,s,working,prep,limit){
  }
  return best;
 }
+
+/* Subdivide the actual face using perpendicular cuts to the tangent at each
+   surveyed frontage station. Shared cuts produce fan/trapezoidal corners. */
+function orgTangent(a,t){const step=Math.min(.008,1/Math.max(10,a.len));return norm(sub(a.at(Math.min(1,t+step)),a.at(Math.max(0,t-step))))}
+function orgPolygonRow(o,s,f,ring,row,working,limit,prep){
+ const n0=Math.min(Math.floor((f.len+1e-6)/s.f),limit);if(n0<1||ring.length<3)return [];
+ const sign=Math.sign(area(o.pts)),u=norm(sub(f.pts.at(-1),f.pts[0])),v=mul(perp(u),sign),far=add(f.mid,mul(v,s.d*1.40));
+ let band=mpHalfPlane(ring,far,v,false);if(band.length<3||!simple(band))return [];
+ let best=[],bestScore=0;
+ const nmin=Math.max(1,n0-6);
+ for(let n=n0;n>=nmin;n--){
+  if(f.len/n>s.f*1.85)break;
+  const cuts=Array.from({length:n+1},(_,i)=>i/n),trial=[];
+  for(let i=0;i<n;i++){
+   const lo=cuts[i],hi=cuts[i+1],a=f.at(lo),b=f.at(hi),fp=orgSlice(f,lo,hi),frontage=length(fp);
+   let pts=band;
+   if(i>0)pts=mpHalfPlane(pts,a,orgTangent(f,lo),true);
+   if(pts.length<3)continue;
+   if(i<n-1)pts=mpHalfPlane(pts,b,orgTangent(f,hi),false);
+   if(pts.length<3||!simple(pts))continue;
+   // If a candidate at the corner takes too much area, trim using the terminal tangent.
+   let A=polyArea({pts});
+   if(A>Math.max(s.min,s.f*s.d)*2.05){
+    if(i===0)pts=mpHalfPlane(pts,a,orgTangent(f,lo),true);
+    if(pts.length>=3&&i===n-1)pts=mpHalfPlane(pts,b,orgTangent(f,hi),false);
+    if(pts.length<3||!simple(pts))continue;A=polyArea({pts});
+   }
+   if(A<s.min-1e-5||A>Math.max(s.min,s.f*s.d)*2.20||A/frontage<s.d*.65||A/frontage>s.d*1.75)continue;
+   const l={id:uid(),name:'Lote',pts,blockId:o.id,auto:true,frontage,depth:A/frontage,frontEdge:null,frontPts:fp,parcelRow:row,parcelV:30,adaptive:true,organicFront:true,curvedFront:fp.length>2&&frontage-dist(a,b)>.003};
+   if(!fp.every(pt=>pointInOrEdge(pt,l))||!orgFits(l,o)||p.boundary&&!orgFits(l,p.boundary)||!orgDisjoint(l,[...working,...p.zones,...trial]))continue;
+   if(!fp.slice(1).every((z,k)=>{const x=fp[k],normal=mul(perp(norm(sub(z,x))),-sign);return dist(x,z)<.02||parcelFrontNearRoad([x,z],normal,{...s,tolerance:Math.max(.5,s.tolerance)},prep)}))continue;
+   trial.push(l);
+  }
+  const score=trial.reduce((n,l)=>n+polyArea(l),0)+trial.length*s.min*.035;
+  if(score>bestScore+.01){best=trial;bestScore=score}
+  if(trial.length===n)break;
+ }
+ return best;
+}
+function orgParcelComplete(o,s,working,prep,limit){
+ let best=orgParcel(o,s,working,prep,limit);
+ if(!s.organic||!s.adaptive||!s.flexDepth||!o.auto||o.holes?.length||s.inset>0||limit<1)return best;
+ const fronts=orgFronts(o,s,prep),ar=a=>a.reduce((n,l)=>n+polyArea(l),0);
+ const report=(lots,row)=>({row,count:lots.length,area:ar(lots),depth:lots.length?ar(lots)/lots.reduce((n,l)=>n+l.frontage,0):s.d,reason:lots.length?'':'Dimensões e acesso não atendidos.'});
+ function record(lots){
+  const A=ar(lots),curves=lots.filter(l=>l.curvedFront).length,oldCurves=best.lots.filter(l=>l.curvedFront).length;
+  if(!lots.length||A<best.area*.90)return;
+  const score=A+.12*s.min*curves,old=best.area+.12*s.min*oldCurves;
+  if(score>old+.01)best={...best,lots,area:A,rows:[report(lots.filter(l=>l.parcelRow===1),1),...(s.rows===2?[report(lots.filter(l=>l.parcelRow===2),2)]:[])],adaptive:true,adjusted:true,limit:false,rejected:{shape:0,road:0,access:0,occupied:0,minimum:0}};
+ }
+ for(const a of fronts.slice(0,4)){
+  if(s.rows===2)for(const b of fronts.filter(b=>b!==a&&dot(a.v,b.v)<-.64&&dot(sub(b.mid,a.mid),a.v)>s.d*.80).slice(0,3)){
+   const normal=norm(sub(a.v,b.v)),mid=lerp(a.mid,b.mid,.5),r1=mpHalfPlane(o.pts,mid,normal,false),r2=mpHalfPlane(o.pts,mid,normal,true);
+   if(r1.length<3||r2.length<3)continue;
+   const A=orgPolygonRow(o,s,a,r1,1,working,limit,prep),B=orgPolygonRow(o,s,b,r2,2,[...working,...A],Math.max(0,limit-A.length),prep);record([...A,...B]);
+  }
+  const A=orgPolygonRow(o,s,a,o.pts,1,working,limit,prep);record(A);
+ }
+ // Use other road-facing edges to complete corners and remaining free portions.
+ for(const f of fronts){
+  const old=best.lots.slice(),row=s.rows===1?1:2;
+  const more=orgPolygonRow(o,s,f,o.pts,row,[...working,...old],Math.max(0,limit-old.length),prep);if(more.length)record([...old,...more]);
+ }
+ return best;
+}
+
 function orgStats(c){
  const q=c.q,curved=q.roads.filter(r=>r.organicRoad&&r.pts.length>2&&dist(r.pts[0],r.pts.at(-1))>1&&length(r.pts)-dist(r.pts[0],r.pts.at(-1))>.07);
  return {curvedRoads:curved.length,curvedLength:curved.reduce((n,r)=>n+length(r.pts),0),curvedLots:q.lots.filter(l=>l.curvedFront).length,organicLots:q.lots.filter(l=>l.organicFront).length}
@@ -131,6 +197,6 @@ function orgStats(c){
 function orgSpecs(q,s){
  if(s.morphology!=='organic'||s.mode==='keep')return mpSpecs(q,s);
  const base=mpSpecs(q,{...s,morphology:'garden'}),first=base.filter(x=>x.w===s.wmin),rest=base.filter(x=>x.w!==s.wmin);
- const list=[];for(const x of [...first,...rest])for(const bend of [.78,1.12])list.push({...x,pattern:'organic',organic:true,bend,compact:x.ratio<1.2});
- return list.slice(0,18);
+ const list=[];for(const x of [...first,...rest])for(const bend of [.54,.80,1.12])list.push({...x,pattern:'organic',organic:true,bend,compact:x.ratio<1.2});
+ return list.slice(0,24);
 }
