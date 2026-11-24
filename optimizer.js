@@ -18,7 +18,7 @@ function optRoundUp(x){return Math.ceil((x-1e-9)*100)/100}
 function optInputs(){
  const v={mode:$('optMode').value,rows:optNumber($('optRows').value),objective:$('optObjective').value,rotate:$('optRotate').checked,flex:$('optFlex').checked};
  for(const [k,r] of Object.entries(OPT_NUMERIC))v[k]=optNumber($(r.id).value);
- return v;
+ v.roadShare=optNumber($('optRoadShare').value);return v;
 }
 function optDiagnostics(s){
  const issues=[],add=(keys,message,fix)=>issues.push({keys,message,fix}),ok=k=>Number.isFinite(s[k])&&s[k]>=OPT_NUMERIC[k].lo&&s[k]<=OPT_NUMERIC[k].hi;
@@ -26,6 +26,7 @@ function optDiagnostics(s){
   if(!Number.isFinite(s[k]))add([k],r.label+': informe um número válido (ex.: 12,5).');
   else if(!ok(k))add([k],r.label+': use de '+fmt(r.lo,0)+' a '+fmt(r.hi,0)+' '+r.unit+'.');
  }
+ if(s.roadShare!==undefined&&(!Number.isFinite(s.roadShare)||s.roadShare<5||s.roadShare>85))add(['roadShare'],'Ocupação viária máxima: informe um percentual de 5 a 85.');
  if(!['new','keep'].includes(s.mode))add(['mode'],'Selecione uma estratégia.');
  if(!['area','lots','balance'].includes(s.objective))add(['objective'],'Selecione uma prioridade.');
  if(![1,2].includes(s.rows))add(['rows'],'Selecione uma ou duas fileiras.');
@@ -60,6 +61,8 @@ function optSuggested(s){
 function optRefreshValidation(){
  const s=optInputs(),issues=optDiagnostics(s),keys=new Set(issues.flatMap(i=>i.keys));
  for(const [k,r] of Object.entries(OPT_NUMERIC))$(r.id).setAttribute('aria-invalid',keys.has(k)?'true':'false');
+ $('optRoadShare').setAttribute('aria-invalid',keys.has('roadShare')?'true':'false');
+ $('optRoadWarning').textContent=s.wmax>24?'Atenção: vias acima de 24 m são uma escolha excepcional nesta malha. Confira a hierarquia viária e os custos.':s.wmax>s.d?'Confira a proporção entre faixa viária e profundidade do lote.':'';
  const info=$('optAreaInfo');
  if(Number.isFinite(s.f)&&Number.isFinite(s.d)&&s.f>0&&s.d>0){
   const nominal=s.f*s.d,extra=s.flex?nominal*1.2:nominal;
@@ -85,7 +88,7 @@ function optSpecs(q,s){
  const ring=q.boundary.pts,edges=ring.map((a,i)=>({a,b:ring[(i+1)%ring.length],l:dist(a,ring[(i+1)%ring.length])})).sort((a,b)=>b.l-a.l),base=optAngle(bearing(edges[0].a,edges[0].b)),angles=[base];
  if(s.rotate)for(const x of [base+90,base+15,base-15,0,90]){const a=optAngle(x);if(angles.every(b=>Math.min(Math.abs(a-b),180-Math.abs(a-b))>4))angles.push(a);if(angles.length>=4)break}
  const widths=s.wmax-s.wmin>.01?[s.wmin,s.wmax]:[s.wmin],short=Math.max(s.f*2,Math.floor(s.maxBlock*.72/s.f)*s.f),lens=[s.maxBlock];if(short<s.maxBlock-1)lens.push(short);
- const a=[];for(const w of widths)for(const angle of angles)for(const maxBlock of lens)for(const phase of [0,.5])a.push({angle,w,maxBlock,phase});
+ const a=[];for(const w of widths)for(const angle of angles)for(const maxBlock of lens)for(const pattern of ['perimeter','internal'])a.push({angle,w,maxBlock,phase:.5,pattern});
  return a.length<=24?a:Array.from({length:24},(_,i)=>a[Math.round(i*(a.length-1)/23)]);
 }
 function optSubtract(a,lo,hi){return a.flatMap(([x,y])=>hi<=x||lo>=y?[[x,y]]:[...(lo>x+1e-6?[[x,Math.min(lo,y)]]:[]),...(hi<y-1e-6?[[Math.max(hi,x),y]]:[])])}
@@ -99,25 +102,46 @@ function optPositions(lo,hi,w,target,minClear,phase,longRows){
  return Array.from({length:n+1},(_,i)=>start+i*(clear+w));
 }
 function optDuplicate(a,b,r,w){const u=norm(sub(b,a)),pts=roadPts(r);for(let i=1;i<pts.length;i++){const x=pts[i-1],y=pts[i];if(Math.abs(dot(u,norm(sub(y,x))))<.995)continue;if([a,b,lerp(a,b,.5)].every(v=>dist(v,nearest(v,x,y))<(w+r.width)/2+.01))return true}return false}
+
+/* Internal streets need no redundant parallel street at the boundary. Edge blocks may be single-loaded. */
+function optInteriorPositions(lo,hi,w,target,minClear,longRows){
+ const span=hi-lo,margin=longRows?Math.max(minClear/2,target/2):Math.max(minClear,Math.min(target/2,span/3));
+ if(span<w+2*margin-1e-6)return [];
+ const available=span-2*margin-w,n=Math.max(1,Math.ceil(available/(target+w)-1e-8)+1);
+ if(n>80)throw Error('Divida a gleba em setores.');
+ const gap=n>1?available/(n-1):0;
+ if(n>1&&gap-w<minClear-1e-6){let nn=Math.max(1,Math.floor(available/(minClear+w)+1e-8)+1);if(nn===1)return [(lo+hi)/2];return Array.from({length:nn},(_,i)=>lo+margin+w/2+i*available/(nn-1))}
+ return n===1?[(lo+hi)/2]:Array.from({length:n},(_,i)=>lo+margin+w/2+i*gap);
+}
 function optGenerateRoads(q,s,spec){
  const origin=q.boundary.pts[0],rad=spec.angle*Math.PI/180,u=[Math.cos(rad),-Math.sin(rad)],v=perp(u),uv=pt=>[dot(sub(pt,origin),u),dot(sub(pt,origin),v)],xy=pt=>add(origin,add(mul(u,pt[0]),mul(v,pt[1])));
  const rings=[q.boundary.pts,...(q.boundary.holes||[])].map(a=>a.map(uv)),b=bbox(rings[0]),w=spec.w,half=w/2;
- // Expanded bounding boxes provide conservative clearance around restrictions and retained properties.
  const restrictions=[...q.zones,...q.blocks.filter(b=>!b.auto),...q.lots].map(o=>bbox(o.pts.map(uv))).concat(rings.slice(1).map(bbox));
- const minFront=s.flex?Math.max(s.f,s.min/s.d):s.f,minDepth=s.flex?Math.max(s.d*.85,s.min/(s.f*1.2)):s.d;
- const xs=optPositions(b[0],b[2],w,spec.maxBlock,minFront,spec.phase,false),ys=optPositions(b[1],b[3],w,s.rows*s.d,s.rows*minDepth,spec.phase,true);
- if(xs.length<2||ys.length<2)return [];
+ const minFront=s.flex?Math.max(s.f,s.min/s.d):s.f,minDepth=s.flex?Math.max(s.d*.85,s.min/(s.f*1.2)):s.d,internal=spec.pattern==='internal';
+ const xs=internal?optInteriorPositions(b[0],b[2],w,spec.maxBlock,minFront,false):optPositions(b[0],b[2],w,spec.maxBlock,minFront,spec.phase,false);
+ const ys=internal?optInteriorPositions(b[1],b[3],w,s.rows*s.d,s.rows*minDepth,true):optPositions(b[1],b[3],w,s.rows*s.d,s.rows*minDepth,spec.phase,true);
+ if(!xs.length||!ys.length)return [];
  let roads=[],seq=q.roads.length;
  function line(axis,value){
-  const r=axis===1?rings:rings.map(a=>a.map(v=>[v[1],v[0]])),bounds=bbox(r[0]),eps=1e-7,py=clamp(value,bounds[1]+eps,bounds[3]-eps);
-  let intervals=parcelIntervalsAt(r,py);
+  const r=axis===1?rings:rings.map(a=>a.map(v=>[v[1],v[0]])),bounds=bbox(r[0]);
+  // Whole-width cross sections, not just the centerline, must fit in the domain.
+  const y0=value-half,y1=value+half;if(y0<bounds[1]-1e-5||y1>bounds[3]+1e-5)return;
+  let intervals=parcelBandIntervals(r,y0,y1);
+  // Reserve room for round terminal caps. Interior networks connect at intersections.
+  intervals=intervals.map(([a,b])=>[a+half,b-half]).filter(([a,b])=>b>a);
   for(const z of restrictions){const box=axis===1?z:[z[1],z[0],z[3],z[2]];if(value>box[1]-half-.05&&value<box[3]+half+.05)intervals=optSubtract(intervals,box[0]-half-.05,box[2]+half+.05)}
-  for(const [lo,hi] of intervals){if(hi-lo<Math.max(w*1.5,s.f))continue;const a=xy(axis===1?[lo,value]:[value,lo]),b=xy(axis===1?[hi,value]:[value,hi]);if(q.roads.some(r=>optDuplicate(a,b,r,w)))continue;roads.push({id:uid(),name:'Via proposta '+String(++seq).padStart(2,'0'),pts:[a,b],width:w,cls:'Local',smooth:false,optimized:true})}
+  for(const [lo,hi] of intervals){
+   if(hi-lo<Math.max(w,s.f))continue;
+   const a=xy(axis===1?[lo,value]:[value,lo]),b=xy(axis===1?[hi,value]:[value,hi]);
+   if(q.roads.some(r=>optDuplicate(a,b,r,w)))continue;
+   roads.push({id:uid(),name:'Via proposta '+String(++seq).padStart(2,'0'),pts:[a,b],width:w,cls:'Local',smooth:false,optimized:true});
+  }
  }
  for(const y of ys)line(1,y);for(const x of xs)line(0,x);
  if(roads.length>160)throw Error('Mais de 160 trechos; divida a gleba em setores.');
  return roads;
 }
+
 function optNetwork(q){
  const roads=q.roads,parents=roads.map((_,i)=>i),root=i=>{while(parents[i]!==i){parents[i]=parents[parents[i]];i=parents[i]}return i};
  const segs=roads.map(r=>{let pts=roadPts(r);return {w:r.width/2,a:pts.slice(1).map((b,i)=>[pts[i],b]),b:bbox(pts)}});
@@ -137,15 +161,17 @@ function optEvaluate(source,s,spec){
   p=q;if(!syncBlocks(q)||!q.blocks.length)return null;
   const opts={f:s.f,d:s.d,min:s.min,rows:s.rows,direction:'auto',angle:0,inset:0,road:true,tolerance:Math.max(1,Math.min(3,q.params.parcelRoadTolerance||3)),fit:!!s.flex,flexDepth:!!s.flex,replace:false,quick:true};
   const oldCount=q.lots.length,plan=computeParcel(q.blocks.map(b=>b.id),opts);if(plan.truncated)return null;
-  q.lots.push(...plan.lots);if(!q.lots.length)return null;
+  // Reject numerical inconsistencies before proposing lots, not after applying.
+  const accepted=plan.lots.filter(l=>{const b=q.blocks.find(b=>b.id===l.blockId);return b&&qLotFits(l,b)});
+  q.lots.push(...accepted);if(!q.lots.length)return null;
   // Also relink preserved manually drawn lots that had no block association.
   if(s.mode==='keep')for(const l of q.lots.slice(0,oldCount)){const b=q.blocks.find(b=>b.id===l.blockId&&qLotFits(l,b))||q.blocks.find(b=>qLotFits(l,b));if(b){l.blockId=b.id;delete l.blockConflict;delete l.previousBlockId}else{l.previousBlockId=l.blockId||l.previousBlockId;delete l.blockId;l.blockConflict=true}}
   Object.assign(q.params,{lotFront:s.f,lotDepth:s.d,lotRows:s.rows,parcelMinArea:s.min,parcelFlexDepth:!!s.flex,parcelFit:!!s.flex});
   const A=polyArea(q.boundary),validLots=q.lots.filter(l=>!l.blockConflict),lotArea=validLots.reduce((n,l)=>n+polyArea(l),0),roadLen=q.roads.reduce((n,r)=>n+length(roadPts(r)),0),roadArea=optRoadArea(q,prepared()),components=optNetwork(q),conflicts=q.lots.length-validLots.length;
-  return {spec,q,lotCount:validLots.length,newLots:plan.lots.length,blockCount:q.blocks.length,lotArea,roadLen,roadArea,yield:lotArea/A*100,roadPct:roadArea/A*100,components,conflicts,area:A,rows2:plan.results.filter(r=>r.rows?.length===2&&r.rows.every(a=>a.count>0)).length};
+  return {spec,q,lotCount:validLots.length,newLots:accepted.length,blockCount:q.blocks.length,lotArea,roadLen,roadArea,yield:lotArea/A*100,roadPct:roadArea/A*100,components,conflicts,area:A,rows2:q.blocks.filter(b=>accepted.some(l=>l.blockId===b.id&&l.parcelRow===1)&&accepted.some(l=>l.blockId===b.id&&l.parcelRow===2)).length};
  }finally{p=original}
 }
-function optRank(a,s){const score=o=>s.objective==='lots'?o.lotCount:s.objective==='balance'?o.lotArea-.4*o.roadArea:o.lotArea,rank=o=>[o.conflicts,o.components>1?1:0,-score(o),-o.lotArea,o.components,o.roadLen];return a.slice().sort((x,y)=>{let a=rank(x),b=rank(y);for(let i=0;i<a.length;i++)if(Math.abs(a[i]-b[i])>1e-7)return a[i]-b[i];return 0})}
+function optRank(a,s){const score=o=>s.objective==='lots'?o.lotCount:s.objective==='balance'?o.lotArea-.85*o.roadArea:o.lotArea,rank=o=>[o.conflicts,o.components>1?1:0,-score(o),-o.lotArea,o.components,o.roadLen];return a.slice().sort((x,y)=>{let a=rank(x),b=rank(y);for(let i=0;i<a.length;i++)if(Math.abs(a[i]-b[i])>1e-7)return a[i]-b[i];return 0})}
 function optDistinct(a){const keys=new Set();return a.filter(o=>{let key=[Math.round(o.lotArea*100),o.lotCount,o.blockCount,Math.round(o.roadLen*10),Math.round(o.roadArea*10),o.components].join('|');if(keys.has(key))return false;keys.add(key);return true})}
 function optRenderPreview(c){
  const svg=$('optPreview');if(!c){svg.setAttribute('viewBox','0 0 500 280');svg.innerHTML='<text x="250" y="140" text-anchor="middle" fill="#6f8580" font-size="14">Gere alternativas para visualizar a implantação.</text>';return}
@@ -164,7 +190,7 @@ function optRenderPreview(c){
 function optMetric(label,value){return '<div class="opt-metric"><span>'+esc(label)+'</span><b>'+esc(value)+'</b></div>'}
 function optRender(){
  $('optCount').textContent=optCandidates.length?optCandidates.length+' alternativas exibidas':'';
- $('optAlternatives').innerHTML=optCandidates.map((c,i)=>'<button class="opt-choice '+(i===optSelected?'on':'')+'" data-opt-index="'+i+'"><span class="opt-tag">'+(i===0?'Melhor encontrada':'Alternativa '+(i+1))+'</span><strong>'+fmt(c.lotCount)+' lotes · '+fmt(c.yield,1)+'%</strong><span>'+(c.spec.baseline?'Traçado atual':fmt(c.spec.angle,0)+'° · via '+fmt(c.spec.w,1)+' m')+'<br>'+c.blockCount+' quadras · '+fmt(c.roadLen,0)+' m de vias'+(c.components>1?' · '+c.components+' redes':'')+'</span></button>').join('');
+ $('optAlternatives').innerHTML=optCandidates.map((c,i)=>'<button class="opt-choice '+(i===optSelected?'on':'')+'" data-opt-index="'+i+'"><span class="opt-tag">'+(i===0?'Melhor encontrada':'Alternativa '+(i+1))+'</span><strong>'+fmt(c.lotCount)+' lotes · '+fmt(c.yield,1)+'%</strong><span>'+(c.spec.baseline?'Traçado atual':fmt(c.spec.angle,0)+'° · via '+fmt(c.spec.w,1)+' m · '+(c.spec.pattern==='internal'?'malha interna':'perimetral'))+'<br>'+c.blockCount+' quadras · '+fmt(c.roadLen,0)+' m de vias · '+fmt(c.roadPct,1)+'% viário'+(c.components>1?' · '+c.components+' redes':'')+'</span></button>').join('');
  const c=optCandidates[optSelected];optRenderPreview(c);
  $('optMetrics').innerHTML=c?[optMetric('Área em lotes',fmt(c.lotArea,0)+' m²'),optMetric('Aproveitamento',fmt(c.yield,1)+'%'),optMetric('Quadras / lotes',c.blockCount+' / '+c.lotCount),optMetric('Área viária estimada',fmt(c.roadPct,1)+'%'),optMetric('Extensão viária',fmt(c.roadLen,0)+' m'),optMetric('Quadras com duas fileiras novas',String(c.rows2)),optMetric('Redes internas',String(c.components)),optMetric('Lotes preservados em conflito',String(c.conflicts)),optMetric('Novos lotes',String(c.newLots))].join(''):'';
  $('optApply').disabled=!c||optRunning;$('optExport').disabled=!c||optRunning;
@@ -180,7 +206,8 @@ function openOptimizer(){
  const nominal=optNumber($('optFront').value)*optNumber($('optDepth').value),savedMin=p.params.parcelMinArea;
  $('optMin').value=Number.isFinite(optNumber(savedMin))&&optNumber(savedMin)>0?savedMin:nominal;
  $('optLinkArea').checked=Math.abs(optNumber($('optMin').value)-nominal)<1e-6;
- const width=clamp(n(p.params.width,14),1,100);$('optRoadMin').value=width;$('optRoadMax').value=Math.min(100,width+2);$('optBlockLen').value=Math.max(120,optRoundUp(optNumber($('optFront').value)||12));$('optRows').value=String(p.params.lotRows||2);$('optObjective').value='area';$('optRotate').checked=true;$('optFlex').checked=true;
+ // Local-road study defaults must not inherit the editor's arbitrary selected width.
+ $('optRoadMin').value='12';$('optRoadMax').value='16';$('optRoadShare').value='35';$('optBlockLen').value=Math.max(120,optRoundUp(optNumber($('optFront').value)||12));$('optRows').value=String(p.params.lotRows||2);$('optObjective').value='balance';$('optRotate').checked=true;$('optFlex').checked=true;
  $('optModeNote').textContent='Preserva gleba e áreas especiais. O original permanece intacto durante a busca.';
  const initial=optSuggested(optInputs());
  if(initial.changes.length){for(const [k,r] of Object.entries(OPT_NUMERIC))if(Number.isFinite(initial.values[k]))$(r.id).value=String(initial.values[k]);$('optLinkArea').checked=false;}
@@ -188,15 +215,15 @@ function openOptimizer(){
 }
 function closeOptimizer(){optReset();if($('optimizerDialog').open)$('optimizerDialog').close()}
 function optRun(){
- if(optRunning)return;const s=optInputs(),issues=optRefreshValidation();if(issues.length){optStatus(issues[0].message,true);return}if(!p.boundary){optStatus('A gleba não está definida.',true);return}
+ if(optRunning)return;const s=optInputs(),issues=optRefreshValidation();if(issues.length){optStatus(issues[0].message,true);return}if(!p.boundary){optStatus('A gleba não está definida.',true);return}if(s.wmax>30&&!confirm('A malha inclui vias de mais de 30 m. Confirma esse parâmetro excepcional para o estudo?'))return;
  const source=cp(p);let specs=optSpecs(source,s);if(s.mode==='keep')specs=[{baseline:true,angle:0,w:s.wmin,maxBlock:s.maxBlock,phase:0},...specs];
  optReset();optSource=snapshot();const token=++optToken;optRunning=true;$('optRun').disabled=true;$('optCancel').disabled=false;optStatus('Analisando '+specs.length+' configurações…');
- let idx=0,found=[],errors=0;
+ let idx=0,found=[],errors=0,overShare=0;
  function step(){
   if(token!==optToken)return;
-  if(idx>=specs.length){optRunning=false;$('optRun').disabled=false;$('optCancel').disabled=true;optCandidates=optDistinct(optRank(found,s)).slice(0,6);optSelected=optCandidates.length?0:-1;optRender();optStatus(optCandidates.length?'Busca concluída: '+specs.length+' configurações avaliadas, '+found.length+' com lotes válidos'+(errors?' · '+errors+' não processadas':'')+'. A primeira é a melhor encontrada.':'Nenhuma alternativa com lotes válidos. Ajuste dimensões e restrições'+(errors?' ('+errors+' configurações não processadas)':'')+'.',!optCandidates.length);return}
-  try{const c=optEvaluate(source,s,specs[idx]);if(c&&c.lotCount)found.push(c)}catch(e){errors++}
-  idx++;optStatus('Analisando '+idx+' / '+specs.length+' · '+found.length+' válidas.');
+  if(idx>=specs.length){optRunning=false;$('optRun').disabled=false;$('optCancel').disabled=true;optCandidates=optDistinct(optRank(found,s)).slice(0,6);optSelected=optCandidates.length?0:-1;optRender();optStatus(optCandidates.length?'Busca concluída: '+specs.length+' configurações avaliadas, '+found.length+' com lotes válidos'+(errors?' · '+errors+' não processadas':'')+(overShare?' · '+overShare+' acima do limite viário':'')+'. A primeira é a melhor encontrada.':(overShare?'Nenhuma alternativa dentro do limite viário de '+fmt(s.roadShare,1)+'%. '+overShare+' configurações excederam esse limite. Reduza a largura das vias ou revise o limite.':'Nenhuma alternativa com lotes válidos. Ajuste dimensões e restrições'+(errors?' ('+errors+' configurações não processadas)':'')+'.'),!optCandidates.length);return}
+  try{const c=optEvaluate(source,s,specs[idx]);if(c&&c.lotCount){if(c.roadPct>s.roadShare+.001)overShare++;else found.push(c)}}catch(e){errors++}
+  idx++;optStatus('Analisando '+idx+' / '+specs.length+' · '+found.length+' válidas'+(overShare?' · '+overShare+' acima do limite viário':'')+'.');
   if(idx%3===0||idx===specs.length){optCandidates=optDistinct(optRank(found,s)).slice(0,6);optSelected=optCandidates.length?0:-1;optRender()}
   setTimeout(step,0);
  }
@@ -213,10 +240,10 @@ function installOptimizer(){
  $('optimizePlan').onclick=openOptimizer;$('optClose').onclick=closeOptimizer;$('optimizerDialog').addEventListener('cancel',e=>{e.preventDefault();closeOptimizer()});
  const refresh=()=>{optReset();const issues=optRefreshValidation();optStatus(issues.length?'Confira os campos destacados.':'Parâmetros válidos. Gere novas alternativas.',!!issues.length)};
  $('optPreset').onchange=()=>{let s=parcelPresets()[Number($('optPreset').value)];if(s&&$('optPreset').value!=='custom'){$('optFront').value=s.f;$('optDepth').value=s.d;$('optMin').value=s.min;$('optRows').value=String(s.rows);$('optLinkArea').checked=Math.abs(s.min-s.f*s.d)<1e-6}refresh()};
- for(const id of Object.values(OPT_NUMERIC).map(r=>r.id))$(id).oninput=()=>{if(['optFront','optDepth','optMin'].includes(id)){$('optPreset').value='custom';if(id==='optMin')$('optLinkArea').checked=false;else optSyncLinkedArea()}refresh()};
+ for(const id of [...Object.values(OPT_NUMERIC).map(r=>r.id),'optRoadShare'])$(id).oninput=()=>{if(['optFront','optDepth','optMin'].includes(id)){$('optPreset').value='custom';if(id==='optMin')$('optLinkArea').checked=false;else optSyncLinkedArea()}refresh()};
  for(const id of ['optMode','optRows','optObjective','optRotate','optFlex'])$(id).onchange=()=>{if(id==='optRows')$('optPreset').value='custom';$('optModeNote').textContent=$('optMode').value==='keep'?'Mantém vias, rotatórias, lotes e quadras manuais. Novas vias evitam interferências.':'Preserva gleba e áreas especiais; o desenho atual ficará arquivado ao aplicar.';refresh()};
  $('optLinkArea').onchange=()=>{if($('optLinkArea').checked){optSyncLinkedArea();$('optPreset').value='custom'}refresh()};
- $('optFix').onclick=optFixForm;
+ $('optFix').onclick=optFixForm;$('optLocalProfile').onclick=()=>{$('optRoadMin').value='12';$('optRoadMax').value='16';$('optRoadShare').value='35';refresh()};
  $('optRun').onclick=optRun;$('optCancel').onclick=()=>{optToken++;optRunning=false;$('optRun').disabled=false;$('optCancel').disabled=true;optRender();optStatus('Busca interrompida. Compare as alternativas já avaliadas.')};
  $('optAlternatives').onclick=e=>{let i=Number(e.target.closest('[data-opt-index]')?.dataset.optIndex);if(Number.isInteger(i)&&optCandidates[i]){optSelected=i;optRender()}};
  $('optExport').onclick=()=>{const c=optCandidates[optSelected];if(!c)return;let q=cp(c.q);q.name=p.name+' · Alternativa '+(optSelected+1);download(filename()+'_alternativa_'+(optSelected+1)+'.json',JSON.stringify(q,null,2),'application/json')};

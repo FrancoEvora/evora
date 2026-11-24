@@ -29,3 +29,6 @@ Otimizador de implantação: até 24 configurações ortogonais (mais o traçado
 
 ### 0.5.1
 Validação do otimizador com diagnósticos por campo, números decimais com vírgula/ponto, faixas compatíveis com o editor (testada 2–200 m, profundidade 2–300 m, área mínima 4–60.000 m² e vias 1–100 m), vínculo opcional de área mínima com as dimensões e correções explícitas que preservam área mínima e largura viária mínima. Ao abrir, parâmetros iniciais incompatíveis herdados podem ser ajustados no formulário, sem alterar o estudo até aplicação. Limite de comprimento de quadra 2–2.000 m, desde que comporte a testada efetiva. Limites numéricos não substituem exigências urbanísticas.
+
+### 0.5.2 — proporção viária e limites da gleba
+Largura local padrão do otimizador independente do editor (12–16 m, ajustável); objetivo padrão de equilíbrio, limite inicial ajustável de 35% de área viária estimada, confirmação para malha acima de 30 m. Testa malhas internas e perimetrais. As vias novas usam faixas completas dentro da gleba e reserva para extremidades; a visualização das vias propostas é recortada pelo perímetro. Acessos externos continuam a exigir desenho manual. Usa a mesma validação de contenção retangular para geração e reconciliação de lotes. Não altera automaticamente estudos existentes; gere uma nova alternativa. As premissas não constituem norma urbanística.
