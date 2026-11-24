@@ -86,9 +86,9 @@ function mpGraphic(q,z,namespace='sheet'){
  for(const b of q.blocks)h+='<path d="'+polyPath(b)+'" fill="#e3e7d7" stroke="#aeb9a2" stroke-width="'+.42*ln+'" fill-rule="evenodd"/>';
  for(const l of q.lots)h+='<path d="'+polyPath(l)+'" fill="'+(l.blockConflict?'#db8c7c':'#ead8b6')+'" stroke="#9e957d" stroke-width="'+.55*ln+'" stroke-linejoin="round"/>';
  for(const o of q.zones)h+='<path d="'+polyPath(o)+'" fill="'+(zoneTypes[o.kind]||zoneTypes.other)[1]+'" stroke="#688262" stroke-width="'+.6*ln+'" fill-rule="evenodd"/>'+urbanZoneDecor(o,z,namespace);
- for(const r of q.roads)h+='<path d="'+path(roadPts(r))+'" fill="none" stroke="#aeb5aa" stroke-width="'+(r.width+.65*ln)+'" stroke-linecap="round" stroke-linejoin="round"/>';
- for(const r of q.roads)h+='<path d="'+path(roadPts(r))+'" fill="none" stroke="#eceade" stroke-width="'+r.width+'" stroke-linecap="round" stroke-linejoin="round"/>';
- for(const r of q.roads)h+='<path d="'+path(roadPts(r))+'" fill="none" stroke="'+(q.masterplan?.style==='active'?'#949b98':r.cls==='Local'?'#9b9e9b':'#7c8885')+'" stroke-width="'+urbanRoadPavement(r)+'" stroke-linecap="round" stroke-linejoin="round"/>';
+ h+=jfPaint(q,'right-of-way','#aeb5aa');for(const r of q.roads)h+='<path d="'+path(roadPts(r))+'" fill="none" stroke="#aeb5aa" stroke-width="'+(r.width+.65*ln)+'" stroke-linecap="round" stroke-linejoin="round"/>';
+ h+=jfPaint(q,'right-of-way','#eceade');for(const r of q.roads)h+='<path d="'+path(roadPts(r))+'" fill="none" stroke="#eceade" stroke-width="'+r.width+'" stroke-linecap="round" stroke-linejoin="round"/>';
+ h+=jfPaint(q,'asphalt','#9b9e9b');for(const r of q.roads)h+='<path d="'+path(roadPts(r))+'" fill="none" stroke="'+(q.masterplan?.style==='active'?'#949b98':r.cls==='Local'?'#9b9e9b':'#7c8885')+'" stroke-width="'+urbanRoadPavement(r)+'" stroke-linecap="round" stroke-linejoin="round"/>';
  for(const r of q.rounds)h+='<circle cx="'+r.c[0]+'" cy="'+r.c[1]+'" r="'+r.r+'" fill="#929b95"/><circle cx="'+r.c[0]+'" cy="'+r.c[1]+'" r="'+(r.r-r.w)+'" fill="#8aa77b"/>';
  h+=mpRoadTrees(q,z);
  const label=(pt,name,size,fill='#365144')=>'<text x="'+pt[0]+'" y="'+pt[1]+'" text-anchor="middle" dominant-baseline="middle" font-family="Arial,sans-serif" font-size="'+size*ln+'" font-weight="650" paint-order="stroke" stroke="#faf9f1" stroke-width="'+2*ln+'" fill="'+fill+'">'+esc(name)+'</text>';

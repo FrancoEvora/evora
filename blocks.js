@@ -1,16 +1,17 @@
 
 'use strict';
-const blockDefaults={autoQuadras:true,edgeQuadras:true,minQuadra:100,quadraLabels:true,quadraDims:true};
+const blockDefaults={autoQuadras:true,edgeQuadras:true,minQuadra:100,quadraLabels:true,quadraDims:true,junctionRadius:0};
 const BLOCK_ENGINE=4, QEPS=1e-6, QARC=.025;
 let blockStatsCache=new WeakMap();
-function normalizeBlocks(q){q.params={...blockDefaults,...q.params};for(const k of ['autoQuadras','edgeQuadras','quadraLabels','quadraDims'])if(typeof q.params[k]!=='boolean')q.params[k]=blockDefaults[k];if(!Number.isFinite(q.params.minQuadra))q.params.minQuadra=100;q.params.minQuadra=clamp(q.params.minQuadra,1,1000000);}
-function blockGeometryKey(q){return JSON.stringify([q.boundary&&[q.boundary.pts,q.boundary.holes],q.roads.map(r=>[r.pts,r.width,r.smooth]),q.rounds.map(r=>[r.c,r.r]),q.zones.map(z=>[z.pts,z.holes]),q.blocks.filter(b=>!b.auto).map(b=>[b.pts,b.holes]),q.params.edgeQuadras,q.params.minQuadra,q.params.autoQuadras]);}
+function normalizeBlocks(q){q.params={...blockDefaults,...q.params};for(const k of ['autoQuadras','edgeQuadras','quadraLabels','quadraDims'])if(typeof q.params[k]!=='boolean')q.params[k]=blockDefaults[k];if(!Number.isFinite(q.params.minQuadra))q.params.minQuadra=100;q.params.minQuadra=clamp(q.params.minQuadra,1,1000000);q.params.junctionRadius=clamp(Number(q.params.junctionRadius)||0,0,20);}
+function blockGeometryKey(q){return JSON.stringify([q.boundary&&[q.boundary.pts,q.boundary.holes],q.roads.map(r=>[r.pts,r.width,r.smooth]),q.rounds.map(r=>[r.c,r.r]),q.zones.map(z=>[z.pts,z.holes]),q.blocks.filter(b=>!b.auto).map(b=>[b.pts,b.holes]),q.params.edgeQuadras,q.params.minQuadra,q.params.autoQuadras,q.params.junctionRadius]);}
 function qCircle(c,r,phase=0){const n=Math.min(256,Math.max(16,4*Math.ceil(Math.PI/Math.acos(r/(r+QARC))/4))),rr=r/Math.cos(Math.PI/n);return Array.from({length:n},(_,i)=>{const a=phase+(i+.5)*2*Math.PI/n;return add(c,[rr*Math.cos(a),rr*Math.sin(a)])});}
 function qShape(pts,holes=[],kind='road'){return {pts,holes,kind,b:bbox(pts)}}
 function qObstacles(q){
  const shapes=[];
  for(const r of q.roads){const pts=roadPts(r),w=r.width/2;if(!Number.isFinite(w)||w<=0)continue;const seen=new Set();for(let i=0;i<pts.length;i++){const pt=pts[i],other=pts[i+1]||pts[i-1],phase=other?Math.atan2(other[1]-pt[1],other[0]-pt[0]):0;let k=pt.join(',');if(!seen.has(k)){seen.add(k);shapes.push(qShape(qCircle(pt,w,phase),[],'road'))}}
   for(let i=1;i<pts.length;i++){let a=pts[i-1],b=pts[i];if(dist(a,b)<QEPS)continue;const n=mul(perp(norm(sub(b,a))),w);shapes.push(qShape([add(a,n),add(b,n),sub(b,n),sub(a,n)],[],'road'))}}
+ for(const c of jfCorners(q))shapes.push(qShape(c.pts,[],'road'));
  for(const r of q.rounds)shapes.push(qShape(qCircle(r.c,r.r),[],'road'));
  for(const z of q.zones)shapes.push(qShape(z.pts,z.holes||[],'restriction'));
  for(const m of q.blocks.filter(b=>!b.auto))shapes.push(qShape(m.pts,m.holes||[],'manual'));
@@ -111,7 +112,7 @@ function blockLabels(o){if(!p.params.quadraLabels)return '';const s=blockStats(o
 function blockSideOverlay(){const sel=selected();if(!p.params.quadraDims||!visibility.block||mode!=='select'||sel?.[0]!=='block')return '';const o=sel[1],s=blockStats(o);let h='';for(const e of s.edges){if(e.len*view.z<44)continue;let u=norm(sub(e.b,e.a)),n=mul(perp(u),area(o.pts)>0?1:-1),off=mul(n,10/view.z);h+=dimensionMark(add(e.a,off),add(e.b,off),'#146984')}return h}
 function blockInspector(o){const s=blockStats(o);let h='<div class="quadra-data"><div class="qline"><span>Área útil</span><b>'+fmt(s.area,2)+' m²</b></div><div class="qline"><span>Dimensões envolventes</span><b>'+fmt(s.width,2)+' × '+fmt(s.depth,2)+' m</b></div><div class="qline"><span>Perímetro externo</span><b>'+fmt(s.outer,2)+' m</b></div>'+(s.inner>.001?'<div class="qline"><span>Divisas internas</span><b>'+fmt(s.inner,2)+' m</b></div>':'')+'<div class="qline"><span>Orientação principal</span><b>'+fmt(s.angle,1)+'°</b></div><div class="qline"><span>Lotes vinculados</span><b>'+p.lots.filter(l=>l.blockId===o.id).length+'</b></div><details><summary>Comprimentos das '+s.edges.length+' divisas externas</summary><div class="qedges">'+s.edges.map(e=>'<div class="qedge"><span>Divisa '+(e.i+1)+'</span><b>'+fmt(e.len,2)+' m · '+fmt(bearing(e.a,e.b),1)+'°</b></div>').join('')+'</div></details></div>';
  if(o.auto)h+='<p class="quadra-lock">Quadra vinculada às vias'+(o.edgeBlock?' e ao limite da gleba':'')+'. Edite as vias para alterar a geometria. As dimensões envolventes não são necessariamente as dimensões de cada divisa.</p>';return h;}
-function renderBlockControls(){const a=p.params;for(const k of ['autoQuadras','edgeQuadras','quadraLabels','quadraDims'])$(k).checked=a[k];$('minQuadra').value=a.minQuadra;}
+function renderBlockControls(){const a=p.params;for(const k of ['autoQuadras','edgeQuadras','quadraLabels','quadraDims'])$(k).checked=a[k];$('minQuadra').value=a.minQuadra;$('junctionRadius').value=a.junctionRadius;}
 function renderBlockTable(){const a=p.blocks,conflicts=p.lots.filter(l=>l.blockConflict).length;
  $('quadraSummary').innerHTML='<b>'+fmt(a.length)+' quadra(s) · '+fmt(a.reduce((n,b)=>n+polyArea(b),0),2)+' m²</b><br>'+a.filter(b=>b.auto).length+' automáticas · '+a.filter(b=>!b.auto).length+' manuais';
  $('quadraList').innerHTML=a.map(o=>{const s=blockStats(o);return '<button class="quadra-row '+(selection===o.id?'on':'')+'" data-quadra="'+esc(o.id)+'"><span>'+esc(o.name)+(o.auto?(o.edgeBlock?' · borda':' · auto'):' · manual')+'<small>'+fmt(s.width,1)+' × '+fmt(s.depth,1)+' m</small></span><strong>'+fmt(s.area,1)+' m²</strong></button>'}).join('')||'<p class="hint">Feche um circuito de vias ou desenhe ruas até os limites da gleba.</p>';
@@ -122,6 +123,7 @@ function exportBlocksCSV(){const head=['Quadra','Tipo','Área (m²)','Compriment
 function installBlocks(){
  $('autoBlocks').onclick=generateBlocksNow;$('autoLots').onclick=openParcel;
  for(const id of ['autoQuadras','edgeQuadras','quadraLabels','quadraDims'])$(id).onchange=e=>{let before=snapshot();p.params[id]=e.target.checked;commit(before)};
+ $('junctionRadius').onchange=e=>{const before=snapshot();p.params.junctionRadius=clamp(n(e.target.value,0),0,20);commit(before,true)};
  $('minQuadra').onchange=e=>{let before=snapshot();p.params.minQuadra=clamp(n(e.target.value,100),1,1000000);commit(before)};
  $('quadraList').onclick=e=>{const id=e.target.closest('[data-quadra]')?.dataset.quadra,o=p.blocks.find(b=>b.id===id);if(!o)return;setMode('select');setSelection(id);const b=bbox(o.pts);view.cx=(b[0]+b[2])/2;view.cy=(b[1]+b[3])/2;view.z=clamp(Math.min((W-100)/Math.max(1,b[2]-b[0]),(H-140)/Math.max(1,b[3]-b[1])),.025,70);renderView();};
  $('quadraCSV').onclick=exportBlocksCSV;

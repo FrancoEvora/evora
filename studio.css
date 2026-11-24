@@ -40,3 +40,6 @@
 @media(max-width:760px){.preview-toolbar select,.sheet-controls select{font-size:16px}.sheet-controls{gap:5px}.opt-map svg{height:280px}.optimizer-footer button{flex:1 1 40%}.optimizer-footer span{flex:1 1 100%}}
 
 .preview-toolbar .example-link{color:#57735f;text-decoration:underline;font-size:10px;font-weight:550;letter-spacing:0;margin-left:auto;white-space:normal}.preview-toolbar select{flex:none}
+
+/* 3.1 — concordâncias geométricas e lotes de ponta */
+#junctionRadius{font-variant-numeric:tabular-nums}#optCornerRadius[aria-invalid=true]{border-color:#b74d3b}.optimizer-dialog .hint{line-height:1.45}

@@ -2,7 +2,7 @@
 'use strict';
 /* Humanized masterplan — vector presentation of the exact project geometry.
    Landscape furnishings are conceptual symbols, not engineering quantities. */
-const HU={land:'#e8eadc',lot:'#e8dabe',lotLine:'#a89a7c',road:'#a6aba6',collector:'#87948f',walk:'#eeeadc',green:'#a8bf91',plaza:'#c0cea2',leisure:'#ddc59a',institutional:'#bdc3ca',app:'#8eaf9d',commercial:'#d6ad91',other:'#c2c9b6'};
+const HU={land:'#e8eadc',lot:'#8ca36b',lotLine:'#f4f5e9',road:'#9b9e9b',collector:'#929995',walk:'#f6f5ea',green:'#73985d',plaza:'#c0cea2',leisure:'#ddc59a',institutional:'#bdc3ca',app:'#8eaf9d',commercial:'#d6ad91',other:'#c2c9b6'};
 function huHash(x){let n=2166136261;for(const c of String(x)){n^=c.charCodeAt(0);n=Math.imul(n,16777619)}return (n>>>0)/4294967295}
 const huN=x=>Number(x.toFixed(3));
 function huPt(v){return v.map(huN).join(' ')}
@@ -74,19 +74,19 @@ function huGraphic(q,z,ns='human',labels=true){
  let h='<defs>'+huClip(id,B)+huTreeDefs(ns)+'<pattern id="grass-'+ns+'" width="9" height="9" patternUnits="userSpaceOnUse"><path d="M1 7l1 -1 M5 3l1 -1 M8 8l.7 -1" stroke="#6f8b63" stroke-opacity=".15" stroke-width=".25"/></pattern><pattern id="lot-'+ns+'" width="11" height="11" patternUnits="userSpaceOnUse"><circle cx="3" cy="4" r=".23" fill="#ae9b79" opacity=".22"/></pattern></defs>';
  h+='<path d="'+polyPath(B)+'" transform="translate('+huN(2*l)+' '+huN(3*l)+')" fill="#41563d" opacity=".12" fill-rule="evenodd"/><path d="'+polyPath(B)+'" fill="'+HU.land+'" fill-rule="evenodd" stroke="#70816c" stroke-width="'+.85*l+'"/><g clip-path="url(#'+id+')">';
  for(const b of q.blocks)h+='<path d="'+polyPath(b)+'" fill="#e1e5d2" stroke="#c2c9b7" stroke-width="'+.35*l+'" fill-rule="evenodd"/>';
- for(const o of q.lots){const a=huHash(o.id),fill=o.blockConflict?'#e3ab99':a>.65?'#e5d9bd':a>.32?'#eaddc5':'#ede2ca';h+='<path d="'+polyPath(o)+'" fill="'+fill+'" stroke="'+(o.blockConflict?'#b95340':HU.lotLine)+'" stroke-width="'+.58*l+'" fill-rule="evenodd"/><path d="'+polyPath(o)+'" fill="url(#lot-'+ns+')" fill-rule="evenodd" opacity=".40"/>'}
+ for(const o of q.lots){const a=huHash(o.id),fill=o.blockConflict?'#e3ab99':a>.65?'#879f64':a>.32?'#91a96e':'#8ca46a';h+='<path d="'+polyPath(o)+'" fill="'+fill+'" stroke="'+(o.blockConflict?'#b95340':HU.lotLine)+'" stroke-width="'+.85*l+'" fill-rule="evenodd"/><path d="'+polyPath(o)+'" fill="url(#lot-'+ns+')" fill-rule="evenodd" opacity=".40"/>'}
  for(const o of q.zones)h+='<path d="'+polyPath(o)+'" fill="'+(HU[o.kind]||HU.other)+'" stroke="#7c9375" stroke-width="'+.72*l+'" fill-rule="evenodd"/>'+huZoneArt(o,z,ns);
- for(const r of q.roads)h+='<path d="'+path(roadPts(r))+'" fill="none" stroke="#9ca594" stroke-width="'+(r.width+.72*l)+'" stroke-linecap="round" stroke-linejoin="round"/>';
- for(const r of q.roads)h+='<path d="'+path(roadPts(r))+'" fill="none" stroke="'+HU.walk+'" stroke-width="'+r.width+'" stroke-linecap="round" stroke-linejoin="round"/>';
- for(const r of q.roads)h+='<path d="'+path(roadPts(r))+'" fill="none" stroke="'+(r.cls==='Local'?HU.road:HU.collector)+'" stroke-width="'+(urbanRoadPavement(r)+.30*l)+'" stroke-linecap="round" stroke-linejoin="round"/>';
+ h+=jfPaint(q,'right-of-way','#9ca594');for(const r of q.roads)h+='<path d="'+path(roadPts(r))+'" fill="none" stroke="#9ca594" stroke-width="'+(r.width+.72*l)+'" stroke-linecap="round" stroke-linejoin="round"/>';
+ h+=jfPaint(q,'right-of-way',HU.walk);for(const r of q.roads)h+='<path d="'+path(roadPts(r))+'" fill="none" stroke="'+HU.walk+'" stroke-width="'+r.width+'" stroke-linecap="round" stroke-linejoin="round"/>';
+ h+=jfPaint(q,'asphalt',HU.road);for(const r of q.roads)h+='<path d="'+path(roadPts(r))+'" fill="none" stroke="'+(r.cls==='Local'?HU.road:HU.collector)+'" stroke-width="'+(urbanRoadPavement(r)+.30*l)+'" stroke-linecap="round" stroke-linejoin="round"/>';
  for(const r of q.roads)if(r.cls!=='Local')h+='<path d="'+path(roadPts(r))+'" fill="none" stroke="#f4f2df" stroke-width="'+.45*l+'" stroke-dasharray="'+5*l+' '+6*l+'" opacity=".80"/>';
  for(const r of q.rounds){h+='<circle cx="'+huN(r.c[0])+'" cy="'+huN(r.c[1])+'" r="'+huN(r.r)+'" fill="'+HU.road+'"/><circle cx="'+huN(r.c[0])+'" cy="'+huN(r.c[1])+'" r="'+huN(r.r-r.w)+'" fill="'+HU.green+'" stroke="'+HU.walk+'" stroke-width=".6"/>';if(r.r-r.w>3)h+=huTree(r.c,Math.min(3,(r.r-r.w)*.55),r.id,ns)}
- if(z>.72&&q.lots.length<1600)for(const o of q.lots)h+=huLotArt(o,ns);
+ // Empty residential parcels read as grass plots; no invented tree in every lot.
  h+=huRoadArt(q,z,ns);
  if(labels){
   const label=(pt,name,size,ink,stroke='#f7f5eb')=>'<text x="'+huN(pt[0])+'" y="'+huN(pt[1])+'" font-family="Arial,sans-serif" text-anchor="middle" dominant-baseline="middle" font-weight="650" font-size="'+size*l+'" paint-order="stroke" stroke="'+stroke+'" stroke-width="'+1.85*l+'" fill="'+ink+'">'+esc(name)+'</text>';
   for(const o of q.zones){const s=blockStats(o),name=mpZoneName(o);if(s.anchor.clearance*z>=Math.max(13,name.length*2.15))h+=label(s.anchor.v,name,10,'#2e503b')}
-  for(const b of q.blocks){const s=blockStats(b);if(s.anchor.clearance*z>24&&q.lots.some(l=>l.blockId===b.id))h+=label(s.anchor.v,b.name,9.5,'#655b47')}
+  for(const b of q.blocks){const s=blockStats(b);if(s.anchor.clearance*z>20&&q.lots.some(l=>l.blockId===b.id)){const pt=s.anchor.v;h+='<circle cx="'+huN(pt[0])+'" cy="'+huN(pt[1])+'" r="'+8.6*l+'" fill="#b95b4e" stroke="#f1e4d3" stroke-width="'+.8*l+'"/><text x="'+huN(pt[0])+'" y="'+huN(pt[1])+'" text-anchor="middle" dominant-baseline="middle" font-family="Arial,sans-serif" font-size="'+7.8*l+'" font-weight="bold" fill="white">'+esc(b.name.replace(/^Q0?/,''))+'</text>'}}
  }
  return h+'</g><path d="'+polyPath(B)+'" fill="none" stroke="#506c53" stroke-width="'+1.2*l+'" fill-rule="evenodd"/>';
 }
@@ -94,7 +94,7 @@ function huSheet(c){
  const q=c.q,B=q.boundary,bb=bbox(B.pts),dx=bb[2]-bb[0],dy=bb[3]-bb[1],W=1600,H=1080,z=Math.min(1170/Math.max(dx,1),770/Math.max(dy,1)),x=52+(1180-dx*z)/2-bb[0]*z,y=166+(780-dy*z)/2-bb[1]*z,audit={...mpAudit(c),...orgStats(c),...(c.audit||{})},scale=[10,20,50,100,200,500].filter(v=>v*z<=155).at(-1)||5;
  const txt=(x,y,sz,s,color='#2a483b',weight=400,extra='')=>'<text x="'+x+'" y="'+y+'" font-size="'+sz+'" font-weight="'+weight+'" fill="'+color+'" '+extra+'>'+esc(s)+'</text>';
  let h='<svg xmlns="http://www.w3.org/2000/svg" width="'+W+'" height="'+H+'" viewBox="0 0 '+W+' '+H+'"><rect width="'+W+'" height="'+H+'" fill="#f8f7f0"/><g font-family="Arial,sans-serif"><rect x="26" y="26" width="1548" height="1028" fill="none" stroke="#d5d9cb"/><rect x="52" y="53" width="44" height="44" rx="2" fill="#294c3d"/><path d="M63 86V64H86 M63 75H81 M63 86H86" fill="none" stroke="#e8d9b6" stroke-width="2.5"/>';
- h+=txt(111,66,12,'ÉVORA URBANISMO  /  TRAÇADO STUDIO 3.0','#526d59',700,'letter-spacing="2.3"')+txt(111,94,27,'Implantação humanizada','#28483b',700)+txt(52,131,15,String(q.name||'Estudo urbanístico').slice(0,80),'#67796a',400)+txt(1548,67,12,'MASTERPLAN · ESTUDO CONCEITUAL','#56735e',700,'text-anchor="end" letter-spacing="1.1"')+txt(1548,94,13,'Geometria métrica · paisagismo indicativo','#7a8978',400,'text-anchor="end"')+'<path d="M52 149H1548" stroke="#cdd7c8"/>';
+ h+=txt(111,66,12,'ÉVORA URBANISMO  /  TRAÇADO STUDIO 3.1','#526d59',700,'letter-spacing="2.3"')+txt(111,94,27,'Implantação humanizada','#28483b',700)+txt(52,131,15,String(q.name||'Estudo urbanístico').slice(0,80),'#67796a',400)+txt(1548,67,12,'MASTERPLAN · ESTUDO CONCEITUAL','#56735e',700,'text-anchor="end" letter-spacing="1.1"')+txt(1548,94,13,'Geometria métrica · paisagismo indicativo','#7a8978',400,'text-anchor="end"')+'<path d="M52 149H1548" stroke="#cdd7c8"/>';
  h+='<g transform="translate('+huN(x)+' '+huN(y)+') scale('+huN(z)+')">'+huGraphic(q,z,'sheet3')+'</g>';
  h+='<rect x="1260" y="169" width="288" height="790" fill="#eff2e8" stroke="#d7dece"/>'+txt(1281,197,11,'SÍNTESE URBANÍSTICA','#54705b',700,'letter-spacing="1.7"');
  const values=[['Área da gleba',fmt(c.area/10000,2)+' ha'],['Lotes válidos',fmt(c.lotCount,0)],['Área em lotes',fmt(c.yield,1)+'%'],['Sistema viário¹',fmt(c.roadPct,1)+'%'],['Frentes curvas',String(audit.curvedLots||0)],['Vias curvilíneas',String(audit.curvedRoads||0)]];
