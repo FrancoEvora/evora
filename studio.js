@@ -190,4 +190,4 @@ function installStudio(){
   window.addEventListener('pagehide',()=>{try{localStorage.setItem('evora-tracado-v1',snapshot())}catch{}});
 }
 
-new ResizeObserver(()=>renderView()).observe(svg);try{p=validateProject(p)}catch(e){p=demo()}normalizePrecision(p);normalizeParcel(p);normalizeBlocks(p);if(p.params.autoQuadras&&(p.blockEngine!==BLOCK_ENGINE||p.derivedDirty))syncBlocks();installStudio();installPrecision();installParcel();installBlocks();renderAll();fit();scheduleMetrics();if(p.anchor.confirmed)setBase('satellite');
+new ResizeObserver(()=>renderView()).observe(svg);try{p=validateProject(p)}catch(e){p=demo()}normalizePrecision(p);normalizeParcel(p);normalizeBlocks(p);if(p.params.autoQuadras&&(p.blockEngine!==BLOCK_ENGINE||p.derivedDirty))syncBlocks();installStudio();installPrecision();installParcel();installBlocks();installOptimizer();renderAll();fit();scheduleMetrics();if(p.anchor.confirmed)setBase('satellite');

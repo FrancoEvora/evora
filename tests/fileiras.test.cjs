@@ -10,4 +10,4 @@ return new Function("document","window","localStorage","ResizeObserver","setTime
 }
 
 
-const result=runQuadraTests(read('index.html'),['parcel.js','precision.js','blocks.js','studio.js'].map(read).join('\n'));console.log(JSON.stringify(result,null,2));if(Object.values(result.t).some(v=>!v))process.exitCode=1;
+const result=runQuadraTests(read('index.html'),['parcel.js','precision.js','blocks.js','optimizer.js','studio.js'].map(read).join('\n'));console.log(JSON.stringify(result,null,2));if(Object.values(result.t).some(v=>!v))process.exitCode=1;

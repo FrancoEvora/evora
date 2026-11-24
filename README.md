@@ -24,3 +24,5 @@ Testes determinísticos de geometria e integração com DOM simulado: `node test
 
 ## Studio 0.5
 Fileiras opostas avaliadas independentemente, com prévia, diagnóstico e ajuste opcional de profundidade (até 15%) e testada (até 20%), preservando a área mínima. Acesso verificado apenas por proximidade geométrica à via.
+
+Otimizador de implantação: até 24 configurações ortogonais (mais o traçado atual no modo complementar), com orientação, largura viária, comprimento de quadra e fase da malha variáveis. Mantém gleba e restrições, classifica por coerência da rede e objetivo selecionado; área viária por amostragem. Até seis propostas distintas. Aplicação arquiva o original e é reversível. Busca heurística, sem garantia de ótimo global, acesso externo ou conformidade urbanística.
