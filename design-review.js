@@ -70,7 +70,11 @@ function qaTerrainStats(q,r){
  return {total,known,coverage:total?known/total*100:0,above,max:known?max:null,abovePct:known?above/known*100:null,contour:qaContour(q,g)};
 }
 function qaSpecs(q,s){
- const base=orgSpecs(q,s),r=s.review;
+ let base=orgSpecs(q,s);const r=s.review;
+ if(s.morphology==='compare'&&s.mode==='new'){
+  const spread=(a,n)=>a.length<=n?a:Array.from({length:n},(_,i)=>a[Math.round(i*(a.length-1)/(n-1))]);
+  base=[...spread(orgSpecs(q,{...s,morphology:'organic',bendMode:'medium'}),8),...spread(mpActiveSpecs(q,{...s,morphology:'active'}),6),...spread(mpSpecs(q,{...s,morphology:'garden'}),5),...spread(optSpecs(q,{...s,morphology:'orthogonal'}),5)];
+ }
  if(!r?.enabled||!r.terrain||!s.rotate||s.mode!=='new'||!base.length)return base;
  const angle=qaContour(q,r.terrain);if(angle===null)return base;
  const extra=[];for(const a of [angle,(angle+90)%180])for(const sp of base.filter((x,i)=>i===0||i===Math.floor(base.length/2))){
