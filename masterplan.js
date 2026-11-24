@@ -113,7 +113,7 @@ function mpSheet(c){
 
 function mpZoneName(o){return o.masterCore?o.name:o.kind==='green'?'Área verde':o.kind==='institutional'?'Institucional':o.kind==='leisure'?'Lazer':o.kind==='plaza'?'Praça':o.kind==='app'?'APP':o.name}
 function mpCurrent(){
- if(!p.boundary)return null;const A=polyArea(p.boundary),valid=p.lots.filter(l=>!l.blockConflict),lotArea=valid.reduce((n,l)=>n+polyArea(l),0),prep=prepared(),roadArea=optRoadArea(p,prep),areas=urbanExistingAreas(p,prep),c={q:p,area:A,lotCount:valid.length,lotArea,yield:lotArea/A*100,roadArea,roadPct:roadArea/A*100,program:{areas}};c.audit=mpAudit(c);return c;
+ if(!p.boundary)return null;const A=polyArea(p.boundary),valid=p.lots.filter(l=>!l.blockConflict),lotArea=valid.reduce((n,l)=>n+polyArea(l),0),prep=prepared(),roadArea=optRoadArea(p,prep),areas=urbanExistingAreas(p,prep),c={q:p,area:A,lotCount:valid.length,lotArea,yield:lotArea/A*100,roadArea,roadPct:roadArea/A*100,program:{areas}};c.audit={...mpAudit(c),...orgStats(c)};return c;
 }
 function installMasterSheet(){
  $('masterSheetBtn').onclick=()=>{const c=mpCurrent();if(!c)return toast('Defina a gleba antes de gerar a prancha.');$('masterSheetView').innerHTML=mpSheet(c);$('masterSheetDialog').showModal()};
