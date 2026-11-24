@@ -42,7 +42,7 @@ function jfReturn(node,a,b,h1,h2,r){
  const N=Math.max(5,Math.ceil(Math.abs(d)/Math.max(.025,2*Math.acos(clamp(1-.012/r,-1,1)))));
  let arc=[T1];for(let i=1;i<N;i++)arc.push(add(C,[r*Math.cos(alpha+d*i/N),r*Math.sin(alpha+d*i/N)]));arc.push(T2);
  // Slight internal overlap makes the union of the polygon and straight road ribbons robust.
- const pts=qClean([lerp(P,node,.006),sub(T1,mul(n,.025)),...arc,sub(T2,mul(m,.025))]);
+ const pts=qClean([node,sub(T1,mul(n,.18)),...arc.slice(1,-1),sub(T2,mul(m,.18))]);
  if(pts.length<3||!simple(pts)||Math.abs(area(pts))<.01)return null;
  return {pts,arc,radius:r};
 }
