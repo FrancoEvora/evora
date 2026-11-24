@@ -1,19 +1,10 @@
-# Évora Launch OS v5.14
+# TRAÇADO Studio 0.2
+Editor urbanístico da Évora. Sirva a raiz por HTTP (`python -m http.server 8000`) ou publique como site estático na Vercel.
 
-Correções na tela de performance de campanhas.
+- Desenho em metros, vias retas e curvas, paralelas, rotatórias e zonas; comandos de comprimento e ângulo, Shift ortogonal e encaixe geométrico.
+- Importe KML/GeoJSON/JSON e exporte JSON/DXF/GeoJSON. Satélite e mapa dependem de conexão com os respectivos fornecedores.
+- Biblioteca de versões e salvamento no navegador. Não há autenticação, sincronização ou banco de dados remoto nesta versão.
+- Área viária e quadras automáticas usam amostragem espacial; não constituem projeto executivo nem aprovação urbanística.
+- A ilha da rotatória integra a faixa viária. As marcações de eixo são interrompidas visualmente nos cruzamentos.
 
-## Ajustes
-
-- Corrigidos textos sobrepostos nos cards de campanha-performance.
-- Reduzido e reorganizado o gráfico comparativo de VGV.
-- Padronizados gráficos similares da plataforma.
-- Lead que merece atenção sai automaticamente da lista quando:
-  - avança de etapa na jornada;
-  - registra uma ação no checklist.
-- Se surgir um novo problema diferente, o lead volta a aparecer na lista de atenção.
-
-## Deploy
-
-Build Command: npm run build  
-Output Directory: public  
-Install Command: npm install
+Arquitetura: index.html (estrutura), studio.css (interface), studio.js (editor e geometria), vercel.json (publicação).

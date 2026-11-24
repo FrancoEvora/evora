@@ -1,12 +1,19 @@
 {
-  "installCommand": "npm install",
-  "buildCommand": "npm run build",
-  "outputDirectory": "public",
-  "rewrites": [
-    { "source": "/enterprise-meta", "destination": "/enterprise-meta.html" },
-    { "source": "/enterprise-meta/", "destination": "/enterprise-meta.html" },
-    { "source": "/app", "destination": "/index.html" },
-    { "source": "/", "destination": "/enterprise-shell.html" },
-    { "source": "/(.*)", "destination": "/index.html" }
+  "framework": null,
+  "cleanUrls": true,
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        }
+      ]
+    }
   ]
 }
