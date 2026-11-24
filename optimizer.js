@@ -2,8 +2,84 @@
 'use strict';
 /* Scenario search in temporary project copies; no mutation of the active study. */
 let optCandidates=[],optSelected=-1,optSource=null,optToken=0,optRunning=false;
-function optInputs(){return {mode:$('optMode').value,f:Number($('optFront').value),d:Number($('optDepth').value),min:Number($('optMin').value),wmin:Number($('optRoadMin').value),wmax:Number($('optRoadMax').value),maxBlock:Number($('optBlockLen').value),rows:Number($('optRows').value),objective:$('optObjective').value,rotate:$('optRotate').checked,flex:$('optFlex').checked}}
-function optValid(s){return ['new','keep'].includes(s.mode)&&['area','lots','balance'].includes(s.objective)&&[s.f,s.d,s.min,s.wmin,s.wmax,s.maxBlock].every(Number.isFinite)&&s.f>=2&&s.f<=100&&s.d>=5&&s.d<=150&&s.min>=10&&s.min<=20000&&s.wmin>=5&&s.wmax>=s.wmin&&s.wmax<=40&&s.maxBlock>=Math.max(25,s.f)&&s.maxBlock<=500&&[1,2].includes(s.rows)&&(s.f*s.d>=s.min-1e-6||s.flex&&s.f*1.2*s.d>=s.min-1e-6)}
+
+/* One shared validation contract, with locale-aware numeric fields and actionable diagnostics. */
+const OPT_NUMERIC={f:{id:'optFront',label:'Testada',lo:2,hi:200,unit:'m'},d:{id:'optDepth',label:'Profundidade',lo:2,hi:300,unit:'m'},min:{id:'optMin',label:'Área mínima',lo:4,hi:60000,unit:'m²'},wmin:{id:'optRoadMin',label:'Largura mínima das vias',lo:1,hi:100,unit:'m'},wmax:{id:'optRoadMax',label:'Largura máxima das vias',lo:1,hi:100,unit:'m'},maxBlock:{id:'optBlockLen',label:'Comprimento máximo da quadra',lo:2,hi:2000,unit:'m'}};
+function optNumber(raw){
+ let x=String(raw??'').trim().replace(/\u00a0/g,' ');
+ if(!x)return NaN;
+ // Brazilian grouping is accepted only when the decimal comma disambiguates it.
+ if(/^[+-]?\d{1,3}(?:\.\d{3})+,\d+$/.test(x))x=x.replace(/\./g,'').replace(',','.');
+ else if(/^[+-]?(?:\d+(?:[.,]\d+)?|[.,]\d+)$/.test(x))x=x.replace(',','.');
+ else return NaN;
+ const v=Number(x);return Number.isFinite(v)?v:NaN;
+}
+function optRoundUp(x){return Math.ceil((x-1e-9)*100)/100}
+function optInputs(){
+ const v={mode:$('optMode').value,rows:optNumber($('optRows').value),objective:$('optObjective').value,rotate:$('optRotate').checked,flex:$('optFlex').checked};
+ for(const [k,r] of Object.entries(OPT_NUMERIC))v[k]=optNumber($(r.id).value);
+ return v;
+}
+function optDiagnostics(s){
+ const issues=[],add=(keys,message,fix)=>issues.push({keys,message,fix}),ok=k=>Number.isFinite(s[k])&&s[k]>=OPT_NUMERIC[k].lo&&s[k]<=OPT_NUMERIC[k].hi;
+ for(const [k,r] of Object.entries(OPT_NUMERIC)){
+  if(!Number.isFinite(s[k]))add([k],r.label+': informe um número válido (ex.: 12,5).');
+  else if(!ok(k))add([k],r.label+': use de '+fmt(r.lo,0)+' a '+fmt(r.hi,0)+' '+r.unit+'.');
+ }
+ if(!['new','keep'].includes(s.mode))add(['mode'],'Selecione uma estratégia.');
+ if(!['area','lots','balance'].includes(s.objective))add(['objective'],'Selecione uma prioridade.');
+ if(![1,2].includes(s.rows))add(['rows'],'Selecione uma ou duas fileiras.');
+ if(ok('wmin')&&ok('wmax')&&s.wmax<s.wmin-1e-8)add(['wmax'],'Via máxima ('+fmt(s.wmax,2)+' m) não pode ser menor que a mínima ('+fmt(s.wmin,2)+' m).','width');
+ if(ok('f')&&ok('d')&&ok('min')){
+  const nominal=s.f*s.d,cap=nominal*(s.flex?1.2:1);
+  if(s.min>cap+1e-6){
+   const d=optRoundUp(s.min/s.f),f=optRoundUp(s.min/s.d);
+   const suggestion=d<=300?' Para manter a área mínima, a profundidade sugerida é '+fmt(d,2)+' m.':f<=200?' Para manter a área mínima, a testada sugerida é '+fmt(f,2)+' m.':' Revise as dimensões em conjunto.';
+   add(['f','d','min'],'Área mínima de '+fmt(s.min,2)+' m² incompatível com '+fmt(s.f,2)+' × '+fmt(s.d,2)+' m (capacidade '+fmt(cap,2)+' m²'+(s.flex?' com ajuste de testada':'')+').'+suggestion,d<=300||f<=200?'area':null);
+  }
+ }
+ if(ok('f')&&ok('maxBlock')){
+  const required=ok('d')&&ok('min')&&s.flex?Math.max(s.f,s.min/s.d):s.f;
+  if(s.maxBlock<required-1e-7)add(['maxBlock'],'Comprimento máximo da quadra ('+fmt(s.maxBlock,2)+' m) precisa comportar ao menos uma testada de '+fmt(optRoundUp(required),2)+' m.','block');
+ }
+ return issues;
+}
+function optValid(s){return optDiagnostics(s).length===0}
+function optSuggested(s){
+ const q={...s},changes=[],diagnostics=optDiagnostics(s);
+ if(diagnostics.some(x=>x.fix==='area')){
+  let depth=optRoundUp(q.min/q.f),front=optRoundUp(q.min/q.d);
+  if(depth>=2&&depth<=300){q.d=depth;changes.push('profundidade: '+fmt(depth,2)+' m')}
+  else if(front>=2&&front<=200){q.f=front;changes.push('testada: '+fmt(front,2)+' m')}
+ }
+ if(diagnostics.some(x=>x.fix==='width')){q.wmax=q.wmin;changes.push('via máxima: '+fmt(q.wmax,2)+' m')}
+ const needed=q.flex&&Number.isFinite(q.min)&&q.d>0?Math.max(q.f,q.min/q.d):q.f;
+ if(Number.isFinite(q.maxBlock)&&q.maxBlock<needed&&needed<=2000&&needed>=2&&q.maxBlock>=2){q.maxBlock=optRoundUp(needed);changes.push('quadra máxima: '+fmt(q.maxBlock,2)+' m')}
+ return {values:q,changes};
+}
+function optRefreshValidation(){
+ const s=optInputs(),issues=optDiagnostics(s),keys=new Set(issues.flatMap(i=>i.keys));
+ for(const [k,r] of Object.entries(OPT_NUMERIC))$(r.id).setAttribute('aria-invalid',keys.has(k)?'true':'false');
+ const info=$('optAreaInfo');
+ if(Number.isFinite(s.f)&&Number.isFinite(s.d)&&s.f>0&&s.d>0){
+  const nominal=s.f*s.d,extra=s.flex?nominal*1.2:nominal;
+  info.innerHTML='<b>Área nominal: '+fmt(nominal,2)+' m²</b>'+(s.flex?'<small>Com flexibilidade de testada: até '+fmt(extra,2)+' m² na profundidade indicada.</small>':'')+(s.flex&&Number.isFinite(s.min)&&s.min>nominal+1e-6&&s.min<=extra+1e-6?'<small>Serão necessárias testadas de pelo menos '+fmt(optRoundUp(s.min/s.d),2)+' m.</small>':'');
+ }else info.textContent='Informe a testada e a profundidade para calcular a área.';
+ $('optValidation').classList.toggle('hidden',!issues.length);
+ $('optValidation').innerHTML=issues.length?'<b>Confira os parâmetros:</b><ul>'+issues.map(x=>'<li>'+esc(x.message)+'</li>').join('')+'</ul>':'';
+ $('optFix').classList.toggle('hidden',!optSuggested(s).changes.length);
+ return issues;
+}
+function optSyncLinkedArea(){if(!$('optLinkArea').checked)return;const f=optNumber($('optFront').value),d=optNumber($('optDepth').value);if(Number.isFinite(f)&&Number.isFinite(d)&&f>0&&d>0)$('optMin').value=String(Math.round(f*d*1000000)/1000000)}
+function optFixForm(){
+ const result=optSuggested(optInputs());
+ if(!result.changes.length)return;
+ optReset();for(const [k,r] of Object.entries(OPT_NUMERIC))if(Number.isFinite(result.values[k]))$(r.id).value=String(result.values[k]);
+ $('optLinkArea').checked=false;$('optPreset').value='custom';
+ const errors=optRefreshValidation();
+ optStatus('Ajustes aplicados no formulário: '+result.changes.join('; ')+'. Área mínima e largura mínima preservadas.'+(errors.length?' Revise os campos restantes.':' Clique em Gerar alternativas.'),!!errors.length);
+}
+
 function optAngle(a){return ((a%180)+180)%180}
 function optSpecs(q,s){
  const ring=q.boundary.pts,edges=ring.map((a,i)=>({a,b:ring[(i+1)%ring.length],l:dist(a,ring[(i+1)%ring.length])})).sort((a,b)=>b.l-a.l),base=optAngle(bearing(edges[0].a,edges[0].b)),angles=[base];
@@ -28,7 +104,8 @@ function optGenerateRoads(q,s,spec){
  const rings=[q.boundary.pts,...(q.boundary.holes||[])].map(a=>a.map(uv)),b=bbox(rings[0]),w=spec.w,half=w/2;
  // Expanded bounding boxes provide conservative clearance around restrictions and retained properties.
  const restrictions=[...q.zones,...q.blocks.filter(b=>!b.auto),...q.lots].map(o=>bbox(o.pts.map(uv))).concat(rings.slice(1).map(bbox));
- const xs=optPositions(b[0],b[2],w,spec.maxBlock,s.f,spec.phase,false),ys=optPositions(b[1],b[3],w,s.rows*s.d,s.rows*s.d*(s.flex?.85:1),spec.phase,true);
+ const minFront=s.flex?Math.max(s.f,s.min/s.d):s.f,minDepth=s.flex?Math.max(s.d*.85,s.min/(s.f*1.2)):s.d;
+ const xs=optPositions(b[0],b[2],w,spec.maxBlock,minFront,spec.phase,false),ys=optPositions(b[1],b[3],w,s.rows*s.d,s.rows*minDepth,spec.phase,true);
  if(xs.length<2||ys.length<2)return [];
  let roads=[],seq=q.roads.length;
  function line(axis,value){
@@ -99,13 +176,19 @@ function openOptimizer(){
  if(!p.boundary){toast('Desenhe ou importe o perímetro da gleba antes de otimizar.');return}
  closeParcel();setMode('select');optReset();
  $('optPreset').innerHTML='<option value="custom">Personalizado / atual</option>'+parcelPresets().map((s,i)=>'<option value="'+i+'">'+esc(s.name)+'</option>').join('');$('optPreset').value='custom';
- $('optMode').value='new';$('optFront').value=p.params.lotFront||12;$('optDepth').value=p.params.lotDepth||30;$('optMin').value=p.params.parcelMinArea||Number($('optFront').value)*Number($('optDepth').value);
- $('optRoadMin').value=clamp(n(p.params.width,14),5,40);$('optRoadMax').value=clamp(n(p.params.width,14)+2,5,40);$('optBlockLen').value=120;$('optRows').value=String(p.params.lotRows||2);$('optObjective').value='area';$('optRotate').checked=true;$('optFlex').checked=true;
- $('optModeNote').textContent='Preserva gleba e áreas especiais. O original permanece intacto durante a busca.';optStatus('Defina os parâmetros e gere as alternativas.');$('optimizerDialog').showModal();
+ $('optMode').value='new';$('optFront').value=p.params.lotFront??12;$('optDepth').value=p.params.lotDepth??30;
+ const nominal=optNumber($('optFront').value)*optNumber($('optDepth').value),savedMin=p.params.parcelMinArea;
+ $('optMin').value=Number.isFinite(optNumber(savedMin))&&optNumber(savedMin)>0?savedMin:nominal;
+ $('optLinkArea').checked=Math.abs(optNumber($('optMin').value)-nominal)<1e-6;
+ const width=clamp(n(p.params.width,14),1,100);$('optRoadMin').value=width;$('optRoadMax').value=Math.min(100,width+2);$('optBlockLen').value=Math.max(120,optRoundUp(optNumber($('optFront').value)||12));$('optRows').value=String(p.params.lotRows||2);$('optObjective').value='area';$('optRotate').checked=true;$('optFlex').checked=true;
+ $('optModeNote').textContent='Preserva gleba e áreas especiais. O original permanece intacto durante a busca.';
+ const initial=optSuggested(optInputs());
+ if(initial.changes.length){for(const [k,r] of Object.entries(OPT_NUMERIC))if(Number.isFinite(initial.values[k]))$(r.id).value=String(initial.values[k]);$('optLinkArea').checked=false;}
+ const issues=optRefreshValidation();optStatus(initial.changes.length?'Parâmetros iniciais ajustados: '+initial.changes.join('; ')+'. Mínimos preservados. Revise antes de gerar.':issues.length?'Confira os campos destacados.':'Parâmetros válidos. Clique em Gerar alternativas.',!!issues.length);$('optimizerDialog').showModal();
 }
 function closeOptimizer(){optReset();if($('optimizerDialog').open)$('optimizerDialog').close()}
 function optRun(){
- if(optRunning)return;const s=optInputs();if(!optValid(s)){optStatus('Revise dimensões, área mínima e limites das vias.',true);return}if(!p.boundary){optStatus('A gleba não está definida.',true);return}
+ if(optRunning)return;const s=optInputs(),issues=optRefreshValidation();if(issues.length){optStatus(issues[0].message,true);return}if(!p.boundary){optStatus('A gleba não está definida.',true);return}
  const source=cp(p);let specs=optSpecs(source,s);if(s.mode==='keep')specs=[{baseline:true,angle:0,w:s.wmin,maxBlock:s.maxBlock,phase:0},...specs];
  optReset();optSource=snapshot();const token=++optToken;optRunning=true;$('optRun').disabled=true;$('optCancel').disabled=false;optStatus('Analisando '+specs.length+' configurações…');
  let idx=0,found=[],errors=0;
@@ -128,8 +211,12 @@ function optApply(){
 }
 function installOptimizer(){
  $('optimizePlan').onclick=openOptimizer;$('optClose').onclick=closeOptimizer;$('optimizerDialog').addEventListener('cancel',e=>{e.preventDefault();closeOptimizer()});
- $('optPreset').onchange=()=>{let s=parcelPresets()[Number($('optPreset').value)];if(s&&$('optPreset').value!=='custom'){$('optFront').value=s.f;$('optDepth').value=s.d;$('optMin').value=s.min;$('optRows').value=String(s.rows)}optReset();optStatus('Parâmetros atualizados. Gere novas alternativas.')};
- for(const id of ['optMode','optFront','optDepth','optMin','optRoadMin','optRoadMax','optBlockLen','optRows','optObjective','optRotate','optFlex'])$(id).addEventListener('change',()=>{if(['optFront','optDepth','optMin','optRows'].includes(id))$('optPreset').value='custom';$('optModeNote').textContent=$('optMode').value==='keep'?'Mantém vias, rotatórias, lotes e quadras manuais. Novas vias evitam interferências.':'Preserva gleba e áreas especiais; o desenho atual ficará arquivado ao aplicar.';optReset();optStatus('Parâmetros atualizados. Gere novas alternativas.')});
+ const refresh=()=>{optReset();const issues=optRefreshValidation();optStatus(issues.length?'Confira os campos destacados.':'Parâmetros válidos. Gere novas alternativas.',!!issues.length)};
+ $('optPreset').onchange=()=>{let s=parcelPresets()[Number($('optPreset').value)];if(s&&$('optPreset').value!=='custom'){$('optFront').value=s.f;$('optDepth').value=s.d;$('optMin').value=s.min;$('optRows').value=String(s.rows);$('optLinkArea').checked=Math.abs(s.min-s.f*s.d)<1e-6}refresh()};
+ for(const id of Object.values(OPT_NUMERIC).map(r=>r.id))$(id).oninput=()=>{if(['optFront','optDepth','optMin'].includes(id)){$('optPreset').value='custom';if(id==='optMin')$('optLinkArea').checked=false;else optSyncLinkedArea()}refresh()};
+ for(const id of ['optMode','optRows','optObjective','optRotate','optFlex'])$(id).onchange=()=>{if(id==='optRows')$('optPreset').value='custom';$('optModeNote').textContent=$('optMode').value==='keep'?'Mantém vias, rotatórias, lotes e quadras manuais. Novas vias evitam interferências.':'Preserva gleba e áreas especiais; o desenho atual ficará arquivado ao aplicar.';refresh()};
+ $('optLinkArea').onchange=()=>{if($('optLinkArea').checked){optSyncLinkedArea();$('optPreset').value='custom'}refresh()};
+ $('optFix').onclick=optFixForm;
  $('optRun').onclick=optRun;$('optCancel').onclick=()=>{optToken++;optRunning=false;$('optRun').disabled=false;$('optCancel').disabled=true;optRender();optStatus('Busca interrompida. Compare as alternativas já avaliadas.')};
  $('optAlternatives').onclick=e=>{let i=Number(e.target.closest('[data-opt-index]')?.dataset.optIndex);if(Number.isInteger(i)&&optCandidates[i]){optSelected=i;optRender()}};
  $('optExport').onclick=()=>{const c=optCandidates[optSelected];if(!c)return;let q=cp(c.q);q.name=p.name+' · Alternativa '+(optSelected+1);download(filename()+'_alternativa_'+(optSelected+1)+'.json',JSON.stringify(q,null,2),'application/json')};

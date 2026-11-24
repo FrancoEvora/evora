@@ -26,3 +26,6 @@ Testes determinísticos de geometria e integração com DOM simulado: `node test
 Fileiras opostas avaliadas independentemente, com prévia, diagnóstico e ajuste opcional de profundidade (até 15%) e testada (até 20%), preservando a área mínima. Acesso verificado apenas por proximidade geométrica à via.
 
 Otimizador de implantação: até 24 configurações ortogonais (mais o traçado atual no modo complementar), com orientação, largura viária, comprimento de quadra e fase da malha variáveis. Mantém gleba e restrições, classifica por coerência da rede e objetivo selecionado; área viária por amostragem. Até seis propostas distintas. Aplicação arquiva o original e é reversível. Busca heurística, sem garantia de ótimo global, acesso externo ou conformidade urbanística.
+
+### 0.5.1
+Validação do otimizador com diagnósticos por campo, números decimais com vírgula/ponto, faixas compatíveis com o editor (testada 2–200 m, profundidade 2–300 m, área mínima 4–60.000 m² e vias 1–100 m), vínculo opcional de área mínima com as dimensões e correções explícitas que preservam área mínima e largura viária mínima. Ao abrir, parâmetros iniciais incompatíveis herdados podem ser ajustados no formulário, sem alterar o estudo até aplicação. Limite de comprimento de quadra 2–2.000 m, desde que comporte a testada efetiva. Limites numéricos não substituem exigências urbanísticas.
