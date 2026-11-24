@@ -57,7 +57,7 @@ function jfCorners(q){
    const a=rays[k],b=rays[(k+1)%rays.length],angle=(Math.atan2(b.u[1],b.u[0])-Math.atan2(a.u[1],a.u[0])+Math.PI*2)%(Math.PI*2);
    if(angle<Math.PI*35/180||angle>Math.PI*145/180)continue;
    const h1=a.r.width/2,h2=b.r.width/2;let ret=null;
-   for(const r of [...new Set([target,target*.8,target*.6,Math.max(1.2,target*.4)].filter(x=>x<=target&&x>=1.2))]){
+   for(const r of [...new Set([target,target*.8,target*.6,Math.max(.5,target*.4)].filter(x=>x<=target&&x>=.5))]){
     const x=jfReturn(n.pt,a,b,h1,h2,r);if(!x)continue;
     const obj={pts:x.pts};
     if(q.boundary&&!orgFits(obj,q.boundary))continue;

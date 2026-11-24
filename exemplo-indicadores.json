@@ -1,0 +1,53 @@
+{
+  "area": 123105.5,
+  "lots": 117,
+  "lotArea": 50331.64613690281,
+  "yield": 40.88496950737604,
+  "roadPct": 34.52755905511811,
+  "program": {
+    "plaza": 3714.5532430340827,
+    "institutional": 6443.471986986166,
+    "leisure": 2742.0094775850694,
+    "green": 12703.540170109514
+  },
+  "audit": {
+    "ends": 0,
+    "residual": 4664.954772783931,
+    "residualPct": 3.789395902525826,
+    "adaptive": 117,
+    "edgeLots": 0,
+    "infillLots": 4,
+    "core": true,
+    "style": "organic",
+    "accessCount": 0,
+    "accessStatus": "Acessos externos não definidos",
+    "curvedRoads": 11,
+    "curvedLength": 1479.2980897355346,
+    "curvedLots": 55,
+    "organicLots": 117,
+    "cornerCount": 54,
+    "minCornerRadius": 2,
+    "cornerRequested": 5,
+    "cornerCompletion": {
+      "newLots": 4,
+      "merged": 1,
+      "area": 2062.832295714077
+    }
+  },
+  "blocks": 13,
+  "components": 1,
+  "evaluated": 12,
+  "valid": 2,
+  "spec": {
+    "angle": 14.18830197375425,
+    "w": 12,
+    "pattern": "organic",
+    "ratio": 1.7,
+    "maxBlock": 125,
+    "phase": 0.5,
+    "master": true,
+    "organic": true,
+    "bend": 0.8,
+    "compact": false
+  }
+}

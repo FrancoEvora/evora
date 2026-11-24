@@ -58,3 +58,5 @@ O partido Bordas ativas continua disponível como alternativa independente, alé
 
 ### 3.1 — concordâncias e acabamento parcelário
 Raio desejado configurável (5 m inicial para novas propostas, 0 em estudos antigos), retornos circulares tangentes nos quadrantes de cruzamentos/T quando cabem no segmento, recorte vetorial das quadras, teste de interferência e contabilização na área viária. Raios reduzidos ou omitidos quando não há espaço, sem inferir critérios de veículos ou normas. DXF inclui camada CONCORDANCIAS_VIARIAS; GeoJSON inclui polígonos adicionais de concordância. A conclusão parcelária testa novos lotes com frente e absorve pequenas sobras apenas quando a união é convexa e mantém a frente e dimensões. Paisagismo indicativo com lotes gramados, divisas claras e arborização concentrada nos espaços públicos; não altera geometria.
+
+Amostra 3.1: estudo calculado em gleba irregular de 12,31 ha, com raio desejado 5 m, lotes de 300 m² mínimos e testada de 12 m. Exemplo SVG exportado diretamente pelo motor; a validação de regressão usa DOM simulado.
