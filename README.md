@@ -21,3 +21,6 @@ Arquitetura: index.html (estrutura), studio.css (interface), studio.js (editor e
 - Área útil, envelope retangular de menor área, orientação, perímetro externo, divisas internas, medidas individuais, nomes e CSV. Dimensões envolventes não equivalem às medidas de cada divisa irregular. Quadras derivadas são protegidas contra edição direta. IDs são conciliados por contorno ou sobreposição aproximada; lotes antigos nunca são apagados na atualização e ficam sinalizados em vermelho se não couberem nas quadras atualizadas. Todo o estudo continua em armazenamento local.
 
 Testes determinísticos de geometria e integração com DOM simulado: `node tests/quadras.test.cjs`. Os testes não substituem validação visual em navegador e levantamento topográfico.
+
+## Studio 0.5
+Fileiras opostas avaliadas independentemente, com prévia, diagnóstico e ajuste opcional de profundidade (até 15%) e testada (até 20%), preservando a área mínima. Acesso verificado apenas por proximidade geométrica à via.
