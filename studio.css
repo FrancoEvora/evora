@@ -31,3 +31,6 @@
 
 /* 2.0 — masterplan workspace */
 .optimizer-dialog{width:min(1220px,98vw);max-height:94dvh}.optimizer-layout{grid-template-columns:300px minmax(0,1fr)}.optimizer-head{background:#eff2eb;padding:16px 20px}.optimizer-head h2{font-size:24px;letter-spacing:-.045em}.opt-config{background:#fafbf8}.opt-results{padding:16px;background:#fff}.opt-map{background:#f8f7f1;border-color:#d7ddd0}.opt-map svg{height:clamp(270px,43vh,500px)}.opt-choice{background:#fafbf8}.opt-choice.on{background:#edf3e9;border-color:#54846a}.opt-metric{background:#f6f7f2}.optimize-btn{background:#203f37;color:white;border-color:#203f37;padding:10px 8px}.optimize-btn:hover{background:#365c4e}.optimizer-footer{background:#f6f8f3}@media(max-width:760px){.optimizer-layout{grid-template-columns:1fr}.opt-map svg{height:280px}.optimizer-footer button{white-space:normal}}
+
+.sheet-dialog{width:min(1240px,98vw);max-height:95dvh;padding:0;overflow:auto}.sheet-dialog #masterSheetView{padding:10px;background:#eceee7}.sheet-dialog #masterSheetView svg{display:block;width:100%;height:auto;max-height:74dvh}.sheet-dialog .optimizer-head{padding:12px 16px}
+@media(max-width:760px){#masterSheetBtn{font-size:10px;padding:6px 4px}}

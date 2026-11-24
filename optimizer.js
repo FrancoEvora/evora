@@ -18,7 +18,7 @@ function optRoundUp(x){return Math.ceil((x-1e-9)*100)/100}
 function optInputs(){
  const v={mode:$('optMode').value,rows:optNumber($('optRows').value),objective:$('optObjective').value,rotate:$('optRotate').checked,flex:$('optFlex').checked};
  for(const [k,r] of Object.entries(OPT_NUMERIC))v[k]=optNumber($(r.id).value);
- v.roadShare=optNumber($('optRoadShare').value);v.morphology=$('optMorphology').value;v.adaptive=$('optAdaptiveLots').checked;return urbanInputs(v);
+ v.roadShare=optNumber($('optRoadShare').value);v.morphology=$('optMorphology').value;v.adaptive=$('optAdaptiveLots').checked;v.accessEdge=$('optAccess').value===''?null:Number($('optAccess').value);return urbanInputs(v);
 }
 function optDiagnostics(s){
  const issues=[],add=(keys,message,fix)=>issues.push({keys,message,fix}),ok=k=>Number.isFinite(s[k])&&s[k]>=OPT_NUMERIC[k].lo&&s[k]<=OPT_NUMERIC[k].hi;
@@ -155,7 +155,7 @@ function optNetwork(q){
 function optRoadArea(q,prep){const B=q.boundary,A=polyArea(B),b=bbox(B.pts),dx=b[2]-b[0],dy=b[3]-b[1],step=Math.max(.5,Math.sqrt(dx*dy/9000),dx/180,dy/180);let n=0,r=0;for(let y=b[1]+step/2;y<b[3];y+=step)for(let x=b[0]+step/2;x<b[2];x+=step){const v=[x,y];if(insideObj(v,B)){n++;if(onRoad(v,prep))r++}}return n?A*r/n:0}
 function optEvaluate(source,s,spec){
  const q=cp({...source,image:null});q.image=source.image;
- if(s.mode==='new'){q.roads=[];q.rounds=[];q.blocks=[];q.lots=[];if(s.publicProgram)q.zones=q.zones.filter(z=>!z.urbanGenerated)}
+ if(s.mode==='new'){q.roads=[];q.rounds=[];q.blocks=[];q.lots=[];delete q.masterplan;if(s.publicProgram)q.zones=q.zones.filter(z=>!z.urbanGenerated)}
  // In keep mode, keep previous automatic blocks for stable IDs during reconciliation.
  q.params={...q.params,autoQuadras:true,edgeQuadras:true,minQuadra:Math.max(1,Math.min(q.params.minQuadra||100,s.min*.5))};
  const generated=spec.baseline?[]:spec.master?mpGenerate(q,s,spec):optGenerateRoads(q,s,spec);if(!spec.baseline&&(!generated||!generated.length))return null;
@@ -187,9 +187,9 @@ function optRender(){
  $('optCount').textContent=optCandidates.length?optCandidates.length+' alternativas exibidas':'';
  $('optAlternatives').innerHTML=optCandidates.map((c,i)=>'<button class="opt-choice '+(i===optSelected?'on':'')+'" data-opt-index="'+i+'"><span class="opt-tag">'+(i===0?'Melhor encontrada':'Alternativa '+(i+1))+'</span><strong>'+fmt(c.lotCount)+' lotes · '+fmt(c.yield,1)+'%</strong><span>'+(c.spec.baseline?'Traçado atual':fmt(c.spec.angle,0)+'° · via '+fmt(c.spec.w,1)+' m · '+(c.spec.master?(c.spec.pattern==='garden'?'bairro-jardim':'circuito compacto'):(c.spec.pattern==='internal'?'malha interna':'perimetral')))+'<br>'+c.blockCount+' quadras · '+fmt(c.roadLen,0)+' m de vias · '+fmt(c.roadPct,1)+'% viário'+(c.components>1?' · '+c.components+' redes':'')+'</span></button>').join('');
  const c=optCandidates[optSelected];optRenderPreview(c);urbanReport(c);
- $('optMetrics').innerHTML=c?[optMetric('Área em lotes',fmt(c.lotArea,0)+' m²'),optMetric('Aproveitamento',fmt(c.yield,1)+'%'),optMetric('Quadras / lotes',c.blockCount+' / '+c.lotCount),optMetric('Área viária estimada',fmt(c.roadPct,1)+'%'),optMetric('Extensão viária',fmt(c.roadLen,0)+' m'),optMetric('Quadras com duas fileiras novas',String(c.rows2)),optMetric('Redes internas',String(c.components)),optMetric('Lotes preservados em conflito',String(c.conflicts)),optMetric('Novos lotes',String(c.newLots)),optMetric('Espaços públicos',fmt(Object.values(c.program?.areas||{}).reduce((a,b)=>a+b,0)/c.area*100,1)+'%'),optMetric('Lotes adaptativos',String(c.audit?.adaptive||0)),optMetric('Pontas viárias livres',String(c.audit?.ends||0)),optMetric('Saldo a classificar',fmt(c.audit?.residualPct||0,1)+'%')].join(''):'';
+ $('optMetrics').innerHTML=c?[optMetric('Área em lotes',fmt(c.lotArea,0)+' m²'),optMetric('Aproveitamento',fmt(c.yield,1)+'%'),optMetric('Quadras / lotes',c.blockCount+' / '+c.lotCount),optMetric('Área viária estimada',fmt(c.roadPct,1)+'%'),optMetric('Extensão viária',fmt(c.roadLen,0)+' m'),optMetric('Quadras com duas fileiras novas',String(c.rows2)),optMetric('Redes internas',String(c.components)),optMetric('Lotes preservados em conflito',String(c.conflicts)),optMetric('Novos lotes',String(c.newLots)),optMetric('Espaços públicos',fmt(Object.values(c.program?.areas||{}).reduce((a,b)=>a+b,0)/c.area*100,1)+'%'),optMetric('Lotes adaptativos',String(c.audit?.adaptive||0)),optMetric('Pontas viárias livres',String(c.audit?.ends||0)),optMetric('Acessos indicados',String(c.audit?.accessCount||0)),optMetric('Saldo a classificar',fmt(c.audit?.residualPct||0,1)+'%')].join(''):'';
  $('optApply').disabled=!c||optRunning;$('optExport').disabled=!c||optRunning;$('optSheet').disabled=!c||optRunning;
- $('optApplyNote').textContent=c?.spec.master?'Circuito interno fechado; confirme acessos externos. Original será arquivado.':c&&c.components>1?'Atenção: faixas viárias desconectadas. Revise as conexões. Original será arquivado.':'Seu projeto original ficará arquivado em Projetos ao aplicar.';
+ $('optApplyNote').textContent=c?.spec.master?(c.audit?.accessCount?'Acesso indicado: verifique a conexão externa. Original será arquivado.':'Circuito interno fechado; defina acessos externos. Original será arquivado.'):c&&c.components>1?'Atenção: faixas viárias desconectadas. Revise as conexões. Original será arquivado.':'Seu projeto original ficará arquivado em Projetos ao aplicar.';
 }
 function optReset(){optToken++;optRunning=false;optCandidates=[];optSelected=-1;optSource=null;$('optRun').disabled=false;$('optCancel').disabled=true;optRender()}
 function optStatus(message,warn=false){$('optStatus').textContent=message;$('optStatus').classList.toggle('warn',warn)}
@@ -197,7 +197,7 @@ function openOptimizer(){
  if(!p.boundary){toast('Desenhe ou importe o perímetro da gleba antes de otimizar.');return}
  closeParcel();setMode('select');optReset();
  $('optPreset').innerHTML='<option value="custom">Personalizado / atual</option>'+parcelPresets().map((s,i)=>'<option value="'+i+'">'+esc(s.name)+'</option>').join('');$('optPreset').value='custom';
- $('optMode').value='new';$('optMorphology').value='garden';$('optAdaptiveLots').checked=true;$('optMorphologyNote').textContent='Parque estruturador, circuito de contorno e vias internas conectadas. Acessos externos ainda precisam ser definidos.';$('optFront').value=p.params.lotFront??12;$('optDepth').value=p.params.lotDepth??30;
+ $('optMode').value='new';$('optAccess').innerHTML='<option value="">A definir no projeto</option>'+p.boundary.pts.map((pt,i)=>'<option value="'+i+'">Divisa '+(i+1)+' · '+fmt(dist(pt,p.boundary.pts[(i+1)%p.boundary.pts.length]),1)+' m · '+fmt(bearing(pt,p.boundary.pts[(i+1)%p.boundary.pts.length]),0)+'°</option>').join('');$('optAccess').value='';$('optMorphology').value='garden';$('optAdaptiveLots').checked=true;$('optMorphologyNote').textContent='Parque estruturador, circuito de contorno e vias internas conectadas. Acessos externos ainda precisam ser definidos.';$('optFront').value=p.params.lotFront??12;$('optDepth').value=p.params.lotDepth??30;
  const nominal=optNumber($('optFront').value)*optNumber($('optDepth').value),savedMin=p.params.parcelMinArea;
  $('optMin').value=Number.isFinite(optNumber(savedMin))&&optNumber(savedMin)>0?savedMin:nominal;
  $('optLinkArea').checked=Math.abs(optNumber($('optMin').value)-nominal)<1e-6;
@@ -211,7 +211,7 @@ function openOptimizer(){
 function closeOptimizer(){optReset();if($('optimizerDialog').open)$('optimizerDialog').close()}
 function optRun(){
  if(optRunning)return;const s=optInputs(),issues=optRefreshValidation();if(issues.length){optStatus(issues[0].message,true);return}if(!p.boundary){optStatus('A gleba não está definida.',true);return}if(s.wmax>30&&!confirm('A malha inclui vias de mais de 30 m. Confirma esse parâmetro excepcional para o estudo?'))return;
- const source=cp(p);let specs=mpSpecs(source,s);if(s.mode==='keep')specs=[{baseline:true,angle:0,w:s.wmin,maxBlock:s.maxBlock,phase:0},...specs];
+ const source=cp(p);let specs=mpSpecs(source,s);if(Number.isInteger(s.accessEdge)&&s.mode==='new')specs=specs.filter(x=>x.master);if(s.mode==='keep')specs=[{baseline:true,angle:0,w:s.wmin,maxBlock:s.maxBlock,phase:0},...specs];
  optReset();optSource=snapshot();const token=++optToken;optRunning=true;$('optRun').disabled=true;$('optCancel').disabled=false;optStatus('Analisando '+specs.length+' configurações…');
  let idx=0,found=[],errors=0,overShare=0,overProgram=0,bestDeficit=Infinity;
  function step(){
@@ -233,10 +233,10 @@ function optApply(){
 }
 function installOptimizer(){
  $('optimizePlan').onclick=openOptimizer;$('optClose').onclick=closeOptimizer;$('optimizerDialog').addEventListener('cancel',e=>{e.preventDefault();closeOptimizer()});
- const refresh=()=>{optReset();const issues=optRefreshValidation();optStatus(issues.length?'Confira os campos destacados.':'Parâmetros válidos. Gere novas alternativas.',!!issues.length)};
+ const refresh=()=>{$('optAccess').disabled=$('optMode').value==='keep'||$('optMorphology').value==='orthogonal';if($('optAccess').disabled)$('optAccess').value='';$('optMorphologyNote').textContent=$('optMode').value==='keep'?'Modo complementar utiliza o traçado existente; o novo circuito é próprio de Novo traçado.':$('optMorphology').value==='orthogonal'?'Alternativa anterior: malha interna ou perimetral.':$('optMorphology').value==='compact'?'Núcleo público menor e circuito ajustado às divisas.':'Parque estruturador, circuito de contorno e vias internas conectadas.';optReset();const issues=optRefreshValidation();optStatus(issues.length?'Confira os campos destacados.':'Parâmetros válidos. Gere novas alternativas.',!!issues.length)};
  $('optPreset').onchange=()=>{let s=parcelPresets()[Number($('optPreset').value)];if(s&&$('optPreset').value!=='custom'){$('optFront').value=s.f;$('optDepth').value=s.d;$('optMin').value=s.min;$('optRows').value=String(s.rows);$('optLinkArea').checked=Math.abs(s.min-s.f*s.d)<1e-6}refresh()};
  for(const id of [...Object.values(OPT_NUMERIC).map(r=>r.id),'optRoadShare',...URBAN_CATEGORIES.map(c=>c.id)])$(id).oninput=()=>{if(['optFront','optDepth','optMin'].includes(id)){$('optPreset').value='custom';if(id==='optMin')$('optLinkArea').checked=false;else optSyncLinkedArea()}refresh()};
- for(const id of ['optMode','optRows','optObjective','optRotate','optFlex','optPublic','optHierarchy','optMorphology','optAdaptiveLots'])$(id).onchange=()=>{if(id==='optRows')$('optPreset').value='custom';$('optModeNote').textContent=$('optMode').value==='keep'?'Mantém vias, rotatórias, lotes e quadras manuais. Novas vias evitam interferências.':'Preserva gleba e áreas especiais; o desenho atual ficará arquivado ao aplicar.';refresh()};
+ for(const id of ['optMode','optRows','optObjective','optRotate','optFlex','optPublic','optHierarchy','optMorphology','optAdaptiveLots','optAccess'])$(id).onchange=()=>{if(id==='optRows')$('optPreset').value='custom';$('optModeNote').textContent=$('optMode').value==='keep'?'Mantém vias, rotatórias, lotes e quadras manuais. Novas vias evitam interferências.':'Preserva gleba e áreas especiais; o desenho atual ficará arquivado ao aplicar.';refresh()};
  $('optLinkArea').onchange=()=>{if($('optLinkArea').checked){optSyncLinkedArea();$('optPreset').value='custom'}refresh()};
  $('optFix').onclick=optFixForm;$('optLocalProfile').onclick=()=>{$('optRoadMin').value='12';$('optRoadMax').value='16';$('optRoadShare').value='35';refresh()};
  $('optRun').onclick=optRun;$('optCancel').onclick=()=>{optToken++;optRunning=false;$('optRun').disabled=false;$('optCancel').disabled=true;optRender();optStatus('Busca interrompida. Compare as alternativas já avaliadas.')};

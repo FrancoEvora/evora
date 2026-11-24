@@ -24,13 +24,13 @@ function urbanRoadFront(o,prep){
  return best;
 }
 function urbanExistingAreas(q,prep){
- const a=Object.fromEntries(URBAN_CATEGORIES.map(c=>[c.kind,0])),zones=q.zones.filter(z=>urbanPublicKinds.has(z.kind)),B=q.boundary,A=polyArea(B);
- if(!zones.length)return a;
+ const a=Object.fromEntries(URBAN_CATEGORIES.map(c=>[c.kind,0])),core=q.zones.filter(z=>urbanPublicKinds.has(z.kind)&&z.masterCore),zones=q.zones.filter(z=>urbanPublicKinds.has(z.kind)&&!z.masterCore),B=q.boundary,A=polyArea(B);
+ if(!zones.length){for(const z of core)a[z.kind]+=polyArea(z);return a;}
  // Exact area for nonoverlapping polygons wholly inside the site and outside the road footprint is credited conservatively by a grid.
  // The grid also prevents overlapping manually entered reserves and road space from being credited twice.
  const b=bbox(B.pts),dx=b[2]-b[0],dy=b[3]-b[1],step=Math.max(.25,Math.sqrt(dx*dy/18000),dx/220,dy/220),z=zones.map(o=>({...o,b:bbox(o.pts)}));let total=0;
  for(let y=b[1]+step/2;y<b[3];y+=step)for(let x=b[0]+step/2;x<b[2];x+=step){let pt=[x,y];if(!insideObj(pt,B))continue;total++;if(onRoad(pt,prep))continue;let o=z.find(o=>inBox(pt,o.b)&&insideObj(pt,o));if(o)a[o.kind]++}
- for(const k in a)a[k]=total?a[k]*A/total:0;return a;
+ for(const k in a)a[k]=total?a[k]*A/total:0;for(const z of core)a[z.kind]+=polyArea(z);return a;
 }
 function urbanSlice(o,target,s,prep,kind){
  const A=polyArea(o),stat=blockStats(o),front=urbanRoadFront(o,prep);
