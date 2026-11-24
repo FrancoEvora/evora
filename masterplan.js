@@ -35,7 +35,7 @@ function mpStations(lo,hi,anchors,desired,w,minGap,maxGap){const a=[lo,...anchor
 function mpGenerate(q,s,spec){
  const w=spec.w,ring0=mpOffsetRing(q.boundary.pts,w/2+.40);if(!ring0||!mpRoadSafe([...ring0,ring0[0]],w,q.boundary,q.zones))return null;
  const ring=mpRoundedRing(ring0,w,q.boundary,q.zones),frame=mpFrame(q,spec.angle),bounds=bbox(ring.map(frame.uv)),core=mpCore(q,s,spec,ring,frame,w);
- if(s.publicProgram&&(s.greenPct||s.plazaPct||s.leisurePct)&&!core)return null;if(core)q.zones.push(...core.zones);
+ if(s.publicProgram&&!core){const need=URBAN_CATEGORIES.filter(c=>['green','plaza','leisure'].includes(c.kind)).reduce((sum,c)=>sum+Math.max(0,polyArea(q.boundary)*(s[c.key]||0)/100-q.zones.filter(z=>z.kind===c.kind).reduce((n,z)=>n+polyArea(z),0)),0);if(need>=Math.max(80,s.min*.5))return null;}if(core)q.zones.push(...core.zones);
  const roads=[];let seq=0;
  function road(pts,cls,name){if(pts.length<2||length(pts)<w)return;roads.push({id:uid(),name:name||'Via local '+String(++seq).padStart(2,'0'),pts,width:w,cls,smooth:false,optimized:true,masterRoad:true})}
  road([...ring,ring[0]],'Local','Circuito de contorno');if(core)road([...core.ring,core.ring[0]],'Coletora','Alameda do parque');
