@@ -34,11 +34,11 @@ function mpCore(q,s,spec,outer,frame,w){
 function mpStations(lo,hi,anchors,desired,w,minGap,maxGap){const a=[lo,...anchors.filter(x=>x>lo+1e-5&&x<hi-1e-5),hi].sort((a,b)=>a-b),out=[];for(let i=1;i<a.length;i++){const x=a[i-1],y=a[i],L=y-x;if(i>1)out.push(x);if(L<2*(minGap+w))continue;let n=Math.max(1,Math.round(L/(desired+w)));if(Number.isFinite(maxGap))n=Math.max(n,Math.ceil(L/(maxGap+w)));while(n>1&&L/n<minGap+w-1e-6)n--;for(let k=1;k<n;k++)out.push(x+L*k/n)}return [...new Set(out.map(x=>Math.round(x*100000)/100000))]}
 function mpGenerate(q,s,spec){
  const w=spec.w,active=spec.pattern==='active',edgeDepth=active?Math.max(s.d*(spec.band||1),s.min/s.f):0,outer=qClean(q.boundary.pts),curb=active?mpOffsetRing(outer,edgeDepth-.08):null,ring0=mpOffsetRing(outer,w/2+(active?edgeDepth:.40));if(active&&(!curb||curb.length!==outer.length||!urbanConvex(outer)))return null;if(!ring0||!mpRoadSafe([...ring0,ring0[0]],w,q.boundary,q.zones))return null;
- const ring=active?ring0:mpRoundedRing(ring0,w,q.boundary,q.zones),frame=mpFrame(q,spec.angle),bounds=bbox(ring.map(frame.uv)),core=mpCore(q,s,spec,ring,frame,w);
+ const ring=active?ring0:mpRoundedRing(ring0,w,q.boundary,q.zones),frame=mpFrame(q,spec.angle),bounds=bbox(ring.map(frame.uv)),cw=active&&s.hierarchy?Math.min(s.wmax,w+2):w,core=mpCore(q,s,spec,ring,frame,cw);
  if(s.publicProgram&&!core){const need=URBAN_CATEGORIES.filter(c=>['green','plaza','leisure'].includes(c.kind)).reduce((sum,c)=>sum+Math.max(0,polyArea(q.boundary)*(s[c.key]||0)/100-q.zones.filter(z=>z.kind===c.kind).reduce((n,z)=>n+polyArea(z),0)),0);if(need>=Math.max(80,s.min*.5))return null;}if(core)q.zones.push(...core.zones);
  const roads=[];let seq=0;
- function road(pts,cls,name){if(pts.length<2||length(pts)<w)return;roads.push({id:uid(),name:name||'Via local '+String(++seq).padStart(2,'0'),pts,width:w,cls,smooth:false,optimized:true,masterRoad:true})}
- road([...ring,ring[0]],'Local',active?'Circuito de bordas ativas':'Circuito de contorno');if(core)road([...core.ring,core.ring[0]],'Coletora','Alameda do parque');
+ function road(pts,cls,name,width=w){if(pts.length<2||length(pts)<width)return;roads.push({id:uid(),name:name||'Via local '+String(++seq).padStart(2,'0'),pts,width,cls,smooth:false,optimized:true,masterRoad:true})}
+ road([...ring,ring[0]],'Local',active?'Circuito de bordas ativas':'Circuito de contorno');if(core)road([...core.ring,core.ring[0]],'Coletora','Alameda do parque',cw);
  const xAnchor=core?[core.box[0],core.box[2]]:[],yAnchor=core?[core.box[1],core.box[3]]:[],depth=s.d*s.rows,minDepth=Math.max(s.d*(s.flex?.85:1),s.min/(s.f*(s.flex?1.2:1)))*s.rows;
  const xs=mpStations(bounds[0],bounds[2],xAnchor,Math.max(s.f*3,Math.min(s.maxBlock,spec.maxBlock||s.maxBlock)),w,Math.max(s.f*1.4,25),s.maxBlock),ys=mpStations(bounds[1],bounds[3],yAnchor,depth*(s.flex?1.18:1),w,Math.max(minDepth*.85,s.d),Infinity),ringUV=ring.map(frame.uv);
  function line(axis,value){const r=axis===1?ringUV:ringUV.map(v=>[v[1],v[0]]);let intervals=parcelIntervalsAt([r],value);if(core){const box=axis===1?core.box:[core.box[1],core.box[0],core.box[3],core.box[2]];if(value>=box[1]-1e-4&&value<=box[3]+1e-4)intervals=optSubtract(intervals,box[0],box[2])}for(const [lo,hi] of intervals){if(hi-lo<Math.max(w*2,s.f))continue;const a=frame.xy(axis===1?[lo,value]:[value,lo]),b=frame.xy(axis===1?[hi,value]:[value,hi]);if(!mpRoadSafe([a,b],w,q.boundary,q.zones))continue;if(roads.some(r=>optDuplicate(a,b,r,w)))continue;road([a,b],'Local')}}
@@ -77,7 +77,7 @@ function mpDivideRow(o,s,part,workingLots,prep,limit){
  }return [];
 }
 function mpAdaptiveParcel(o,s,working,prep,limit){const baseline=planParcelArea(o,s,working,prep,limit);if(!s.adaptive||!s.flexDepth||!o.auto||o.holes?.length)return baseline;let best=baseline;for(const config of mpRows(o,s,prep)){let lots=[],rows=[];for(const part of config){const a=mpDivideRow(o,s,part,[...working,...lots],prep,Math.max(0,limit-lots.length));lots.push(...a);rows.push({row:part.row,count:a.length,area:a.reduce((n,l)=>n+polyArea(l),0),depth:a.length?a.reduce((n,l)=>n+l.depth,0)/a.length:s.d,reason:a.length?'':'Divisa não comporta lotes adaptativos.'})}const A=lots.reduce((n,l)=>n+polyArea(l),0),double=rows.filter(r=>r.count>0).length,oldDouble=best.rows.filter(r=>r.count>0).length;if(lots.length&&(double>=oldDouble&&A>best.area+.01||double>oldDouble&&A>=best.area*.90))best={...baseline,lots,rows,area:A,adjusted:true,adaptive:true,limit:false,rejected:{shape:0,road:0,access:0,occupied:0,minimum:0}}}return best}
-function mpAudit(c){const q=c.q,A=c.area,residual=Math.max(0,A-c.lotArea-c.roadArea-Object.values(c.program?.areas||{}).reduce((n,x)=>n+x,0));return {ends:mpOpenEnds(q),residual,residualPct:residual/A*100,adaptive:q.lots.filter(l=>l.adaptive).length,edgeLots:q.lots.filter(l=>l.edgeLot).length,core:q.zones.some(z=>z.masterCore),style:q.masterplan?.style||'orthogonal',accessCount:q.masterplan?.accessCount||0,accessStatus:q.masterplan?.accessStatus||'Acessos externos não definidos'}}
+function mpAudit(c){const q=c.q,A=c.area,residual=Math.max(0,A-c.lotArea-c.roadArea-Object.values(c.program?.areas||{}).reduce((n,x)=>n+x,0));return {ends:mpOpenEnds(q),residual,residualPct:residual/A*100,adaptive:q.lots.filter(l=>l.adaptive).length,edgeLots:q.lots.filter(l=>l.edgeLot).length,infillLots:q.lots.filter(l=>l.infill).length,core:q.zones.some(z=>z.masterCore),style:q.masterplan?.style||'orthogonal',accessCount:q.masterplan?.accessCount||0,accessStatus:q.masterplan?.accessStatus||'Acessos externos não definidos'}}
 
 
 function mpRoadTrees(q,z){let h='',num=0;const step=Math.max(13,12/z);for(const r of q.roads.filter(r=>r.cls!=='Local'||r.name==='Circuito de contorno'||r.name==='Circuito de bordas ativas')){const pts=roadPts(r);for(let i=1;i<pts.length;i++){const a=pts[i-1],b=pts[i],L=dist(a,b),u=norm(sub(b,a)),n=perp(u);for(let t=step;t<L-step*.5&&num<180;t+=step)for(const sign of [-1,1]){const pt=add(add(a,mul(u,t)),mul(n,sign*(r.width/2-.8)));if(!insideObj(pt,q.boundary))continue;if(q.roads.some(o=>o!==r&&roadPts(o).slice(1).some((v,k)=>dist(pt,nearest(pt,roadPts(o)[k],v))<o.width/2+1.5)))continue;h+='<circle cx="'+pt[0].toFixed(2)+'" cy="'+pt[1].toFixed(2)+'" r="1.45" fill="#7ca073" stroke="#4e7954" stroke-width="'+.32/z+'"/>';num++}}}return h}
@@ -135,9 +135,10 @@ function mpEdgeLots(q,s,prep){
    const width=len/n;if(width>s.f*1.45+1e-5)continue;
    let lots=[];
    for(let k=0;k<n;k++){
-    const t=k/n,T=(k+1)/n,pts=qClean([lerp(a,b,t),lerp(a,b,T),lerp(A,Z,T),lerp(A,Z,t)]),areaM=Math.abs(area(pts));
-    if(pts.length!==4||!simple(pts)||!urbanConvex(pts)||areaM<s.min-1e-5||areaM/width<s.d*.83||areaM/width>s.d*1.65)continue;
-    const l={id:uid(),name:'Lote',pts,auto:true,adaptive:true,frontage:width,depth:areaM/width,frontEdge:0,parcelRow:1,parcelV:21,edgeLot:true};
+    const dir=norm(sub(b,a)),v=mul(perp(dir),Math.sign(area(sector))),uv=pt=>[dot(sub(pt,a),dir),dot(sub(pt,a),v)],xy=pt=>add(a,add(mul(dir,pt[0]),mul(v,pt[1]))),local=sector.map(uv),bb=bbox(local),lo=k===0?bb[0]:width*k,hi=k===n-1?bb[2]:width*(k+1);
+    let pts=qClean(parcelClip(parcelClip(local,0,lo,true),0,hi,false).map(xy));const areaM=Math.abs(area(pts));if(pts.length<3||!simple(pts)||!urbanConvex(pts)||areaM<s.min-1e-5)continue;
+    const idx=pts.findIndex((p0,k)=>Math.abs(uv(p0)[1])<1e-5&&Math.abs(uv(pts[(k+1)%pts.length])[1])<1e-5);if(idx<0)continue;pts=pts.slice(idx).concat(pts.slice(0,idx));if(dist(pts[0],pts[1])<s.f-1e-5)continue;
+    const l={id:uid(),name:'Lote',pts,auto:true,adaptive:true,frontage:dist(pts[0],pts[1]),depth:Math.max(...pts.map(v=>uv(v)[1])),cornerLot:k===0||k===n-1,frontEdge:0,parcelRow:1,parcelV:21,edgeLot:true};
     const owner=blocks.find(b=>mpConvexFits(l,b));if(!owner||!mpConvexFits(l,q.boundary)||!mpDisjoint(l,[...q.zones,...out,...lots]))continue;
     const normal=mul(perp(norm(sub(pts[1],pts[0]))),-Math.sign(area(pts)));
     if(!parcelFrontNearRoad([pts[0],pts[1]],normal,{...s,tolerance:.35},prep))continue;
@@ -155,4 +156,21 @@ function mpActiveSpecs(q,s){
  const basic=optSpecs(q,{...s,morphology:'orthogonal'}),angles=[...new Set(basic.map(a=>a.angle))].slice(0,s.rotate?3:1),widths=[...new Set([s.wmin,s.wmax])],a=[];
  for(const w of widths)for(const angle of angles)for(const band of [.94,1.04])for(const ratio of [1.3,2.0])a.push({angle,w,band,pattern:'active',ratio,maxBlock:s.maxBlock,phase:.5,master:true});
  return a.slice(0,24);
+}
+
+function mpResidualFaces(q,s){
+ const temp={...q,params:{...q.params,minQuadra:Math.max(100,s.min*.8)},zones:[...q.zones,...q.lots.map(l=>({...l,kind:'other'}))]};
+ try{return vectorBlocks(temp)}catch{return []}
+}
+function mpInfill(q,s){
+ const prep=prepared(),existing=q.lots.slice(),names=new Set(existing.map(l=>l.name)),added=[];
+ const faces=mpResidualFaces(q,s).filter(b=>polyArea(b)>=s.min-1e-5&&!b.holes?.length).sort((a,b)=>polyArea(b)-polyArea(a));
+ for(const face of faces.slice(0,50)){
+  const owner=q.blocks.find(b=>qLotFits({pts:face.pts,adaptive:urbanConvex(face.pts)},b));if(!owner||owner.edgeBlock)continue;
+  const local={...face,id:owner.id,name:owner.name,auto:true},opts={f:s.f,d:s.d,min:s.min,rows:2,direction:'auto',angle:0,inset:0,road:true,tolerance:.35,fit:!!s.flex,flexDepth:!!s.flex,replace:false,quick:false,adaptive:!!s.adaptive,edgeActive:true};
+  const res=mpAdaptiveParcel(local,opts,[...existing,...added],prep,Math.max(0,3000-existing.length-added.length));if(res.limit)continue;
+  for(const l of res.lots){if(!qLotFits(l,owner)||!mpDisjoint(l,[...q.zones,...existing,...added])||polyArea(l)<s.min-1e-5)continue;
+   let num=1,name;do{name=owner.name+' / L'+String(num++).padStart(2,'0')}while(names.has(name));names.add(name);l.name=name;l.infill=true;added.push(l)}
+ }
+ q.lots.push(...added);return added;
 }
