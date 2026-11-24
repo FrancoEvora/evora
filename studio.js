@@ -115,7 +115,9 @@ function draftPoint(raw,orth=false,ignore=null){
 function roadMarkMask(){
   const rings=p.rounds.map(o=>'<circle cx="'+o.c[0]+'" cy="'+o.c[1]+'" r="'+(o.r+1)+'" fill="black"/>').join('');
   const junctions=crossingCache.map(o=>'<circle cx="'+o.v[0]+'" cy="'+o.v[1]+'" r="'+o.radius+'" fill="black"/>').join('');
-  return '<defs><mask id="roadMarksMask" maskUnits="userSpaceOnUse" x="-10000000" y="-10000000" width="20000000" height="20000000"><rect x="-10000000" y="-10000000" width="20000000" height="20000000" fill="white"/>'+rings+junctions+'</mask></defs>';
+  const x=view.cx-W/(2*view.z)-40/view.z,y=view.cy-H/(2*view.z)-40/view.z,w=(W+80)/view.z,h=(H+80)/view.z;
+  const bounds=' x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'"';
+  return '<defs><mask id="roadMarksMask" maskUnits="userSpaceOnUse" maskContentUnits="userSpaceOnUse"'+bounds+'><rect'+bounds+' fill="white"/>'+rings+junctions+'</mask></defs>';
 }
 function simplifyGridRing(a,epsilon){
   a=simplifyGridCorners(a);if(a.length<5)return a;
