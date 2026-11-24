@@ -101,6 +101,7 @@ function urbanZoneDecor(o,z,namespace='main'){
  const box=bbox(o.pts),dx=box[2]-box[0],dy=box[3]-box[1];if(Math.min(dx,dy)*z<15)return '';
  const clip='land-'+namespace+'-'+String(o.id).replace(/[^a-zA-Z0-9_-]/g,''),A=polyArea(o),spacing=Math.max(7,Math.sqrt(A/36)),r=Math.max(1.3,Math.min(3.1,spacing*.22)),center=blockStats(o).anchor.v;
  let h='<defs><clipPath id="'+clip+'"><path d="'+polyPath(o)+'" fill-rule="evenodd" clip-rule="evenodd"/></clipPath></defs><g clip-path="url(#'+clip+')" pointer-events="none">';
+ if(o.kind==='green'&&Math.min(dx,dy)>22){const horizontal=dx>dy,x0=box[0],y0=box[1],x1=box[2],y1=box[3],d=horizontal?'M'+(x0-2)+' '+(y0+dy*.55)+' C'+(x0+dx*.3)+' '+(y0+dy*.12)+' '+(x0+dx*.7)+' '+(y0+dy*.88)+' '+(x1+2)+' '+(y0+dy*.45):'M'+(x0+dx*.42)+' '+(y0-2)+' C'+(x0+dx*.10)+' '+(y0+dy*.33)+' '+(x0+dx*.9)+' '+(y0+dy*.66)+' '+(x0+dx*.56)+' '+(y1+2);h+='<ellipse cx="'+center[0]+'" cy="'+center[1]+'" rx="'+dx*.21+'" ry="'+dy*.19+'" fill="#b9cf9f" opacity=".75"/><path d="'+d+'" stroke="#e9e2cd" stroke-width="2.8" fill="none"/>';}
  if(o.kind==='plaza'){
   h+='<path d="M'+(box[0]-2)+' '+center[1]+'H'+(box[2]+2)+' M'+center[0]+' '+(box[1]-2)+'V'+(box[3]+2)+'" stroke="#e9e1c6" stroke-width="'+Math.min(3.8,Math.max(1.2,Math.min(dx,dy)*.07))+'" fill="none"/>';
   h+='<circle cx="'+center[0]+'" cy="'+center[1]+'" r="'+Math.min(6,Math.min(dx,dy)*.13)+'" fill="#e9e1c6" stroke="#c0b69a" stroke-width="'+.5/z+'"/>';
@@ -111,7 +112,7 @@ function urbanZoneDecor(o,z,namespace='main'){
  }
  let count=0;
  for(let iy=0;iy<Math.ceil(dy/spacing)&&count<60;iy++)for(let ix=0;ix<Math.ceil(dx/spacing)&&count<60;ix++){
-  let x=box[0]+(ix+.65+(iy%2)*.23)*spacing,y=box[1]+(iy+.6)*spacing,pt=[x,y];if(!insideObj(pt,o))continue;
+  const jitter=(a,b)=>Math.sin((a+1)*19.13+(b+2)*73.21);let x=box[0]+(ix+.65+(iy%2)*.23+(o.kind==='green'?jitter(ix,iy)*.25:0))*spacing,y=box[1]+(iy+.6+(o.kind==='green'?jitter(iy,ix)*.27:0))*spacing,pt=[x,y];if(!insideObj(pt,o))continue;if(o.kind==='green'&&((x-center[0])/Math.max(1,dx*.22))**2+((y-center[1])/Math.max(1,dy*.20))**2<1)continue;
   if(o.kind==='plaza'&&(Math.abs(x-center[0])<r+2||Math.abs(y-center[1])<r+2))continue;
   if(o.kind==='leisure'&&dist(pt,center)<Math.min(dx,dy)*.27)continue;
   h+='<circle cx="'+(x+.55)+'" cy="'+(y+.65)+'" r="'+r+'" fill="#385c3b" opacity=".17"/><circle cx="'+x+'" cy="'+y+'" r="'+r+'" fill="#588b5c" stroke="#3f764a" stroke-width="'+.45/z+'" opacity=".8"/><circle cx="'+(x-r*.27)+'" cy="'+(y-r*.24)+'" r="'+r*.45+'" fill="#a9c899" opacity=".65"/>';count++;

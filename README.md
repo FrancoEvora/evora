@@ -45,3 +45,5 @@ Verificação: oito suítes de testes determinísticos de geometria e DOM simula
 
 ### 2.1 — bordas ativas (candidato)
 Circuito recuado e parcelas convexas entre o meio-fio e as divisas da gleba, validadas por área, testada, sobreposição e acesso interno. Aplicação inicial limitada a glebas convexas. Comparação com o partido anterior disponível. Não constitui projeto executivo.
+
+Revisão 2.1: testada efetiva limitada ao trecho reto da faixa viária; lotes de esquina podem incorporar os vértices sem contabilizá-los como frente acessível. Coletora central pode ter largura diferenciada. A apresentação paisagística é simbólica; não é projeto executivo. Em terrenos côncavos, comparar outros partidos. A qualidade urbanística e as conexões externas exigem revisão humana.

@@ -88,7 +88,7 @@ function mpGraphic(q,z,namespace='sheet'){
  for(const o of q.zones)h+='<path d="'+polyPath(o)+'" fill="'+(zoneTypes[o.kind]||zoneTypes.other)[1]+'" stroke="#688262" stroke-width="'+.6*ln+'" fill-rule="evenodd"/>'+urbanZoneDecor(o,z,namespace);
  for(const r of q.roads)h+='<path d="'+path(roadPts(r))+'" fill="none" stroke="#aeb5aa" stroke-width="'+(r.width+.65*ln)+'" stroke-linecap="round" stroke-linejoin="round"/>';
  for(const r of q.roads)h+='<path d="'+path(roadPts(r))+'" fill="none" stroke="#eceade" stroke-width="'+r.width+'" stroke-linecap="round" stroke-linejoin="round"/>';
- for(const r of q.roads)h+='<path d="'+path(roadPts(r))+'" fill="none" stroke="'+(r.cls==='Local'?'#9b9e9b':'#7c8885')+'" stroke-width="'+urbanRoadPavement(r)+'" stroke-linecap="round" stroke-linejoin="round"/>';
+ for(const r of q.roads)h+='<path d="'+path(roadPts(r))+'" fill="none" stroke="#949b98" stroke-width="'+urbanRoadPavement(r)+'" stroke-linecap="round" stroke-linejoin="round"/>';
  for(const r of q.rounds)h+='<circle cx="'+r.c[0]+'" cy="'+r.c[1]+'" r="'+r.r+'" fill="#929b95"/><circle cx="'+r.c[0]+'" cy="'+r.c[1]+'" r="'+(r.r-r.w)+'" fill="#8aa77b"/>';
  h+=mpRoadTrees(q,z);
  const label=(pt,name,size,fill='#365144')=>'<text x="'+pt[0]+'" y="'+pt[1]+'" text-anchor="middle" dominant-baseline="middle" font-family="Arial,sans-serif" font-size="'+size*ln+'" font-weight="650" paint-order="stroke" stroke="#faf9f1" stroke-width="'+2*ln+'" fill="'+fill+'">'+esc(name)+'</text>';
@@ -125,23 +125,24 @@ function installMasterSheet(){
    Each peripheral lot occupies a verified convex sector between the curb and the cadastral edge. */
 function mpEdgeLots(q,s,prep){
  const info=q.masterplan?.edgeBand;if(!info)return [];
- const B=info.outer,C=info.curb,out=[],blocks=q.blocks.filter(b=>b.edgeBlock);
+ const B=info.outer,C=info.curb,out=[],blocks=q.blocks.filter(b=>b.edgeBlock),axis=q.roads.find(r=>r.name==='Circuito de bordas ativas')?.pts;if(!axis||axis.length!==B.length+1)return [];
  for(let i=0;i<B.length;i++){
   const j=(i+1)%B.length,a=C[i],b=C[j],A=B[i],Z=B[j],len=dist(a,b),sector=[a,b,Z,A];
   if(len<s.f-1e-6||!simple(sector)||!urbanConvex(sector))continue;
-  const sectorArea=Math.abs(area(sector)),n0=Math.min(Math.floor((len+1e-6)/s.f),Math.floor((sectorArea+1e-6)/s.min));if(n0<1||n0>500)continue;
+  const dir=norm(sub(b,a)),v=mul(perp(dir),Math.sign(area(sector))),uv=pt=>[dot(sub(pt,a),dir),dot(sub(pt,a),v)],xy=pt=>add(a,add(mul(dir,pt[0]),mul(v,pt[1]))),local=sector.map(uv),bb=bbox(local),F0=Math.max(0,uv(axis[i])[0]+.12),F1=Math.min(len,uv(axis[j])[0]-.12),F=F1-F0;
+  const sectorArea=Math.abs(area(sector)),n0=Math.min(Math.floor((F+1e-6)/s.f),Math.floor((sectorArea+1e-6)/s.min));if(n0<1||n0>500)continue;
   let best=[];
   for(let n=n0;n>=Math.max(1,n0-4);n--){
-   const width=len/n;if(width>s.f*1.45+1e-5)continue;
+   const width=F/n;if(width>s.f*1.45+1e-5)continue;
    let lots=[];
    for(let k=0;k<n;k++){
-    const dir=norm(sub(b,a)),v=mul(perp(dir),Math.sign(area(sector))),uv=pt=>[dot(sub(pt,a),dir),dot(sub(pt,a),v)],xy=pt=>add(a,add(mul(dir,pt[0]),mul(v,pt[1]))),local=sector.map(uv),bb=bbox(local),lo=k===0?bb[0]:width*k,hi=k===n-1?bb[2]:width*(k+1);
+    const lo=k===0?bb[0]:F0+width*k,hi=k===n-1?bb[2]:F0+width*(k+1),frontageSegment=[xy([F0+width*k,0]),xy([F0+width*(k+1),0])];
     let pts=qClean(parcelClip(parcelClip(local,0,lo,true),0,hi,false).map(xy));const areaM=Math.abs(area(pts));if(pts.length<3||!simple(pts)||!urbanConvex(pts)||areaM<s.min-1e-5)continue;
     const idx=pts.findIndex((p0,k)=>Math.abs(uv(p0)[1])<1e-5&&Math.abs(uv(pts[(k+1)%pts.length])[1])<1e-5);if(idx<0)continue;pts=pts.slice(idx).concat(pts.slice(0,idx));if(dist(pts[0],pts[1])<s.f-1e-5)continue;
-    const l={id:uid(),name:'Lote',pts,auto:true,adaptive:true,frontage:dist(pts[0],pts[1]),depth:Math.max(...pts.map(v=>uv(v)[1])),cornerLot:k===0||k===n-1,frontEdge:0,parcelRow:1,parcelV:21,edgeLot:true};
+    const l={id:uid(),name:'Lote',pts,auto:true,adaptive:true,frontage:width,frontageSegment,depth:Math.max(...pts.map(v=>uv(v)[1])),cornerLot:k===0||k===n-1,frontEdge:0,parcelRow:1,parcelV:21,edgeLot:true};
     const owner=blocks.find(b=>mpConvexFits(l,b));if(!owner||!mpConvexFits(l,q.boundary)||!mpDisjoint(l,[...q.zones,...out,...lots]))continue;
     const normal=mul(perp(norm(sub(pts[1],pts[0]))),-Math.sign(area(pts)));
-    if(!parcelFrontNearRoad([pts[0],pts[1]],normal,{...s,tolerance:.35},prep))continue;
+    if(!parcelFrontNearRoad(frontageSegment,normal,{...s,tolerance:.35},prep))continue;
     l.blockId=owner.id;lots.push(l);
    }
    if(lots.reduce((n,l)=>n+polyArea(l),0)>best.reduce((n,l)=>n+polyArea(l),0))best=lots;

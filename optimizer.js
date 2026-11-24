@@ -198,7 +198,7 @@ function openOptimizer(){
  if(!p.boundary){toast('Desenhe ou importe o perímetro da gleba antes de otimizar.');return}
  closeParcel();setMode('select');optReset();
  $('optPreset').innerHTML='<option value="custom">Personalizado / atual</option>'+parcelPresets().map((s,i)=>'<option value="'+i+'">'+esc(s.name)+'</option>').join('');$('optPreset').value='custom';
- $('optMode').value='new';$('optAccess').innerHTML='<option value="">A definir no projeto</option>'+p.boundary.pts.map((pt,i)=>'<option value="'+i+'">Divisa '+(i+1)+' · '+fmt(dist(pt,p.boundary.pts[(i+1)%p.boundary.pts.length]),1)+' m · '+fmt(bearing(pt,p.boundary.pts[(i+1)%p.boundary.pts.length]),0)+'°</option>').join('');$('optAccess').value='';$('optMorphology').value='active';$('optAdaptiveLots').checked=true;$('optMorphologyNote').textContent='Circuito recuado com lotes nas bordas, parque central e conexões internas. Acessos externos a definir.';$('optFront').value=p.params.lotFront??12;$('optDepth').value=p.params.lotDepth??30;
+ $('optMode').value='new';$('optAccess').innerHTML='<option value="">A definir no projeto</option>'+p.boundary.pts.map((pt,i)=>'<option value="'+i+'">Divisa '+(i+1)+' · '+fmt(dist(pt,p.boundary.pts[(i+1)%p.boundary.pts.length]),1)+' m · '+fmt(bearing(pt,p.boundary.pts[(i+1)%p.boundary.pts.length]),0)+'°</option>').join('');$('optAccess').value='';$('optMorphology').value=urbanConvex(qClean(p.boundary.pts))?'active':'compare';$('optAdaptiveLots').checked=true;$('optMorphologyNote').textContent='Circuito recuado com lotes nas bordas, parque central e conexões internas. Acessos externos a definir.';$('optFront').value=p.params.lotFront??12;$('optDepth').value=p.params.lotDepth??30;
  const nominal=optNumber($('optFront').value)*optNumber($('optDepth').value),savedMin=p.params.parcelMinArea;
  $('optMin').value=Number.isFinite(optNumber(savedMin))&&optNumber(savedMin)>0?savedMin:nominal;
  $('optLinkArea').checked=Math.abs(optNumber($('optMin').value)-nominal)<1e-6;
@@ -212,7 +212,7 @@ function openOptimizer(){
 function closeOptimizer(){optReset();if($('optimizerDialog').open)$('optimizerDialog').close()}
 function optRun(){
  if(optRunning)return;const s=optInputs(),issues=optRefreshValidation();if(issues.length){optStatus(issues[0].message,true);return}if(!p.boundary){optStatus('A gleba não está definida.',true);return}if(s.wmax>30&&!confirm('A malha inclui vias de mais de 30 m. Confirma esse parâmetro excepcional para o estudo?'))return;
- const source=cp(p);let specs=mpSpecs(source,s);if(Number.isInteger(s.accessEdge)&&s.mode==='new')specs=specs.filter(x=>x.master);if(s.mode==='keep')specs=[{baseline:true,angle:0,w:s.wmin,maxBlock:s.maxBlock,phase:0},...specs];
+ if(s.mode==='new'&&s.morphology==='active'&&!s.adaptive){optStatus('O partido de bordas ativas utiliza lotes adaptativos. Habilite essa opção ou selecione outro partido.',true);return;}const source=cp(p);let specs=mpSpecs(source,s);if(Number.isInteger(s.accessEdge)&&s.mode==='new')specs=specs.filter(x=>x.master);if(s.mode==='keep')specs=[{baseline:true,angle:0,w:s.wmin,maxBlock:s.maxBlock,phase:0},...specs];
  optReset();optSource=snapshot();const token=++optToken;optRunning=true;$('optRun').disabled=true;$('optCancel').disabled=false;optStatus('Analisando '+specs.length+' configurações…');
  let idx=0,found=[],errors=0,overShare=0,overProgram=0,bestDeficit=Infinity;
  function step(){
