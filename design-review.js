@@ -160,7 +160,7 @@ function qaEvaluate(c,s){
  const critical=issues+Math.max(0,network.components-1)+network.acute+network.short+network.tight+(terrain?.above>0?1:0);
  const checks={count,failArea,failFront,failBuild,unlinked,coverage,buildPct,unreachable,mean,p90:distances.length?distances[Math.ceil(distances.length*.9)-1]:null,network,terrain,issues,critical,thresholds:Object.fromEntries(Object.keys(QA_FIELDS).map(k=>[k,r[k]])),frontageMin:s.f,areaMin:s.min,rows};
  // Strict is intentionally only the chosen screening criteria, not legal approval.
- checks.pass=issues===0&&network.components<=1&&network.acute===0&&network.short===0&&network.tight===0&&(!terrain||terrain.coverage>=99.99&&terrain.above<=.01);
+ checks.pass=count>0&&issues===0&&network.components===1&&!network.roundabouts&&network.acute===0&&network.short===0&&network.tight===0&&(!terrain||terrain.coverage>=99.99&&terrain.above<=.01);
  return checks;
 }
 function qaDominates(a,b){
@@ -172,7 +172,7 @@ function qaRank(sorted,s){
  if(!s.review?.enabled||s.objective!=='urban'||sorted.some(c=>!c.review))return sorted;
  // Non-dominated fronts within equal feasibility groups. Keep the legacy
  // preference as tie-breaker; this is Pareto sorting, not an evolutionary solver.
- const remaining=sorted.slice(),out=[];while(remaining.length){const front=remaining.filter(x=>!remaining.some(y=>x!==y&&qaDominates(y,x)));for(const x of front){x.review.paretoLayer=(out.length?undefined:1)||0;}out.push(...front);for(const x of front)remaining.splice(remaining.indexOf(x),1)}
+ const remaining=sorted.slice(),out=[];let layer=0;while(remaining.length){layer++;const front=remaining.filter(x=>!remaining.some(y=>x!==y&&qaDominates(y,x)));for(const x of front)x.review.paretoLayer=layer;out.push(...front);for(const x of front)remaining.splice(remaining.indexOf(x),1)}
  return out;
 }
 function qaFmt(x,d=1,suffix=''){return Number.isFinite(x)?fmt(x,d)+suffix:'não avaliado'}
@@ -205,6 +205,6 @@ function qaInstall(refresh){
  $('qaTerrainFile').onchange=async()=>{const file=$('qaTerrainFile').files?.[0];if(!file)return;try{const g=qaParseTerrain(await file.text());qaTerrain=g;qaTerrainName=file.name;refresh();$('qaTerrainInfo').textContent=g.points+' cotas carregadas. X/Y/Z em metros locais. Confirme o referencial antes de usar.'}catch(e){qaTerrain=null;qaTerrainName='';refresh();$('qaTerrainInfo').textContent=e.message}};
  $('qaTerrainClear').onclick=()=>{qaTerrain=null;qaTerrainName='';$('qaTerrainFile').value='';refresh();$('qaTerrainInfo').textContent='Sem modelo de terreno. Relevo não avaliado.'};
  $('qaTemplate').onclick=()=>download('grade_topografica_exemplo.csv','x;y;z\n0;0;900\n100;0;901\n0;100;902\n100;100;903\n','text/csv;charset=utf-8');
- $('qaCurrent').onclick=()=>{const s=optInputs(),issues=qaDiagnostics(s.review);if(!s.review.enabled){optStatus('Habilite a revisão técnica.',true);return}if(issues.length){optStatus(issues[0].message,true);return}try{qaRender(qaCurrent(s))}catch(e){optStatus(String(e.message||e),true)}};
+ $('qaCurrent').onclick=()=>{const s=optInputs(),issues=optDiagnostics(s);if(!s.review.enabled){optStatus('Habilite a revisão técnica.',true);return}if(issues.length){optStatus(issues[0].message,true);return}try{qaRender(qaCurrent(s))}catch(e){optStatus(String(e.message||e),true)}};
  $('qaExport').onclick=()=>{if(qaLastReport)download(filename()+'_revisao_tecnica.json',JSON.stringify(qaLastReport,null,2),'application/json')};
 }
