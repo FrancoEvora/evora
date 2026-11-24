@@ -80,7 +80,7 @@ function orgFronts(o,s,prep){
  });
  const start=edges.findIndex((e,i)=>!e.ok||dot(e.u,edges[(i+edges.length-1)%edges.length].u)<.83);
  const chains=[];let run=[];
- function finish(){if(!run.length)return;const pts=[run[0].a,...run.map(e=>e.b)],a=orgArc(pts),u=norm(sub(pts.at(-1),pts[0]));if(a.len>=s.f-.001&&dist(pts[0],pts.at(-1))>s.f*.65){chains.push({...a,v:mul(perp(u),sign),u,mid:a.at(.5),curve:a.len-dist(pts[0],pts.at(-1]),turn:Math.acos(clamp(dot(run[0].u,run.at(-1).u),-1,1))*180/Math.PI})}run=[]}
+ function finish(){if(!run.length)return;const pts=[run[0].a,...run.map(e=>e.b)],a=orgArc(pts),u=norm(sub(pts.at(-1),pts[0]));if(a.len>=s.f-.001&&dist(pts[0],pts.at(-1))>s.f*.65){chains.push({...a,v:mul(perp(u),sign),u,mid:a.at(.5),curve:a.len-dist(pts[0],pts.at(-1)),turn:Math.acos(clamp(dot(run[0].u,run.at(-1).u),-1,1))*180/Math.PI})}run=[]}
  for(let k=0;k<edges.length;k++){const e=edges[(Math.max(0,start)+k)%edges.length];if(!e.ok){finish();continue}if(run.length&&(dot(run.at(-1).u,e.u)<.82||dot(run[0].u,e.u)<.33))finish();run.push(e)}finish();
  return chains.sort((a,b)=>b.len-a.len).slice(0,8)
 }
