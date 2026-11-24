@@ -9,6 +9,7 @@ const QA_FIELDS={
  spacing:{id:'qaSpacing',label:'Distância mínima entre interseções',lo:5,hi:200,value:30},
  radius:{id:'qaRadius',label:'Raio geométrico indicativo',lo:3,hi:200,value:15},
  park:{id:'qaPark',label:'Distância pela rede até convivência',lo:50,hi:2000,value:400},
+ parkCoverage:{id:'qaCoverage',label:'Cobertura mínima de convivência (%)',lo:0,hi:100,value:90},
  footW:{id:'qaFootW',label:'Largura da implantação-teste',lo:2,hi:50,value:8},
  footD:{id:'qaFootD',label:'Profundidade da implantação-teste',lo:2,hi:80,value:12},
  setback:{id:'qaSetback',label:'Afastamento perimetral de estudo',lo:0,hi:15,value:1.5},
@@ -96,15 +97,15 @@ function qaGraph(q){
 function qaNetworkChecks(q,g,r){
  const other=(e,i)=>e.A===i?e.B:e.A,junctions=g.nodes.map((n,i)=>({n,i})).filter(({n})=>n.adj.length>=3);let minAngle=Infinity,acute=0;
  for(const {n,i} of junctions){const vectors=n.adj.map(ei=>norm(sub(g.nodes[other(g.edges[ei],i)].pt,n.pt)));let m=Infinity;for(let a=0;a<vectors.length;a++)for(let b=a+1;b<vectors.length;b++)m=Math.min(m,Math.acos(clamp(dot(vectors[a],vectors[b]),-1,1))*180/Math.PI);minAngle=Math.min(minAngle,m);if(m<r.angle-.001)acute++}
- let short=0,minSpacing=Infinity;const used=new Set();
+ let short=0,long=0,minSpacing=Infinity,maxSpacing=0;const used=new Set();
  for(const {n,i} of junctions)for(const ei of n.adj){if(used.has(ei))continue;let e=g.edges[ei],prev=i,v=other(e,i),L=e.len;used.add(ei);let guard=0;
   while(g.nodes[v].adj.length===2&&guard++<g.edges.length){const next=g.nodes[v].adj.find(id=>id!==e.id);if(used.has(next))break;used.add(next);e=g.edges[next];prev=v;v=other(e,v);L+=e.len}
-  if(v!==i&&g.nodes[v].adj.length>=3){minSpacing=Math.min(minSpacing,L);if(L<r.spacing-.001)short++}
+  if(v!==i&&g.nodes[v].adj.length>=3){minSpacing=Math.min(minSpacing,L);maxSpacing=Math.max(maxSpacing,L);if(L<r.spacing-.001)short++;if(Number.isFinite(r.maxBlock)&&L>r.maxBlock+.001)long++}
  }
  let bends=0,tight=0,minRadius=Infinity;for(const road of q.roads){const a=roadPts(road),closed=dist(a[0],a.at(-1))<.03,pts=closed?a.slice(0,-1):a;for(let i=closed?0:1;i<pts.length-(closed?0:1);i++){const A=pts[(i+pts.length-1)%pts.length],B=pts[i],C=pts[(i+1)%pts.length],ab=dist(A,B),bc=dist(B,C),ca=dist(C,A);if(Math.min(ab,bc)<.25)continue;const turn=Math.acos(clamp(dot(norm(sub(B,A)),norm(sub(C,B))),-1,1))*180/Math.PI;if(turn<2)continue;
   const crossArea=Math.abs(cross(sub(B,A),sub(C,A)));if(crossArea<1e-8)continue;const R=ab*bc*ca/(2*crossArea);bends++;minRadius=Math.min(minRadius,R);if(R<r.radius)tight++;
  }}
- return {components:g.components,junctions:junctions.length,minAngle:Number.isFinite(minAngle)?minAngle:null,acute,minSpacing:Number.isFinite(minSpacing)?minSpacing:null,short,bends,minRadius:Number.isFinite(minRadius)?minRadius:null,tight,roundabouts:g.roundabouts};
+ return {components:g.components,junctions:junctions.length,minAngle:Number.isFinite(minAngle)?minAngle:null,acute,minSpacing:Number.isFinite(minSpacing)?minSpacing:null,maxSpacing:maxSpacing||null,short,long,bends,minRadius:Number.isFinite(minRadius)?minRadius:null,tight,roundabouts:g.roundabouts};
 }
 /* Verify the physical side of the street; no access through another lot is inferred. */
 function qaRoadProjection(pt,normal,g,tol=.50){
@@ -147,7 +148,7 @@ function qaFootprint(l,r,front){
 }
 function qaEvaluate(c,s){
  const r=s.review;if(!r?.enabled)return null;
- const q=c.q,g=qaGraph(q),network=qaNetworkChecks(q,g,r),terrain=qaTerrainStats(q,r);
+ const q=c.q,g=qaGraph(q),network=qaNetworkChecks(q,g,{...r,maxBlock:s.maxBlock}),terrain=qaTerrainStats(q,r);
  const amenities=q.zones.filter(z=>['green','plaza','leisure'].includes(z.kind)),sources=amenities.flatMap(z=>qaFronts(z,g,8).projections),walk=qaNetworkDistances(g,sources);
  const rows=[];let failArea=0,failFront=0,failBuild=0,near=0,unreachable=0,distances=[],unlinked=0;
  for(const l of q.lots){const f=qaFronts(l,g,1.5),A=polyArea(l),D=walk(f.front),build=qaFootprint(l,r,f.front),areaOk=A>=s.min-.002,frontOk=f.length>=s.f-.10,owner=q.blocks.find(b=>b.id===l.blockId),linked=!!owner&&!l.blockConflict&&qLotFits(l,owner);
@@ -156,23 +157,25 @@ function qaEvaluate(c,s){
   rows.push({id:l.id,name:l.name,area:A,frontage:f.length,reportedFrontage:Number.isFinite(l.frontage)?l.frontage:null,areaOk,frontOk,build,linked,networkDistance:Number.isFinite(D)?D:null});
  }
  distances.sort((a,b)=>a-b);const count=rows.length,coverage=count?near/count*100:0,buildPct=count?(count-failBuild)/count*100:0,mean=distances.length?distances.reduce((a,b)=>a+b,0)/distances.length:null;
- const issues=failArea+failFront+failBuild+unlinked;
- const critical=issues+Math.max(0,network.components-1)+network.acute+network.short+network.tight+(terrain?.above>0?1:0);
- const checks={count,failArea,failFront,failBuild,unlinked,coverage,buildPct,unreachable,mean,p90:distances.length?distances[Math.ceil(distances.length*.9)-1]:null,network,terrain,issues,critical,thresholds:Object.fromEntries(Object.keys(QA_FIELDS).map(k=>[k,r[k]])),frontageMin:s.f,areaMin:s.min,rows};
+ const issues=failArea+failFront+failBuild+unlinked,parkRelevant=amenities.length>0||!!(s.publicProgram&&(s.greenPct||s.plazaPct||s.leisurePct)),parkOk=!parkRelevant||coverage>=r.parkCoverage-.001;
+ const critical=issues+Math.max(0,network.components-1)+network.acute+network.short+network.long+network.tight+(terrain?.above>0?1:0)+(parkOk?0:1);
+ const checks={count,failArea,failFront,failBuild,unlinked,coverage,buildPct,unreachable,mean,p90:distances.length?distances[Math.ceil(distances.length*.9)-1]:null,network,terrain,issues,critical,parkRelevant,parkOk,maxBlock:s.maxBlock??null,thresholds:Object.fromEntries(Object.keys(QA_FIELDS).map(k=>[k,r[k]])),frontageMin:s.f,areaMin:s.min,rows};
  // Strict is intentionally only the chosen screening criteria, not legal approval.
- checks.pass=count>0&&issues===0&&network.components===1&&!network.roundabouts&&network.acute===0&&network.short===0&&network.tight===0&&(!terrain||terrain.coverage>=99.99&&terrain.above<=.01);
+ checks.pass=count>0&&issues===0&&network.components===1&&!network.roundabouts&&network.acute===0&&network.short===0&&network.long===0&&network.tight===0&&parkOk&&(!terrain||terrain.coverage>=99.99&&terrain.above<=.01);
  return checks;
 }
 function qaDominates(a,b){
  const A=a.review,B=b.review;if(!A||!B)return false;
- const vec=c=>[c.yield,-c.roadPct,c.review.coverage,c.review.buildPct,-c.review.critical,-(c.review.terrain?.abovePct??0),-(c.audit?.residualPct||0)];
+ const vec=c=>[c.yield,-c.roadPct,c.review.coverage,c.review.buildPct,-c.review.critical,c.review.terrain?.coverage??100,-(c.review.terrain?.abovePct??0),-(c.audit?.residualPct||0)];
  const x=vec(a),y=vec(b);return x.every((v,i)=>v>=y[i]-1e-7)&&x.some((v,i)=>v>y[i]+1e-7)
 }
 function qaRank(sorted,s){
  if(!s.review?.enabled||s.objective!=='urban'||sorted.some(c=>!c.review))return sorted;
  // Non-dominated fronts within equal feasibility groups. Keep the legacy
  // preference as tie-breaker; this is Pareto sorting, not an evolutionary solver.
- const remaining=sorted.slice(),out=[];let layer=0;while(remaining.length){layer++;const front=remaining.filter(x=>!remaining.some(y=>x!==y&&qaDominates(y,x)));for(const x of front)x.review.paretoLayer=layer;out.push(...front);for(const x of front)remaining.splice(remaining.indexOf(x),1)}
+ const out=[];let layer=0;const groups=[sorted.filter(c=>c.review.pass===true),sorted.filter(c=>c.review.pass!==true)];
+ const severity=c=>{const x=c.review;return (x.issues??0)/Math.max(1,x.count??1)*100+(x.network?.acute??0)*2+(x.network?.short??0)*1.5+(x.network?.long??0)+(x.network?.tight??0)+Math.max(0,(x.network?.components??1)-1)*50+(x.terrain?100-x.terrain.coverage+(x.terrain.abovePct??0):0)};
+ for(const remaining of groups){while(remaining.length){layer++;const front=remaining.filter(x=>!remaining.some(y=>x!==y&&qaDominates(y,x)));for(const x of front)x.review.paretoLayer=layer;front.sort((a,b)=>severity(a)-severity(b));out.push(...front);for(const x of front)remaining.splice(remaining.indexOf(x),1)}}
  return out;
 }
 function qaFmt(x,d=1,suffix=''){return Number.isFinite(x)?fmt(x,d)+suffix:'não avaliado'}
@@ -187,9 +190,10 @@ function qaRender(c){
  ['Lotes sem quadra válida',String(a.unlinked),'Vínculo e contenção geométrica'],
  ['Interseções com ângulo crítico',String(g.acute),qaFmt(g.minAngle,1,'°')+' · mínimo de estudo '+a.thresholds.angle+'°'],
  ['Trechos curtos entre cruzamentos',String(g.short),qaFmt(g.minSpacing,1,' m')+' · referência '+a.thresholds.spacing+' m'],
+ ['Trechos longos entre cruzamentos',String(g.long),qaFmt(g.maxSpacing,1,' m')+(Number.isFinite(a.maxBlock)?' · referência '+a.maxBlock+' m':'')],
  ['Pontos de curvatura abaixo da referência',String(g.tight),qaFmt(g.minRadius,1,' m')+' · raio local aproximado, não concordância'],
  ['Componentes do grafo de eixos',String(g.components),g.roundabouts?'Rotatórias não entram no grafo desta revisão.':'Não verifica conexão à cidade.'],
- ['Lotes próximos de praça/parque/lazer',qaFmt(a.coverage,1,'%'),'Até '+a.thresholds.park+' m pela rede de eixos; entradas e passeios presumidos'],
+ ['Lotes próximos de praça/parque/lazer',qaFmt(a.coverage,1,'%'),'Até '+a.thresholds.park+' m pela rede de eixos; meta '+a.thresholds.parkCoverage+'%; entradas e passeios presumidos'],
  ['Distância média / percentil 90',qaFmt(a.mean,0,' m')+' / '+qaFmt(a.p90,0,' m'),a.unreachable+' lote(s) sem percurso inferido'],
  ['Topografia',t?qaFmt(t.coverage,1,'%')+' da extensão coberta':'Não fornecida',t?'Declives no terreno natural; sem perfil de projeto.':'Importe uma grade de cotas no mesmo referencial local.'],
  ['Declive natural acima da referência',t?qaFmt(t.above,0,' m'):'Não avaliado',t?'Máximo amostrado '+qaFmt(t.max,1,'%')+'; limite de estudo '+a.thresholds.grade+'%.':'Sem terreno não há avaliação de declividade.']
