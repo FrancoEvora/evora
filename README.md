@@ -42,3 +42,6 @@ Partidos bairro-jardim e circuito compacto: circuito de contorno derivado do per
 Acesso externo opcional por divisa indicada pelo usuário (ponto médio; exige conferência de ligação e geometria). Prancha também disponível no editor para o projeto atual. Árvores, caminhos e pavimentação da prancha são símbolos conceituais.
 
 Verificação: oito suítes de testes determinísticos de geometria e DOM simulado; amostra irregular reconstruída aproximadamente a partir da forma apresentada, não levantamento do usuário. A planta dessa amostra foi renderizada e inspecionada em navegador local. Teste interativo completo no navegador remoto não concluído por falha do Chromium. O saldo indicado compreende usos fora dos lotes, vias e programa público; pode incluir APP e outras áreas cadastradas.
+
+### 2.1 — bordas ativas (candidato)
+Circuito recuado e parcelas convexas entre o meio-fio e as divisas da gleba, validadas por área, testada, sobreposição e acesso interno. Aplicação inicial limitada a glebas convexas. Comparação com o partido anterior disponível. Não constitui projeto executivo.

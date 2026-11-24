@@ -59,7 +59,7 @@ function urbanDistance(pt,o){if(insideObj(pt,o))return 0;let d=Infinity;for(cons
 function urbanReserve(q,s){
  const A=polyArea(q.boundary),prep=prepared(),existing=urbanExistingAreas(q,prep,s.mode==='new'&&q.masterplan?.engine===2),areas={...existing},targets=Object.fromEntries(URBAN_CATEGORIES.map(c=>[c.kind,s.publicProgram?A*(s[c.key]||0)/100:0])),newZones=[];
  if(!s.publicProgram)return {areas,targets,existing,newZones,shortfall:0,ok:true,excess:0};
- const keepBoxes=q.lots.map(l=>bbox(l.pts)),pool=q.blocks.filter(o=>o.auto&&!keepBoxes.some(b=>urbanBboxOverlap(b,bbox(o.pts)))).map(o=>({...o})),site=blockStats(q.boundary).anchor.v,bb=bbox(q.boundary.pts),scale=Math.max(1,Math.hypot(bb[2]-bb[0],bb[3]-bb[1])),tol=Math.max(.05,A*.000001);
+ const keepBoxes=q.lots.map(l=>bbox(l.pts)),pool=q.blocks.filter(o=>o.auto&&(q.masterplan?.style==='active'?!(o.edgeBlock&&o.holes?.length)&&!q.lots.some(l=>mpIntersectionArea(o,l.pts)>.01):!keepBoxes.some(b=>urbanBboxOverlap(b,bbox(o.pts))))).map(o=>({...o})),site=blockStats(q.boundary).anchor.v,bb=bbox(q.boundary.pts),scale=Math.max(1,Math.hypot(bb[2]-bb[0],bb[3]-bb[1])),tol=Math.max(.05,A*.000001);
  const focal=()=>[...q.zones,...newZones].filter(z=>z.kind==='plaza'||z.kind==='green'||z.kind==='leisure');
  for(const c of URBAN_CATEGORIES){
   let rounds=0;const need0=Math.max(0,targets[c.kind]-areas[c.kind]),desiredCount=c.kind==='green'&&need0>4500?Math.min(4,Math.max(2,Math.ceil(need0/6500))):c.kind==='plaza'&&need0>10000?2:1;
